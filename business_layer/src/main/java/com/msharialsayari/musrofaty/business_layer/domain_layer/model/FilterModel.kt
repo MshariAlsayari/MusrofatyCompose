@@ -12,7 +12,7 @@ data class FilterModel(
     var searchWord: String = "",
     var smsType: String = "",
     var date: String = "",
-    var senderName: String? = "",
+    var bankName: String? = "",
     var dateFrom: String? = "",
     var dateTo: String? = "",
     var isSelected: Boolean = false,
@@ -37,6 +37,6 @@ fun FilterModel.toFilterEntity() = FilterEntity(
     searchWord = searchWord,
     smsType = smsType,
     date=date,
-    senderName = senderName,
+    bankName = bankName,
     dateFrom =  dateFrom,
     dateTo =  dateTo)
