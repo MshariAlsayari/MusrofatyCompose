@@ -1,8 +1,8 @@
-package com.msharialsayari.musrofaty.layer_domain.model.enum
+package com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum
 
 import android.content.Context
-import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.SharedPreferenceManager
+import com.msharialsayari.musrofaty.business_layer.R
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 
 

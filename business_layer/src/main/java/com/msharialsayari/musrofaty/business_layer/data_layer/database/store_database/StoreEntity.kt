@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

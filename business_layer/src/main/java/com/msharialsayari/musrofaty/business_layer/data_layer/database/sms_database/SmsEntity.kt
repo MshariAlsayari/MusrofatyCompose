@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDateTime
 
 @Parcelize
 @Entity(tableName = "SmsEntity")
@@ -15,15 +16,15 @@ data class SmsEntity(
     var id: String,
     @ColumnInfo(name = "senderName")
     var senderName: String? = null,
-    @ColumnInfo(name = "dateTime")
-    var dateTime: String? = null,
+    @ColumnInfo(name = "timestamp")
+    var timestamp: LocalDateTime? = null,
     @ColumnInfo(name = "body")
     var body: String? = null,
     @ColumnInfo(name = "isDeleted")
     var isDeleted: Boolean? = false
 ) : Parcelable
 
-fun SmsEntity.toSmsModel()= SmsEntity(id, senderName, dateTime, body, isDeleted)
+fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body, isDeleted)
 
 
 

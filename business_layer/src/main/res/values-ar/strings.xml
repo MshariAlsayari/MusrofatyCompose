@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">business_layer</string>
-    <string name="sms_category_no_category">No category</string>
+    <string name="sms_category_no_category">غير محدد</string>
 </resources>

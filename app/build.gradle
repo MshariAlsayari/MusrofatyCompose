@@ -56,6 +56,10 @@ android {
 
 dependencies {
 
+
+    implementation(project(":business_layer"))
+    implementation(project(":utils"))
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
@@ -65,6 +69,10 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$composeNavVersion"
 
 
+
+    // ViewModel and LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 
     // logging
     implementation "com.jakewharton.timber:timber:$timberVersion"
