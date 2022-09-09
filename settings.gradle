@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MusrofatyCompose"
 include ':app'
-include ':data_layer'
+
+include ':business_layer'

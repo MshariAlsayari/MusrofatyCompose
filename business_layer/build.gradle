@@ -9,7 +9,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.msharialsayari.musrofaty.data_layer"
+        applicationId "com.msharialsayari.musrofaty.business_layer"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -35,9 +35,6 @@ android {
 
 dependencies {
 
-
-    implementation(project(":domain_layer"))
-
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'com.google.android.material:material:1.6.1'
@@ -48,8 +45,7 @@ dependencies {
     //gson
     implementation 'com.google.code.gson:gson:2.8.9'
 
-
-    // room
+    //room
     implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 }

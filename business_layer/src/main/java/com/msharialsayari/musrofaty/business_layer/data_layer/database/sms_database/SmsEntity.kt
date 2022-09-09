@@ -1,9 +1,10 @@
-package com.msharialsayari.musrofaty.data_layer.database.sms_database
+package com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,6 +22,8 @@ data class SmsEntity(
     @ColumnInfo(name = "isDeleted")
     var isDeleted: Boolean? = false
 ) : Parcelable
+
+fun SmsEntity.toSmsModel()= SmsEntity(id, senderName, dateTime, body, isDeleted)
 
 
 
