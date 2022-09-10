@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
-import dagger.hilt.EntryPoint
+import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

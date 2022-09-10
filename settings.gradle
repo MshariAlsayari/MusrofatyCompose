@@ -17,3 +17,4 @@ rootProject.name = "MusrofatyCompose"
 include ':app'
 include ':business_layer'
 include ':utils'
+include ':ui_component'
