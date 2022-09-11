@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_title_screen">Home</string>
+    <string name="sms_list_title_screen">SMS</string>
+    <string name="settings_title_screen">Settings</string>
+</resources>

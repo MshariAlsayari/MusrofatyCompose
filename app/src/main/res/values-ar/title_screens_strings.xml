@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string name="dashboard_title_screen">الصفحة الرئيسية</string>
+    <string name="sms_list_title_screen">الرسائل</string>
+    <string name="settings_title_screen">الإعدادات</string>
+
+</resources>
