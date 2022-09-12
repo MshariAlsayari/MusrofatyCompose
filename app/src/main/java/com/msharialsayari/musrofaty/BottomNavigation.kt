@@ -7,10 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
@@ -28,8 +24,7 @@ fun BottomNavigation(navController: NavController, items:List<BottomNavItem>, bo
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
             BottomNavigation(
-                backgroundColor = colorResource(id = R.color.teal_200),
-                contentColor = Color.Black
+                backgroundColor = MaterialTheme.colors.background,
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
@@ -42,8 +37,8 @@ fun BottomNavigation(navController: NavController, items:List<BottomNavItem>, bo
                             )
                         },
                         label = { Text(text = stringResource(item.title), fontSize = 9.sp) },
-                        selectedContentColor = Color.Black,
-                        unselectedContentColor = Color.Black.copy(0.4f),
+                        selectedContentColor = MaterialTheme.colors.onBackground,
+                        unselectedContentColor = MaterialTheme.colors.onBackground.copy(0.4f),
                         alwaysShowLabel = true,
                         selected = currentRoute == item.screen_route,
                         onClick = {

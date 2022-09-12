@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+
+    <style name="Theme.MusrofatyCompose" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/purple_700</item>
+    </style>
+
+
     <style name="Theme.AnimatedSplashScreen" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/black</item>
         <item name="android:windowBackground">@color/black</item>
-        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/transparent_image</item>
     </style>
 </resources>

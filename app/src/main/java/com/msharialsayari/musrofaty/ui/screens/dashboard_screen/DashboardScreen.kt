@@ -1,36 +1,29 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
-import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui_component.RowComponent
 
 @Composable
 fun DashboardScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
-            text = "Dashboard Screen",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
+
+
+        RowComponent.SenderRow("Bank Alsajhi", 50) {
+            Log.i(
+                "MshariTest",
+                "Clicked sldflskjflk jsdflkjsd lfjsd lfjsdflk sdflsjd fljsdflslfl"
+            )
+        }
     }
 }
