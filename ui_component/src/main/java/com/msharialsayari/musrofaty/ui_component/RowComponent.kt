@@ -19,7 +19,7 @@ object RowComponent {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.sender_row_height100))
+                .height(dimensionResource(id = R.dimen.row_height100))
                 .clickable {
                     onClick()
                 },
@@ -48,6 +48,59 @@ object RowComponent {
                     painter = painterResource(id = R.drawable.ic_navigation),
                     contentDescription = ""
                 )
+
+            }
+
+        }
+
+    }
+
+
+    @Composable
+    fun PreferenceRow(
+        iconId: Int,
+        header: String = "",
+        body: String = "",
+        onClick: () -> Unit = {}
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.row_height100))
+                .clickable {
+                    onClick()
+                },
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = ""
+                )
+
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(dimensionResource(id = R.dimen.default_margin16)),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    TextComponent.HeaderText(
+                        text = header
+                    )
+
+                    TextComponent.PlaceholderText(
+                        text = body
+                    )
+                }
+
 
             }
 

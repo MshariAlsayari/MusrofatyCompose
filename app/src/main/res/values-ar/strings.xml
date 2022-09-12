@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">MusrofatyCompose</string>
+
+    <string name="pref_appearance_title">المظهر</string>
+    <string name="pref_appearance_summary">إمكانية تغير اللغة والنمط</string>
+    <string name="pref_sms_title">الرسائل</string>
+    <string name="pref_sms_summary">إمكانية التغيير في كفاءة تحليل الرسائل</string>
 
 </resources>

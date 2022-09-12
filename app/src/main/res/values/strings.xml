@@ -2,16 +2,10 @@
     <string name="app_name">MusrofatyCompose</string>
 
 
-
-
-
-
-
-
-
-
-
-
+    <string name="pref_appearance_title">Appearance</string>
+    <string name="pref_appearance_summary">ability to change the language and the theme</string>
+    <string name="pref_sms_title">SMS</string>
+    <string name="pref_sms_summary">ability to change on sms detector performance</string>
 
 
 </resources>

@@ -22,5 +22,5 @@
 
 
     <!--rows_size-->
-    <dimen name="sender_row_height100">100dp</dimen>
+    <dimen name="row_height100">100dp</dimen>
 </resources>
