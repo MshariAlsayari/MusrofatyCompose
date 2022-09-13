@@ -11,9 +11,17 @@ import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.TextComponent
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
+fun SplashScreen(navController: NavHostController, myViewModel: SplashViewModel = viewModel()) {
+    val dataExample = myViewModel.event.observeAsState()
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize(),

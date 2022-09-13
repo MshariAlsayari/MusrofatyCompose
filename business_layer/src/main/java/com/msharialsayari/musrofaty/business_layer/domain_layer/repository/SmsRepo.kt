@@ -82,7 +82,7 @@ class SmsRepo @Inject constructor(
         return smsModel
     }
 
-    suspend fun insert(context: Context) {
+    suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.forEach { sms ->
