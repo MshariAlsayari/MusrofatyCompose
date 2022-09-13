@@ -19,7 +19,7 @@ fun NavigationGraph(navController: NavHostController, innerPadding: PaddingValue
         startDestination = Screen.Splash.route,
         Modifier.padding(innerPadding)
     ) {
-        composable(route = Screen.Splash.route) {
+        composable(Screen.Splash.route) {
             SplashScreen(navController = navController)
         }
 

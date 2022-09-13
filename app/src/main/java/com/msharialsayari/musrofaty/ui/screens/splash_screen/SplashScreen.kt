@@ -3,8 +3,7 @@ package com.msharialsayari.musrofaty.ui.screens.splash_screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,19 +17,19 @@ import com.msharialsayari.musrofaty.ui_component.ProgressBar
 fun SplashScreen(navController: NavHostController) {
 
     val viewModel: SplashViewModel = hiltViewModel()
-    val isLoading by viewModel.isLoading.collectAsState(initial = true)
+    val isLoading = remember { viewModel.isLoading }
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
 
-        if (isLoading) {
+        if (isLoading.value) {
             ProgressBar.CircleProgressBar()
         }
 
 
-        if (!isLoading) {
+        if (!isLoading.value) {
             navController.navigate(BottomNavItem.Dashboard.screen_route) {
                 popUpTo(Screen.Splash.route) {
                     inclusive = true
