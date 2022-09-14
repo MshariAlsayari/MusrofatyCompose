@@ -55,13 +55,14 @@ fun SplashScreen(navController: NavHostController, settingPermission:()->Unit) {
             DialogComponent.MusrofatyDialog(
                 title = "Permission",
                 message ="Read SMS Permission" ,
-                positiveBtnText = "Go toSetting" ,
+                positiveBtnText = "Go to Setting" ,
                 negativeBtnText = "",
                 onClickPositiveBtn = {
                     settingPermission()
                 }
             )
         }
+        else -> {}
     }
 
 }

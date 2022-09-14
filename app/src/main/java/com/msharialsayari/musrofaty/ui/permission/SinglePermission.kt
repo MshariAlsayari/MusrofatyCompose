@@ -13,7 +13,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @SuppressLint("PermissionLaunchedDuringComposition")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun singlePermission(permission:String):PermissionStatus {
+fun singlePermission(permission:String):PermissionStatus? {
     val permissionState = rememberPermissionState(permission = permission)
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -41,14 +41,13 @@ fun singlePermission(permission:String):PermissionStatus {
             //Text(text = "Reading external permission is required by this app")
             return PermissionStatus.SHOULD_SHOW_DIALOG
         }
-        !permissionState.hasPermission && !permissionState.shouldShowRationale -> {
-         //   Text(text = "Permission fully denied. Go to settings to enable")
-            return PermissionStatus.SHOULD_SHOW_DIALOG
-
-        }
+//        !permissionState.hasPermission && !permissionState.shouldShowRationale -> {
+//         //   Text(text = "Permission fully denied. Go to settings to enable")
+//            return nu
+//        }
 
         else->{
-            return PermissionStatus.SHOULD_SHOW_DIALOG
+            return null
         }
     }
 }
