@@ -6,6 +6,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.WordsType
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -87,8 +88,8 @@ class SmsRepo @Inject constructor(
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.forEach { sms ->
             val checkedSms = dao.getSms(sms.id)
-            if (checkedSms != null && (checkedSms.isDeleted == null || checkedSms.isDeleted == false)) {
-                smsEntityList.add(checkedSms)
+            if (checkedSms == null || checkedSms.isDeleted == false ) {
+                smsEntityList.add(sms.toSmsEntity())
             }
         }
 

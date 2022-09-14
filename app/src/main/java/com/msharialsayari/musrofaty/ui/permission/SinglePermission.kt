@@ -1,8 +1,6 @@
 package com.msharialsayari.musrofaty.ui.permission
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -15,7 +13,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @SuppressLint("PermissionLaunchedDuringComposition")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SinglePermission(permission:String) {
+fun singlePermission(permission:String):PermissionStatus {
     val permissionState = rememberPermissionState(permission = permission)
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -37,15 +35,20 @@ fun SinglePermission(permission:String) {
 
     when {
         permissionState.hasPermission -> {
-            Text(text = "Reading external permission is granted")
+            return PermissionStatus.GRANTED
         }
         permissionState.shouldShowRationale -> {
-            Column {
-                Text(text = "Reading external permission is required by this app")
-            }
+            //Text(text = "Reading external permission is required by this app")
+            return PermissionStatus.SHOULD_SHOW_DIALOG
         }
         !permissionState.hasPermission && !permissionState.shouldShowRationale -> {
-            Text(text = "Permission fully denied. Go to settings to enable")
+         //   Text(text = "Permission fully denied. Go to settings to enable")
+            return PermissionStatus.SHOULD_SHOW_DIALOG
+
+        }
+
+        else->{
+            return PermissionStatus.SHOULD_SHOW_DIALOG
         }
     }
 }

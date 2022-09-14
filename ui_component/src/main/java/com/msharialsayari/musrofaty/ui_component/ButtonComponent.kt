@@ -8,7 +8,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 
 object ButtonComponent {
 
@@ -23,11 +22,4 @@ object ButtonComponent {
             Text(text = text)
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ActionButtonPreview() {
-    ButtonComponent.ActionButton(text = "Click me")
-
 }

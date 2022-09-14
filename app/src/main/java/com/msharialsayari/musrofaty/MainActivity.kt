@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MusrofatyComposeTheme {
-                MainScreenView()
+                MainScreenView(this)
             }
         }
     }
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MainScreenView() {
+fun MainScreenView(activity: MainActivity) {
     val bottomBarState        = rememberSaveable { (mutableStateOf(false)) }
     val topBarState           = rememberSaveable { (mutableStateOf(true)) }
     val navController         = rememberNavController()
@@ -69,7 +69,7 @@ fun MainScreenView() {
             BottomNavigation(navController = navController, items = bottomNavigationItems,  bottomBarState = bottomBarState)
         }
     ) { innerPadding ->
-        NavigationGraph(navController = navController, innerPadding = innerPadding)
+        NavigationGraph(activity = activity, navController = navController, innerPadding = innerPadding)
     }
 }
 

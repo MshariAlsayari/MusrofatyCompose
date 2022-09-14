@@ -17,12 +17,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val smsRepo: SmsRepo,
-    @ApplicationContext val context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
 
      val isLoading = mutableStateOf(true)
-
+     val smsListSize = mutableStateOf("0")
 
     init {
         initData()
@@ -81,7 +81,16 @@ class SplashViewModel @Inject constructor(
     private fun loadAllData() {
         viewModelScope.launch {
             smsRepo.insert()
-            isLoading.value = false
+           // isLoading.value = false
+            getALLSms()
+        }
+    }
+
+    private fun getALLSms(){
+        viewModelScope.launch {
+            val result = smsRepo.getAllSms()
+            smsListSize.value = result.size.toString()
+
         }
     }
 }
