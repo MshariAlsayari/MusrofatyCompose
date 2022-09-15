@@ -19,7 +19,8 @@ fun SendersListScreen() {
         list = uiState.senders.keys.toList(),
         views = { RowComponent.SenderRow(senderName = it, totalSms = uiState.senders[it]?.size?:0) },
         onItemClicked = {item, position ->  },
-        isLoading = uiState.isLoading
+        isLoading = uiState.isLoading,
+        onRefresh = { viewModel.getAllSenders() }
     )
     
 
