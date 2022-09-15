@@ -9,7 +9,7 @@ sealed class Screen(val route: String) {
 
 
 sealed class BottomNavItem(var title:Int, var icon:Int, var screen_route:String){
-    object Dashboard : BottomNavItem(R.string.dashboard_title_screen    ,R.drawable.ic_dashboard, "dashboard")
-    object SmsList   : BottomNavItem(R.string.sms_list_title_screen     ,R.drawable.ic_dashboard, "sms_list")
-    object Setting   : BottomNavItem(R.string.settings_title_screen,R.drawable.ic_settings , "settings")
+    object Dashboard   : BottomNavItem(R.string.dashboard_title_screen    ,R.drawable.ic_dashboard, "dashboard")
+    object SendersList : BottomNavItem(R.string.senders_list_title_screen,R.drawable.ic_dashboard, "senders_list")
+    object Setting     : BottomNavItem(R.string.settings_title_screen,R.drawable.ic_settings , "settings")
 }

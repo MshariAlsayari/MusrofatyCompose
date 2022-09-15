@@ -3,6 +3,10 @@
 
     <string name="app_name">MusrofatyCompose</string>
 
+
+    <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
+    <string name="permission_dialog_positive_button">الإعدادات</string>
+
     <string name="pref_appearance_title">المظهر</string>
     <string name="pref_appearance_summary">إمكانية تغير اللغة والنمط</string>
     <string name="pref_sms_title">الرسائل</string>

@@ -33,6 +33,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            applicationIdSuffix ".d"
+            versionNameSuffix "-debug"
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -115,6 +120,11 @@ dependencies {
 
     //ViewPager2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+
+    //EasyList
+    implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.0.4'
+
 
 
     testImplementation 'junit:junit:4.13.2'

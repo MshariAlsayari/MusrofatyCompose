@@ -3,7 +3,10 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 import android.content.Context
 import android.net.Uri
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.utils.*
+import com.msharialsayari.musrofaty.utils.Constants
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
+import com.msharialsayari.musrofaty.utils.SmsUtils
+import com.msharialsayari.musrofaty.utils.WordsType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,11 +28,11 @@ class SmsSourceImpl @Inject constructor(): SmsDataSource {
             if (cursor.moveToFirst() && totalSMS != null) {
                 for (i in 0 until totalSMS) {
 
-                    if (SmsUtils.isValidSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))) {
+                    if (SmsUtils.isValidSms(context,cursor.getString(cursor.getColumnIndexOrThrow("body")))) {
                         objSmsModel             = SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
                         objSmsModel.senderName  = cursor.getString(cursor.getColumnIndexOrThrow("address"))
                         objSmsModel.body        = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
-                        objSmsModel.timestamp   = DateUtils.getLocalDateTimeByTimestamp(cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong())
+                        objSmsModel.timestamp   = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
                         lstSms.add(objSmsModel)
                     }
                     cursor.moveToNext()

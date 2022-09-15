@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.ui.screens.splash_screen
 
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
@@ -11,6 +10,9 @@ import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.WordsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +23,8 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-     val isLoading = mutableStateOf(true)
-     val smsListSize = mutableStateOf("0")
+     private val _uiState = MutableStateFlow(SplashUiState())
+     val uiState  : StateFlow<SplashUiState> = _uiState
 
     init {
         initData()
@@ -81,16 +83,14 @@ class SplashViewModel @Inject constructor(
     private fun loadAllData() {
         viewModelScope.launch {
             smsRepo.insert()
-           // isLoading.value = false
-            getALLSms()
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
         }
     }
 
-    private fun getALLSms(){
-        viewModelScope.launch {
-            val result = smsRepo.getAllSms()
-            smsListSize.value = result.size.toString()
+     data class SplashUiState(
+        var isLoading:Boolean = true
+    )
 
-        }
-    }
 }

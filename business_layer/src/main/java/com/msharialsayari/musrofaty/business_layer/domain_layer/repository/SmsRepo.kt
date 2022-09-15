@@ -29,23 +29,6 @@ class SmsRepo @Inject constructor(
         return list
     }
 
-//    suspend fun getAllSmsWithFilterOption(option:Int= R.id.all, isDeleted: Boolean = false):List<SmsModel>{
-//        val allSms = getAllSms(isDeleted)
-//        val finalList = when (option) {
-//            R.id.all -> allSms
-//            R.id.today -> SmsUtils.getTodaySms(allSms)
-//            R.id.week -> SmsUtils.getCurrentWeek(allSms)
-//            R.id.month -> SmsUtils.getCurrentMonth(allSms)
-//            R.id.year -> SmsUtils.getCurrentYear(allSms)
-//            else -> allSms
-//        }
-//
-//        return finalList
-//    }
-
-
-
-
 
     suspend fun getAllNoCheckIsDeleted(): List<SmsModel> {
         val banks = SharedPreferenceManager.getWordsList(context = context, WordsType.BANKS_WORDS)

@@ -36,7 +36,7 @@ fun MainScreenView(activity: MainActivity) {
     val navController         = rememberNavController()
     val bottomNavigationItems = listOf(
         BottomNavItem.Dashboard,
-        BottomNavItem.SmsList,
+        BottomNavItem.SendersList,
         BottomNavItem.Setting
     )
 
@@ -47,7 +47,7 @@ fun MainScreenView(activity: MainActivity) {
             bottomBarState.value = true
             topBarState.value = false
         }
-        BottomNavItem.SmsList.screen_route  -> {
+        BottomNavItem.SendersList.screen_route  -> {
             bottomBarState.value = true
             topBarState.value = false
         }

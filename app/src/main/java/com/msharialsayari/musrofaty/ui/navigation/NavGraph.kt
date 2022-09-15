@@ -13,8 +13,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
-import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 
 @Composable
@@ -37,8 +37,8 @@ fun NavigationGraph(activity:Activity, navController: NavHostController, innerPa
         composable(BottomNavItem.Dashboard.screen_route) {
             DashboardScreen()
         }
-        composable(BottomNavItem.SmsList.screen_route) {
-            SmsListScreen()
+        composable(BottomNavItem.SendersList.screen_route) {
+            SendersListScreen()
         }
         composable(BottomNavItem.Setting.screen_route) {
             SettingsScreen()

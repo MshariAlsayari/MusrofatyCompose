@@ -9,6 +9,7 @@ object Constants {
     private const val EXPENSES_4 = "سداد"
     private const val EXPENSES_5 = "حوالة صادرة"
     private const val EXPENSES_6 = "سحب"
+    const val EXPENSES_7 = "إصدار فاتورتك"
 
     private const val INCOME_1   = "حوالة واردة"
     private const val INCOME_2   = "دائن"
@@ -35,6 +36,7 @@ object Constants {
     //BILLS
     const val ALKAHRABA_COMPANY = "ALKAHRABA"
     const val WATER_COMPANY     = "NWC"
+    const val MOI_MOROOR = "MOI-MOROOR"
 
 
     //Currency
@@ -42,24 +44,26 @@ object Constants {
     const val CURRENCY_2 = "ريال"
     const val CURRENCY_3 = "SR"
     const val CURRENCY_4 = "ر.س"
+    const val CURRENCY_5 = "USD"
 
 
     var listIncomeWords  = listOf(
-        INCOME_1,
+                                  INCOME_1,
                                   INCOME_2,
                                   INCOME_3
     )
 
     var listExpenseWords = listOf(
-        EXPENSES_1,
+                                  EXPENSES_1,
                                   EXPENSES_2,
                                   EXPENSES_3,
                                   EXPENSES_4,
                                   EXPENSES_5,
-                                  EXPENSES_6
+                                  EXPENSES_6,
+                                  EXPENSES_7
     )
     var listOfSenders    = listOf(
-        SAIB_BANK,
+                                  SAIB_BANK,
                                   ALINMA_BANK,
                                   ALRAJHI_BANK,
                                   SAMBA_BANK,
@@ -71,15 +75,17 @@ object Constants {
                                   ALKAHRABA_COMPANY,
                                   WATER_COMPANY,
                                   UR_PAY_BANK,
-                                  ALAHLI_WITH_SAMBA_BANK
+                                  ALAHLI_WITH_SAMBA_BANK,
+                                  MOI_MOROOR
     )
 
 
     var listCurrencyWords = listOf(
-        CURRENCY_1,
+                                   CURRENCY_1,
                                    CURRENCY_2,
                                    CURRENCY_3,
-                                   CURRENCY_4
+                                   CURRENCY_4,
+                                   CURRENCY_5
     )
 
 
@@ -108,5 +114,24 @@ object Constants {
     //SMS Eliminator
     const val OTP_ar  ="كلمة المرور لمرة واحدة"
     const val OTP_en  ="One time password"
+    const val OTP_shortcut_en  ="OTP"
+
+    // mada
+    const val mada_ar  ="مدى"
+    const val mada_en  ="mada"
+    var madaWordList = listOf(mada_ar, mada_en)
+
+    //visa
+    const val visa_ar  ="فيزا"
+    const val visa_en  ="visa"
+    const val visa_safar  ="سفر"
+    const val visa_credit  ="ائتمانية"
+    const val visa_urpay  ="urpay"
+    var visaWordList = listOf(visa_ar, visa_en,visa_safar,visa_credit,visa_urpay)
+
+    //visa
+    const val mastercard_ar  ="ماستركارد"
+    const val mastercard_en  ="mastercard"
+    var mastercardWordList = listOf(mastercard_ar, mastercard_en)
 
 }
