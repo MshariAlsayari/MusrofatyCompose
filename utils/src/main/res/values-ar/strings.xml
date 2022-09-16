@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">utils</string>
+    <string name="incomes_sms_type">إيرادات</string>
+    <string name="expenses_sms_type">مصروفات</string>
+    <string name="nothing_sms_type">غير محدد</string>
+</resources>

@@ -1,16 +1,20 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
+import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
 
 
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
+    private const val STORE_FROM_REGEX = "At:.+|لدى:.+"
 
 
     fun isValidSms(context: Context,sms:String?):Boolean{
         sms?.let {
-            return containerNumber(it) && containsCurrency(context, it) && !isOTPSms(it)
+            return containerNumber(it)           &&
+                   clearSms(sms) != null         &&
+                   !isOTPSms(it)
         }?: run { return false }
 
     }
@@ -39,15 +43,61 @@ object SmsUtils {
         return sms?.contains(Constants.OTP_ar, ignoreCase = true) == true || sms?.contains(Constants.OTP_en, ignoreCase = true)== true ||  sms?.contains(Constants.OTP_shortcut_en, ignoreCase = true)  ?:false
     }
 
-    private fun containsCurrency(context: Context,sms:String?):Boolean{
-        sms?.let {
-            val currencyList = SharedPreferenceManager.getWordsList(context, WordsType.CURRENCY_WORDS)
-            return currencyList.find { smsContainsCurrency(it, sms) } != null
-        }?: kotlin.run { return false }
+
+
+    private fun smsContainsCurrency(currency: String, sms: String): Boolean {
+        return sms.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
     }
 
-    fun smsContainsCurrency(currency: String, sms: String): Boolean {
-        return sms.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
+    fun getCurrency(smsBody: String? , currency:List<String>): String {
+        smsBody?.let {sms->
+            return currency.find { it.contains(sms, ignoreCase = true) } ?: ""
+        }?:run { return "" }
+    }
+
+
+    fun getStoreName(sms: String?): String {
+        sms?.let {
+            return try {
+                val groupRegex = STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: ""
+                var storeName = ""
+                val list = groupRegex.split(":")
+                if (list.size >= 2) {
+                    storeName = list[1]
+                    storeName = storeName.replace("\\n".toRegex(), "")
+                }
+                storeName
+            } catch (e: Exception) {
+                ""
+            }
+        }?: kotlin.run { return "" }
+    }
+
+
+
+    fun getSmsType(sms: String, expensesList:List<String>,incomesList:List<String>): SmsType {
+        if (isExpensesSMS(sms, expensesList)) {
+            return SmsType.EXPENSES
+        }
+
+        if (isIncomeSMS(sms, incomesList)) {
+            return SmsType.INCOME
+        }
+        return SmsType.NOTHING
+    }
+
+    private fun isExpensesSMS(smsBody: String?, words:List<String>): Boolean {
+        smsBody?.let {sms->
+            return words.find { it.contains(sms, ignoreCase = true) }     != null
+        }?:run { return false }
+
+    }
+
+    private fun isIncomeSMS(smsBody: String?, words:List<String>): Boolean {
+        smsBody?.let {sms->
+            return words.find { it.contains(sms, ignoreCase = true) } != null
+        }?:run { return false }
+
     }
 
 }

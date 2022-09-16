@@ -9,15 +9,14 @@ import kotlinx.parcelize.Parcelize
 data class FilterModel(
     var id: Int = 0,
     var title: String = "",
-    var searchWord: String = "",
+    var words: String = "",
     var smsType: String = "",
-    var date: String = "",
-    var bankName: String? = "",
-    var dateFrom: String? = "",
-    var dateTo: String? = "",
-    var isSelected: Boolean = false,
+    var filterOption: String = "",
+    var senderName: String = "",
+    var dateFrom: Long = 0,
+    var dateTo: Long = 0
 ) : Parcelable {
-
+    var isSelected: Boolean = false
     companion object {
         fun getFilterWordsAsList(searchWord: String?): List<String> {
             return searchWord?.split(",") ?: emptyList()
@@ -34,9 +33,9 @@ data class FilterModel(
 fun FilterModel.toFilterEntity() = FilterEntity(
     id = id,
     title =  title,
-    searchWord = searchWord,
+    words = words,
     smsType = smsType,
-    date=date,
-    bankName = bankName,
+    filterOption=filterOption,
+    senderName = senderName,
     dateFrom =  dateFrom,
     dateTo =  dateTo)

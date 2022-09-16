@@ -39,7 +39,7 @@ enum class SmsCategory(val valueAr: String, val valueEn: String) {
         }
 
 
-        fun getNoCategory(): Int {
+        private fun getNoCategory(): Int {
             return R.string.sms_category_no_category
         }
 

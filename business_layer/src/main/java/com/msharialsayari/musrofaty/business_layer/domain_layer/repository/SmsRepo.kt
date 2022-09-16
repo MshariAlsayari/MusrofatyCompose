@@ -6,9 +6,10 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
-import com.msharialsayari.musrofaty.utils.WordsType
+import com.msharialsayari.musrofaty.utils.SmsUtils
+import com.msharialsayari.musrofaty.utils.enums.SmsType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,65 +18,52 @@ import javax.inject.Singleton
 class SmsRepo @Inject constructor(
     private val dao: SmsDao,
     private val datasource: SmsDataSource,
+    private val wordDetectorRepo: WordDetectorRepo,
     @ApplicationContext val context: Context
 ) {
 
-    suspend fun getAllSms(isDeleted: Boolean = false): List<SmsModel> {
-        val banks = SharedPreferenceManager.getWordsList(context = context, WordsType.BANKS_WORDS)
+    suspend fun getAllSms(): List<SmsModel> {
+        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS).map { it.word }
         val list = mutableListOf<SmsModel>()
-        dao.getAll(banks, isDeleted).forEach {
-            list.add(it.toSmsModel())
+        senders.map {
+            list.addAll(getSmsBySenderName(it))
         }
         return list
     }
 
 
-    suspend fun getAllNoCheckIsDeleted(): List<SmsModel> {
-        val banks = SharedPreferenceManager.getWordsList(context = context, WordsType.BANKS_WORDS)
+    suspend fun getSmsBySenderName(bankName: String): List<SmsModel> {
         val list = mutableListOf<SmsModel>()
-        dao.getAllNoCheckIsDeleted(banks).forEach {
-            list.add(it.toSmsModel())
+        dao.getSmsBySenderName(bankName).map {
+            list.add(fillSmsModel(it.toSmsModel()))
         }
         return list
     }
 
-
-    suspend fun getSmsBySenderName(bankName: String, isDeleted: Boolean = false): List<SmsModel> {
-        val list = mutableListOf<SmsModel>()
-        dao.getSmsBySenderName(bankName, isDeleted).forEach {
-            list.add(it.toSmsModel())
-        }
-        return list
-    }
-
-    suspend fun getSmsByBankNameNoCheck(bankName: String): List<SmsModel> {
-        val list = mutableListOf<SmsModel>()
-        dao.getSmsBySenderNameNoCheckIsDeleted(bankName).forEach {
-            list.add(it.toSmsModel())
-        }
-        return list
-    }
-
-    suspend fun setDeletedSms(list: List<SmsModel>, isDeleted: Boolean): List<SmsModel> {
-        val smsModel = mutableListOf<SmsModel>()
-        val ids = mutableListOf<String>()
-        list.forEach { sms ->
-            ids.add(sms.id)
-        }
-        dao.setDeletedSms(ids, isDeleted)
+    private suspend fun fillSmsModel(smsModel: SmsModel):SmsModel{
+        smsModel.smsType = getSmsType(smsModel.body)
+        smsModel.currency = getSmsCurrency(smsModel.body)
         return smsModel
     }
 
+
+    private suspend fun getSmsType(body:String):SmsType{
+        val expensesWord = wordDetectorRepo.getAllActive(WordDetectorType.EXPENSES_WORDS).map { it.word }
+        val incomesWord = wordDetectorRepo.getAllActive(WordDetectorType.INCOME_WORDS).map { it.word }
+        return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord )
+    }
+
+    private suspend fun getSmsCurrency(body:String):String{
+        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        return SmsUtils.getCurrency(body, currency = currencyWord )
+    }
+
+
     suspend fun insert() {
+        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS)
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.forEach { sms ->
-            val checkedSms = dao.getSms(sms.id)
-            if (checkedSms == null || checkedSms.isDeleted == false ) {
-                smsEntityList.add(sms.toSmsEntity())
-            }
-        }
-
+        smsList.map { smsEntityList.add(it.toSmsEntity()) }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
 

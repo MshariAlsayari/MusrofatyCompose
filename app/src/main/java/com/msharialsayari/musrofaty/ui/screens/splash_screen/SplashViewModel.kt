@@ -5,9 +5,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
-import com.msharialsayari.musrofaty.utils.Constants
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
-import com.msharialsayari.musrofaty.utils.WordsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val smsRepo: SmsRepo,
+    private val wordDetectorRepo: WordDetectorRepo,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -32,62 +32,21 @@ class SplashViewModel @Inject constructor(
 
 
     private fun initData() {
-        if (!SharedPreferenceManager.isDefaultSmsWordsListChanged(
-                context,
-                WordsType.INCOME_WORDS
-            )
-        ) {
-            SharedPreferenceManager.saveArrayList(
-                context,
-                Constants.listIncomeWords,
-                WordsType.INCOME_WORDS
-            )
-        }
-
-        if (!SharedPreferenceManager.isDefaultSmsWordsListChanged(
-                context,
-                WordsType.EXPENSES_WORDS
-            )
-        ) {
-            SharedPreferenceManager.saveArrayList(
-                context,
-                Constants.listExpenseWords,
-                WordsType.EXPENSES_WORDS
-            )
-        }
-
-        if (!SharedPreferenceManager.isDefaultSmsWordsListChanged(context, WordsType.BANKS_WORDS)) {
-            SharedPreferenceManager.saveArrayList(
-                context,
-                Constants.listOfSenders,
-                WordsType.BANKS_WORDS
-            )
-        }
-
-        if (!SharedPreferenceManager.isDefaultSmsWordsListChanged(
-                context,
-                WordsType.CURRENCY_WORDS
-            )
-        ) {
-            SharedPreferenceManager.saveArrayList(
-                context,
-                Constants.listCurrencyWords,
-                WordsType.CURRENCY_WORDS
-            )
-        }
-
-        loadAllData()
-    }
-
-
-    private fun loadAllData() {
+        val isChanged = SharedPreferenceManager.isDefaultSmsWordsListChanged(context)
         viewModelScope.launch {
+            if (!isChanged) {
+                wordDetectorRepo.insertDefault()
+                SharedPreferenceManager.setDefaultSmsWordsChanged(context)
+            }
             smsRepo.insert()
             _uiState.update {
                 it.copy(isLoading = false)
             }
         }
+
     }
+
+
 
      data class SplashUiState(
         var isLoading:Boolean = true

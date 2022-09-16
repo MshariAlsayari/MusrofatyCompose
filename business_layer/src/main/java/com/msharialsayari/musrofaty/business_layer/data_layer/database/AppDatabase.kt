@@ -5,19 +5,28 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.layer_data.database.Convertors
 
 
 @Database(
-    entities = [SmsEntity::class],
-    version = 1,
+    entities = [SmsEntity::class, FilterEntity::class, CategoryEntity::class, StoreEntity::class],
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun smmDao(): SmsDao
+    abstract fun filterDao(): FilterDao
+    abstract fun categoryDto(): CategoryDao
+    abstract fun storeDao(): StoreDao
 
 
 }
@@ -66,4 +75,26 @@ val MIGRATION_9_10= object : Migration(9,10) {
         database.execSQL("CREATE TABLE `StoreEntity`  (`storeName` TEXT PRIMARY KEY NOT NULL ,`categoryId` INTEGER NOT NULL)")
     }
 }
+
+
+val MIGRATION_10_11= object : Migration(10,11) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `SmsEntity` " )
+        database.execSQL("CREATE TABLE `SmsEntity`  (`smsId` TEXT PRIMARY KEY NOT NULL ,`bankName` TEXT ,`smsDateTime` INTEGER NOT NULL, `smsBody` TEXT, `isDeleted` INTEGER DEFAULT(0) )")
+    }
+}
+
+val MIGRATION_11_12= object : Migration(11,12) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `WalletEntity` " )
+        database.execSQL("DROP TABLE `SmsEntity` " )
+        database.execSQL("DROP TABLE `FilterEntity` " )
+
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''))")
+        database.execSQL("CREATE TABLE `FilterEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
+
+    }
+}
+
+
 

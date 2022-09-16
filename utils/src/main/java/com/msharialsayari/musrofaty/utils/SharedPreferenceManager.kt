@@ -14,14 +14,10 @@ object SharedPreferenceManager {
 
     private const val PREF_THEME                                  = "PREF_THEME"
     private const val PREF_LANGUAGE                               = "key_preferredLang"
-    private const val PREF_INCOME_WORDS                           = "PREF_INCOME_WORDS"
-    private const val PREF_BANKS                                  = "PREF_BANKS"
-    private const val PREF_CURRENCY                               = "PREF_CURRENCY"
-    private const val PREF_EXPENSES_WORDS                         = "PREF_EXPENSES_WORDS"
     private const val PREF_SHOW_TOOLTIPS                          = "PREF_SHOW_TOOLTIPS"
     private const val PREF_ACTIVITY_TRANSITION                    = "PREF_ACTIVITY_TRANSITION"
     private const val PREF_LANGUAGE_CHANGED                       = "PREF_LANGUAGE_CHANGED"
-    private const val PREF_FIRST_TIME_OPEN_ADD_WORD_FRAGMENT      = "PREF_FIRST_TIME_OPEN_ADD_WORD_FRAGMENT"
+    private const val PREF_INSERT_DEFAULT_WORDS                   = "PREF_INSERT_DEFAULT_WORDS"
     private const val PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED   = "PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED"
     private const val PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED = "PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED"
     private const val PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED    = "PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED"
@@ -74,77 +70,17 @@ object SharedPreferenceManager {
         return getLanguage(context).language.equals(Constants.arabic_ar, ignoreCase = true)
     }
 
-    fun isDefaultCategoryListInserted(context: Context): Boolean {
+
+    fun isDefaultSmsWordsListChanged(context: Context): Boolean {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                                .getBoolean(PREF_IS_DEFAULT_LIST_CATEGORY_INSERTED, false)
+            .getBoolean(PREF_INSERT_DEFAULT_WORDS, false)
     }
 
-    fun setDefaultCategoryListInserted(context: Context) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                         .edit()
-                         .putBoolean(PREF_IS_DEFAULT_LIST_CATEGORY_INSERTED, true)
-                         .apply()
-    }
-
-    fun getWordsList(context: Context, wordsType: WordsType): MutableList<String> {
-        val wType = when (wordsType) {
-            WordsType.INCOME_WORDS -> PREF_INCOME_WORDS
-            WordsType.EXPENSES_WORDS -> PREF_EXPENSES_WORDS
-            WordsType.BANKS_WORDS -> PREF_BANKS
-            WordsType.CURRENCY_WORDS -> PREF_CURRENCY
-        }
-        val gson = Gson()
-        val wordsList: List<String>
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val jsonPreferences = sharedPref.getString(wType, "")
-        val type: Type = object : TypeToken<List<String>>() {}.type
-        wordsList = gson.fromJson(jsonPreferences, type) ?: mutableListOf()
-        return wordsList.toMutableList()
-
-    }
-
-    fun saveArrayList(context: Context, list: List<String>, wordsType: WordsType) {
-        val wType = when (wordsType) {
-            WordsType.INCOME_WORDS -> PREF_INCOME_WORDS
-            WordsType.EXPENSES_WORDS -> PREF_EXPENSES_WORDS
-            WordsType.BANKS_WORDS -> PREF_BANKS
-            WordsType.CURRENCY_WORDS -> PREF_CURRENCY
-        }
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = prefs.edit()
-        val gson = Gson()
-        val json = gson.toJson(list.toSet().toList())
-        editor.putString(wType, json)
-        editor.apply()
-
-        setDefaultSmsWordsChanged(context, wordsType)
-    }
-
-    fun isDefaultSmsWordsListChanged(context: Context, wordsType: WordsType): Boolean {
-        val listType = when (wordsType) {
-            WordsType.INCOME_WORDS -> PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED
-            WordsType.EXPENSES_WORDS -> PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED
-            WordsType.BANKS_WORDS -> PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED
-            WordsType.CURRENCY_WORDS -> PREF_IS_DEFAULT_LIST_CURRENCY_WORDS_CHANGED
-        }
-        return PreferenceManager.getDefaultSharedPreferences(context)
-            .getBoolean(listType, false)
-    }
-
-    private fun setDefaultSmsWordsChanged(
+     fun setDefaultSmsWordsChanged(
         context: Context,
-        wordsType: WordsType,
         isChanged: Boolean = true
     ) {
-
-        val key = when (wordsType) {
-            WordsType.INCOME_WORDS -> PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED
-            WordsType.EXPENSES_WORDS -> PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED
-            WordsType.BANKS_WORDS -> PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED
-            WordsType.CURRENCY_WORDS -> PREF_IS_DEFAULT_LIST_CURRENCY_WORDS_CHANGED
-        }
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(key, isChanged)
-            .apply()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INSERT_DEFAULT_WORDS, isChanged).apply()
     }
 
     fun getShouldShowTooltips(context: Context): Boolean {
@@ -171,17 +107,7 @@ object SharedPreferenceManager {
                          .apply()
     }
 
-    fun getFirstTimeOPenAddWordFragment(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                                .getBoolean(PREF_FIRST_TIME_OPEN_ADD_WORD_FRAGMENT, true)
-    }
 
-    fun setFirstTimeOPenAddWordFragment(context: Context, should: Boolean) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                         .edit()
-                         .putBoolean(PREF_FIRST_TIME_OPEN_ADD_WORD_FRAGMENT, should)
-                         .apply()
-    }
 
     fun setTheme(context: Context, theme: Int) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -201,6 +127,3 @@ object SharedPreferenceManager {
 }
 
 
-enum class WordsType {
-    INCOME_WORDS, EXPENSES_WORDS, BANKS_WORDS, CURRENCY_WORDS
-}

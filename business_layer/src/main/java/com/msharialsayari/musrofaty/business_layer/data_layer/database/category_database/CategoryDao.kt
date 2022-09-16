@@ -10,7 +10,6 @@ interface CategoryDao {
     @Query("SELECT * FROM CategoryEntity")
     suspend fun getAll(): List<CategoryEntity>
 
-
     @Transaction
     @Query("SELECT * FROM CategoryEntity")
     suspend fun getAllCategoriesWithStores(): List<CategoryWithStore>
@@ -39,11 +38,12 @@ interface CategoryDao {
     @Delete
     suspend fun delete(vararg categoryEntity: CategoryEntity)
 
-    @Query("DELETE FROM CategoryEntity")
-    suspend fun deleteAll()
 
     @Update
     suspend fun update(categoryEntity: CategoryEntity)
+
+    @Query("DELETE FROM CategoryEntity")
+    suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg categoryEntity: CategoryEntity)

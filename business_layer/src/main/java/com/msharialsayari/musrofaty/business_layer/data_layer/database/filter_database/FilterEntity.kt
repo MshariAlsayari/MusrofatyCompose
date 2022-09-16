@@ -17,26 +17,26 @@ class FilterEntity(
     @ColumnInfo(name = "title")
     var title: String = "",
     @ColumnInfo(name = "searchWord")
-    var searchWord: String = "",
+    var words: String = "",
     @ColumnInfo(name = "smsType")
     var smsType: String = "",
     @ColumnInfo(name = "date")
-    var date: String = "",
+    var filterOption: String = "",
     @ColumnInfo(name = "bankName")
-    var bankName: String? = "",
+    var senderName: String = "",
     @ColumnInfo(name = "dateFrom")
-    var dateFrom: String? = "",
+    var dateFrom: Long = 0,
     @ColumnInfo(name = "dateTo")
-    var dateTo: String? = "",
+    var dateTo: Long = 0,
 ) : Parcelable
 
 
 fun FilterEntity.toFilterModel() = FilterModel(
     id = id,
     title = title,
-    searchWord = searchWord,
+    words = words,
     smsType = smsType,
-    date = date,
-    bankName = bankName,
+    filterOption = filterOption,
+    senderName = senderName,
     dateFrom = dateFrom,
     dateTo = dateTo)

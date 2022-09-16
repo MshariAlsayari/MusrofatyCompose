@@ -29,17 +29,17 @@ class Convertors {
             } ?: kotlin.run { return gson.toJson("") }
         }
 
-        @JvmStatic
-        @TypeConverter
-        fun toLocalDateTime(value: Long): LocalDateTime? {
-            return LocalDateTime.ofEpochSecond(value, 0, ZoneOffset.UTC)
-        }
-
-        @JvmStatic
-        @TypeConverter
-        fun fromLocalDateTime(ldt: LocalDateTime): Long {
-            return ldt.toEpochSecond(ZoneOffset.UTC)
-        }
+//        @JvmStatic
+//        @TypeConverter
+//        fun toLocalDateTime(value: Long): LocalDateTime? {
+//            return LocalDateTime.ofEpochSecond(value, 0, ZoneOffset.UTC)
+//        }
+//
+//        @JvmStatic
+//        @TypeConverter
+//        fun fromLocalDateTime(ldt: LocalDateTime): Long {
+//            return ldt.toEpochSecond(ZoneOffset.UTC)
+//        }
 
 
 

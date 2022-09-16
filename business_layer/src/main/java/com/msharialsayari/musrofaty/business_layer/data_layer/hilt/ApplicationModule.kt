@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.hilt
 import android.content.Context
 import androidx.room.Room
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.AppDatabase
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,21 +20,36 @@ object ApplicationModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext app: Context) =
         Room.databaseBuilder(app, AppDatabase::class.java, "AppDatabase")
-//            .addMigrations(
-//                MIGRATION_1_2,
-//                FILTER_MIGRATION_2_1,
-//                FILTER_MIGRATION_3_4,
-//                SMS_CATEGORY_MIGRATION_4_5,
-//                SMS_DELETE_FLAG_MIGRATION_5_6,
-//                FILTER_DATE_FROM_MIGRATION_6_7,
-//                MIGRATION_9_10
-//
-//            )
+            .addMigrations(
+                MIGRATION_1_2,
+                FILTER_MIGRATION_2_1,
+                FILTER_MIGRATION_3_4,
+                SMS_CATEGORY_MIGRATION_4_5,
+                SMS_DELETE_FLAG_MIGRATION_5_6,
+                FILTER_DATE_FROM_MIGRATION_6_7,
+                MIGRATION_9_10,
+                MIGRATION_10_11,
+                MIGRATION_11_12,
+
+            )
             .build()
 
     @Singleton
     @Provides
     fun provideSmsDao(db: AppDatabase) = db.smmDao()
+
+
+    @Singleton
+    @Provides
+    fun provideFilterDao(db: AppDatabase) = db.filterDao()
+
+    @Singleton
+    @Provides
+    fun provideCategoryDto(db: AppDatabase) = db.categoryDto()
+
+    @Singleton
+    @Provides
+    fun provideStoreDto(db: AppDatabase) = db.storeDao()
 
 
 

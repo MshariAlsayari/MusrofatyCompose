@@ -25,9 +25,9 @@ class SendersListViewModel @Inject constructor(
 
     fun getAllSenders(){
         viewModelScope.launch {
-            val result = smsRepo.getAllNoCheckIsDeleted()
+            val result = smsRepo.getAllSms()
             _uiState.update { state ->
-                state.copy(isLoading = false,senders =  result.groupBy { it.senderName!! })
+                state.copy(isLoading = false,senders =  result.groupBy { it.senderName })
             }
         }
     }

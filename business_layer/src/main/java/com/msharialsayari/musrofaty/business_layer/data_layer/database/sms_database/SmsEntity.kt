@@ -14,16 +14,14 @@ data class SmsEntity(
     @ColumnInfo(name = "id")
     var id: String,
     @ColumnInfo(name = "senderName")
-    var senderName: String? = null,
+    var senderName: String = "",
     @ColumnInfo(name = "timestamp")
     var timestamp: Long = 0,
     @ColumnInfo(name = "body")
-    var body: String? = null,
-    @ColumnInfo(name = "isDeleted")
-    var isDeleted: Boolean? = false
+    var body: String = "",
 ) : Parcelable
 
-fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body, isDeleted)
+fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body)
 
 
 

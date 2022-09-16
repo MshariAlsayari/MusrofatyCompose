@@ -3,16 +3,15 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 import android.content.Context
 import android.net.Uri
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
 import com.msharialsayari.musrofaty.utils.Constants
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.SmsUtils
-import com.msharialsayari.musrofaty.utils.WordsType
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
-class SmsSourceImpl @Inject constructor(): SmsDataSource {
+class SmsSourceImpl @Inject constructor() : SmsDataSource {
 
 
     private fun loadAllSms(context: Context): List<SmsModel> {
@@ -28,11 +27,20 @@ class SmsSourceImpl @Inject constructor(): SmsDataSource {
             if (cursor.moveToFirst() && totalSMS != null) {
                 for (i in 0 until totalSMS) {
 
-                    if (SmsUtils.isValidSms(context,cursor.getString(cursor.getColumnIndexOrThrow("body")))) {
-                        objSmsModel             = SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
-                        objSmsModel.senderName  = cursor.getString(cursor.getColumnIndexOrThrow("address"))
-                        objSmsModel.body        = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
-                        objSmsModel.timestamp   = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+                    if (SmsUtils.isValidSms(
+                            context,
+                            cursor.getString(cursor.getColumnIndexOrThrow("body"))
+                        )
+                    ) {
+                        objSmsModel =
+                            SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
+                        objSmsModel.senderName =
+                            cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                        objSmsModel.body =
+                            SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
+                                ?: ""
+                        objSmsModel.timestamp =
+                            cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
                         lstSms.add(objSmsModel)
                     }
                     cursor.moveToNext()
@@ -42,23 +50,32 @@ class SmsSourceImpl @Inject constructor(): SmsDataSource {
         }
 
 
-        c=null
+        c = null
         return lstSms
 
     }
 
-    override suspend fun loadBanksSms(context: Context): List<SmsModel> {
+    override suspend fun loadBanksSms(
+        context: Context,
+    ): List<SmsModel> {
+        val activeSenders: List<WordDetectorModel> = emptyList()
+        val senders = activeSenders.map { it.word }.toList()
         val allSms = loadAllSms(context)
         val banksSmsList = mutableListOf<SmsModel>()
-        val sendersList: List<String> = SharedPreferenceManager.getWordsList(context, WordsType.BANKS_WORDS).toList()
-        val filteredList = allSms.filter { it.senderName?.isNotEmpty() == true && sendersList.find { sender-> it.senderName.equals(sender, ignoreCase = true) } != null }
-        filteredList.forEach {smsModel->
-            smsModel.senderName?.let { bankName ->
-                    if (SmsUtils.isAlahliSender(bankName)) {
-                        smsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
-                    }
-                    banksSmsList.add(smsModel)
+        val filteredList = allSms.filter {
+            it.senderName.isNotEmpty() && senders.find { sender ->
+                it.senderName.equals(
+                    sender,
+                    ignoreCase = true
+                )
+            } != null
+        }
+        filteredList.map { smsModel ->
+            if (SmsUtils.isAlahliSender(smsModel.senderName)) {
+                smsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
             }
+            banksSmsList.add(smsModel)
+
         }
         return banksSmsList
     }
