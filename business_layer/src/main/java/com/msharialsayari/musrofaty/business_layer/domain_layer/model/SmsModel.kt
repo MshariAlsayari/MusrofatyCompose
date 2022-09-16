@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.utils.SmsUtils
@@ -17,7 +18,8 @@ data class SmsModel(
     var isSelected:Boolean = false,
     var storeAndCategoryModel : StoreAndCategoryModel? =null,
     var smsType: SmsType  = SmsType.NOTHING,
-    var currency: String=""
+    var currency: String="",
+    var senderId: Int = 0,
 ) : Parcelable{
 
     val storeName :String
@@ -26,4 +28,4 @@ data class SmsModel(
 }
 
 
-fun SmsModel.toSmsEntity()=SmsEntity(id, senderName, timestamp, body)
+fun SmsModel.toSmsEntity()=SmsEntity(id, senderName, timestamp, body,senderId)

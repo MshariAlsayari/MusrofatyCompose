@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.AppDatabase
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.*
-import com.msharialsayari.musrofaty.layer_data.database.filter_database.FilterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +58,10 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun provideWordDto(db: AppDatabase) = db.wordDto()
+
+    @Singleton
+    @Provides
+    fun provideSenderDto(db: AppDatabase) = db.senderDao()
 
 
 

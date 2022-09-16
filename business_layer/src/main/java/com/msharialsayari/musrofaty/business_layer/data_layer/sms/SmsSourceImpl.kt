@@ -6,6 +6,7 @@ import android.util.Log
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SmsUtils
@@ -14,7 +15,10 @@ import javax.inject.Singleton
 
 
 @Singleton
-class SmsSourceImpl @Inject constructor(private val wordDetectorRepo: WordDetectorRepo) : SmsDataSource {
+class SmsSourceImpl @Inject constructor(
+    private val wordDetectorRepo: WordDetectorRepo,
+    private val senderRepo: SenderRepo
+) : SmsDataSource {
 
 
     private fun loadAllSms(context: Context): List<SmsModel> {
@@ -59,7 +63,7 @@ class SmsSourceImpl @Inject constructor(private val wordDetectorRepo: WordDetect
     }
 
     override suspend fun loadBanksSms(context: Context, ): List<SmsModel> {
-        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS).map { it.word }.toList()
+        val senders = senderRepo.getAllActive().map { it.senderName }.toList()
         val allSms = loadAllSms(context)
         val banksSmsList = mutableListOf<SmsModel>()
         val filteredList = allSms.filter {

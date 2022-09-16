@@ -8,6 +8,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
+import com.msharialsayari.musrofaty.ui_component.ProgressBar
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 import com.msharialsayari.musrofaty.ui_component.TextComponent
 
@@ -22,6 +23,7 @@ fun SendersListScreen() {
         views = { RowComponent.SenderRow(senderName = it, totalSms = uiState.senders[it]?.size?:0) },
         onItemClicked = {item, position ->  },
         isLoading = uiState.isLoading,
+        loadingProgress = {ProgressBar.CircleProgressBar()},
         emptyView = {EmptyComponent.EmptyTextComponent()},
         onRefresh = { viewModel.getAllSenders() }
     )

@@ -30,7 +30,7 @@ data class FilterAdvancedModel(
 
 }
 
-fun FilterAdvancedModel.toFilterEntity() = FilterAdvancedEntity(
+fun FilterAdvancedModel.toFilterAdvancedEntity() = FilterAdvancedEntity(
     id = id,
     title =  title,
     words = words,

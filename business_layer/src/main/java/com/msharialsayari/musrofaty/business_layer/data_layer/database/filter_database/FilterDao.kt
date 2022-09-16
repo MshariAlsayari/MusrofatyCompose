@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.layer_data.database.filter_database
+package com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database
 
 
 import androidx.room.*
@@ -16,6 +16,6 @@ interface FilterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg filterEntity: FilterEntity)
 
-    @Delete
-    suspend fun delete(vararg filterEntity: FilterEntity)
+    @Query("Delete from FilterEntity WHERE id =:id")
+    suspend fun delete(id: Int)
 }

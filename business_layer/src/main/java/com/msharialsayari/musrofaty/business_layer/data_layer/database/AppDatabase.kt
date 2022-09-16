@@ -16,12 +16,20 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_dat
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.layer_data.database.Convertors
-import com.msharialsayari.musrofaty.layer_data.database.filter_database.FilterDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 
 
 @Database(
-    entities = [SmsEntity::class, FilterEntity::class, FilterAdvancedEntity::class, CategoryEntity::class, StoreEntity::class, WordDetectorEntity::class],
+    entities = [SmsEntity::class,
+        FilterEntity::class,
+        FilterAdvancedEntity::class,
+        CategoryEntity::class,
+        StoreEntity::class,
+        WordDetectorEntity::class,
+        SenderEntity::class, ],
     version = 12,
     exportSchema = false
 )
@@ -33,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDto(): CategoryDao
     abstract fun storeDao(): StoreDao
     abstract fun wordDto(): WordDetectorDao
-
+    abstract fun senderDao(): SenderDao
 
 }
 
@@ -96,7 +104,7 @@ val MIGRATION_11_12= object : Migration(11,12) {
         database.execSQL("DROP TABLE `SmsEntity` " )
 
 
-        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''))")
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
 

@@ -31,7 +31,7 @@ class FilterAdvancedEntity(
 ) : Parcelable
 
 
-fun FilterAdvancedEntity.toFilterModel() = FilterAdvancedModel(
+fun FilterAdvancedEntity.toFilterAdvancedModel() = FilterAdvancedModel(
     id = id,
     title = title,
     words = words,

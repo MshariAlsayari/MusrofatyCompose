@@ -123,7 +123,7 @@ dependencies {
 
 
     //EasyList
-    implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.0.4'
+    implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.0.6'
 
 
 

@@ -19,9 +19,13 @@ data class SmsEntity(
     var timestamp: Long = 0,
     @ColumnInfo(name = "body")
     var body: String = "",
+    @ColumnInfo(name = "senderId")
+    var senderId: Int = 0,
 ) : Parcelable
 
-fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body)
+
+
+fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body, senderId = senderId)
 
 
 

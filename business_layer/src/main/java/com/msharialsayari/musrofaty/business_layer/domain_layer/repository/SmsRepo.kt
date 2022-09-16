@@ -19,11 +19,12 @@ class SmsRepo @Inject constructor(
     private val dao: SmsDao,
     private val datasource: SmsDataSource,
     private val wordDetectorRepo: WordDetectorRepo,
+    private val senderRepo: SenderRepo,
     @ApplicationContext val context: Context
 ) {
 
     suspend fun getAllSms(): List<SmsModel> {
-        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS).map { it.word }
+        val senders = senderRepo.getAllActive().map { it.senderName }.toList()
         val list = mutableListOf<SmsModel>()
         senders.map {
             list.addAll(getSmsBySenderName(it))
