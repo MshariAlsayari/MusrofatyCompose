@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.AppDatabase
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.*
+import com.msharialsayari.musrofaty.layer_data.database.filter_database.FilterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,11 +46,19 @@ object ApplicationModule {
 
     @Singleton
     @Provides
+    fun provideFilterAdvancedDao(db: AppDatabase) = db.filterAdvancedDao()
+
+    @Singleton
+    @Provides
     fun provideCategoryDto(db: AppDatabase) = db.categoryDto()
 
     @Singleton
     @Provides
     fun provideStoreDto(db: AppDatabase) = db.storeDao()
+
+    @Singleton
+    @Provides
+    fun provideWordDto(db: AppDatabase) = db.wordDto()
 
 
 

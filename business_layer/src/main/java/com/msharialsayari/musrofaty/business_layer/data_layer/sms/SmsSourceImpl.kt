@@ -2,8 +2,11 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import javax.inject.Inject
@@ -11,7 +14,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class SmsSourceImpl @Inject constructor() : SmsDataSource {
+class SmsSourceImpl @Inject constructor(private val wordDetectorRepo: WordDetectorRepo) : SmsDataSource {
 
 
     private fun loadAllSms(context: Context): List<SmsModel> {
@@ -55,11 +58,8 @@ class SmsSourceImpl @Inject constructor() : SmsDataSource {
 
     }
 
-    override suspend fun loadBanksSms(
-        context: Context,
-    ): List<SmsModel> {
-        val activeSenders: List<WordDetectorModel> = emptyList()
-        val senders = activeSenders.map { it.word }.toList()
+    override suspend fun loadBanksSms(context: Context, ): List<SmsModel> {
+        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS).map { it.word }.toList()
         val allSms = loadAllSms(context)
         val banksSmsList = mutableListOf<SmsModel>()
         val filteredList = allSms.filter {
@@ -77,6 +77,7 @@ class SmsSourceImpl @Inject constructor() : SmsDataSource {
             banksSmsList.add(smsModel)
 
         }
+        Log.i("Mshari",banksSmsList.size.toString() )
         return banksSmsList
     }
 }

@@ -7,7 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
+import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.RowComponent
+import com.msharialsayari.musrofaty.ui_component.TextComponent
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -20,6 +22,7 @@ fun SendersListScreen() {
         views = { RowComponent.SenderRow(senderName = it, totalSms = uiState.senders[it]?.size?:0) },
         onItemClicked = {item, position ->  },
         isLoading = uiState.isLoading,
+        emptyView = {EmptyComponent.EmptyTextComponent()},
         onRefresh = { viewModel.getAllSenders() }
     )
     

@@ -1,12 +1,12 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.os.Parcelable
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class FilterModel(
+data class FilterAdvancedModel(
     var id: Int = 0,
     var title: String = "",
     var words: String = "",
@@ -30,7 +30,7 @@ data class FilterModel(
 
 }
 
-fun FilterModel.toFilterEntity() = FilterEntity(
+fun FilterAdvancedModel.toFilterEntity() = FilterAdvancedEntity(
     id = id,
     title =  title,
     words = words,

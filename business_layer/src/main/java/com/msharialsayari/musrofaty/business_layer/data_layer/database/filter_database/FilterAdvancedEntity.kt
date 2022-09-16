@@ -9,33 +9,34 @@ import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-@Entity(tableName = "FilterEntity")
-class FilterEntity(
+@Entity(tableName = "FilterAdvancedEntity")
+class FilterAdvancedEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int = 0,
     @ColumnInfo(name = "title")
     var title: String = "",
     @ColumnInfo(name = "searchWord")
-    var searchWord: String = "",
+    var words: String = "",
     @ColumnInfo(name = "smsType")
     var smsType: String = "",
     @ColumnInfo(name = "date")
-    var date: String = "",
+    var filterOption: String = "",
     @ColumnInfo(name = "bankName")
-    var bankName: String? = "",
+    var senderName: String = "",
     @ColumnInfo(name = "dateFrom")
-    var dateFrom: String? = "",
+    var dateFrom: Long = 0,
     @ColumnInfo(name = "dateTo")
-    var dateTo: String? = "",
+    var dateTo: Long = 0,
 ) : Parcelable
 
-fun FilterEntity.toFilterModel() = FilterAdvancedModel(
+
+fun FilterAdvancedEntity.toFilterModel() = FilterAdvancedModel(
     id = id,
     title = title,
-    words = searchWord,
+    words = words,
     smsType = smsType,
-    filterOption = date,
-    senderName = bankName?:"",
-    dateFrom = 0,
-    dateTo = 0)
+    filterOption = filterOption,
+    senderName = senderName,
+    dateFrom = dateFrom,
+    dateTo = dateTo)

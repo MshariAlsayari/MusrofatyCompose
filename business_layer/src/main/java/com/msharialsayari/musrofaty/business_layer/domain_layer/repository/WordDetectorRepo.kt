@@ -14,9 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 class WordDetectorRepo @Inject constructor(
-    private val dao: WordDetectorDao,
-    @ApplicationContext val context: Context
-) {
+    private val dao: WordDetectorDao) {
 
 
     suspend fun getAll(type:WordDetectorType):List<WordDetectorModel> {
@@ -37,10 +35,10 @@ class WordDetectorRepo @Inject constructor(
 
     suspend fun insert(vararg list: WordDetectorModel) {
         val words: MutableList<WordDetectorEntity> = mutableListOf()
-        list.toList().map {
+        list.map {
             words.add(it.toWordDetectorEntity())
         }
-        dao.insert(*words.toTypedArray())
+        dao.insertAll(*words.toTypedArray())
     }
 
 

@@ -7,17 +7,21 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.layer_data.database.Convertors
+import com.msharialsayari.musrofaty.layer_data.database.filter_database.FilterDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
 
 
 @Database(
-    entities = [SmsEntity::class, FilterEntity::class, CategoryEntity::class, StoreEntity::class],
+    entities = [SmsEntity::class, FilterEntity::class, FilterAdvancedEntity::class, CategoryEntity::class, StoreEntity::class, WordDetectorEntity::class],
     version = 12,
     exportSchema = false
 )
@@ -25,8 +29,10 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
 abstract class AppDatabase : RoomDatabase() {
     abstract fun smmDao(): SmsDao
     abstract fun filterDao(): FilterDao
+    abstract fun filterAdvancedDao(): FilterAdvancedDao
     abstract fun categoryDto(): CategoryDao
     abstract fun storeDao(): StoreDao
+    abstract fun wordDto(): WordDetectorDao
 
 
 }
@@ -88,10 +94,12 @@ val MIGRATION_11_12= object : Migration(11,12) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("DROP TABLE `WalletEntity` " )
         database.execSQL("DROP TABLE `SmsEntity` " )
-        database.execSQL("DROP TABLE `FilterEntity` " )
+
 
         database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''))")
-        database.execSQL("CREATE TABLE `FilterEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
+        database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
+        database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
+
 
     }
 }

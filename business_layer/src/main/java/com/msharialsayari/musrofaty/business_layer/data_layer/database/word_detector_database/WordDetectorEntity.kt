@@ -10,9 +10,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = "WordDetectorEntity")
 data class WordDetectorEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int,
+    var id: Int=0,
     @ColumnInfo(name = "word")
     var word: String,
     @ColumnInfo(name = "type")

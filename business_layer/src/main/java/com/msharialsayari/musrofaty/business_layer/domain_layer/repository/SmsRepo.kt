@@ -60,7 +60,6 @@ class SmsRepo @Inject constructor(
 
 
     suspend fun insert() {
-        val senders = wordDetectorRepo.getAllActive(WordDetectorType.SENDERS_WORDS)
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.map { smsEntityList.add(it.toSmsEntity()) }

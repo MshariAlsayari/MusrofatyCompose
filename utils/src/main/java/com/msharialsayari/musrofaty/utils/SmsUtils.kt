@@ -44,11 +44,6 @@ object SmsUtils {
     }
 
 
-
-    private fun smsContainsCurrency(currency: String, sms: String): Boolean {
-        return sms.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
-    }
-
     fun getCurrency(smsBody: String? , currency:List<String>): String {
         smsBody?.let {sms->
             return currency.find { it.contains(sms, ignoreCase = true) } ?: ""

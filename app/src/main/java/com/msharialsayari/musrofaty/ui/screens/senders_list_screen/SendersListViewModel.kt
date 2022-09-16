@@ -17,25 +17,36 @@ class SendersListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersUiState())
-    val uiState  : StateFlow<SendersUiState> = _uiState
+    val uiState: StateFlow<SendersUiState> = _uiState
 
     init {
         getAllSenders()
     }
 
-    fun getAllSenders(){
+    fun getAllSenders() {
         viewModelScope.launch {
+            _uiState.update { state ->
+                state.copy(isLoading = true)
+            }
             val result = smsRepo.getAllSms()
             _uiState.update { state ->
-                state.copy(isLoading = false,senders =  result.groupBy { it.senderName })
+                state.copy(isLoading = false, senders = state.getSendersList(result))
             }
         }
     }
 
 
     data class SendersUiState(
-        val isLoading: Boolean = true,
-        val senders: Map<String, List<SmsModel>> = mapOf()
-    )
+        var isLoading: Boolean = false,
+        var senders: Map<String, List<SmsModel>> = mapOf()
+
+    ) {
+
+        fun getSendersList(list: List<SmsModel>): Map<String, List<SmsModel>> {
+            return list.groupBy { it.senderName }
+        }
+
+    }
+
 
 }

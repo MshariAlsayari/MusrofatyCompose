@@ -14,7 +14,7 @@ interface WordDetectorDao {
     suspend fun getAllActive(type:String): List<WordDetectorEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg wordDetectorEntity: WordDetectorEntity)
+    suspend fun insertAll(vararg wordDetectorEntity: WordDetectorEntity)
 
     @Update
     suspend fun update(wordDetectorEntity: WordDetectorEntity)

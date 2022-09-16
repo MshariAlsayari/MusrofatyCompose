@@ -1,7 +1,8 @@
-package com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database
+package com.msharialsayari.musrofaty.layer_data.database.filter_database
 
 
 import androidx.room.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
 
 @Dao
 interface FilterDao {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="number_of_sms">Total of Sms</string>
+    <string name="no_result">No Result</string>
 </resources>
