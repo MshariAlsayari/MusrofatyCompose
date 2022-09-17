@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 data class SmsEntity(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    var id: String,
+    var id: String="",
     @ColumnInfo(name = "senderName")
     var senderName: String = "",
     @ColumnInfo(name = "timestamp")
@@ -20,7 +20,7 @@ data class SmsEntity(
     @ColumnInfo(name = "body")
     var body: String = "",
     @ColumnInfo(name = "senderId")
-    var senderId: Int = 0,
+    var senderId: Int,
 ) : Parcelable
 
 

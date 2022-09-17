@@ -2,7 +2,9 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_d
 
 import android.os.Parcelable
 import androidx.room.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_database.ContentEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
@@ -19,8 +21,8 @@ data class SenderEntity(
     var displayNameAr: String = "",
     @ColumnInfo(name = "displayNameEn")
     var displayNameEn: String = "",
-    @ColumnInfo(name = "type")
-    var type: String = "",
+    @ColumnInfo(name = "contentId")
+    var contentId: Int = 0,
     @ColumnInfo(name = "isPined")
     var isPined: Boolean = false,
     @ColumnInfo(name = "isActive")
@@ -29,7 +31,7 @@ data class SenderEntity(
 
 
 @Parcelize
-data class SenderWithSms(
+data class SenderWithRelations(
     @Embedded val sender: SenderEntity,
     @Relation(
         parentColumn = "id",
@@ -38,11 +40,12 @@ data class SenderWithSms(
     val sms: List<SmsEntity>,
 ):Parcelable
 
+
 @Parcelize
-data class SenderWithSmsModel(
-    val category: SenderModel? = null,
+data class SenderWithRelationsModel(
+    val sender: SenderModel,
     val sms: List<SmsModel> = listOf(),
 ) : Parcelable
 
 
-fun SenderEntity.toSenderModel() = SenderModel(id, senderName, displayNameAr, displayNameEn, type, isPined, isActive)
+fun SenderEntity.toSenderModel() = SenderModel(id, senderName, displayNameAr, displayNameEn,contentId, isPined, isActive)

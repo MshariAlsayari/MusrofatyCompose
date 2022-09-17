@@ -7,6 +7,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_database.ContentDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_database.ContentEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
@@ -29,7 +31,8 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_da
         CategoryEntity::class,
         StoreEntity::class,
         WordDetectorEntity::class,
-        SenderEntity::class, ],
+        SenderEntity::class,
+        ContentEntity::class, ],
     version = 12,
     exportSchema = false
 )
@@ -42,6 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun storeDao(): StoreDao
     abstract fun wordDto(): WordDetectorDao
     abstract fun senderDao(): SenderDao
+    abstract fun contentDao(): ContentDao
 
 }
 
@@ -106,7 +110,10 @@ val MIGRATION_11_12= object : Migration(11,12) {
 
         database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
+        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
+        database.execSQL("CREATE TABLE `ContentEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`contentKey` TEXT NOT NULL ,`value_ar` TEXT ,`value_en` TEXT)")
+
 
 
     }

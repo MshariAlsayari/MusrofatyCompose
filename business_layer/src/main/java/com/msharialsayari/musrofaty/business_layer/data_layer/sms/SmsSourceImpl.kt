@@ -39,8 +39,7 @@ class SmsSourceImpl @Inject constructor(
                             cursor.getString(cursor.getColumnIndexOrThrow("body"))
                         )
                     ) {
-                        objSmsModel =
-                            SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
+                        objSmsModel = SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
                         objSmsModel.senderName =
                             cursor.getString(cursor.getColumnIndexOrThrow("address"))
                         objSmsModel.body =
@@ -63,7 +62,8 @@ class SmsSourceImpl @Inject constructor(
     }
 
     override suspend fun loadBanksSms(context: Context, ): List<SmsModel> {
-        val senders = senderRepo.getAllActive().map { it.senderName }.toList()
+        val activeSender = senderRepo.getAllActive()
+        val senders = activeSender.map { it.senderName }.toList()
         val allSms = loadAllSms(context)
         val banksSmsList = mutableListOf<SmsModel>()
         val filteredList = allSms.filter {
@@ -78,10 +78,12 @@ class SmsSourceImpl @Inject constructor(
             if (SmsUtils.isAlahliSender(smsModel.senderName)) {
                 smsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
             }
+            smsModel.senderId = activeSender.find { it.senderName.equals( smsModel.senderName , ignoreCase = true) }?.id!!
             banksSmsList.add(smsModel)
 
         }
-        Log.i("Mshari",banksSmsList.size.toString() )
+        Log.i("MshariSenders",senders.size.toString() )
+        Log.i("MshariBankList",banksSmsList.size.toString() )
         return banksSmsList
     }
 }

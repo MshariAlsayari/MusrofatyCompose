@@ -14,7 +14,7 @@ object RowComponent {
 
 
     @Composable
-    fun SenderRow(senderName: String = "", totalSms: Int = 0, onClick: () -> Unit = {}) {
+    fun SenderRow(displayName: String = "", totalSms: Int = 0, onClick: () -> Unit = {}) {
 
         Column(
             modifier = Modifier
@@ -36,7 +36,7 @@ object RowComponent {
                     verticalArrangement = Arrangement.Center
                 ) {
                     TextComponent.HeaderText(
-                        text = senderName
+                        text = displayName
                     )
 
                     TextComponent.PlaceholderText(

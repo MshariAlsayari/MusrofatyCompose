@@ -35,13 +35,13 @@ fun NavigationGraph(activity:Activity, navController: NavHostController, innerPa
         }
 
         composable(BottomNavItem.Dashboard.screen_route) {
-            DashboardScreen()
+            DashboardScreen(navController = navController)
         }
         composable(BottomNavItem.SendersList.screen_route) {
-            SendersListScreen()
+            SendersListScreen(navController = navController)
         }
         composable(BottomNavItem.Setting.screen_route) {
-            SettingsScreen()
+            SettingsScreen(navController = navController)
         }
 
         composable(Screen.SinglePermission.route) {

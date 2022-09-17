@@ -63,6 +63,10 @@ object ApplicationModule {
     @Provides
     fun provideSenderDto(db: AppDatabase) = db.senderDao()
 
+    @Singleton
+    @Provides
+    fun provideContentDto(db: AppDatabase) = db.contentDao()
+
 
 
 }

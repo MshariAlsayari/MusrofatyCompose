@@ -20,6 +20,7 @@ data class SmsModel(
     var smsType: SmsType  = SmsType.NOTHING,
     var currency: String="",
     var senderId: Int = 0,
+    var displayName: String = "",
 ) : Parcelable{
 
     val storeName :String
