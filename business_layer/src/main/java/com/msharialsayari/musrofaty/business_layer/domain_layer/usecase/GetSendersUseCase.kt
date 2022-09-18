@@ -16,14 +16,10 @@ class GetSendersUseCase @Inject constructor(
     private val contentRepo: ContentRepo) {
 
     suspend operator fun invoke(): Map<SenderModel, List<SmsModel>> {
-        val result = senderRepo.getAllSendersWithSms()
-        result.map {
-            it.sender.content = contentRepo.getContentById(it.sender.contentId)
-            it.sms = smsRepo.getSmsBySenderName(it.sender.senderName)
-        }
+        val result = senderRepo.getAllActive()
         val map = mutableMapOf<SenderModel, List<SmsModel>>()
-        result.groupBy { it.sender }.entries.map {
-            map.putIfAbsent(it.key, it.value.flatMap { it.sms })
+        result.groupBy { it }.entries.map {
+            map.putIfAbsent(it.key, emptyList<SmsModel>())
         }
 
         map.entries.sortedWith(compareBy { !it.key.isPined })

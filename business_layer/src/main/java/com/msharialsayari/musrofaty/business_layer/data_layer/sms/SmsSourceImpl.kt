@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 
 import android.content.Context
 import android.net.Uri
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
@@ -18,12 +19,12 @@ class SmsSourceImpl @Inject constructor(
 ) : SmsDataSource {
 
 
-    private fun loadAllSms(context: Context, senders:List<String>): List<SmsModel> {
+    private fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
         val lstSms = ArrayList<SmsModel>()
         var objSmsModel: SmsModel
         val message = Uri.parse("content://sms/inbox")
         val cr = context.contentResolver
-        val senderFinal = senders.map { it.uppercase() }.toList()
+        val senders = activeSenders.map { it.senderName.uppercase() }.toList()
         val projection = arrayOf("_id", "address", "person", "body", "date")
         var whereAddress = "upper(address) IN ("
         senders.forEachIndexed{index,item ->
@@ -36,7 +37,7 @@ class SmsSourceImpl @Inject constructor(
         whereAddress += ")"
 
 
-        var c = cr.query(message, projection, whereAddress, senderFinal.toTypedArray(), null)
+        var c = cr.query(message, projection, whereAddress, senders.toTypedArray(), null)
         val totalSMS = c?.count
 
         c?.let { cursor ->
@@ -49,13 +50,14 @@ class SmsSourceImpl @Inject constructor(
                         )
                     ) {
                         objSmsModel = SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
-                        objSmsModel.senderName =
-                            cursor.getString(cursor.getColumnIndexOrThrow("address"))
-                        objSmsModel.body =
-                            SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
-                                ?: ""
-                        objSmsModel.timestamp =
-                            cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+                        if (SmsUtils.isAlahliSender(cursor.getString(cursor.getColumnIndexOrThrow("address")))) {
+                            objSmsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
+                        }else {
+                            objSmsModel.senderName = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                        }
+                        objSmsModel.body = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
+                        objSmsModel.timestamp = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+                        objSmsModel.senderId = activeSenders.find { it.senderName.equals( objSmsModel.senderName , ignoreCase = true) }?.id!!
                         lstSms.add(objSmsModel)
                     }
                     cursor.moveToNext()
@@ -72,25 +74,7 @@ class SmsSourceImpl @Inject constructor(
 
     override suspend fun loadBanksSms(context: Context): List<SmsModel> {
         val activeSender = senderRepo.getAllActive()
-        val senders = activeSender.map { it.senderName }.toList()
-        val allSms = loadAllSms(context,senders)
-        val banksSmsList = mutableListOf<SmsModel>()
-        val filteredList = allSms.filter {
-            it.senderName.isNotEmpty() && senders.find { sender ->
-                it.senderName.equals(
-                    sender,
-                    ignoreCase = true
-                )
-            } != null
-        }
-        filteredList.map { smsModel ->
-            if (SmsUtils.isAlahliSender(smsModel.senderName)) {
-                smsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
-            }
-            smsModel.senderId = activeSender.find { it.senderName.equals( smsModel.senderName , ignoreCase = true) }?.id!!
-            banksSmsList.add(smsModel)
-
-        }
-        return banksSmsList
+        val allSms = loadAllSms(context,activeSender)
+        return allSms
     }
 }
