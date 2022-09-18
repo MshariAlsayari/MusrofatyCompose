@@ -84,7 +84,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
     implementation 'androidx.compose.runtime:runtime-livedata:1.3.0-beta02'
 
-    // implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+
 
     // logging
     implementation "com.jakewharton.timber:timber:$timberVersion"

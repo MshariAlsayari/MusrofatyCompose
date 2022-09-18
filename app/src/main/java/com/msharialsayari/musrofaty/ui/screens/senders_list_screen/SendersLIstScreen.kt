@@ -39,7 +39,7 @@ fun SendersListScreen(navController: NavHostController) {
 
 
     VerticalEasyList(
-        list = uiState.senders,
+        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(uiState.senders, navController.context),
         views = { SenderComponent(model = it) },
         dividerView = { DividerComponent.HorizontalDividerComponent()},
         onItemClicked = {item, position ->  },

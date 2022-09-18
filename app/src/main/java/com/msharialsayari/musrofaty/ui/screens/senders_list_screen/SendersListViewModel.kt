@@ -40,7 +40,7 @@ class SendersListViewModel @Inject constructor(
             }
             val result = getSendersUseCase.invoke()
             _uiState.update { state ->
-                state.copy(isLoading = false, senders = state.wrapSendersToSenderComponentModelList(result,context))
+                state.copy(isLoading = false, senders = result)
             }
         }
     }
@@ -59,7 +59,10 @@ class SendersListViewModel @Inject constructor(
     fun pinSender(senderName:String){
         viewModelScope.launch {
             val result = pinSenderUseCase.invoke(senderName = senderName, pin = true)
-            getAllSenders()
+            _uiState.update { state ->
+                state.copy(isLoading = false, senders = state.pinSender(senderName))
+            }
+
         }
 
     }
@@ -67,40 +70,50 @@ class SendersListViewModel @Inject constructor(
 
     data class SendersUiState(
         var isLoading: Boolean = false,
-        var senders: List<SenderComponentModel> = emptyList()
+        var senders:  Map<SenderModel, List<SmsModel>> = emptyMap(),
     ){
 
-        fun wrapSendersToSenderComponentModelList(map : Map<SenderModel, List<SmsModel>>,context: Context):List<SenderComponentModel>{
-            val list = mutableListOf<SenderComponentModel>()
-            map.map {
-                if (it.key.isPined){
-                    list.add(
-                        0,
-                        SenderComponentModel(
-                            senderName = it.key.senderName,
-                            displayName = SenderModel.getDisplayName(context, it.key),
-                            senderType = ContentModel.getDisplayName(context, it.key.content),
-                            smsTotal = it.value.size
+        companion object {
+            fun wrapSendersToSenderComponentModelList(
+                map: Map<SenderModel, List<SmsModel>>,
+                context: Context
+            ): List<SenderComponentModel> {
+                val list = mutableListOf<SenderComponentModel>()
+                map.map {
+                    if (it.key.isPined) {
+                        list.add(
+                            0,
+                            SenderComponentModel(
+                                senderName = it.key.senderName,
+                                displayName = SenderModel.getDisplayName(context, it.key),
+                                senderType = ContentModel.getDisplayName(context, it.key.content),
+                                smsTotal = it.value.size
+                            )
                         )
-                    )
-                }else {
-                    list.add(
-                        SenderComponentModel(
-                            senderName = it.key.senderName,
-                            displayName = SenderModel.getDisplayName(context, it.key),
-                            senderType = ContentModel.getDisplayName(context, it.key.content),
-                            smsTotal = it.value.size
+                    } else {
+                        list.add(
+                            SenderComponentModel(
+                                senderName = it.key.senderName,
+                                displayName = SenderModel.getDisplayName(context, it.key),
+                                senderType = ContentModel.getDisplayName(context, it.key.content),
+                                smsTotal = it.value.size
+                            )
                         )
-                    )
+                    }
                 }
-            }
-            return list
+                return list
 
+            }
         }
 
-        fun removeSender(senderName:String): List<SenderComponentModel> {
-            val list =senders.toMutableList().filter { !it.senderName.equals( senderName, ignoreCase = true) }
-            return list
+        fun removeSender(senderName:String): Map<SenderModel, List<SmsModel>> {
+            return senders.filterKeys { it.senderName != senderName }
+        }
+
+        fun pinSender(senderName: String): Map<SenderModel, List<SmsModel>> {
+            senders.map { it.key.isPined = it.key.senderName == senderName }
+            return senders
+
         }
 
     }
