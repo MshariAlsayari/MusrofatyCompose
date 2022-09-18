@@ -18,13 +18,25 @@ class SmsSourceImpl @Inject constructor(
 ) : SmsDataSource {
 
 
-    private fun loadAllSms(context: Context): List<SmsModel> {
+    private fun loadAllSms(context: Context, senders:List<String>): List<SmsModel> {
         val lstSms = ArrayList<SmsModel>()
         var objSmsModel: SmsModel
-        val message = Uri.parse("content://sms/")
+        val message = Uri.parse("content://sms/inbox")
         val cr = context.contentResolver
+        val senderFinal = senders.map { it.uppercase() }.toList()
+        val projection = arrayOf("_id", "address", "person", "body", "date")
+        var whereAddress = "upper(address) IN ("
+        senders.forEachIndexed{index,item ->
+            whereAddress += "?"
+            if (index != senders.lastIndex){
+                whereAddress += ","
+            }
 
-        var c = cr.query(message, null, null, null, null)
+        }
+        whereAddress += ")"
+
+
+        var c = cr.query(message, projection, whereAddress, senderFinal.toTypedArray(), null)
         val totalSMS = c?.count
 
         c?.let { cursor ->
@@ -58,10 +70,10 @@ class SmsSourceImpl @Inject constructor(
 
     }
 
-    override suspend fun loadBanksSms(context: Context, ): List<SmsModel> {
+    override suspend fun loadBanksSms(context: Context): List<SmsModel> {
         val activeSender = senderRepo.getAllActive()
         val senders = activeSender.map { it.senderName }.toList()
-        val allSms = loadAllSms(context)
+        val allSms = loadAllSms(context,senders)
         val banksSmsList = mutableListOf<SmsModel>()
         val filteredList = allSms.filter {
             it.senderName.isNotEmpty() && senders.find { sender ->
