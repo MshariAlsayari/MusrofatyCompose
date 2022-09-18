@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
@@ -65,7 +67,17 @@ class SplashViewModel @Inject constructor(
 
     private fun insertDefaultSenders(){
         viewModelScope.launch {
-            val senders = SenderModel.getDefaultSendersModel()
+            val sendersContent = contentRepo.getContentByKey(ContentKey.SENDERS.name)
+            val banksSender =sendersContent.find{it.valueAr == SendersKey.BANKS.valueAr}
+            val servicesSender =sendersContent.find{it.valueAr == SendersKey.SERVICES.valueAr}
+            val digitalWalletSender =sendersContent.find{it.valueAr == SendersKey.DIGITALWALLET.valueAr}
+
+            val senders = SenderModel.getDefaultSendersModel(
+                bankContentId =banksSender?.id ?:0 ,
+                servicesContentId = servicesSender?.id ?:0 ,
+                digitalWalletContentId = digitalWalletSender?.id ?:0
+
+            )
             senderRepo.insert(*senders.toTypedArray())
         }
 
@@ -76,9 +88,9 @@ class SplashViewModel @Inject constructor(
         val isFirst = SharedPreferenceManager.isFirstLunch(context)
         viewModelScope.launch {
             if (isFirst) {
+                insertContent()
                 insertWordsDetector()
                 insertDefaultSenders()
-                insertContent()
                 SharedPreferenceManager.setFirstLunch(context)
             }
             Handler(Looper.getMainLooper()).postDelayed({

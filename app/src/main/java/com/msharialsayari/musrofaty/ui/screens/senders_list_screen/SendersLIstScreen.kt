@@ -9,9 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.ui_component.EmptyComponent
-import com.msharialsayari.musrofaty.ui_component.ProgressBar
-import com.msharialsayari.musrofaty.ui_component.RowComponent
+import com.msharialsayari.musrofaty.ui_component.*
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -21,8 +19,9 @@ fun SendersListScreen(navController: NavHostController) {
 
 
     VerticalEasyList(
-        list = uiState.senders.keys.toList(),
-        views = { RowComponent.SenderRow(displayName = SenderModel.getDisplayName(navController.context,it), totalSms = uiState.senders[it]?.size?:0) },
+        list = uiState.senders,
+        views = { SenderComponent(model = it) },
+        dividerView = {DividerComponent.HorizontalDividerComponent()},
         onItemClicked = {item, position ->  },
         isLoading = uiState.isLoading,
         loadingProgress = {ProgressBar.CircleProgressBar()},

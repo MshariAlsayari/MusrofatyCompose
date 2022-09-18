@@ -13,7 +13,7 @@ interface ContentDao {
     suspend fun getContentByKey(key:String): List<ContentEntity>
 
     @Query("SELECT * FROM ContentEntity WHERE id=:id")
-    suspend fun getContentById(id:Int): ContentEntity
+    suspend fun getContentById(id:Int): ContentEntity?
 
     @Update
     suspend fun update(contentEntity: ContentEntity)

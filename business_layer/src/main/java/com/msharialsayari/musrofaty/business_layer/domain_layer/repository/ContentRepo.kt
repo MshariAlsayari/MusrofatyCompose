@@ -23,8 +23,8 @@ class ContentRepo @Inject constructor(
         return dao.getContentByKey(key).map { it.toContentModel() }.toList()
     }
 
-    suspend fun getContentById(id:Int): ContentModel{
-        return dao.getContentById(id).toContentModel()
+    suspend fun getContentById(id:Int): ContentModel?{
+        return dao.getContentById(id)?.toContentModel()
     }
 
 

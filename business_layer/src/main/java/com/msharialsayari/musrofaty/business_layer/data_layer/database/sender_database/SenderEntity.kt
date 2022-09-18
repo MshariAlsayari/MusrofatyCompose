@@ -43,8 +43,8 @@ data class SenderWithRelations(
 
 @Parcelize
 data class SenderWithRelationsModel(
-    val sender: SenderModel,
-    val sms: List<SmsModel> = listOf(),
+    var sender: SenderModel,
+    var sms: List<SmsModel> = listOf(),
 ) : Parcelable
 
 

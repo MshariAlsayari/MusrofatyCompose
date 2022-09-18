@@ -26,11 +26,11 @@ data class ContentModel (
             return list
         }
 
-        fun getDisplayName(context: Context, model:ContentModel):String {
+        fun getDisplayName(context: Context, model:ContentModel?):String {
             return if (SharedPreferenceManager.isArabic(context)){
-                model.valueAr?: ""
+                model?.valueAr?: ""
             }else{
-                model.valueEn ?: ""
+                model?.valueEn ?: ""
             }
         }
 
