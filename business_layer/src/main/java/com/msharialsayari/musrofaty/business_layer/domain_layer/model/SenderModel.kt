@@ -100,7 +100,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
-                    contentId = servicesContentId,
+                    contentId = digitalWalletContentId,
                     senderName = Constants.STC_PAY_WALLET,
                     displayNameAr = "UrPay محفظة",
                     displayNameEn = "UrPay wallet"
@@ -108,7 +108,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
-                    contentId = servicesContentId,
+                    contentId = digitalWalletContentId,
                     senderName = Constants.UR_PAY_BANK,
                     displayNameAr = "STCPay محفظة",
                     displayNameEn = "STCPay wallet"
@@ -116,7 +116,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
-                    contentId = digitalWalletContentId,
+                    contentId = servicesContentId,
                     senderName = Constants.ALKAHRABA_COMPANY,
                     displayNameAr = "الشركة السعودية للكهرباء",
                     displayNameEn = "Saudi Electricity Company"
@@ -124,7 +124,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
-                    contentId = digitalWalletContentId,
+                    contentId = servicesContentId,
                     senderName = Constants.WATER_COMPANY,
                     displayNameAr = "شركة المياه الوطنية",
                     displayNameEn = "National Water Company"
@@ -132,7 +132,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
-                    contentId = digitalWalletContentId,
+                    contentId = servicesContentId,
                     senderName = Constants.MOI_MOROOR,
                     displayNameAr = "الأمن العام",
                     displayNameEn = "Police Security"
