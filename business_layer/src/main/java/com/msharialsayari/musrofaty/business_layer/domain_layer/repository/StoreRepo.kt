@@ -126,7 +126,5 @@ class StoreRepo @Inject constructor(
     }
 
 
-    suspend fun updateStoreCategory(categoryId: Int) {
-        dao.updateCategory(categoryId)
-    }
+
 }

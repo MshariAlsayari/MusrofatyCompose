@@ -8,4 +8,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blackOnyx">#1d252d</color>
     <color name="lightBlackOnyx">#333a42</color>
+    <color name="deletAction">#F60313</color>
+    <color name="pinAction">#13DA1B</color>
+
 </resources>

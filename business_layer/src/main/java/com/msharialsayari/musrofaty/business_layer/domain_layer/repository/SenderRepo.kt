@@ -1,9 +1,10 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderWithRelationsModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.toSenderModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSenderEntity
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,6 +20,17 @@ class SenderRepo @Inject constructor(
         dao.getAllActive().map { senders.add(fillSenderModel( it.toSenderModel())) }
         return senders
     }
+
+    suspend fun activeSender(senderName:String, active:Boolean){
+        dao.activeSender(senderName,active)
+    }
+
+    suspend fun pinSender(senderName:String, pin:Boolean){
+        dao.removePinFromAll()
+        dao.pinSender(senderName,pin)
+    }
+
+
 
     suspend fun getAllSendersWithSms(): List<SenderWithRelationsModel>{
         val sendersWithSms = mutableListOf<SenderWithRelationsModel>()

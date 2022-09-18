@@ -11,10 +11,6 @@ interface StoreDao {
     suspend fun insert(vararg storeEntity: StoreEntity)
 
 
-    @Query("UPDATE StoreEntity SET categoryId =:categoryId ")
-    suspend fun updateCategory(categoryId: Int)
-
-
     @Query("SELECT * FROM StoreEntity WHERE storeName = :storeName")
     suspend fun getStoreByName(storeName: String): StoreEntity?
 

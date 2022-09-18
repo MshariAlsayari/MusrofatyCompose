@@ -25,7 +25,9 @@ class GetSendersUseCase @Inject constructor(
         result.groupBy { it.sender }.entries.map {
             map.putIfAbsent(it.key, it.value.flatMap { it.sms })
         }
-        return map.toMap()
+
+        map.entries.sortedWith(compareBy { !it.key.isPined })
+        return map
 
     }
 }

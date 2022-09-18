@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.content.Context
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -112,7 +111,7 @@ data class SenderModel(
                     contentId = servicesContentId,
                     senderName = Constants.UR_PAY_BANK,
                     displayNameAr = "STCPay محفظة",
-                    displayNameEn = "The Saudi Investment Bank"
+                    displayNameEn = "STCPay wallet"
                 )
             )
             list.add(

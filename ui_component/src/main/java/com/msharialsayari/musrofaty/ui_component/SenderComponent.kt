@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 
@@ -15,13 +14,13 @@ fun SenderComponent(model: SenderComponentModel){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(120.dp)
             .padding(
                 dimensionResource(id = R.dimen.default_margin16)
             ),
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            TextComponent.HeaderText(text = model.senderName)
+            TextComponent.HeaderText(text = model.displayName)
             TextComponent.PlaceholderText(text = model.senderType)
         }
 
@@ -42,8 +41,11 @@ fun SenderComponent(model: SenderComponentModel){
 
 }
 
+
+
 data class SenderComponentModel(
     var senderName:String="",
+    var displayName:String="",
     var senderType:String="",
     var smsTotal:Int=0,
 )

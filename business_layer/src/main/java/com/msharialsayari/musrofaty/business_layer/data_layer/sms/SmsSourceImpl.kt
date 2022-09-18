@@ -2,10 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import com.msharialsayari.musrofaty.utils.Constants
@@ -82,8 +79,6 @@ class SmsSourceImpl @Inject constructor(
             banksSmsList.add(smsModel)
 
         }
-        Log.i("MshariSenders",senders.size.toString() )
-        Log.i("MshariBankList",banksSmsList.size.toString() )
         return banksSmsList
     }
 }
