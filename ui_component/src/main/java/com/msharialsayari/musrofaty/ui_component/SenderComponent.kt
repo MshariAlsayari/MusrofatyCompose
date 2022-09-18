@@ -14,7 +14,6 @@ fun SenderComponent(model: SenderComponentModel){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
             .padding(
                 dimensionResource(id = R.dimen.default_margin16)
             ),
@@ -23,17 +22,6 @@ fun SenderComponent(model: SenderComponentModel){
             TextComponent.HeaderText(text = model.displayName)
             TextComponent.PlaceholderText(text = model.senderType)
         }
-
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextComponent.HeaderText(text = model.smsTotal.toString())
-            TextComponent.HeaderText(text = "SMS")
-        }
-
-
 
 
 
@@ -47,7 +35,6 @@ data class SenderComponentModel(
     var senderName:String="",
     var displayName:String="",
     var senderType:String="",
-    var smsTotal:Int=0,
 )
 
 

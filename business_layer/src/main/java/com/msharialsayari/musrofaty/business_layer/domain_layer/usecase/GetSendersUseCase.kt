@@ -11,19 +11,12 @@ import javax.inject.Singleton
 
 @Singleton
 class GetSendersUseCase @Inject constructor(
-    private val senderRepo: SenderRepo,
-    private val smsRepo: SmsRepo,
-    private val contentRepo: ContentRepo) {
+    private val senderRepo: SenderRepo) {
 
-    suspend operator fun invoke(): Map<SenderModel, List<SmsModel>> {
+    suspend operator fun invoke(): List<SenderModel> {
         val result = senderRepo.getAllActive()
-        val map = mutableMapOf<SenderModel, List<SmsModel>>()
-        result.groupBy { it }.entries.map {
-            map.putIfAbsent(it.key, emptyList<SmsModel>())
-        }
-
-        map.entries.sortedWith(compareBy { !it.key.isPined })
-        return map
+        result.sortedBy { !it.isPined }
+        return result
 
     }
 }
