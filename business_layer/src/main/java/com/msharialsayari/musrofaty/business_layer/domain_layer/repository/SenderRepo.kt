@@ -17,7 +17,7 @@ class SenderRepo @Inject constructor(
 
     suspend fun getAllActive():List<SenderModel>{
         val senders = mutableListOf<SenderModel>()
-        dao.getAllActive().map { senders.add(fillSenderModel( it.toSenderModel())) }
+        dao.getAllActive().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
         return senders
     }
 

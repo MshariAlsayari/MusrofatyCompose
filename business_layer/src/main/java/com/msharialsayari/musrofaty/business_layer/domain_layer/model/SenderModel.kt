@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.msharialsayari.musrofaty.business_layer.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -16,7 +17,8 @@ data class SenderModel(
     var contentId: Int = 0,
     var isPined: Boolean = false,
     var isActive: Boolean = true,
-    var content: ContentModel? = null
+    var content: ContentModel? = null,
+    var icon: Int? = null,
 ) : Parcelable {
 
     companion object {
@@ -28,6 +30,7 @@ data class SenderModel(
             val list = mutableListOf<SenderModel>()
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_saudi_investment,
                     contentId = bankContentId,
                     senderName = Constants.SAIB_BANK,
                     displayNameAr = "البنك السعودي للاستثمار",
@@ -36,6 +39,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_alinma,
                     contentId = bankContentId,
                     senderName = Constants.ALINMA_BANK,
                     displayNameAr = "مصرف الإنماء",
@@ -44,6 +48,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_rajhi,
                     contentId = bankContentId,
                     senderName = Constants.ALRAJHI_BANK,
                     displayNameAr = "مصرف الراجحي",
@@ -52,6 +57,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_ahli_new,
                     contentId = bankContentId,
                     senderName = Constants.SAMBA_BANK,
                     displayNameAr = "بنك الأهلي",
@@ -60,6 +66,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_riyad,
                     contentId = bankContentId,
                     senderName = Constants.RIYAD_BANK,
                     displayNameAr = "بنك الرياض",
@@ -68,6 +75,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_bilad,
                     contentId = bankContentId,
                     senderName = Constants.ALBILAD_BANK,
                     displayNameAr = "بنك البلاد",
@@ -76,6 +84,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_arab,
                     contentId = bankContentId,
                     senderName = Constants.ALARABI_BANK,
                     displayNameAr = "البنك العربي",
@@ -84,6 +93,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_ahli_new,
                     contentId = bankContentId,
                     senderName = Constants.ALAHLI_BANK,
                     displayNameAr = "بنك الأهلي",
@@ -92,6 +102,7 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_ahli_new,
                     contentId = bankContentId,
                     senderName = Constants.ALAHLI_WITH_SAMBA_BANK,
                     displayNameAr = "بنك الأهلي",
@@ -100,22 +111,25 @@ data class SenderModel(
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_rajhi,
                     contentId = digitalWalletContentId,
-                    senderName = Constants.STC_PAY_WALLET,
+                    senderName = Constants.UR_PAY_BANK,
                     displayNameAr = "UrPay محفظة",
                     displayNameEn = "UrPay wallet"
                 )
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_stcpay,
                     contentId = digitalWalletContentId,
-                    senderName = Constants.UR_PAY_BANK,
+                    senderName = Constants.STC_PAY_WALLET,
                     displayNameAr = "STCPay محفظة",
                     displayNameEn = "STCPay wallet"
                 )
             )
             list.add(
                 SenderModel(
+                    icon= R.drawable.ic_kaharba,
                     contentId = servicesContentId,
                     senderName = Constants.ALKAHRABA_COMPANY,
                     displayNameAr = "الشركة السعودية للكهرباء",
@@ -153,7 +167,7 @@ data class SenderModel(
 }
 
 fun SenderModel.toSenderEntity() =
-    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined, isActive)
+    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined, isActive, icon=icon)
 
 
 

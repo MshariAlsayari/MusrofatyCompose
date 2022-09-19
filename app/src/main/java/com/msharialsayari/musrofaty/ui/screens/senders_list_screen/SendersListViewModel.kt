@@ -53,8 +53,10 @@ class SendersListViewModel @Inject constructor(
 
     fun pinSender(senderName:String){
         viewModelScope.launch {
-            pinSenderUseCase.invoke(senderName = senderName, pin = true)
-            getAllSenders()
+            if (!_uiState.value.isSenderPinned(senderName)) {
+                pinSenderUseCase.invoke(senderName = senderName, pin = true)
+                getAllSenders()
+            }
 
         }
 
@@ -80,6 +82,7 @@ class SendersListViewModel @Inject constructor(
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
+                                senderIcon = it.icon
                             )
                         )
                     } else {
@@ -88,6 +91,7 @@ class SendersListViewModel @Inject constructor(
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
+                                senderIcon = it.icon
                             )
                         )
                     }
@@ -95,6 +99,12 @@ class SendersListViewModel @Inject constructor(
                 return list
 
             }
+
+
+        }
+
+        fun isSenderPinned(senderName: String):Boolean{
+            return senders.find { it.senderName.equals(senderName,ignoreCase = true) }?.isPined ?: false
         }
 
 

@@ -11,6 +11,10 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_d
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_database.ContentEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
@@ -18,10 +22,6 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_dat
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.layer_data.database.Convertors
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 
 
 @Database(
@@ -108,7 +108,7 @@ val MIGRATION_11_12= object : Migration(11,12) {
         database.execSQL("DROP TABLE `SmsEntity` " )
 
 
-        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`icon` INTEGER)")
         database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
