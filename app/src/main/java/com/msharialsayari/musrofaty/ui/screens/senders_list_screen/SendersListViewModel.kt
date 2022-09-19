@@ -42,19 +42,19 @@ class SendersListViewModel @Inject constructor(
         }
     }
 
-    fun disableSender(senderName:String){
+    fun disableSender(senderId:Int){
         viewModelScope.launch {
-             activeSenderUseCase.invoke(senderName = senderName, active = false)
+             activeSenderUseCase.invoke(senderId = senderId, active = false)
             getAllSenders()
         }
 
     }
 
 
-    fun pinSender(senderName:String){
+    fun pinSender(senderId:Int){
         viewModelScope.launch {
-            if (!_uiState.value.isSenderPinned(senderName)) {
-                pinSenderUseCase.invoke(senderName = senderName, pin = true)
+            if (!_uiState.value.isSenderPinned(senderId)) {
+                pinSenderUseCase.invoke(senderId = senderId, pin = true)
                 getAllSenders()
             }
 
@@ -79,6 +79,7 @@ class SendersListViewModel @Inject constructor(
                         list.add(
                             0,
                             SenderComponentModel(
+                                senderId=it.id,
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
@@ -88,6 +89,7 @@ class SendersListViewModel @Inject constructor(
                     } else {
                         list.add(
                             SenderComponentModel(
+                                senderId=it.id,
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
@@ -103,8 +105,8 @@ class SendersListViewModel @Inject constructor(
 
         }
 
-        fun isSenderPinned(senderName: String):Boolean{
-            return senders.find { it.senderName.equals(senderName,ignoreCase = true) }?.isPined ?: false
+        fun isSenderPinned(senderId: Int):Boolean{
+            return senders.find { it.id == senderId }?.isPined ?: false
         }
 
 

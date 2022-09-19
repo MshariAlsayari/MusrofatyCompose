@@ -21,13 +21,18 @@ class SenderRepo @Inject constructor(
         return senders
     }
 
-    suspend fun activeSender(senderName:String, active:Boolean){
-        dao.activeSender(senderName,active)
+    suspend fun getSenderById(senderId:Int):SenderModel{
+        val model =  dao.getSenderById(senderId).toSenderModel()
+        return fillSenderModel(model)
     }
 
-    suspend fun pinSender(senderName:String, pin:Boolean){
+    suspend fun activeSender(senderId:Int, active:Boolean){
+        dao.activeSender(senderId,active)
+    }
+
+    suspend fun pinSender(senderId:Int, pin:Boolean){
         dao.removePinFromAll()
-        dao.pinSender(senderName,pin)
+        dao.pinSender(senderId,pin)
     }
 
 

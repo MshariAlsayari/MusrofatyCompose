@@ -33,7 +33,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
         WordDetectorEntity::class,
         SenderEntity::class,
         ContentEntity::class, ],
-    version = 12,
+    version = 14,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -108,14 +108,25 @@ val MIGRATION_11_12= object : Migration(11,12) {
         database.execSQL("DROP TABLE `SmsEntity` " )
 
 
-        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`icon` INTEGER)")
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
-        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0))")
+        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0),`icon` INTEGER)")
         database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
         database.execSQL("CREATE TABLE `ContentEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`contentKey` TEXT NOT NULL ,`value_ar` TEXT ,`value_en` TEXT)")
 
+    }
+}
 
+val MIGRATION_12_13= object : Migration(12,13) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE `SenderEntity` ADD `icon` INTEGER")
+    }
+}
 
+val MIGRATION_13_14= object : Migration(13,14) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `SmsEntity` " )
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
     }
 }
 

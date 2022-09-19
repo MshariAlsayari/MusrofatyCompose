@@ -3,10 +3,17 @@
 
     <string name="app_name">MusrofatyCompose</string>
 
+    <!--commons-->
+    <string name="common_delete">حذف</string>
+    <string name="common_pin">تثبيت</string>
+    <string name="common_change">تعديل</string>
 
+    <!--permissions-->
     <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
 
+
+    <!--Settings-->
     <string name="pref_appearance_title">المظهر</string>
     <string name="pref_appearance_summary">إمكانية تغير اللغة والنمط</string>
     <string name="pref_sms_title">الرسائل</string>

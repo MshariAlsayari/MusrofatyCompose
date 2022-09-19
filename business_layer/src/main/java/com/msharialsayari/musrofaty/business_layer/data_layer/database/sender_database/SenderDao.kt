@@ -9,6 +9,10 @@ interface SenderDao {
     @Query("SELECT * FROM SenderEntity")
     suspend fun getAll():List<SenderEntity>
 
+
+    @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
+    suspend fun getSenderById(senderId:Int):SenderEntity
+
     @Transaction
     @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
     suspend fun getAllSendersWithSms(): List<SenderWithRelations>
@@ -16,11 +20,11 @@ interface SenderDao {
     @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
     suspend fun getAllActive():List<SenderEntity>
 
-    @Query("UPDATE SenderEntity SET isActive =:isActive WHERE senderName=:senderName")
-    suspend fun activeSender(senderName:String, isActive:Boolean)
+    @Query("UPDATE SenderEntity SET isActive =:isActive WHERE id=:senderId")
+    suspend fun activeSender(senderId:Int, isActive:Boolean)
 
-    @Query("UPDATE SenderEntity SET isPined =:isPin WHERE senderName=:senderName")
-    suspend fun pinSender(senderName:String, isPin:Boolean)
+    @Query("UPDATE SenderEntity SET isPined =:isPin WHERE id=:senderId")
+    suspend fun pinSender(senderId:Int, isPin:Boolean)
 
     @Query("UPDATE SenderEntity SET isPined =0")
     suspend fun removePinFromAll()

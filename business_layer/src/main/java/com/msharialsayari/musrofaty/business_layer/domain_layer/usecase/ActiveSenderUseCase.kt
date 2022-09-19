@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class ActiveSenderUseCase @Inject constructor(
     private val senderRepo: SenderRepo) {
 
-    suspend operator fun invoke(senderName:String, active:Boolean = true) {
-        senderRepo.activeSender(senderName,active)
+    suspend operator fun invoke(senderId:Int, active:Boolean = true) {
+        senderRepo.activeSender(senderId,active)
     }
 }

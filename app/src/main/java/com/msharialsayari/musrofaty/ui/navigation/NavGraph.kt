@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
+import com.msharialsayari.musrofaty.ui.screens.sender_details.SenderDetailsScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
@@ -42,6 +45,12 @@ fun NavigationGraph(activity:Activity, navController: NavHostController, innerPa
         }
         composable(BottomNavItem.Setting.screen_route) {
             SettingsScreen(navController = navController)
+        }
+
+        composable(Screen.SenderDetails.route,
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
+        )) {backStackEntry->
+            SenderDetailsScreen(navController = navController,backStackEntry.arguments?.getInt("senderId")?:0)
         }
 
         composable(Screen.SinglePermission.route) {

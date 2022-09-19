@@ -45,6 +45,7 @@ fun SenderComponent(model: SenderComponentModel){
 
 
 data class SenderComponentModel(
+    var senderId:Int,
     var senderName:String="",
     var displayName:String="",
     var senderType:String="",
