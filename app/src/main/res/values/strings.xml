@@ -8,6 +8,13 @@
     <string name="common_change">Modify</string>
 
 
+    <!--Sender Details-->
+    <string name="sender_display_name_ar">Arabic Name</string>
+    <string name="sender_display_name_en">English Name</string>
+    <string name="sender_pin">Pin</string>
+    <string name="sender_active">Active</string>
+
+
     <!--permissions-->
     <string name="permission_dialog_message">You should allow the Read SMS permission</string>
     <string name="permission_dialog_positive_button">Go to settings</string>

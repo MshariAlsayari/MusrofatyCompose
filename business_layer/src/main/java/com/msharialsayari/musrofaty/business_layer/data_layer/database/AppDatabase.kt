@@ -110,7 +110,7 @@ val MIGRATION_11_12= object : Migration(11,12) {
 
         database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `FilterAdvancedEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`smsType` TEXT NOT NULL,`words` TEXT NOT NULL, `filterOption` TEXT NOT NULL, `dateFrom` INTEGER NOT NULL DEFAULT(0), `dateTo` INTEGER NOT NULL DEFAULT(0))")
-        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0),`icon` INTEGER)")
+        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `displayNameAr` TEXT ,`displayNameEn` TEXT,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER NOT NULL DEFAULT(0))")
         database.execSQL("CREATE TABLE `WordDetectorEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT NOT NULL,`type` TEXT NOT NULL,`isActive` INTEGER NOT NULL DEFAULT(1))")
         database.execSQL("CREATE TABLE `ContentEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`contentKey` TEXT NOT NULL ,`value_ar` TEXT ,`value_en` TEXT)")
 

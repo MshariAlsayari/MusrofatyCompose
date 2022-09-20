@@ -93,9 +93,8 @@ class SplashViewModel @Inject constructor(
                 insertDefaultSenders()
                 SharedPreferenceManager.setFirstLunch(context)
             }
-            Handler(Looper.getMainLooper()).postDelayed({
-                insertSms()
-            }, 3000)
+            insertSms()
+
 
 
         }

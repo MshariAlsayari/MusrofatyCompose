@@ -12,6 +12,12 @@
     <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
 
+    <!--Sender Details-->
+    <string name="sender_display_name_ar">الاسم بالعربي</string>
+    <string name="sender_display_name_en">الاسم بالانجليزي</string>
+    <string name="sender_pin">تثبيت المرسل</string>
+    <string name="sender_active">تنشيط المرسل</string>
+
 
     <!--Settings-->
     <string name="pref_appearance_title">المظهر</string>
