@@ -35,6 +35,14 @@ class SenderRepo @Inject constructor(
         dao.pinSender(senderId,pin)
     }
 
+    suspend fun changeDisplayName(senderId:Int, isArabic:Boolean, name:String){
+      if (isArabic){
+          dao.updateArabicDisplayName(senderId, name)
+      }else{
+          dao.updateEnglishDisplayName(senderId, name)
+      }
+    }
+
 
 
     suspend fun getAllSendersWithSms(): List<SenderWithRelationsModel>{

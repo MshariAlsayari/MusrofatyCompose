@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -53,6 +54,24 @@ object TextComponent {
             text = text,
             modifier = modifier,
             textAlign = alignment,
+            fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
+            fontWeight = FontWeight.Normal
+        )
+
+    }
+
+
+    @Composable
+    fun ClickableText(
+        modifier: Modifier = Modifier,
+        alignment: TextAlign = TextAlign.Start,
+        text: String
+    ) {
+        Text(
+            text = text,
+            modifier = modifier,
+            textAlign = alignment,
+            color= MaterialTheme.colors.secondary,
             fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
             fontWeight = FontWeight.Normal
         )

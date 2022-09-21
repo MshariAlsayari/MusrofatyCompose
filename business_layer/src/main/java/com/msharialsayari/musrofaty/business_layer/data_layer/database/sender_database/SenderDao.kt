@@ -26,6 +26,13 @@ interface SenderDao {
     @Query("UPDATE SenderEntity SET isPined =:isPin WHERE id=:senderId")
     suspend fun pinSender(senderId:Int, isPin:Boolean)
 
+
+    @Query("UPDATE SenderEntity SET displayNameAr =:name WHERE id=:senderId")
+    suspend fun updateArabicDisplayName(senderId:Int, name:String)
+
+    @Query("UPDATE SenderEntity SET displayNameEn =:name WHERE id=:senderId")
+    suspend fun updateEnglishDisplayName(senderId:Int, name:String)
+
     @Query("UPDATE SenderEntity SET isPined =0")
     suspend fun removePinFromAll()
 
