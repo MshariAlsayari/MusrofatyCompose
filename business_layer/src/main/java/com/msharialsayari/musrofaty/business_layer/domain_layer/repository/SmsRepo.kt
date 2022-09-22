@@ -5,6 +5,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
@@ -44,6 +45,7 @@ class SmsRepo @Inject constructor(
     private suspend fun fillSmsModel(smsModel: SmsModel):SmsModel{
         smsModel.smsType = getSmsType(smsModel.body)
         smsModel.currency = getSmsCurrency(smsModel.body)
+        smsModel.senderModel = getSmsCurrency(smsModel.senderId)
         return smsModel
     }
 
@@ -57,6 +59,10 @@ class SmsRepo @Inject constructor(
     private suspend fun getSmsCurrency(body:String):String{
         val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
         return SmsUtils.getCurrency(body, currency = currencyWord )
+    }
+
+    private suspend fun getSmsCurrency(senderId:Int):SenderModel{
+        return  senderRepo.getSenderById(senderId)
     }
 
 

@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
-import com.msharialsayari.musrofaty.ui.screens.sender_details.SenderDetailsScreen
+import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen

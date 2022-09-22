@@ -1,13 +1,11 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
-import java.util.*
 
 @Parcelize
 data class SmsModel(
@@ -20,7 +18,7 @@ data class SmsModel(
     var smsType: SmsType  = SmsType.NOTHING,
     var currency: String="",
     var senderId: Int = 0,
-    var displayName: String = "",
+    var senderModel: SenderModel?,
 ) : Parcelable{
 
     val storeName :String

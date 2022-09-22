@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.sender_details
+package com.msharialsayari.musrofaty.ui.screens.sender_details_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.sender_details
+package com.msharialsayari.musrofaty.ui.screens.sender_details_screen
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
