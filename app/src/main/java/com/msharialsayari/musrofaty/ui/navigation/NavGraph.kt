@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
@@ -51,6 +52,11 @@ fun NavigationGraph(activity:Activity, navController: NavHostController, innerPa
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
         )) {backStackEntry->
             SenderDetailsScreen(backStackEntry.arguments?.getInt("senderId")?:0)
+        }
+
+        composable(Screen.SenderSmsList.route,
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType },)) {backStackEntry->
+            SenderSmsListScreen(backStackEntry.arguments?.getInt("senderId")?:0)
         }
 
         composable(Screen.SinglePermission.route) {
