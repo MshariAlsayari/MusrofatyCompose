@@ -109,8 +109,24 @@ class SendersListViewModel @Inject constructor(
             return senders.find { it.id == senderId }?.isPined ?: false
         }
 
+//        fun pinSender(senderId: Int):List<SenderModel>{
+//            val list =  senders.filter { it.id != senderId }
+//            val senderModel = senders.find { it.id == senderId }
+//            senderModel?.let {sender->
+//                list.toMutableList().add(0,sender)
+//            }
+//
+//            return list
+//
+//
+//        }
+
+
+
 
     }
+
+
 
 
 }

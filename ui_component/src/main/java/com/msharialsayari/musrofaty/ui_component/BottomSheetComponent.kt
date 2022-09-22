@@ -2,8 +2,8 @@ package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,19 +16,19 @@ object BottomSheetComponent {
     @Composable
     fun TextFieldBottomSheetComponent(modifier: Modifier= Modifier, model:TextFieldBottomSheetModel){
         val text  =  remember { mutableStateOf(model.textFieldValue) }
-        text.value = model.textFieldValue
+        text.value = text.value
         Column(modifier = modifier) {
             TextComponent.HeaderText(text = stringResource(id = model.title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
             DividerComponent.HorizontalDividerComponent()
-            TextField(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
-                value =     text.value,
-                onValueChange = {
+            TextFieldComponent.BoarderTextFieldComponent(
+                modifier = modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)),
+                textValue = text.value,
+                onValueChanged = {
                     text.value= it
                 }
             )
             ButtonComponent.ActionButton(text = model.buttonText, onClick = {
-                model.onActionButtonClicked(   text.value)
+                model.onActionButtonClicked(text.value)
             })
 
         }

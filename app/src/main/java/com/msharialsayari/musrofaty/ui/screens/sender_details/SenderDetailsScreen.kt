@@ -8,21 +8,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui_component.SwitchComponent
+import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SenderDetailsScreen(navController: NavController, senderId: Int) {
+fun SenderDetailsScreen(senderId: Int) {
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val isArBottomSheet = remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     viewModel.getSenderModel(senderId)
 
     val sheetState = rememberModalBottomSheetState(
@@ -32,7 +37,23 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { sheetState.hide() }
+        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState,false)}
+    }
+
+    if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.hide()
+            }
+        }
+
+    }else{
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.show()
+            }
+        }
+
     }
 
     ModalBottomSheetLayout(
@@ -45,8 +66,7 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
                     onActionButtonClicked = { value ->
                         viewModel.changeDisplayName(value, true)
                         coroutineScope.launch {
-                            sheetState.hide()
-
+                            handleVisibilityOfBottomSheet(sheetState,false)
                         }
                     },
                     buttonText = R.string.common_save
@@ -59,7 +79,7 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
                     onActionButtonClicked = { value ->
                         viewModel.changeDisplayName(value, false)
                         coroutineScope.launch {
-                            sheetState.hide()
+                            handleVisibilityOfBottomSheet(sheetState,false)
 
                         }
                     },
@@ -83,8 +103,7 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
                             modifier = Modifier.clickable {
                                 isArBottomSheet.value = true
                                 coroutineScope.launch {
-                                    if (sheetState.isVisible) sheetState.hide()
-                                    else sheetState.show()
+                                handleVisibilityOfBottomSheet(sheetState,!sheetState.isVisible)
                                 }
                             })
                     }
@@ -98,8 +117,7 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
                             modifier = Modifier.clickable {
                                 isArBottomSheet.value = false
                                 coroutineScope.launch {
-                                    if (sheetState.isVisible) sheetState.hide()
-                                    else sheetState.show()
+                                    handleVisibilityOfBottomSheet(sheetState,!sheetState.isVisible)
                                 }
                             })
                     }
@@ -130,4 +148,15 @@ fun SenderDetailsScreen(navController: NavController, senderId: Int) {
 
 
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show:Boolean) {
+
+    if (show){
+        sheetState.show()
+    }else{
+        sheetState.hide()
+    }
+
 }

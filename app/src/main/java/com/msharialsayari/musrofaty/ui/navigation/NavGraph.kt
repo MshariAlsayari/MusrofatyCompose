@@ -50,7 +50,7 @@ fun NavigationGraph(activity:Activity, navController: NavHostController, innerPa
         composable(Screen.SenderDetails.route,
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
         )) {backStackEntry->
-            SenderDetailsScreen(navController = navController,backStackEntry.arguments?.getInt("senderId")?:0)
+            SenderDetailsScreen(backStackEntry.arguments?.getInt("senderId")?:0)
         }
 
         composable(Screen.SinglePermission.route) {
