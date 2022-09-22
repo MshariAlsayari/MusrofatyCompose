@@ -1,11 +1,13 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_details
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +21,9 @@ class SendersDetailsViewModel @Inject constructor(
     private val pinSenderUseCase: PinSenderUseCase,
     private val activeSenderUseCase: ActiveSenderUseCase,
     private val updateSenderDisplayNameUseCase: UpdateSenderDisplayNameUseCase,
-    private val getContentByKeyUseCase: GetContentByKeyUseCase
+    private val getContentByKeyUseCase: GetContentByKeyUseCase,
+    private val updateSenderCategoryUseCase: UpdateSenderCategoryUseCase,
+
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersDetailsUiState())
@@ -90,6 +94,22 @@ class SendersDetailsViewModel @Inject constructor(
         }
     }
 
+    fun updateSenderCategory(category: SelectedItemModel) {
+        viewModelScope.launch {
+            _uiState.value.sender?.let {sender->
+                updateSenderCategoryUseCase.invoke(
+                    senderId = sender.id,
+                    contentCategoryId =category.id
+                )
+
+                _uiState.update { state->
+                    state.copy(sender = state.updateSenderCategory(category.id))
+                }
+            }
+        }
+
+    }
+
     data class SendersDetailsUiState(
         val sender: SenderModel? = null,
         val isActive: Boolean = false,
@@ -119,6 +139,24 @@ class SendersDetailsViewModel @Inject constructor(
         fun changeEnglishDisplayName(name: String): SenderModel? {
             val model = sender
             model?.displayNameEn = name
+            return model
+
+        }
+
+        fun wrapContentModel(context: Context):List<SelectedItemModel>{
+            val list = mutableListOf<SelectedItemModel>()
+            this.contents.forEach {
+                val model = SelectedItemModel(id = it.id, value = ContentModel.getDisplayName(context, it), isSelected = sender?.content?.id == it.id)
+                list.add(model)
+            }
+            return list.toList()
+
+        }
+
+        fun updateSenderCategory(contentId:Int):SenderModel?{
+            val model = sender
+            model?.content =  contents.find { it.id == contentId }
+            model?.contentId = contentId
             return model
 
         }

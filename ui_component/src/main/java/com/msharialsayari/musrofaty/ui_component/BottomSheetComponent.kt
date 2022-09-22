@@ -37,22 +37,22 @@ object BottomSheetComponent {
 
 
     @Composable
-    fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier, model:TextFieldBottomSheetModel){
-        val text  =  remember { mutableStateOf(model.textFieldValue) }
-        text.value = text.value
+    fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
+                                             @StringRes title:Int,
+                                             list: List<SelectedItemModel>,
+                                             onSelectItem:(SelectedItemModel)->Unit
+    ){
+
         Column(modifier = modifier) {
-            TextComponent.HeaderText(text = stringResource(id = model.title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
+            TextComponent.HeaderText(text = stringResource(id = title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
             DividerComponent.HorizontalDividerComponent()
-            TextFieldComponent.BoarderTextFieldComponent(
-                modifier = modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)),
-                textValue = text.value,
-                onValueChanged = {
-                    text.value= it
-                }
-            )
-            ButtonComponent.ActionButton(text = model.buttonText, onClick = {
-                model.onActionButtonClicked(text.value)
-            })
+            list.forEach {item->
+                StringSelectedItemComponent(model = item, onSelect = {
+                    item.isSelected = it
+                    onSelectItem(item)
+                })
+            }
+
 
         }
 

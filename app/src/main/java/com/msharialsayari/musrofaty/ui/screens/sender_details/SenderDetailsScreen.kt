@@ -102,7 +102,16 @@ fun SenderDetailsScreen(senderId: Int) {
             if (model!= null) {
                 BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
             }else{
-
+                BottomSheetComponent.SelectedItemListBottomSheetComponent(
+                    title = R.string.sender_category,
+                    list = uiState.wrapContentModel(context),
+                    onSelectItem = {
+                        viewModel.updateSenderCategory(it)
+                        coroutineScope.launch {
+                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                        }
+                    }
+                )
             }
         },
         modifier = Modifier.fillMaxSize()
@@ -150,6 +159,9 @@ fun SenderDetailsScreen(senderId: Int) {
                             ),
                             modifier = Modifier.clickable {
                                 bottomSheetType.value = SenderDetailsBottomSheet.CONTENT
+                                coroutineScope.launch {
+                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                                }
                             })
                     }
                 )

@@ -43,6 +43,10 @@ class SenderRepo @Inject constructor(
       }
     }
 
+    suspend fun changeCategory(senderId:Int, categoryId:Int){
+        dao.updateCategory(senderId, categoryId)
+    }
+
 
 
     suspend fun getAllSendersWithSms(): List<SenderWithRelationsModel>{

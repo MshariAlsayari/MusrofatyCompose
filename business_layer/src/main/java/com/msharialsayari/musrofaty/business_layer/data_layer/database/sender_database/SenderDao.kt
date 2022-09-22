@@ -33,6 +33,10 @@ interface SenderDao {
     @Query("UPDATE SenderEntity SET displayNameEn =:name WHERE id=:senderId")
     suspend fun updateEnglishDisplayName(senderId:Int, name:String)
 
+    @Query("UPDATE SenderEntity SET contentId =:categoryId WHERE id=:senderId")
+    suspend fun updateCategory(senderId:Int, categoryId:Int)
+
+
     @Query("UPDATE SenderEntity SET isPined =0")
     suspend fun removePinFromAll()
 
