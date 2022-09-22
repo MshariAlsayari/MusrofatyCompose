@@ -29,7 +29,7 @@ fun SenderDetailsScreen(senderId: Int) {
     val context = LocalContext.current
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val isArBottomSheet = remember { mutableStateOf(false) }
+    val bottomSheetType = remember { mutableStateOf<SenderDetailsBottomSheet?>(null) }
     val keyboardController = LocalSoftwareKeyboardController.current
     viewModel.getSenderModel(senderId)
 
@@ -40,7 +40,7 @@ fun SenderDetailsScreen(senderId: Int) {
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState,false)}
+        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
     if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
@@ -50,7 +50,7 @@ fun SenderDetailsScreen(senderId: Int) {
             }
         }
 
-    }else{
+    } else {
         DisposableEffect(Unit) {
             onDispose {
                 keyboardController?.show()
@@ -62,34 +62,48 @@ fun SenderDetailsScreen(senderId: Int) {
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            val model = if (isArBottomSheet.value) {
-                TextFieldBottomSheetModel(
-                    title = R.string.sender_display_name_ar,
-                    textFieldValue = uiState.sender?.displayNameAr ?: "",
-                    onActionButtonClicked = { value ->
-                        viewModel.changeDisplayName(value, true)
-                        coroutineScope.launch {
-                            handleVisibilityOfBottomSheet(sheetState,false)
-                        }
-                    },
-                    buttonText = R.string.common_save
-                )
+            var model:TextFieldBottomSheetModel? =null
 
-            } else {
-                TextFieldBottomSheetModel(
+            when (bottomSheetType.value) {
+
+                SenderDetailsBottomSheet.DISPLAY_NAME_AR ->
+                    model = TextFieldBottomSheetModel(
                     title = R.string.sender_display_name_en,
                     textFieldValue = uiState.sender?.displayNameEn ?: "",
+                    buttonText = R.string.common_save,
                     onActionButtonClicked = { value ->
                         viewModel.changeDisplayName(value, false)
                         coroutineScope.launch {
-                            handleVisibilityOfBottomSheet(sheetState,false)
+                            handleVisibilityOfBottomSheet(sheetState, false)
 
                         }
                     },
-                    buttonText = R.string.common_save
+
                 )
+
+                SenderDetailsBottomSheet.DISPLAY_NAME_EN -> model = TextFieldBottomSheetModel(
+                    title = R.string.sender_display_name_en,
+                    textFieldValue = uiState.sender?.displayNameEn ?: "",
+                    buttonText = R.string.common_save,
+                    onActionButtonClicked = { value ->
+                        viewModel.changeDisplayName(value, false)
+                        coroutineScope.launch {
+                            handleVisibilityOfBottomSheet(sheetState, false)
+
+                        }
+                    },
+
+                )
+
+                SenderDetailsBottomSheet.CONTENT -> {}
+                else -> {}
             }
-            BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
+
+            if (model!= null) {
+                BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
+            }else{
+
+            }
         },
         modifier = Modifier.fillMaxSize()
     ) {
@@ -104,9 +118,9 @@ fun SenderDetailsScreen(senderId: Int) {
                         TextComponent.ClickableText(
                             text = uiState.sender?.displayNameAr ?: "",
                             modifier = Modifier.clickable {
-                                isArBottomSheet.value = true
+                                bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_AR
                                 coroutineScope.launch {
-                                handleVisibilityOfBottomSheet(sheetState,!sheetState.isVisible)
+                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                                 }
                             })
                     }
@@ -118,9 +132,9 @@ fun SenderDetailsScreen(senderId: Int) {
                         TextComponent.ClickableText(
                             text = uiState.sender?.displayNameEn ?: "",
                             modifier = Modifier.clickable {
-                                isArBottomSheet.value = false
+                                bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_EN
                                 coroutineScope.launch {
-                                    handleVisibilityOfBottomSheet(sheetState,!sheetState.isVisible)
+                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                                 }
                             })
                     }
@@ -130,9 +144,12 @@ fun SenderDetailsScreen(senderId: Int) {
                     text = { Text(text = stringResource(id = R.string.sender_category)) },
                     trailing = {
                         TextComponent.ClickableText(
-                            text = ContentModel.getDisplayName(context = context ,uiState.sender?.content),
+                            text = ContentModel.getDisplayName(
+                                context = context,
+                                uiState.sender?.content
+                            ),
                             modifier = Modifier.clickable {
-
+                                bottomSheetType.value = SenderDetailsBottomSheet.CONTENT
                             })
                     }
                 )
@@ -165,12 +182,16 @@ fun SenderDetailsScreen(senderId: Int) {
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show:Boolean) {
+suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show: Boolean) {
 
-    if (show){
+    if (show) {
         sheetState.show()
-    }else{
+    } else {
         sheetState.hide()
     }
 
+}
+
+enum class SenderDetailsBottomSheet {
+    DISPLAY_NAME_AR, DISPLAY_NAME_EN, CONTENT
 }

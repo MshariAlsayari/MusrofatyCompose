@@ -2,11 +2,10 @@ package com.msharialsayari.musrofaty.ui.screens.sender_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PinSenderUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateSenderDisplayNameUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +19,27 @@ class SendersDetailsViewModel @Inject constructor(
     private val pinSenderUseCase: PinSenderUseCase,
     private val activeSenderUseCase: ActiveSenderUseCase,
     private val updateSenderDisplayNameUseCase: UpdateSenderDisplayNameUseCase,
+    private val getContentByKeyUseCase: GetContentByKeyUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersDetailsUiState())
     val uiState: StateFlow<SendersDetailsUiState> = _uiState
 
+    init {
+        getSendersContent()
+    }
+
+
+    private fun getSendersContent(){
+        viewModelScope.launch {
+            val result = getContentByKeyUseCase.invoke(ContentKey.SENDERS)
+            _uiState.update {
+                it.copy(
+                    contents = result,
+                )
+            }
+        }
+    }
     fun getSenderModel(senderId: Int) {
         viewModelScope.launch {
             val result = getSenderUseCase.invoke(senderId)
@@ -79,6 +94,7 @@ class SendersDetailsViewModel @Inject constructor(
         val sender: SenderModel? = null,
         val isActive: Boolean = false,
         val isPin: Boolean = false,
+        var contents: List<ContentModel> = emptyList()
     ) {
 
         fun pinSender(pin: Boolean): SenderModel? {
