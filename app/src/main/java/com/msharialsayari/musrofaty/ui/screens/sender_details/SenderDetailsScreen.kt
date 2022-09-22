@@ -10,10 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.SwitchComponent
 import com.msharialsayari.musrofaty.ui_component.TextComponent
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SenderDetailsScreen(senderId: Int) {
+    val context = LocalContext.current
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val isArBottomSheet = remember { mutableStateOf(false) }
@@ -119,6 +122,17 @@ fun SenderDetailsScreen(senderId: Int) {
                                 coroutineScope.launch {
                                     handleVisibilityOfBottomSheet(sheetState,!sheetState.isVisible)
                                 }
+                            })
+                    }
+                )
+
+                ListItem(
+                    text = { Text(text = stringResource(id = R.string.sender_category)) },
+                    trailing = {
+                        TextComponent.ClickableText(
+                            text = ContentModel.getDisplayName(context = context ,uiState.sender?.content),
+                            modifier = Modifier.clickable {
+
                             })
                     }
                 )

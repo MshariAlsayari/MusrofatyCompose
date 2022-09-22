@@ -8,6 +8,7 @@
     <string name="common_pin">تثبيت</string>
     <string name="common_change">تعديل</string>
     <string name="common_save">حفظ</string>
+    <string name="sender_category">فئة المرسل</string>
 
     <!--permissions-->
     <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
