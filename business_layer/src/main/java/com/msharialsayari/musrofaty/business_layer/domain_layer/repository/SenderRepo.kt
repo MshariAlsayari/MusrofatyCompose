@@ -5,13 +5,18 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_da
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.toSenderModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSenderEntity
+import com.msharialsayari.musrofaty.utils.SmsUtils
+import com.msharialsayari.musrofaty.utils.enums.SmsType
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SenderRepo @Inject constructor(
     private val dao: SenderDao,
+    private val wordDetectorRepo: WordDetectorRepo,
     private val contentRepo: ContentRepo
 ) {
 
@@ -22,9 +27,46 @@ class SenderRepo @Inject constructor(
     }
 
     suspend fun getSenderById(senderId:Int):SenderModel{
-        val model =  dao.getSenderById(senderId).toSenderModel()
+        val model = dao.getSenderById(senderId).toSenderModel()
         return fillSenderModel(model)
     }
+
+    suspend fun getSenderByIdWithSms(senderId:Int):SenderWithRelationsModel{
+        val model =  dao.getSenderByIdWithSms(senderId)
+        var senderModel = model.sender.toSenderModel()
+        senderModel = fillSenderModel(senderModel)
+        val smsList = model.sms.map {
+            var smsModel = it.toSmsModel()
+            smsModel = fillSmsModel(smsModel)
+            smsModel.senderModel = senderModel
+            return@map smsModel
+        }
+        return  SenderWithRelationsModel(sender = senderModel, sms = smsList)
+    }
+
+
+
+
+    private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
+        smsModel.smsType = getSmsType(smsModel.body)
+        smsModel.currency = getSmsCurrency(smsModel.body)
+
+        return smsModel
+    }
+
+
+    private suspend fun getSmsType(body:String): SmsType {
+        val expensesWord = wordDetectorRepo.getAllActive(WordDetectorType.EXPENSES_WORDS).map { it.word }
+        val incomesWord = wordDetectorRepo.getAllActive(WordDetectorType.INCOME_WORDS).map { it.word }
+        return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord )
+    }
+
+    private suspend fun getSmsCurrency(body:String):String{
+        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        return SmsUtils.getCurrency(body, currency = currencyWord )
+    }
+
+
 
     suspend fun activeSender(senderId:Int, active:Boolean){
         dao.activeSender(senderId,active)

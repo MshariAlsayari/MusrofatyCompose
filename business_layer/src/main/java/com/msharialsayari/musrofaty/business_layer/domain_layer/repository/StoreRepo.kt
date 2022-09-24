@@ -24,7 +24,7 @@ class StoreRepo @Inject constructor(
 ) {
 
     private suspend fun getAllSms(): List<SmsModel> {
-        return smsRepo.getAllSms()
+        return emptyList()
     }
 
 

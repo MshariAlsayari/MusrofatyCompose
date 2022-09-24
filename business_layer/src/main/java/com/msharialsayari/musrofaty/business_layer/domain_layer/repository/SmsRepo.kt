@@ -24,28 +24,10 @@ class SmsRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    suspend fun getAllSms(): List<SmsModel> {
-        val senders = senderRepo.getAllActive().map { it.senderName }.toList()
-        val list = mutableListOf<SmsModel>()
-        senders.map {
-            list.addAll(getSmsBySenderName(it))
-        }
-        return list
-    }
-
-
-    suspend fun getSmsBySenderName(bankName: String): List<SmsModel> {
-        val list = mutableListOf<SmsModel>()
-        dao.getSmsBySenderName(bankName).map {
-            list.add(fillSmsModel(it.toSmsModel()))
-        }
-        return list
-    }
-
     private suspend fun fillSmsModel(smsModel: SmsModel):SmsModel{
         smsModel.smsType = getSmsType(smsModel.body)
         smsModel.currency = getSmsCurrency(smsModel.body)
-        smsModel.senderModel = getSmsCurrency(smsModel.senderId)
+        smsModel.senderModel = getSender(smsModel.senderId)
         return smsModel
     }
 
@@ -61,7 +43,7 @@ class SmsRepo @Inject constructor(
         return SmsUtils.getCurrency(body, currency = currencyWord )
     }
 
-    private suspend fun getSmsCurrency(senderId:Int):SenderModel{
+    private suspend fun getSender(senderId:Int):SenderModel{
         return  senderRepo.getSenderById(senderId)
     }
 

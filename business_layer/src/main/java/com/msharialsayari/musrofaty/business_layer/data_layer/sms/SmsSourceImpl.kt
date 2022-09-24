@@ -14,7 +14,6 @@ import javax.inject.Singleton
 
 @Singleton
 class SmsSourceImpl @Inject constructor(
-    private val wordDetectorRepo: WordDetectorRepo,
     private val senderRepo: SenderRepo
 ) : SmsDataSource {
 

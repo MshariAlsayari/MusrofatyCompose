@@ -14,6 +14,10 @@ interface SenderDao {
     suspend fun getSenderById(senderId:Int):SenderEntity
 
     @Transaction
+    @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
+    suspend fun getSenderByIdWithSms(senderId:Int): SenderWithRelations
+
+    @Transaction
     @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
     suspend fun getAllSendersWithSms(): List<SenderWithRelations>
 
