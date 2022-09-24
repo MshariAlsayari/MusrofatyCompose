@@ -3,9 +3,12 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderWithSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,19 +19,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SenderSmsListViewModel @Inject constructor(
-    private val getSenderUseCase: GetSenderUseCase,
+    private val getSenderWithSmsUseCase: GetSenderWithSmsUseCase
 
 
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
-    fun getSenderModel(senderId: Int) {
+    fun getSenderWithAllSms(senderId: Int) {
         viewModelScope.launch {
-            val result = getSenderUseCase.invoke(senderId)
             _uiState.update {
-                it.copy(sender = result,)
+                it.copy(isLoading = true)
+            }
+            val result = getSenderWithSmsUseCase.invoke(senderId)
+            _uiState.update {
+                it.copy(sender = result.sender, sms = result.sms, isLoading = false)
             }
         }
 
@@ -36,16 +42,32 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     data class SenderSmsListUiState(
-        var isLoading:Boolean = false,
+        var isLoading: Boolean = false,
         val sender: SenderModel? = null,
         var sms: List<SmsModel> = emptyList()
-    ){
+    ) {
         companion object {
             fun wrapSendersToSenderComponentModelList(
                 sms: List<SmsModel>,
                 context: Context
             ): List<SmsComponentModel> {
                 val list = mutableListOf<SmsComponentModel>()
+                sms.forEach {
+                    val model = SmsComponentModel(
+                        id = it.id,
+                        timestamp = it.timestamp,
+                        body = it.body,
+                        currency = it.currency,
+                        senderDisplayName = SenderModel.getDisplayName(context, it.senderModel),
+                        senderCategory = ContentModel.getDisplayName(
+                            context,
+                            it.senderModel?.content
+                        )
+                    )
+
+                    list.add(model)
+                }
+
 
                 return list
 

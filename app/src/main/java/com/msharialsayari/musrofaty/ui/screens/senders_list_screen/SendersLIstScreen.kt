@@ -1,11 +1,14 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -14,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.*
 
@@ -51,18 +55,25 @@ fun SendersListScreen(navController: NavHostController) {
 
 
     VerticalEasyList(
-        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(uiState.senders, navController.context),
-        views = { SenderComponent(model = it) },
-        dividerView = { DividerComponent.HorizontalDividerComponent()},
-        onItemClicked = {item, position ->  },
+        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(
+            uiState.senders,
+            navController.context
+        ),
+        view = { SenderComponent(model = it) },
+        dividerView = { DividerComponent.HorizontalDividerComponent() },
+        onItemClicked = { item, position ->
+            navController.navigate("sender_sms_list/${item.senderId}")
+
+
+        },
         isLoading = uiState.isLoading,
         startActions = listOf(deleteAction),
-        endActions = listOf(pinAction,modifyAction),
-        loadingProgress = {ProgressBar.CircleProgressBar()},
-        emptyView = {EmptyComponent.EmptyTextComponent()},
+        endActions = listOf(pinAction, modifyAction),
+        loadingProgress = { ProgressBar.CircleProgressBar() },
+        emptyView = { EmptyComponent.EmptyTextComponent() },
         onRefresh = { viewModel.getAllSenders() }
     )
-    
+
 
 }
 
