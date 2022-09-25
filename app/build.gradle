@@ -125,6 +125,9 @@ dependencies {
     //EasyList
     implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.0.7'
 
+    implementation 'com.google.accompanist:accompanist-swiperefresh:0.24.13-rc'
+
+
 
 
     testImplementation 'junit:junit:4.13.2'

@@ -6,10 +6,8 @@ import androidx.compose.runtime.Composable
 
 object ProgressBar {
 
-
     @Composable
     fun CircleProgressBar(){
-        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
-
+         CircularProgressIndicator(color = MaterialTheme.colors.secondary)
     }
 }

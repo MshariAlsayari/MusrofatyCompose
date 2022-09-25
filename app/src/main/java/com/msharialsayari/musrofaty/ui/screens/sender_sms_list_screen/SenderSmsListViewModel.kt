@@ -3,11 +3,9 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderWithSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,10 +41,11 @@ class SenderSmsListViewModel @Inject constructor(
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,
+        var isRefreshing: Boolean = false,
         val sender: SenderModel? = null,
         var sms: List<SmsModel> = emptyList()
     ) {
-        companion object {
+
             fun wrapSendersToSenderComponentModelList(
                 sms: List<SmsModel>,
                 context: Context
@@ -62,7 +61,8 @@ class SenderSmsListViewModel @Inject constructor(
                         senderCategory = ContentModel.getDisplayName(
                             context,
                             it.senderModel?.content
-                        )
+                        ),
+                        senderIcon = sender?.icon
                     )
 
                     list.add(model)
@@ -74,6 +74,6 @@ class SenderSmsListViewModel @Inject constructor(
             }
 
 
-        }
+
     }
 }

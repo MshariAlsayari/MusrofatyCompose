@@ -1,13 +1,20 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 
 
 @Composable
@@ -27,7 +34,13 @@ private fun SenderInfoComponent(senderName:String,senderCategory:String,senderIc
         secondaryText = { Text(text = senderCategory)},
         icon = {
             senderIcon?.let {
-                Icon(painter = painterResource(id = senderIcon), contentDescription = null)
+                Image(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                        .background(color = Color.White),
+                    painter = painterResource(id = it), contentDescription = null)
+
             }
         }
     )
@@ -37,6 +50,7 @@ private fun SenderInfoComponent(senderName:String,senderCategory:String,senderIc
 @Composable
 private fun SmsComponent(body: String){
     TextComponent.BodyText(
+        modifier=Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
         text = body
     )
 
