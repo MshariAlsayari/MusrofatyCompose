@@ -21,11 +21,13 @@ data class SmsEntity(
     var body: String = "",
     @ColumnInfo(name = "senderId")
     var senderId: Int,
+    @ColumnInfo(name = "isFavorite")
+    var isFavorite: Boolean = false,
 ) : Parcelable
 
 
 
-fun SmsEntity.toSmsModel()= SmsModel(id, senderName, timestamp, body, senderId = senderId)
+fun SmsEntity.toSmsModel()= SmsModel(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite)
 
 
 

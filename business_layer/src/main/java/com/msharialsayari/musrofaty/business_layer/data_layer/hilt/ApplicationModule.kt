@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.hilt
 
 import android.content.Context
 import androidx.room.Room
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.AppDatabase
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.*
 import dagger.Module
 import dagger.Provides
@@ -31,7 +30,8 @@ object ApplicationModule {
                 MIGRATION_10_11,
                 MIGRATION_11_12,
                 MIGRATION_12_13,
-                MIGRATION_13_14
+                MIGRATION_13_14,
+                MIGRATION_14_15
 
             )
             .build()

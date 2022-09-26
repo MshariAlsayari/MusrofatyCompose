@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderWithSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SenderSmsListViewModel @Inject constructor(
-    private val getSenderWithSmsUseCase: GetSenderWithSmsUseCase
+    private val getSenderWithSmsUseCase: GetSenderWithSmsUseCase,
+    private val favoriteSmsUseCase: FavoriteSmsUseCase
 
 
 ) : ViewModel() {
@@ -38,6 +40,12 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
+    fun favoriteSms(id:String , favorite:Boolean){
+        viewModelScope.launch {
+            favoriteSmsUseCase.invoke(id, favorite)
+        }
+    }
+
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,
@@ -55,6 +63,7 @@ class SenderSmsListViewModel @Inject constructor(
                     val model = SmsComponentModel(
                         id = it.id,
                         timestamp = it.timestamp,
+                        isFavorite = it.isFavorite,
                         body = it.body,
                         currency = it.currency,
                         senderDisplayName = SenderModel.getDisplayName(context, it.senderModel),

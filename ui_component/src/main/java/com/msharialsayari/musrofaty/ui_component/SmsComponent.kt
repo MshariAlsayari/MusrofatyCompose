@@ -2,17 +2,22 @@ package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ListItem
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import com.msharialsayari.musrofaty.utils.DateUtils
 
 
 @Composable
@@ -27,6 +32,7 @@ fun SmsComponent(
     ) {
         SenderInfoComponent(model.senderDisplayName, model.senderCategory, model.senderIcon)
         SmsBodyComponent(model.body)
+        SmsInfoRowComponent(model)
         SmsActionRowComponent(model, onActionClicked = { model, action ->
             onActionClicked(model, action)
         })
@@ -63,6 +69,17 @@ private fun SmsBodyComponent(body: String) {
 }
 
 @Composable
+private fun SmsInfoRowComponent(
+    model: SmsComponentModel,
+){
+    TextComponent.PlaceholderText(
+        modifier=Modifier.padding(top = dimensionResource(id = R.dimen.default_margin16), start = dimensionResource(id = R.dimen.default_margin16), end = dimensionResource(id = R.dimen.default_margin16)),
+        text = DateUtils.getDateByTimestamp(model.timestamp) ?:""
+    )
+
+}
+
+@Composable
 private fun SmsActionRowComponent(
     model: SmsComponentModel,
     onActionClicked: (SmsComponentModel, SmsActionType) -> Unit
@@ -70,7 +87,9 @@ private fun SmsActionRowComponent(
     val isFavoriteState = remember { mutableStateOf(model.isFavorite) }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(id = R.dimen.default_margin16))
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = dimensionResource(id = R.dimen.default_margin16))
     ) {
 
         DividerComponent.HorizontalDividerComponent()
@@ -88,17 +107,16 @@ private fun SmsActionRowComponent(
                     model.isFavorite = isFavoriteState.value
                     onActionClicked(model, SmsActionType.FAVORITE)
                 },
-                imageVector = Icons.Default.Favorite,
+                imageVector = Icons.Outlined.Favorite,
                 contentDescription = null,
-                tint = if (isFavoriteState.value) Color.Red else LocalContentColor.current.copy(
-                    alpha = LocalContentAlpha.current
-                )
+                tint = if (isFavoriteState.value) Color.Red else colorResource(id = R.color.lightGray)
             )
             Icon(
                 modifier = Modifier.clickable {
                     onActionClicked(model, SmsActionType.SHARE)
                 },
-                imageVector = Icons.Default.Share,
+                tint = colorResource(id = R.color.lightGray),
+                imageVector = Icons.Outlined.Share,
                 contentDescription = null
             )
 

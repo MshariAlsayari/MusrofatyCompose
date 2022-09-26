@@ -8,4 +8,5 @@
     <color name="blackOnyx">#1d252d</color>
     <color name="lightBlackOnyx">#333a42</color>
     <color name="deletAction">#F60313</color>
+    <color name="lightGray">#979797</color>
 </resources>

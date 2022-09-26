@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +12,7 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.ui_component.SmsActionType
 import com.msharialsayari.musrofaty.ui_component.SmsComponent
 
 
@@ -28,8 +28,11 @@ fun SenderSmsListScreen(senderId: Int) {
 
     VerticalEasyList(
         list = uiState.wrapSendersToSenderComponentModelList(uiState.sms, context),
-        view = { SmsComponent(model = it, onActionClicked = { mmodel,action->
-            Log.i("Mshari", action.name)
+        view = { SmsComponent(model = it, onActionClicked = { model,action->
+           when(action){
+               SmsActionType.FAVORITE -> viewModel.favoriteSms(model.id, model.isFavorite)
+               SmsActionType.SHARE -> {}
+           }
         }) },
         dividerView = { HorizontalDividerComponent() },
         onItemClicked = { item, position -> },

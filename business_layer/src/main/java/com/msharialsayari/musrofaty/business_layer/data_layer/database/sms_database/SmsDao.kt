@@ -17,6 +17,9 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE id = :id")
     suspend fun getSms(id:String): SmsEntity?
 
+    @Query("UPDATE SmsEntity SET isFavorite =:favorite WHERE id=:id")
+    suspend fun favoriteSms(id:String, favorite:Boolean)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 

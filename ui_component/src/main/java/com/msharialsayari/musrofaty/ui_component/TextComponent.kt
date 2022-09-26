@@ -4,6 +4,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +54,7 @@ object TextComponent {
         Text(
             text = text,
             modifier = modifier,
+            color= colorResource(id = R.color.lightGray),
             textAlign = alignment,
             fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
             fontWeight = FontWeight.Normal

@@ -3,7 +3,6 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 import android.content.Context
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
@@ -45,6 +44,10 @@ class SmsRepo @Inject constructor(
 
     private suspend fun getSender(senderId:Int):SenderModel{
         return  senderRepo.getSenderById(senderId)
+    }
+
+    suspend fun favoriteSms(smsId:String, favorite:Boolean){
+        return  dao.favoriteSms(smsId,favorite)
     }
 
 

@@ -19,6 +19,7 @@ data class SmsModel(
     var currency: String="",
     var senderId: Int = 0,
     var senderModel: SenderModel?=null,
+    var isFavorite: Boolean = false,
 ) : Parcelable{
 
     val storeName :String
@@ -27,4 +28,4 @@ data class SmsModel(
 }
 
 
-fun SmsModel.toSmsEntity()=SmsEntity(id, senderName, timestamp, body,senderId)
+fun SmsModel.toSmsEntity()=SmsEntity(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite)
