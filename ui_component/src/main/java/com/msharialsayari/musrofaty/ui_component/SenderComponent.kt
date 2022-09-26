@@ -1,14 +1,12 @@
 package com.msharialsayari.musrofaty.ui_component
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 
 
 @Composable
@@ -22,13 +20,9 @@ fun SenderComponent(model: SenderComponentModel){
             ),
     ) {
 
-        if (model.senderIcon != null)
-        Image(modifier = Modifier
-            .width(50.dp)
-            .height(50.dp)
-            .background(color = Color.White),
-            painter = painterResource(id = model.senderIcon!!),
-            contentDescription = null)
+        model.senderIcon?.let {
+            AvatarComponent(it)
+        }
         Column(modifier = Modifier
             .weight(1f)
             .padding(start = dimensionResource(id = R.dimen.default_margin16))) {

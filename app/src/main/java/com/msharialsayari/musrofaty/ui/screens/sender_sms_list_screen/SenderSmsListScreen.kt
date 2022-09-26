@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +28,9 @@ fun SenderSmsListScreen(senderId: Int) {
 
     VerticalEasyList(
         list = uiState.wrapSendersToSenderComponentModelList(uiState.sms, context),
-        view = { SmsComponent(model = it) },
+        view = { SmsComponent(model = it, onActionClicked = { mmodel,action->
+            Log.i("Mshari", action.name)
+        }) },
         dividerView = { HorizontalDividerComponent() },
         onItemClicked = { item, position -> },
         isLoading = uiState.isLoading,
