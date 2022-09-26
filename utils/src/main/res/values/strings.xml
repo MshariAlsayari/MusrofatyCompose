@@ -3,4 +3,28 @@
     <string name="incomes_sms_type">Incomes</string>
     <string name="expenses_sms_type">Expenses</string>
     <string name="nothing_sms_type">No Type</string>
+
+    <!--   Time duration -->
+    <string name="common_minute">Minute</string>
+    <string name="common_two_minutes">Minutes</string>
+    <string name="common_minutes">Minutes</string>
+    <string name="common_second">Second</string>
+    <string name="common_two_seconds">Seconds</string>
+    <string name="common_seconds">Seconds</string>
+    <string name="common_hour">Hour</string>
+    <string name="common_two_hours">Hours</string>
+    <string name="common_hours">Hours</string>
+    <string name="common_day">Day</string>
+    <string name="common_two_days">Days</string>
+    <string name="common_days">Days</string>
+    <string name="common_week">Week</string>
+    <string name="common_two_weeks">Weeks</string>
+    <string name="common_weeks">Weeks</string>
+    <string name="common_month">Month</string>
+    <string name="common_two_months">Months</string>
+    <string name="common_months">Months</string>
+    <string name="common_year">Year</string>
+    <string name="common_two_years">Years</string>
+    <string name="common_years">Years</string>
+    <string name="common_ago">ago</string>
 </resources>

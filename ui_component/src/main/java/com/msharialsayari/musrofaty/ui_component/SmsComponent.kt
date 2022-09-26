@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -72,9 +73,10 @@ private fun SmsBodyComponent(body: String) {
 private fun SmsInfoRowComponent(
     model: SmsComponentModel,
 ){
+    val context = LocalContext.current
     TextComponent.PlaceholderText(
         modifier=Modifier.padding(top = dimensionResource(id = R.dimen.default_margin16), start = dimensionResource(id = R.dimen.default_margin16), end = dimensionResource(id = R.dimen.default_margin16)),
-        text = DateUtils.getDateByTimestamp(model.timestamp) ?:""
+        text = DateUtils.getHowLongPostDate(context , model.timestamp)
     )
 
 }
