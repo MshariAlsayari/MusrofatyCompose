@@ -52,9 +52,7 @@ private fun SenderInfoComponent(
         text = { Text(text = senderName) },
         secondaryText = { Text(text = senderCategory) },
         icon = {
-            senderIcon?.let {
-                AvatarComponent(it)
-            }
+            AvatarComponent(senderIcon?: com.msharialsayari.musrofaty.utils.R.drawable.ic_launcher_foreground)
         }
     )
 

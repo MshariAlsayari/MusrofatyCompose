@@ -83,7 +83,6 @@ class SendersListViewModel @Inject constructor(
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
-                                senderIcon = it.icon
                             )
                         )
                     } else {
@@ -93,7 +92,6 @@ class SendersListViewModel @Inject constructor(
                                 senderName = it.senderName,
                                 displayName = SenderModel.getDisplayName(context, it),
                                 senderType = ContentModel.getDisplayName(context, it.content),
-                                senderIcon = it.icon
                             )
                         )
                     }

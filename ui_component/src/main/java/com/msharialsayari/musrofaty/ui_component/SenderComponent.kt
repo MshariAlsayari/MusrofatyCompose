@@ -20,9 +20,9 @@ fun SenderComponent(model: SenderComponentModel){
             ),
     ) {
 
-        model.senderIcon?.let {
-            AvatarComponent(it)
-        }
+
+        AvatarComponent(model.senderIcon?: com.msharialsayari.musrofaty.utils.R.drawable.ic_launcher_foreground )
+
         Column(modifier = Modifier
             .weight(1f)
             .padding(start = dimensionResource(id = R.dimen.default_margin16))) {
@@ -43,7 +43,7 @@ data class SenderComponentModel(
     var senderName:String="",
     var displayName:String="",
     var senderType:String="",
-    var senderIcon:Int?,
+    var senderIcon:Int?=null,
 )
 
 

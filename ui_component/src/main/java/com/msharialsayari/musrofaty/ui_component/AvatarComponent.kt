@@ -19,7 +19,7 @@ fun AvatarComponent(icon:Int) {
             .width(50.dp)
             .height(50.dp)
             .clip(CircleShape)
-            .background(color = Color.White),
+            .background(color = Color.Gray),
         painter = painterResource(id = icon), contentDescription = null
     )
 }

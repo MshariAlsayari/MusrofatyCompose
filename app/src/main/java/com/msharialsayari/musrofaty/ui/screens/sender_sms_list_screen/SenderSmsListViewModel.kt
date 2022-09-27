@@ -71,7 +71,6 @@ class SenderSmsListViewModel @Inject constructor(
                             context,
                             it.senderModel?.content
                         ),
-                        senderIcon = sender?.icon
                     )
 
                     list.add(model)
