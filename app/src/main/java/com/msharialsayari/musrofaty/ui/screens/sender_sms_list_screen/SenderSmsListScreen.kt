@@ -57,18 +57,15 @@ fun SenderSmsListScreen(senderId: Int) {
     val context = LocalContext.current
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit){
-        viewModel.getSenderWithAllSms(senderId)
-    }
-
-
     val toolbarHeightRange = with(LocalDensity.current) {
         MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx()
     }
     val toolbarState = rememberToolbarState(toolbarHeightRange)
     val listState = rememberLazyListState()
-
     val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit){
+        viewModel.getSenderWithAllSms(senderId)
+    }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
