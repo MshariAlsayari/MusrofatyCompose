@@ -1,6 +1,9 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
@@ -8,9 +11,11 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.paging_source.SmsPagingSource
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +28,8 @@ class SmsRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    private suspend fun fillSmsModel(smsModel: SmsModel):SmsModel{
+
+    private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
         smsModel.smsType = getSmsType(smsModel.body)
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.senderModel = getSender(smsModel.senderId)
@@ -31,24 +37,38 @@ class SmsRepo @Inject constructor(
     }
 
 
-    private suspend fun getSmsType(body:String):SmsType{
+    private suspend fun getSmsType(body: String): SmsType {
         val expensesWord = wordDetectorRepo.getAllActive(WordDetectorType.EXPENSES_WORDS).map { it.word }
         val incomesWord = wordDetectorRepo.getAllActive(WordDetectorType.INCOME_WORDS).map { it.word }
-        return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord )
+        return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord)
     }
 
-    private suspend fun getSmsCurrency(body:String):String{
-        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.getCurrency(body, currency = currencyWord )
+    private suspend fun getSmsCurrency(body: String): String {
+        val currencyWord =
+            wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        return SmsUtils.getCurrency(body, currency = currencyWord)
     }
 
-    private suspend fun getSender(senderId:Int):SenderModel{
-        return  senderRepo.getSenderById(senderId)
+    private suspend fun getSender(senderId: Int): SenderModel {
+        return senderRepo.getSenderById(senderId)
     }
 
-    suspend fun favoriteSms(smsId:String, favorite:Boolean){
-        return  dao.favoriteSms(smsId,favorite)
+    suspend fun favoriteSms(smsId: String, favorite: Boolean) {
+        return dao.favoriteSms(smsId, favorite)
     }
+
+
+    suspend fun getPagesSmsList(senderId: Int): Flow<PagingData<SmsModel>> = Pager(
+        config = PagingConfig(pageSize = 20, prefetchDistance = 2),
+        pagingSourceFactory = {
+            SmsPagingSource(
+                smsDao = dao,
+                wordDetectorRepo = wordDetectorRepo,
+                senderRepo = senderRepo,
+                query = senderId
+            )
+        }
+    ).flow
 
 
     suspend fun insert() {
@@ -57,5 +77,6 @@ class SmsRepo @Inject constructor(
         smsList.map { smsEntityList.add(it.toSmsEntity()) }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
+
 
 }

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+
 @Dao
 interface SmsDao {
 
@@ -22,5 +23,8 @@ interface SmsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg smsEntity: SmsEntity)
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
+     fun getSmsPagedList(senderId:Int): List<SmsEntity>
 
 }
