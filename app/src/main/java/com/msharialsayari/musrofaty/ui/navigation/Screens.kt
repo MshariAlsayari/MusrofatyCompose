@@ -4,8 +4,8 @@ import com.msharialsayari.musrofaty.R
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash_screen")
-    object SenderDetails : Screen("sender_details/{senderId}")
-    object SenderSmsList : Screen("sender_sms_list/{senderId}")
+    object SenderDetails : Screen("sender_details")
+    object SenderSmsList : Screen("sender_sms_list")
     object SinglePermission : Screen("single_permission_screen")
 
 }

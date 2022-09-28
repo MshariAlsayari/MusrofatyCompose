@@ -22,41 +22,63 @@ import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 
 @Composable
-fun NavigationGraph(activity:Activity, navController: NavHostController, innerPadding: PaddingValues) {
+fun NavigationGraph(
+    activity: Activity,
+    navController: NavHostController,
+    innerPadding: PaddingValues
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
         Modifier.padding(innerPadding)
     ) {
         composable(Screen.Splash.route) {
-            SplashScreen(navController = navController, settingPermission = {
+            SplashScreen(settingPermission = {
                 val intent = Intent()
                 intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                 val uri: Uri = Uri.fromParts("package", navController.context.packageName, null)
                 intent.data = uri
                 activity.startActivityForResult(intent, 123)
+            }, onLoadingDone = {
+                navController.navigate(BottomNavItem.Dashboard.screen_route) {
+                    popUpTo(Screen.Splash.route) {
+                        inclusive = true
+                    }
+                }
             })
         }
 
         composable(BottomNavItem.Dashboard.screen_route) {
-            DashboardScreen(navController = navController)
+            DashboardScreen()
         }
         composable(BottomNavItem.SendersList.screen_route) {
-            SendersListScreen(navController = navController)
+            SendersListScreen(
+                onNavigateToSenderDetails = {
+                    navController.navigate(Screen.SenderDetails.route + "/${it}")
+                },
+                onNavigateToSenderSmsList = {
+                    navController.navigate(Screen.SenderSmsList.route + "/${it}")
+                }
+            )
         }
         composable(BottomNavItem.Setting.screen_route) {
-            SettingsScreen(navController = navController)
+            SettingsScreen()
         }
 
-        composable(Screen.SenderDetails.route,
+        composable(Screen.SenderDetails.route + "/{senderId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
-        )) {backStackEntry->
-            SenderDetailsScreen(backStackEntry.arguments?.getInt("senderId")?:0)
+            )) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val senderId = arguments?.getInt("senderId") ?: 0
+            SenderDetailsScreen(senderId)
         }
 
-        composable(Screen.SenderSmsList.route,
-            arguments = listOf(navArgument("senderId") { type = NavType.IntType },)) {backStackEntry->
-            SenderSmsListScreen(backStackEntry.arguments?.getInt("senderId")?:0)
+        composable(Screen.SenderSmsList.route + "/{senderId}",
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
+            )) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val senderId = arguments?.getInt("senderId") ?: 0
+            SenderSmsListScreen(senderId)
         }
 
         composable(Screen.SinglePermission.route) {

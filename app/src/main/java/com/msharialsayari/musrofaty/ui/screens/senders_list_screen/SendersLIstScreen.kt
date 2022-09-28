@@ -6,11 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
@@ -18,7 +18,8 @@ import com.msharialsayari.musrofaty.ui_component.*
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun SendersListScreen(navController: NavHostController) {
+fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigateToSenderSmsList:(senderId:Int)->Unit) {
+    val context = LocalContext.current
     val viewModel: SendersListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -45,19 +46,21 @@ fun SendersListScreen(navController: NavHostController) {
         backgroundColor = colorResource(R.color.modifyAction),
         onClicked = { position, item ->
             //Navigate to senderDetailScreen
-            navController.navigate("sender_details/${item.senderId}")
+
+            onNavigateToSenderDetails(item.senderId)
         })
 
 
     VerticalEasyList(
         list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(
             uiState.senders,
-            navController.context
+            context
         ),
         view = { SenderComponent(model = it) },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-            navController.navigate("sender_sms_list/${item.senderId}")
+
+            onNavigateToSenderSmsList(item.senderId)
 
 
         },
