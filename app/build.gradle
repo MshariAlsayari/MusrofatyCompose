@@ -107,8 +107,17 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
 
     //room
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
     implementation "androidx.room:room-ktx:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation("androidx.room:room-paging:$roomVersion")
+    
+    implementation "androidx.paging:paging-compose:1.0.0-alpha16"
+
+
+
+
+
 
     implementation 'com.itextpdf:itextg:5.5.10'
 
@@ -124,7 +133,7 @@ dependencies {
 
 
     //EasyList
-    implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.1.0'
+    implementation 'com.github.MshariAlsayari:Easy-List-Compose:3.1.1'
 
     implementation 'com.google.accompanist:accompanist-swiperefresh:0.24.13-rc'
 

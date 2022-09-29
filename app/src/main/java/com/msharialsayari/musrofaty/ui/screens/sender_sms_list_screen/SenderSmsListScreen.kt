@@ -3,10 +3,8 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
@@ -25,15 +23,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
-import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
-import com.msharialsayari.musrofaty.ui_component.EmptyComponent
-import com.msharialsayari.musrofaty.ui_component.ProgressBar
 import com.msharialsayari.musrofaty.ui_component.SmsActionType
 import com.msharialsayari.musrofaty.ui_component.SmsComponent
 import kotlinx.coroutines.cancelChildren
@@ -125,21 +123,62 @@ fun LazySenderSms(
     senderId:Int
 ) {
     val context = LocalContext.current
-    VerticalEasyList(
-        list = uiState.wrapSendersToSenderComponentModelList(uiState.sms, context),
-        view = { SmsComponent(model = it, onActionClicked = { model,action->
-            when(action){
-                SmsActionType.FAVORITE -> viewModel.favoriteSms(model.id, model.isFavorite)
-                SmsActionType.SHARE -> {}
-            }
-        }) },
-        dividerView = { HorizontalDividerComponent() },
-        onItemClicked = { item, position -> },
-        isLoading = uiState.isLoading,
-        loadingProgress = { ProgressBar.CircleProgressBar() },
-        emptyView = { EmptyComponent.EmptyTextComponent() },
-        onRefresh = { viewModel.getSenderWithAllSms(senderId)}
-    )
+    val lazyMovieItems: LazyPagingItems<SmsEntity>? = uiState.smsFlow?.collectAsLazyPagingItems()
+    val listState       = rememberLazyListState()
+
+    if (lazyMovieItems != null)
+    LazyColumn(
+        modifier            = Modifier,
+        state               = listState,
+        verticalArrangement = Arrangement.spacedBy(0.dp),
+        contentPadding      = PaddingValues(
+            horizontal          = 0.dp,
+            vertical            = 0.dp
+        )
+    ) {
+
+
+        items( key ={sms-> sms.id} , items= lazyMovieItems ) {  item ->
+
+            if (item != null)
+            SmsComponent(model = uiState.wrapSendersToSenderComponentModelList(item,context), onActionClicked = { model, action ->
+                when (action) {
+                    SmsActionType.FAVORITE -> viewModel.favoriteSms(model.id, model.isFavorite)
+                    SmsActionType.SHARE -> {}
+                }
+            })
+
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+
+//    VerticalEasyList(
+//        list = uiState.wrapSendersToSenderComponentModelList(lazyMovieItems?.itemSnapshotList?.items?: emptyList(), context) ,
+//        view = { SmsComponent(model = it, onActionClicked = { model,action->
+//            when(action){
+//                SmsActionType.FAVORITE -> viewModel.favoriteSms(model.id, model.isFavorite)
+//                SmsActionType.SHARE -> {}
+//            }
+//        }) },
+//        onLoadingNextPage = {
+//
+//        },
+//        dividerView = { HorizontalDividerComponent() },
+//        onItemClicked = { item, position -> },
+//        isLoading = uiState.isLoading,
+//        loadingProgress = { ProgressBar.CircleProgressBar() },
+//        emptyView = { EmptyComponent.EmptyTextComponent() },
+//        onRefresh = { viewModel.getSenderWithAllSms(senderId)}
+//    )
 
 }
 

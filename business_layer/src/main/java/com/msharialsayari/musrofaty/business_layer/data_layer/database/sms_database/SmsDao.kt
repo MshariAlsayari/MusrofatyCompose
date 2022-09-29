@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database
 
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -25,6 +26,6 @@ interface SmsDao {
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
-     fun getSmsPagedList(senderId:Int): List<SmsEntity>
+     fun getSmsPagedList(senderId:Int): PagingSource<Int,SmsEntity>
 
 }
