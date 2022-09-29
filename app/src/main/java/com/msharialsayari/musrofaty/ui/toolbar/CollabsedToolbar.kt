@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -19,7 +20,7 @@ import kotlin.math.roundToInt
 
 private val ContentPadding = 8.dp
 private val Elevation = 4.dp
-private val ButtonSize = 24.dp
+
 private const val Alpha = 0.75f
 
 private val ExpandedPadding = 1.dp
@@ -78,10 +79,10 @@ fun CollapsingToolbarExpandedPreview() {
 
 @Composable
 fun CollapsingToolbar(
-    modifier: Modifier = Modifier,
-    title:String,
-    background: (@Composable () -> Unit)?=null,
-    progress: Float,
+    modifier   : Modifier = Modifier,
+    title      :String,
+    background : (@Composable () -> Unit)?=null,
+    progress   : Float,
 
 ) {
     val costaRicaHeight = with(LocalDensity.current) {
@@ -95,20 +96,16 @@ fun CollapsingToolbar(
     }
 
     Surface(
-        color = MaterialTheme.colors.primary,
         elevation = Elevation,
         modifier = modifier
     ) {
         Box (modifier = Modifier.fillMaxSize()) {
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .align(
-                    BiasAlignment(0f, 1f - ((1f - progress) * 0.75f))
-                )
-                .graphicsLayer {
-                    alpha = progress * Alpha
-                }) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                .align(BiasAlignment(0f, 1f - ((1f - progress) * 0.75f)))
+                .graphicsLayer { alpha = progress * Alpha }
+            ) {
 
                 background?.invoke()
 
@@ -118,27 +115,13 @@ fun CollapsingToolbar(
 
 
             //#endregion
-            Box(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(horizontal = ContentPadding)
-                    .fillMaxSize()
+            Box(modifier = Modifier.fillMaxSize()
+                .graphicsLayer { alpha = ((0.25f - progress) * 4).coerceIn(0f, 1f) },
             ) {
-                CollapsingToolbarLayout {
-                    //#region Logo Images
-                    TextComponent.HeaderText(
-                        modifier = Modifier
-                            .padding(logoPadding)
-                            .height(MapHeight)
-                            .wrapContentWidth()
-                            .graphicsLayer { alpha = ((0.25f - progress) * 4).coerceIn(0f, 1f) },
-                        text = title
 
-                    )
+                    TextComponent.HeaderText( modifier = Modifier.padding(top = 40.dp, start = 20.dp, end = 20.dp),text = title)
 
 
-
-                }
             }
         }
     }
