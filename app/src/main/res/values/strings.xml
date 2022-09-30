@@ -7,6 +7,14 @@
     <string name="common_pin">Pin</string>
     <string name="common_change">Modify</string>
     <string name="common_save">Save</string>
+    <string name="common_sender_shortcut">Shortcut</string>
+    <string name="common_sms_total">SMS total</string>
+    <string name="common_details">Details</string>
+    <plurals name="common_sms">
+        <item quantity="zero">SMS</item>
+        <item quantity="one">SMS</item>
+        <item quantity="other">SMSs</item>
+    </plurals>
 
 
     <!--Sender Details-->

@@ -8,7 +8,17 @@
     <string name="common_pin">تثبيت</string>
     <string name="common_change">تعديل</string>
     <string name="common_save">حفظ</string>
-    <string name="sender_category">فئة المرسل</string>
+    <string name="common_sender_shortcut">الاسم المختصر</string>
+    <string name="common_sms_total">مجموع الرسائل</string>
+    <string name="common_details">التفاصيل</string>
+    <plurals name="common_sms">
+        <item quantity="zero">رسالة</item>
+        <item quantity="one">رسالة</item>
+        <item quantity="two">رسالتين</item>
+        <item quantity="few">رسائل</item>
+        <item quantity="many">رسائل</item>
+        <item quantity="other">رسالة</item>
+    </plurals>
 
     <!--permissions-->
     <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
@@ -19,6 +29,7 @@
     <string name="sender_display_name_en">الاسم بالانجليزي</string>
     <string name="sender_pin">تثبيت المرسل</string>
     <string name="sender_active">تنشيط المرسل</string>
+    <string name="sender_category">فئة المرسل</string>
 
 
     <!--Settings-->

@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.yariksoffice.lingver.Lingver
 import java.util.*
 
 

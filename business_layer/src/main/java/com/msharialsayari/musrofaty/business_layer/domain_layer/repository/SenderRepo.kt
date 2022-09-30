@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderWithRelationsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.toSenderModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
@@ -10,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordD
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSenderEntity
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,6 +26,10 @@ class SenderRepo @Inject constructor(
         val senders = mutableListOf<SenderModel>()
         dao.getAllActive().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
         return senders
+    }
+
+     fun getSenders(): Flow<List<SenderEntity>> {
+        return dao.getActive()
     }
 
     suspend fun getSenderById(senderId:Int):SenderModel{

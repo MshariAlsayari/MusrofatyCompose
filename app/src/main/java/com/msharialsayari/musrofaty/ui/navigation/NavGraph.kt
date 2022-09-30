@@ -78,7 +78,15 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            SenderSmsListScreen(senderId)
+            SenderSmsListScreen(
+                senderId,
+                onDetailsClicked = {
+                navController.navigate(Screen.SenderDetails.route + "/${it}")
+                },
+                onBack = {
+                    navController.navigateUp()
+                }
+            )
         }
 
         composable(Screen.SinglePermission.route) {

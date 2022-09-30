@@ -10,14 +10,11 @@ import androidx.compose.ui.res.dimensionResource
 
 
 @Composable
-fun SenderComponent(model: SenderComponentModel){
+fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel){
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                dimensionResource(id = R.dimen.default_margin16)
-            ),
+        modifier = modifier
+            .fillMaxWidth(),
     ) {
 
 

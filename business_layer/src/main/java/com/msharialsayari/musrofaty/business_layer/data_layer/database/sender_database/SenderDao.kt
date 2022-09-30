@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SenderDao {
@@ -23,6 +24,9 @@ interface SenderDao {
 
     @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
     suspend fun getAllActive():List<SenderEntity>
+
+    @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
+    fun getActive(): Flow<List<SenderEntity>>
 
     @Query("UPDATE SenderEntity SET isActive =:isActive WHERE id=:senderId")
     suspend fun activeSender(senderId:Int, isActive:Boolean)

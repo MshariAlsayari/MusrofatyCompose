@@ -5,6 +5,7 @@ import android.content.Context
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.HiltAndroidApp
+import java.util.*
 
 @HiltAndroidApp
 class MyApp : Application() {
@@ -13,7 +14,8 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Lingver.init(this)
-        Lingver.getInstance().setFollowSystemLocale(this)
+        Lingver.getInstance().setLocale(this, Locale("ar"))
+        SharedPreferenceManager.storeLanguage(this, Locale("ar"))
 
     }
 
