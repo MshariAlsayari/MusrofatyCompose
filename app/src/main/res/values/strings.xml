@@ -24,6 +24,11 @@
     <string name="sender_pin">Pin</string>
     <string name="sender_active">Active</string>
 
+    <!--Sender Sms List-->
+    <string name="tab_all_sms">SMSs</string>
+    <string name="tab_favorite_sms">Likes</string>
+    <string name="tab_summary">Summary</string>
+
 
     <!--permissions-->
     <string name="permission_dialog_message">You should allow the Read SMS permission</string>

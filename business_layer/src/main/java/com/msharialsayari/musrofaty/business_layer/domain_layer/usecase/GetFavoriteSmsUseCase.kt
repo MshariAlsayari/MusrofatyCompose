@@ -7,15 +7,13 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
-class GetPagesSmsList @Inject constructor(
+class GetFavoriteSmsUseCase  @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-     operator fun invoke(senderId:Int): Flow<PagingData<SmsEntity>> {
-        val result = smsRepo.getPagesSmsList(senderId)
-        return result
+    operator fun invoke(senderId: Int, isFavorite:Boolean = true): Flow<PagingData<SmsEntity>> {
+        return smsRepo.getAllFavoriteSms(senderId,isFavorite)
 
     }
 }

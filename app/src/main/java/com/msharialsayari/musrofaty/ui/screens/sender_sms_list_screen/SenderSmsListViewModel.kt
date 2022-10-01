@@ -8,9 +8,7 @@ import androidx.paging.cachedIn
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetPagesSmsList
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -24,21 +22,64 @@ import javax.inject.Inject
 class SenderSmsListViewModel @Inject constructor(
     private val getSenderUseCase: GetSenderUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
-    private val getPagesSmsList: GetPagesSmsList
-
+    private val getAllSms: GetAllSmsUseCase,
+    private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
+    private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
 
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
-    fun getSenderWithAllSms(senderId: Int) {
+
+
+    fun getSender(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val senderResult = getSenderUseCase.invoke(senderId)
-            val smsResult    = getPagesSmsList.invoke(senderId).cachedIn(viewModelScope)
+            val senderResult         = getSenderUseCase.invoke(senderId)
             _uiState.update {
-                it.copy(sender = senderResult, smsFlow = smsResult, isLoading = false, )
+                it.copy(
+                    sender          = senderResult,
+                    isLoading       = false )
+            }
+        }
+    }
+
+
+    fun getAllSms(senderId: Int){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isTabLoading = true) }
+            val smsResult            = getAllSms.invoke(senderId).cachedIn(viewModelScope)
+            _uiState.update {
+                it.copy(
+                    smsFlow         = smsResult,
+                    isTabLoading       = false )
+            }
+        }
+
+    }
+
+    fun getAllSmsBySenderId(senderId: Int){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isTabLoading = true) }
+            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId)
+            _uiState.update {
+                it.copy(
+                    allSmsFlow         = smsResult,
+                    isTabLoading       = false )
+            }
+        }
+
+    }
+
+    fun getFavoriteSms(senderId: Int){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isTabLoading = true) }
+            val smsResult            = getFavoriteSmsUseCase.invoke(senderId).cachedIn(viewModelScope)
+            _uiState.update {
+                it.copy(
+                    favoriteSmsFlow = smsResult,
+                    isTabLoading       = false )
             }
         }
 
@@ -84,8 +125,11 @@ class SenderSmsListViewModel @Inject constructor(
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,
+        var isTabLoading: Boolean = false,
         var isRefreshing: Boolean = false,
         val sender: SenderModel? = null,
-        var smsFlow: Flow<PagingData<SmsEntity>>? =null
+        var smsFlow: Flow<PagingData<SmsEntity>>? =null,
+        var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? =null,
+        var allSmsFlow: Flow<List<SmsEntity>>? =null,
     )
 }

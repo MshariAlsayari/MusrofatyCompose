@@ -6,6 +6,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -26,6 +27,12 @@ interface SmsDao {
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
-     fun getSmsPagedList(senderId:Int): PagingSource<Int,SmsEntity>
+     fun getAllSms(senderId:Int): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
+     fun getSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite")
+    fun getAllFavoriteSms(senderId:Int, isFavorite: Boolean = true): PagingSource<Int,SmsEntity>
 
 }

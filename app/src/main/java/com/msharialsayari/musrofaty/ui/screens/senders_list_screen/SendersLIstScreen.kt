@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -8,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -32,7 +34,7 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
 
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
-        { Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = null) },
+        { ActionIcon(id = R.drawable.ic_delete)},
         backgroundColor = colorResource(R.color.deletAction),
         onClicked = { position, item ->
             viewModel.disableSender(item.senderId)
@@ -40,7 +42,7 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
 
     val pinAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_pin)) },
-        { Icon(painter = painterResource(id = R.drawable.ic_pin), contentDescription = null) },
+        { ActionIcon(id = R.drawable.ic_pin) },
         backgroundColor = colorResource(R.color.pinAction),
         onClicked = { position, item ->
             viewModel.pinSender(item.senderId)
@@ -49,7 +51,7 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
 
     val modifyAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
-        { Icon(painter = painterResource(id = R.drawable.ic_modify), contentDescription = null) },
+        { ActionIcon(id = R.drawable.ic_modify) },
         backgroundColor = colorResource(R.color.modifyAction),
         onClicked = { position, item ->
             //Navigate to senderDetailScreen
@@ -81,6 +83,15 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
         onRefresh = { viewModel.getAllSenders() }
     )
 
+
+}
+
+@Composable
+fun ActionIcon(@DrawableRes id:Int){
+    Icon(painter           = painterResource(id = id),
+        contentDescription = null,
+        tint               = Color.White
+    )
 
 }
 

@@ -2,13 +2,14 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
+import androidx.compose.material.*
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -27,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -35,6 +36,9 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SummaryTab
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
@@ -42,7 +46,6 @@ import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 private val MinToolbarHeight = 40.dp
@@ -59,14 +62,13 @@ fun SenderSmsListScreen(senderId: Int,
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit){ viewModel.getSenderWithAllSms(senderId) }
+    LaunchedEffect(Unit){ viewModel.getSender(senderId) }
 
     when{
-        uiState.isLoading -> PagerLoading()
-        uiState.sender != null && uiState.smsFlow != null ->
+        uiState.isLoading -> PageLoading()
+        uiState.sender != null ->
             PageContainer(
                 uiState.sender!!,
-                uiState.smsFlow!!,
                 viewModel,
                 onDetailsClicked,
                 onBack)
@@ -80,7 +82,6 @@ fun SenderSmsListScreen(senderId: Int,
 
 @Composable
 fun PageContainer(sender:SenderModel,
-                  sms: Flow<PagingData<SmsEntity>>,
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
                   onBack: ()->Unit){
@@ -88,7 +89,8 @@ fun PageContainer(sender:SenderModel,
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState                      = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection            = getNestedScrollConnection(toolbarState = toolbarState)
-    val smsItems                          = sms.collectAsLazyPagingItems()
+    val uiState                           by viewModel.uiState.collectAsState()
+
     Column(modifier = Modifier
         .nestedScroll(nestedScrollConnection)
         .fillMaxSize(),
@@ -96,15 +98,49 @@ fun PageContainer(sender:SenderModel,
 
     ) {
         CollapsedToolbar(
-            toolbarState = toolbarState,
-            sender=sender, listSize=smsItems.itemSnapshotList.size,
+            toolbarState     = toolbarState,
+            sender           = sender,
+            listSize         = uiState.smsFlow?.collectAsLazyPagingItems()?.itemCount ?: 0,
             onDetailsClicked = onDetailsClicked,
-            onBack = onBack
-
+            onBack           = onBack
         )
-        LazySenderSms(smsItems,viewModel)
+        Tabs(sender.id)
     }
 
+}
+
+@Composable
+fun Tabs(senderId: Int){
+    Column {
+        var tabIndex by remember { mutableStateOf(0) }
+        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_summary)
+        Column {
+            TabRow(
+                selectedTabIndex = tabIndex,
+                indicator = {
+                    TabRowDefaults.Indicator(
+                        modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
+                        color = MaterialTheme.colors.secondary,
+                        height = TabRowDefaults.IndicatorHeight
+                    )
+                }
+            ) {
+                tabTitles.forEachIndexed { index, stringResId ->
+                    Tab(
+                        modifier = Modifier.background(MaterialTheme.colors.background),
+                        selected = tabIndex == index,
+                        onClick = { tabIndex = index },
+                        text = { Text(text = stringResource(id = stringResId), color = MaterialTheme.colors.onBackground) })
+                }
+            }
+            when (tabIndex) {
+                0 ->  AllSmsTab(senderId = senderId)
+                1 ->  FavoriteSmsTab(senderId = senderId)
+                2 ->  SummaryTab(senderId = senderId)
+            }
+        }
+
+    }
 }
 
 @Composable
@@ -127,7 +163,7 @@ fun CollapsedToolbar(toolbarState: ToolbarState,
 
 
 @Composable
-fun PagerLoading(){
+fun PageLoading(){
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -328,10 +364,12 @@ fun ToolbarActionsComposable(onBack: () -> Unit) {
         Icon( Icons.Default.ArrowBack,
 
             contentDescription = null,
-            modifier = Modifier.mirror().clickable {
-                onBack()
+            modifier = Modifier
+                .mirror()
+                .clickable {
+                    onBack()
 
-        })
+                })
 
 
 

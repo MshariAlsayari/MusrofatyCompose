@@ -31,6 +31,12 @@
     <string name="sender_active">تنشيط المرسل</string>
     <string name="sender_category">فئة المرسل</string>
 
+    <!--Sender Sms List-->
+    <string name="tab_all_sms">الرسائل</string>
+    <string name="tab_favorite_sms">المفضلة</string>
+    <string name="tab_summary">الملخص</string>
+
+
 
     <!--Settings-->
     <string name="pref_appearance_title">المظهر</string>

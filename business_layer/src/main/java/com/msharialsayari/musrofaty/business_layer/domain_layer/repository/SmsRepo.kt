@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -18,6 +17,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+
+const val ITEM_SIZE = 10
 
 @Singleton
 class SmsRepo @Inject constructor(
@@ -41,11 +42,24 @@ class SmsRepo @Inject constructor(
     }
 
 
-     fun getPagesSmsList(senderId: Int): Flow<PagingData<SmsEntity>> {
-         Log.i("Mshari", "fetching items")
-        val pagingSourceFactory = {dao.getSmsPagedList(senderId)}
+     fun getAllSms(senderId: Int): Flow<PagingData<SmsEntity>> {
+        val pagingSourceFactory = {dao.getAllSms(senderId)}
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(pageSize = ITEM_SIZE),
+            pagingSourceFactory = pagingSourceFactory,
+        ).flow
+
+    }
+
+    fun getSmsBySenderId(senderId: Int):  Flow<List<SmsEntity>> {
+        return dao.getSmsBySenderId(senderId)
+    }
+
+
+    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true): Flow<PagingData<SmsEntity>> {
+        val pagingSourceFactory = {dao.getAllFavoriteSms(senderId,isFavorite)}
+        return Pager(
+            config = PagingConfig(pageSize = ITEM_SIZE),
             pagingSourceFactory = pagingSourceFactory,
         ).flow
 
