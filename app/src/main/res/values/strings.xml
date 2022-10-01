@@ -10,6 +10,7 @@
     <string name="common_sender_shortcut">Shortcut</string>
     <string name="common_sms_total">SMS total</string>
     <string name="common_details">Details</string>
+    <string name="common_filter_options">Filter</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
@@ -39,6 +40,16 @@
     <string name="pref_appearance_summary">ability to change the language and the theme</string>
     <string name="pref_sms_title">SMS</string>
     <string name="pref_sms_summary">ability to change on sms detector performance</string>
+
+    <!--filter options-->
+    <string-array name="filter_options">
+        <item>All</item>
+        <item>Today</item>
+        <item>This week</item>
+        <item>This month</item>
+        <item>This year</item>
+        <item>Range date</item>
+    </string-array>
 
 
 </resources>

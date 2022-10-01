@@ -11,6 +11,7 @@
     <string name="common_sender_shortcut">الاسم المختصر</string>
     <string name="common_sms_total">مجموع الرسائل</string>
     <string name="common_details">التفاصيل</string>
+    <string name="common_filter_options">تصفية</string>
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
         <item quantity="one">رسالة</item>
@@ -43,5 +44,16 @@
     <string name="pref_appearance_summary">إمكانية تغير اللغة والنمط</string>
     <string name="pref_sms_title">الرسائل</string>
     <string name="pref_sms_summary">إمكانية التغيير في كفاءة تحليل الرسائل</string>
+
+
+    <!--filter options-->
+    <string-array name="filter_options">
+        <item>الكل</item>
+        <item>اليوم</item>
+        <item>الاسبوع الحالي</item>
+        <item>الشهر الحالي</item>
+        <item>السنة الحالية</item>
+        <item>تحديد تاريخ</item>
+    </string-array>
 
 </resources>

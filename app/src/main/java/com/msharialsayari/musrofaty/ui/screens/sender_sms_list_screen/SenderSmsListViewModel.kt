@@ -1,14 +1,17 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.content.Context
+import androidx.compose.ui.res.stringArrayResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +33,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
+
 
 
 
@@ -122,6 +126,22 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
+    fun getFilterOptions(context: Context,selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+        val options = context.resources.getStringArray(R.array.filter_options)
+        val list = mutableListOf<SelectedItemModel>()
+        options.mapIndexed { index, value ->
+            list.add(SelectedItemModel(
+                id = index,
+                value = value,
+                isSelected = if (selectedItem != null) selectedItem.id == index else index == 0
+            )
+            )
+        }
+
+        return list
+
+    }
+
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,
@@ -131,5 +151,6 @@ class SenderSmsListViewModel @Inject constructor(
         var smsFlow: Flow<PagingData<SmsEntity>>? =null,
         var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? =null,
         var allSmsFlow: Flow<List<SmsEntity>>? =null,
+        var selectedFilterOption :SelectedItemModel? = null
     )
 }

@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.background
@@ -12,13 +13,13 @@ import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,6 +37,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SummaryTab
@@ -64,6 +66,7 @@ fun SenderSmsListScreen(senderId: Int,
     val uiState                           by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit){ viewModel.getSender(senderId) }
 
+
     when{
         uiState.isLoading -> PageLoading()
         uiState.sender != null ->
@@ -81,6 +84,21 @@ fun SenderSmsListScreen(senderId: Int,
 }
 
 @Composable
+fun FilterOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterOptionClicked:()->Unit){
+    val context                           = LocalContext.current
+    val uiState                           by viewModel.uiState.collectAsState()
+    BottomSheetComponent.SelectedItemListBottomSheetComponent(
+        title = R.string.common_filter_options,
+        list = viewModel.getFilterOptions(context, uiState.selectedFilterOption),
+        onSelectItem = {
+            uiState.selectedFilterOption = it
+            onFilterOptionClicked()
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@Composable
 fun PageContainer(sender:SenderModel,
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
@@ -90,22 +108,46 @@ fun PageContainer(sender:SenderModel,
     val toolbarState                      = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection            = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState                           by viewModel.uiState.collectAsState()
-
-    Column(modifier = Modifier
-        .nestedScroll(nestedScrollConnection)
-        .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        CollapsedToolbar(
-            toolbarState     = toolbarState,
-            sender           = sender,
-            listSize         = uiState.smsFlow?.collectAsLazyPagingItems()?.itemCount ?: 0,
-            onDetailsClicked = onDetailsClicked,
-            onBack           = onBack
-        )
-        Tabs(sender.id)
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val onFilterSelected:()->Unit = {
+        coroutineScope.launch {
+            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+        }
     }
+
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+    }
+
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {FilterOptionsBottomSheet(viewModel =viewModel, onFilterOptionClicked= onFilterSelected)}){
+
+        Column(modifier = Modifier
+            .nestedScroll(nestedScrollConnection)
+            .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            CollapsedToolbar(
+                toolbarState     = toolbarState,
+                sender           = sender,
+                listSize         = uiState.smsFlow?.collectAsLazyPagingItems()?.itemCount ?: 0,
+                onDetailsClicked = onDetailsClicked,
+                onBack           = onBack,
+                onFilterOptionClicked = onFilterSelected
+
+            )
+            Tabs(sender.id)
+        }
+
+    }
+
 
 }
 
@@ -148,10 +190,11 @@ fun CollapsedToolbar(toolbarState: ToolbarState,
                      sender: SenderModel,
                      listSize: Int,
                      onDetailsClicked: (Int)->Unit,
-                     onBack: ()->Unit){
+                     onBack: ()->Unit,
+                     onFilterOptionClicked: ()->Unit){
     CollapsingToolbar(
         progress   = toolbarState.progress,
-        actions    = {ToolbarActionsComposable(onBack)},
+        actions    = {ToolbarActionsComposable(onBack, onFilterOptionClicked)},
         collapsedComposable      = { CollapsedToolbarComposable(sender,listSize)},
         expandedComposable = { ExpandedToolbarComposable(sender,listSize,onDetailsClicked)},
         modifier   = Modifier
@@ -356,10 +399,11 @@ fun CollapsedToolbarComposable(sender: SenderModel, smsSize:Int){
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ToolbarActionsComposable(onBack: () -> Unit) {
+fun ToolbarActionsComposable(onBack: () -> Unit, onFilterOptionsClick:()->Unit) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon( Icons.Default.ArrowBack,
 
@@ -368,6 +412,17 @@ fun ToolbarActionsComposable(onBack: () -> Unit) {
                 .mirror()
                 .clickable {
                     onBack()
+
+                })
+
+
+        Icon( Icons.Default.DateRange,
+
+            contentDescription = null,
+            modifier = Modifier
+                .mirror()
+                .clickable {
+                   onFilterOptionsClick()
 
                 })
 

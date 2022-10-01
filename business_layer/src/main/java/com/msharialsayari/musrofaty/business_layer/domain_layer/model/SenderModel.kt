@@ -50,14 +50,7 @@ data class SenderModel(
                     displayNameEn = "Alrajhi Bank"
                 )
             )
-            list.add(
-                SenderModel(
-                    contentId = bankContentId,
-                    senderName = Constants.SAMBA_BANK,
-                    displayNameAr = "بنك الأهلي",
-                    displayNameEn = "Alahli Bank"
-                )
-            )
+
             list.add(
                 SenderModel(
                     contentId = bankContentId,
@@ -82,14 +75,7 @@ data class SenderModel(
                     displayNameEn = "Arab National Bank"
                 )
             )
-            list.add(
-                SenderModel(
-                    contentId = bankContentId,
-                    senderName = Constants.ALAHLI_BANK,
-                    displayNameAr = "بنك الأهلي",
-                    displayNameEn = "Alahli Bank"
-                )
-            )
+
             list.add(
                 SenderModel(
                     contentId = bankContentId,
