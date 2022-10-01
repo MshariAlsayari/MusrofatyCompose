@@ -87,7 +87,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFavoriteSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isTabLoading = true) }
-            val smsResult            = getFavoriteSmsUseCase.invoke(senderId)
+            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterOption())
             _uiState.update {
                 it.copy(
                     favoriteSmsFlow = smsResult,

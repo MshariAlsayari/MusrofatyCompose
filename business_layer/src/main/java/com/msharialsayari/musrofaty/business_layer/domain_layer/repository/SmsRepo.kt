@@ -47,31 +47,11 @@ class SmsRepo @Inject constructor(
         val pagingSourceFactory = {
             when (filterOption) {
                 DateUtils.FilterOption.ALL -> dao.getAllSms(senderId)
-                DateUtils.FilterOption.TODAY -> dao.getAllSms(
-                    senderId,
-                    DateUtils.getYesterday(),
-                    DateUtils.getTomorrow()
-                )
-                DateUtils.FilterOption.WEEK -> dao.getAllSms(
-                    senderId,
-                    DateUtils.getYesterday(),
-                    DateUtils.getTomorrow()
-                )
-                DateUtils.FilterOption.MONTH -> dao.getAllSms(
-                    senderId,
-                    DateUtils.getYesterday(),
-                    DateUtils.getTomorrow()
-                )
-                DateUtils.FilterOption.YEAR -> dao.getAllSms(
-                    senderId,
-                    DateUtils.getYesterday(),
-                    DateUtils.getTomorrow()
-                )
-                DateUtils.FilterOption.RANGE -> dao.getAllSms(
-                    senderId,
-                    DateUtils.getYesterday(),
-                    DateUtils.getTomorrow()
-                )
+                DateUtils.FilterOption.TODAY -> dao.getTodaySms(senderId)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSms(senderId)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSms(senderId)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYearSms(senderId)
+                DateUtils.FilterOption.RANGE -> dao.getAllSms(senderId)
             }
         }
 
@@ -88,8 +68,18 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true): Flow<PagingData<SmsEntity>> {
-        val pagingSourceFactory = {dao.getAllFavoriteSms(senderId,isFavorite)}
+    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL): Flow<PagingData<SmsEntity>> {
+
+        val pagingSourceFactory = {
+            when (filterOption) {
+                DateUtils.FilterOption.ALL -> dao.getAllFavoriteSms(senderId,isFavorite )
+                DateUtils.FilterOption.TODAY -> dao.getTodayFavoriteSms(senderId,isFavorite)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekFavoriteSms(senderId,isFavorite)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthFavoriteSms(senderId,isFavorite)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYearFavoriteSms(senderId,isFavorite)
+                DateUtils.FilterOption.RANGE -> dao.getAllFavoriteSms(senderId,isFavorite )
+            }
+        }
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
             pagingSourceFactory = pagingSourceFactory,

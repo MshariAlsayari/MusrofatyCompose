@@ -179,6 +179,18 @@ object DateUtils {
 
     }
 
+    fun getLastMonth(): Long {
+        val calender =  Calendar.getInstance()
+        calender.add(Calendar.MONTH, -1)
+        return calender.timeInMillis
+    }
+
+    fun getNextMonth(): Long {
+        val calender =  Calendar.getInstance()
+        calender.add(Calendar.MONTH, +1)
+        return calender.timeInMillis
+    }
+
 
     fun getYesterday(): Long {
         val calender =  Calendar.getInstance()
