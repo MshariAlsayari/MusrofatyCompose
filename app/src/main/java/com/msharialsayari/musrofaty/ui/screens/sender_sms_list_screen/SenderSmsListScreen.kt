@@ -117,6 +117,8 @@ fun PageContainer(sender:SenderModel,
         coroutineScope.launch {
             handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
         }
+        viewModel.onFilterChanged()
+
     }
 
     BackHandler(sheetState.isVisible) {

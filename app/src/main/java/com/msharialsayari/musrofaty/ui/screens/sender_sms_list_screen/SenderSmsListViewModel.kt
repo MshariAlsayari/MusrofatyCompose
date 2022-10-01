@@ -13,6 +13,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
+import com.msharialsayari.musrofaty.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,13 @@ class SenderSmsListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
+    fun onFilterChanged(){
+        val senderId = _uiState.value.sender?.id!!
+        getAllSms(senderId)
+        getAllSmsBySenderId(senderId)
+        getFavoriteSms(senderId)
+    }
+
 
 
 
@@ -53,7 +61,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getAllSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isTabLoading = true) }
-            val smsResult            = getAllSms.invoke(senderId).cachedIn(viewModelScope)
+            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterOption())
             _uiState.update {
                 it.copy(
                     smsFlow         = smsResult,
@@ -79,7 +87,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFavoriteSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isTabLoading = true) }
-            val smsResult            = getFavoriteSmsUseCase.invoke(senderId).cachedIn(viewModelScope)
+            val smsResult            = getFavoriteSmsUseCase.invoke(senderId)
             _uiState.update {
                 it.copy(
                     favoriteSmsFlow = smsResult,
@@ -140,6 +148,10 @@ class SenderSmsListViewModel @Inject constructor(
 
         return list
 
+    }
+
+    fun getFilterOption():DateUtils.FilterOption{
+        return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterOption?.id)
     }
 
 

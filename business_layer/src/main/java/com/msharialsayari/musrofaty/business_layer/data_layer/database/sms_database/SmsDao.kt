@@ -29,6 +29,9 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
      fun getAllSms(senderId:Int): PagingSource<Int,SmsEntity>
 
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND timestamp BETWEEN :startDay AND :endDay ")
+    fun getAllSms(senderId:Int, startDay:Long,  endDay:Long): PagingSource<Int,SmsEntity>
+
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
      fun getSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
 

@@ -180,6 +180,23 @@ object DateUtils {
     }
 
 
+    fun getYesterday(): Long {
+        val calender =  Calendar.getInstance()
+        calender.add(Calendar.DAY_OF_MONTH, -1)
+        return calender.timeInMillis
+    }
+
+    fun getToday(): Long {
+        return Calendar.getInstance().timeInMillis
+    }
+
+    fun getTomorrow(): Long {
+        val calender =  Calendar.getInstance()
+        calender.add(Calendar.DAY_OF_MONTH, 1)
+        return calender.timeInMillis
+    }
+
+
 
     enum class NumberType {
         SINGLE, TWICE, PLURAL
@@ -187,5 +204,25 @@ object DateUtils {
 
     enum class DateTimeUnit {
         SECONDS, MINUTES, HOURS, DAYS
+    }
+
+    enum class FilterOption{
+        ALL,TODAY, WEEK,MONTH,YEAR,RANGE;
+        companion object{
+            fun getFilterOption(id:Int? = 0):FilterOption{
+                return when(id){
+                    1-> TODAY
+                    2-> WEEK
+                    3-> MONTH
+                    4-> YEAR
+                    5-> RANGE
+                    else -> ALL
+                }
+
+            }
+        }
+
+
+
     }
 }

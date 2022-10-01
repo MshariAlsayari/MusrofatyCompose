@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
+import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -42,8 +43,39 @@ class SmsRepo @Inject constructor(
     }
 
 
-     fun getAllSms(senderId: Int): Flow<PagingData<SmsEntity>> {
-        val pagingSourceFactory = {dao.getAllSms(senderId)}
+     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL): Flow<PagingData<SmsEntity>> {
+        val pagingSourceFactory = {
+            when (filterOption) {
+                DateUtils.FilterOption.ALL -> dao.getAllSms(senderId)
+                DateUtils.FilterOption.TODAY -> dao.getAllSms(
+                    senderId,
+                    DateUtils.getYesterday(),
+                    DateUtils.getTomorrow()
+                )
+                DateUtils.FilterOption.WEEK -> dao.getAllSms(
+                    senderId,
+                    DateUtils.getYesterday(),
+                    DateUtils.getTomorrow()
+                )
+                DateUtils.FilterOption.MONTH -> dao.getAllSms(
+                    senderId,
+                    DateUtils.getYesterday(),
+                    DateUtils.getTomorrow()
+                )
+                DateUtils.FilterOption.YEAR -> dao.getAllSms(
+                    senderId,
+                    DateUtils.getYesterday(),
+                    DateUtils.getTomorrow()
+                )
+                DateUtils.FilterOption.RANGE -> dao.getAllSms(
+                    senderId,
+                    DateUtils.getYesterday(),
+                    DateUtils.getTomorrow()
+                )
+            }
+        }
+
+
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
             pagingSourceFactory = pagingSourceFactory,
