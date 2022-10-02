@@ -43,7 +43,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL): Flow<PagingData<SmsEntity>> {
+     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
         val pagingSourceFactory = {
             when (filterOption) {
                 DateUtils.FilterOption.ALL -> dao.getAllSms(senderId)
@@ -51,7 +51,7 @@ class SmsRepo @Inject constructor(
                 DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSms(senderId)
                 DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSms(senderId)
                 DateUtils.FilterOption.YEAR -> dao.getCurrentYearSms(senderId)
-                DateUtils.FilterOption.RANGE -> dao.getAllSms(senderId)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateSms(senderId,startDate,endDate)
             }
         }
 
@@ -68,7 +68,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL): Flow<PagingData<SmsEntity>> {
+    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0 , endDate:Long= 0): Flow<PagingData<SmsEntity>> {
 
         val pagingSourceFactory = {
             when (filterOption) {
@@ -77,7 +77,7 @@ class SmsRepo @Inject constructor(
                 DateUtils.FilterOption.WEEK -> dao.getCurrentWeekFavoriteSms(senderId,isFavorite)
                 DateUtils.FilterOption.MONTH -> dao.getCurrentMonthFavoriteSms(senderId,isFavorite)
                 DateUtils.FilterOption.YEAR -> dao.getCurrentYearFavoriteSms(senderId,isFavorite)
-                DateUtils.FilterOption.RANGE -> dao.getAllFavoriteSms(senderId,isFavorite )
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateFavoriteSms(senderId,isFavorite, startDate, endDate )
             }
         }
         return Pager(

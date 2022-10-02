@@ -42,6 +42,9 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
     fun getCurrentYearSms(senderId:Int): PagingSource<Int,SmsEntity>
 
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    fun getRangeDateSms(senderId:Int, startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
+
 
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
@@ -63,5 +66,8 @@ interface SmsDao {
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
     fun getCurrentYearFavoriteSms(senderId:Int, isFavorite: Boolean = true): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    fun getRangeDateFavoriteSms(senderId:Int, isFavorite: Boolean = true, startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
 
 }
