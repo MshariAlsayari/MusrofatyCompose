@@ -26,8 +26,8 @@ interface SmsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
-     fun getAllSms(senderId:Int): PagingSource<Int,SmsEntity>
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%'")
+     fun getAllSms(senderId:Int, query:String= "شراء"): PagingSource<Int,SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))")
     fun getTodaySms(senderId:Int): PagingSource<Int,SmsEntity>

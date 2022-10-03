@@ -88,9 +88,9 @@ fun FilterOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterOptionCl
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter_options,
-        list = viewModel.getFilterOptions(context, uiState.selectedFilterOption),
+        list = viewModel.getFilterOptions(context, uiState.selectedFilterTimeOption),
         onSelectItem = {
-            uiState.selectedFilterOption = it
+            uiState.selectedFilterTimeOption = it
             onFilterOptionClicked()
         }
     )

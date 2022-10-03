@@ -154,7 +154,7 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
      fun getFilterOption():DateUtils.FilterOption{
-        return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterOption?.id)
+        return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 
 
@@ -168,7 +168,9 @@ class SenderSmsListViewModel @Inject constructor(
         var smsFlow: Flow<PagingData<SmsEntity>>? =null,
         var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? =null,
         var allSmsFlow: Flow<List<SmsEntity>>? =null,
-        var selectedFilterOption:SelectedItemModel? = null,
+        var selectedFilterTimeOption:SelectedItemModel? = null,
+        var selectedFilter:SelectedItemModel? = null,
+        var filters: Flow<List<SmsEntity>>? =null,
         var financialStatistics: Map<String, FinancialStatistics> = emptyMap()
     )
 }
