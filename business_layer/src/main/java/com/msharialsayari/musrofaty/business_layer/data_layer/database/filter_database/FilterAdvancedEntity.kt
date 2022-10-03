@@ -16,18 +16,11 @@ class FilterAdvancedEntity(
     var id: Int = 0,
     @ColumnInfo(name = "title")
     var title: String = "",
-    @ColumnInfo(name = "searchWord")
+    @ColumnInfo(name = "words")
     var words: String = "",
-    @ColumnInfo(name = "smsType")
-    var smsType: String = "",
-    @ColumnInfo(name = "date")
-    var filterOption: String = "",
-    @ColumnInfo(name = "bankName")
-    var senderName: String = "",
-    @ColumnInfo(name = "dateFrom")
-    var dateFrom: Long = 0,
-    @ColumnInfo(name = "dateTo")
-    var dateTo: Long = 0,
+    @ColumnInfo(name = "senderId")
+    var senderId: Int,
+
 ) : Parcelable
 
 
@@ -35,8 +28,4 @@ fun FilterAdvancedEntity.toFilterAdvancedModel() = FilterAdvancedModel(
     id = id,
     title = title,
     words = words,
-    smsType = smsType,
-    filterOption = filterOption,
-    senderName = senderName,
-    dateFrom = dateFrom,
-    dateTo = dateTo)
+    senderId = senderId,)

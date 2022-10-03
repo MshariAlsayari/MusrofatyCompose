@@ -9,8 +9,8 @@ interface FilterAdvancedDao {
     @Query("SELECT * FROM FilterAdvancedEntity")
     suspend fun getAll(): List<FilterAdvancedEntity>
 
-    @Query("SELECT * FROM FilterAdvancedEntity WHERE bankName COLLATE NOCASE == (:bankName)")
-    suspend fun getSenderFilters(bankName: String): List<FilterAdvancedEntity>
+    @Query("SELECT * FROM FilterAdvancedEntity WHERE senderId =:senderId ")
+    suspend fun getSenderFilters(senderId: Int): List<FilterAdvancedEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg filterEntity: FilterAdvancedEntity)

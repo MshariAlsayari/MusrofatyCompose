@@ -12,12 +12,12 @@ class FilterRepo @Inject constructor(
     private val filterDao: FilterDao
 ) {
 
-    suspend fun getAll(senderName: String): List<FilterAdvancedModel> {
+    suspend fun getAll(senderName: String, senderId:Int): List<FilterAdvancedModel> {
         val finalList = mutableListOf<FilterAdvancedModel>()
         val oldFilter = filterDao.getBankFilters(senderName)
-        val advancedFilter = dao.getSenderFilters(senderName)
+        val advancedFilter = dao.getSenderFilters(senderId)
         oldFilter.map { entity ->
-            finalList.add(entity.toFilterModel())
+            finalList.add(entity.toFilterModel(senderId))
         }
 
         advancedFilter.map {entity ->
@@ -30,8 +30,9 @@ class FilterRepo @Inject constructor(
         val finalList = mutableListOf<FilterAdvancedModel>()
         val oldFilter = filterDao.getAll()
         val advancedFilter = dao.getAll()
+
         oldFilter.map { entity ->
-            finalList.add(entity.toFilterModel())
+            finalList.add(entity.toFilterModel(0))
         }
 
         advancedFilter.map {entity ->

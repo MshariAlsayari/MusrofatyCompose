@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
 import kotlinx.parcelize.Parcelize
 
@@ -10,13 +11,8 @@ data class FilterAdvancedModel(
     var id: Int = 0,
     var title: String = "",
     var words: String = "",
-    var smsType: String = "",
-    var filterOption: String = "",
-    var senderName: String = "",
-    var dateFrom: Long = 0,
-    var dateTo: Long = 0
+    var senderId: Int,
 ) : Parcelable {
-    var isSelected: Boolean = false
     companion object {
         fun getFilterWordsAsList(searchWord: String?): List<String> {
             return searchWord?.split(",") ?: emptyList()
@@ -34,8 +30,4 @@ fun FilterAdvancedModel.toFilterAdvancedEntity() = FilterAdvancedEntity(
     id = id,
     title =  title,
     words = words,
-    smsType = smsType,
-    filterOption=filterOption,
-    senderName = senderName,
-    dateFrom =  dateFrom,
-    dateTo =  dateTo)
+    senderId = senderId)

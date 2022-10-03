@@ -30,12 +30,9 @@ class FilterEntity(
     var dateTo: String? = "",
 ) : Parcelable
 
-fun FilterEntity.toFilterModel() = FilterAdvancedModel(
+fun FilterEntity.toFilterModel(senderId:Int) = FilterAdvancedModel(
     id = id,
     title = title,
     words = searchWord,
-    smsType = smsType,
-    filterOption = date,
-    senderName = bankName?:"",
-    dateFrom = 0,
-    dateTo = 0)
+    senderId = senderId
+)

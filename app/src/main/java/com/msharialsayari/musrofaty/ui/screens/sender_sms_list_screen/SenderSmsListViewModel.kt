@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
@@ -25,7 +26,8 @@ class SenderSmsListViewModel @Inject constructor(
     private val getAllSms: GetAllSmsUseCase,
     private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
     private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
-    private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase
+    private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
+    private val getFiltersUseCase: GetFiltersUseCase
 
 ) : ViewModel() {
 
@@ -47,10 +49,29 @@ class SenderSmsListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val senderResult         = getSenderUseCase.invoke(senderId)
+            getFilters()
             _uiState.update {
                 it.copy(
                     sender          = senderResult,
                     isLoading       = false )
+            }
+        }
+    }
+
+    fun getFilters(){
+        _uiState.value.sender?.let { sender->
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true) }
+                val filtersResult = getFiltersUseCase.invoke(
+                    sender.senderName,
+                    sender.id
+                )
+                _uiState.update {
+                    it.copy(
+                        filters = filtersResult,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
@@ -170,7 +191,7 @@ class SenderSmsListViewModel @Inject constructor(
         var allSmsFlow: Flow<List<SmsEntity>>? =null,
         var selectedFilterTimeOption:SelectedItemModel? = null,
         var selectedFilter:SelectedItemModel? = null,
-        var filters: Flow<List<SmsEntity>>? =null,
+        var filters: List<FilterAdvancedModel> = emptyList(),
         var financialStatistics: Map<String, FinancialStatistics> = emptyMap()
     )
 }
