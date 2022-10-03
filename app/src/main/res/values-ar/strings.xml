@@ -35,7 +35,7 @@
     <!--Sender Sms List-->
     <string name="tab_all_sms">الرسائل</string>
     <string name="tab_favorite_sms">المفضلة</string>
-    <string name="tab_summary">الملخص</string>
+    <string name="tab_statistics">الإحصائيات</string>
 
 
 

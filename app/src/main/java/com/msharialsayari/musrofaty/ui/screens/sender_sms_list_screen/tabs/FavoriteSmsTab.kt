@@ -17,8 +17,8 @@ fun FavoriteSmsTab( senderId:Int){
     LaunchedEffect(Unit){ viewModel.getFavoriteSms(senderId) }
 
     when{
-        uiState.isTabLoading -> PageLoading()
-        uiState.favoriteSmsFlow != null -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems()!! )
+        uiState.isFavoriteSmsPageLoading -> PageLoading()
+        uiState.favoriteSmsFlow != null  -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems()!! )
     }
 
 }

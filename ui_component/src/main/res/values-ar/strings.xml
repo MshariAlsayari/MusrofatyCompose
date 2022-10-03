@@ -2,4 +2,6 @@
 <resources>
     <string name="number_of_sms">عدد الرسائل</string>
     <string name="no_result">لا يوجد نتائج</string>
+    <string name="income">الإيرادات</string>
+    <string name="expenses">المصروفات</string>
 </resources>

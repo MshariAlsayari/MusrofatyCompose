@@ -18,8 +18,8 @@ fun AllSmsTab(senderId:Int){
     LaunchedEffect(Unit){ viewModel.getAllSms(senderId) }
 
     when{
-        uiState.isTabLoading -> PageLoading()
-        uiState.smsFlow != null -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!! )
+        uiState.isAllSmsPageLoading -> PageLoading()
+        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!! )
     }
 
 

@@ -9,4 +9,7 @@
     <color name="lightBlackOnyx">#333a42</color>
     <color name="deletAction">#F60313</color>
     <color name="lightGray">#979797</color>
+
+    <color name="incomeColor">#01852D</color>
+    <color name="expensesColor">#CC0311</color>
 </resources>

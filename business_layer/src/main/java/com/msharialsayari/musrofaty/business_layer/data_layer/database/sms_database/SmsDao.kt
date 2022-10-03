@@ -46,10 +46,6 @@ interface SmsDao {
     fun getRangeDateSms(senderId:Int, startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
 
 
-
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
-     fun getSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
-
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite")
     fun getAllFavoriteSms(senderId:Int, isFavorite: Boolean = true): PagingSource<Int,SmsEntity>
 
@@ -69,5 +65,25 @@ interface SmsDao {
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
     fun getRangeDateFavoriteSms(senderId:Int, isFavorite: Boolean = true, startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
+
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId")
+    fun getSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))")
+    fun getTodaySmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime'))")
+    fun getCurrentWeekSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now'))")
+    fun getCurrentMonthSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
+    fun getCurrentYearSmsBySenderId(senderId:Int): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    fun getRangeDateSmsBySenderId(senderId:Int, startDate:Long, endDate:Long): Flow<List<SmsEntity>>
 
 }

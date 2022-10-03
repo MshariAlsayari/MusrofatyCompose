@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
@@ -40,7 +39,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SummaryTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.StatisticsTab
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
@@ -113,22 +112,26 @@ fun PageContainer(sender:SenderModel,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
     val coroutineScope = rememberCoroutineScope()
-    val onFilterSelected:()->Unit = {
-        coroutineScope.launch {
-            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-        }
-        viewModel.onFilterChanged()
 
-    }
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
+    LaunchedEffect(key1 = Unit){
+        viewModel.getAllSmsBySenderId(sender.id)
+    }
+
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = {FilterOptionsBottomSheet(viewModel =viewModel, onFilterOptionClicked= onFilterSelected)}){
+        sheetContent = {FilterOptionsBottomSheet(viewModel =viewModel, onFilterOptionClicked= {
+            coroutineScope.launch {
+                handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+            }
+            viewModel.onFilterChanged()
+
+        })}){
 
         Column(modifier = Modifier
             .nestedScroll(nestedScrollConnection)
@@ -139,10 +142,16 @@ fun PageContainer(sender:SenderModel,
             CollapsedToolbar(
                 toolbarState     = toolbarState,
                 sender           = sender,
-                listSize         = uiState.smsFlow?.collectAsLazyPagingItems()?.itemCount ?: 0,
+                listSize         = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0,
                 onDetailsClicked = onDetailsClicked,
                 onBack           = onBack,
-                onFilterOptionClicked = onFilterSelected
+                onFilterIconClicked = {
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                    }
+
+
+                }
 
             )
             Tabs(sender.id)
@@ -157,7 +166,7 @@ fun PageContainer(sender:SenderModel,
 fun Tabs(senderId: Int){
     Column {
         var tabIndex by remember { mutableStateOf(0) }
-        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_summary)
+        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_statistics)
         Column {
             TabRow(
                 selectedTabIndex = tabIndex,
@@ -180,7 +189,7 @@ fun Tabs(senderId: Int){
             when (tabIndex) {
                 0 ->  AllSmsTab(senderId = senderId)
                 1 ->  FavoriteSmsTab(senderId = senderId)
-                2 ->  SummaryTab(senderId = senderId)
+                2 ->  StatisticsTab(senderId = senderId)
             }
         }
 
@@ -193,10 +202,10 @@ fun CollapsedToolbar(toolbarState: ToolbarState,
                      listSize: Int,
                      onDetailsClicked: (Int)->Unit,
                      onBack: ()->Unit,
-                     onFilterOptionClicked: ()->Unit){
+                     onFilterIconClicked: ()->Unit){
     CollapsingToolbar(
         progress   = toolbarState.progress,
-        actions    = {ToolbarActionsComposable(onBack, onFilterOptionClicked)},
+        actions    = {ToolbarActionsComposable(onBack, onFilterIconClicked)},
         collapsedComposable      = { CollapsedToolbarComposable(sender,listSize)},
         expandedComposable = { ExpandedToolbarComposable(sender,listSize,onDetailsClicked)},
         modifier   = Modifier
@@ -424,7 +433,7 @@ fun ToolbarActionsComposable(onBack: () -> Unit, onFilterOptionsClick:()->Unit) 
             modifier = Modifier
                 .mirror()
                 .clickable {
-                   onFilterOptionsClick()
+                    onFilterOptionsClick()
 
                 })
 

@@ -1,5 +1,7 @@
 package com.msharialsayari.musrofaty.utils
 
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.*
 
 object StringsUtils {
@@ -23,6 +25,21 @@ object StringsUtils {
                 }
             }.toCharArray())
         }
+    }
+
+    fun formatNumberWithComma(number:String):String{
+        val amount: Double = number.toDouble()
+        val formatter = DecimalFormat("#,###.00", DecimalFormatSymbols(Locale.ENGLISH))
+        return try {
+            val formattedAmount =  formatter.format(amount)
+            if (formattedAmount == ".00"  ||formattedAmount == "00."){
+                "0.00"
+            }else
+                formattedAmount
+        }catch (e:Exception){
+            number
+        }
+
     }
 
     fun formatLongNumbers(value: Long): String {

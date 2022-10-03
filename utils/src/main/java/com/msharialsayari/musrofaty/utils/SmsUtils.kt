@@ -1,13 +1,19 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
+import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
 
 
+
+
+    private const val WHITESPACES_REGEX = "\\s"
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
-    private const val STORE_FROM_REGEX = "At:.+|لدى:.+"
+    private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
+    private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
+    private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+"
 
 
     fun isValidSms(context: Context,sms:String?):Boolean{
@@ -82,17 +88,48 @@ object SmsUtils {
     }
 
     private fun isExpensesSMS(smsBody: String?, words:List<String>): Boolean {
-        smsBody?.let {sms->
-            return words.find { it.contains(sms, ignoreCase = true) }     != null
-        }?:run { return false }
-
+        return words.any { smsBody?.contains(it, ignoreCase = true) == true }
     }
 
     private fun isIncomeSMS(smsBody: String?, words:List<String>): Boolean {
-        smsBody?.let {sms->
-            return words.find { it.contains(sms, ignoreCase = true) } != null
-        }?:run { return false }
+        return words.any { smsBody?.contains(it, ignoreCase = true) == true }
+    }
 
+    fun isSACurrency(currency: String) = listSACurrency.any { it.equals(currency, ignoreCase = true) }
+
+    fun extractAmount(sms: String?, currencyList: List<String>): Double {
+        var amount = 0.0
+        sms?.let {
+            for (currency in currencyList) {
+                if (isSmsContainsCurrency(currency, sms)) {
+                    amount = getAmount(sms)
+                    return amount
+                }
+            }
+        }
+        return amount
+    }
+
+    fun getAmount(sms: String?): Double {
+        sms?.let {
+            return try {
+                val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                    .find(sms)?.groupValues?.get(0) ?: "0"
+                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                    .find(amountLine)?.groupValues?.get(0) ?: "0"
+                amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
+                amount.toDouble()
+            } catch (e: Exception) {
+                0.0
+            }
+        } ?: run { return 0.0 }
+
+    }
+
+
+
+    fun isSmsContainsCurrency(currency: String, sms: String?): Boolean {
+        return sms?.contains(currency.toRegex(option = RegexOption.IGNORE_CASE)) ?: false
     }
 
 }

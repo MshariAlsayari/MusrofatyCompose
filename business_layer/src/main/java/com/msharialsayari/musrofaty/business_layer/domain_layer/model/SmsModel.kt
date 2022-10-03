@@ -17,6 +17,7 @@ data class SmsModel(
     var storeAndCategoryModel : StoreAndCategoryModel? =null,
     var smsType: SmsType  = SmsType.NOTHING,
     var currency: String="",
+    var amount: Double=0.0,
     var senderId: Int = 0,
     var senderModel: SenderModel?=null,
     var isFavorite: Boolean = false,

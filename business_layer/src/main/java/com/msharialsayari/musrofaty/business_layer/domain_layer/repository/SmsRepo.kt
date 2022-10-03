@@ -32,8 +32,9 @@ class SmsRepo @Inject constructor(
 
 
     private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
-        smsModel.smsType = getSmsType(smsModel.body)
-        smsModel.currency = getSmsCurrency(smsModel.body)
+        smsModel.smsType     = getSmsType(smsModel.body)
+        smsModel.currency    = getSmsCurrency(smsModel.body)
+        smsModel.amount      = getAmount(smsModel.body)
         smsModel.senderModel = getSender(smsModel.senderId)
         return smsModel
     }
@@ -63,8 +64,15 @@ class SmsRepo @Inject constructor(
 
     }
 
-    fun getSmsBySenderId(senderId: Int):  Flow<List<SmsEntity>> {
-        return dao.getSmsBySenderId(senderId)
+    fun getSmsBySenderId(senderId: Int,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
+        return when (filterOption) {
+            DateUtils.FilterOption.ALL -> dao.getSmsBySenderId(senderId)
+            DateUtils.FilterOption.TODAY -> dao.getTodaySmsBySenderId(senderId)
+            DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSmsBySenderId(senderId)
+            DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSmsBySenderId(senderId)
+            DateUtils.FilterOption.YEAR -> dao.getCurrentYearSmsBySenderId(senderId)
+            DateUtils.FilterOption.RANGE -> dao.getRangeDateSmsBySenderId(senderId,startDate,endDate)
+        }
     }
 
 
@@ -101,6 +109,11 @@ class SmsRepo @Inject constructor(
         val currencyWord =
             wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
         return SmsUtils.getCurrency(body, currency = currencyWord)
+    }
+
+    private suspend fun getAmount(body: String): Double {
+        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        return SmsUtils.extractAmount(body, currencyList = currencyWord)
     }
 
     private suspend fun getSender(senderId: Int): SenderModel {

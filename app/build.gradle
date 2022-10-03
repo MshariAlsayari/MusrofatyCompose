@@ -143,6 +143,9 @@ dependencies {
     //chart
     implementation 'com.github.tehras:charts:beta-01'
 
+    //Chart and graph library
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 
 
 

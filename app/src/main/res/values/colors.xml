@@ -12,4 +12,8 @@
     <color name="pinAction">#4CAF50</color>
     <color name="modifyAction">#2196F3</color>
 
+
+    <color name="incomeColor">#01852D</color>
+    <color name="expensesColor">#CC0311</color>
+
 </resources>

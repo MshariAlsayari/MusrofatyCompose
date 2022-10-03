@@ -28,7 +28,7 @@
     <!--Sender Sms List-->
     <string name="tab_all_sms">SMSs</string>
     <string name="tab_favorite_sms">Likes</string>
-    <string name="tab_summary">Summary</string>
+    <string name="tab_statistics">Statistics</string>
 
 
     <!--permissions-->
