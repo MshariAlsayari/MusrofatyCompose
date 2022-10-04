@@ -9,18 +9,13 @@ import javax.inject.Singleton
 @Singleton
 class FilterRepo @Inject constructor(
     private val dao: FilterAdvancedDao,
-    private val filterDao: FilterDao
+    private val filterDao: FilterDao,
+    private val senderRepo: SenderRepo,
 ) {
 
-    suspend fun getAll(senderName: String, senderId:Int): List<FilterAdvancedModel> {
+    suspend fun getAll( senderId:Int): List<FilterAdvancedModel> {
         val finalList = mutableListOf<FilterAdvancedModel>()
-        val oldFilter = filterDao.getBankFilters(senderName)
-        val advancedFilter = dao.getSenderFilters(senderId)
-        oldFilter.map { entity ->
-            finalList.add(entity.toFilterModel(senderId))
-        }
-
-        advancedFilter.map {entity ->
+        dao.getSenderFilters(senderId).map {entity ->
             finalList.add(entity.toFilterAdvancedModel())
         }
         return finalList
@@ -28,14 +23,7 @@ class FilterRepo @Inject constructor(
 
     suspend fun getAll(): List<FilterAdvancedModel> {
         val finalList = mutableListOf<FilterAdvancedModel>()
-        val oldFilter = filterDao.getAll()
-        val advancedFilter = dao.getAll()
-
-        oldFilter.map { entity ->
-            finalList.add(entity.toFilterModel(0))
-        }
-
-        advancedFilter.map {entity ->
+        dao.getAll().map {entity ->
             finalList.add(entity.toFilterAdvancedModel())
         }
         return finalList
@@ -54,10 +42,27 @@ class FilterRepo @Inject constructor(
     suspend fun delete(list: List<FilterAdvancedModel>) {
         val finalList = mutableListOf<FilterAdvancedEntity>()
         list.forEach {
-            filterDao.delete(it.id)
             finalList.add(it.toFilterAdvancedEntity())
         }
         dao.delete(*finalList.toTypedArray())
     }
+
+
+    suspend fun migrateForFilters() {
+        val senders = senderRepo.getAllSenders()
+        val filters = filterDao.getAll()
+        val filterAdvanced = mutableListOf<FilterAdvancedEntity>()
+        filters.forEach { filter->
+           val sender =  senders.find { it.senderName.equals(filter.bankName , ignoreCase = true) }
+            if (sender != null){
+                val entity = filter.toFilterModel(sender.id).toFilterAdvancedEntity()
+                filterAdvanced.add(entity)
+
+            }
+        }
+        dao.insertAll(*filterAdvanced.toTypedArray())
+    }
+
+
 
 }

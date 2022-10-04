@@ -2,18 +2,13 @@ package com.msharialsayari.musrofaty.ui.screens.splash_screen
 
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.*
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,6 +24,7 @@ class SplashViewModel @Inject constructor(
     private val wordDetectorRepo: WordDetectorRepo,
     private val contentRepo: ContentRepo,
     private val senderRepo: SenderRepo,
+    private val filtersRepo: FilterRepo,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -46,6 +42,12 @@ class SplashViewModel @Inject constructor(
             contentRepo.insert(*defaultContent.toTypedArray())
         }
 
+    }
+
+    private fun migrateForFilters(){
+        viewModelScope.launch {
+            filtersRepo.migrateForFilters()
+        }
     }
 
     private fun insertSms(){
@@ -91,6 +93,7 @@ class SplashViewModel @Inject constructor(
                 insertContent()
                 insertWordsDetector()
                 insertDefaultSenders()
+                migrateForFilters()
                 SharedPreferenceManager.setFirstLunch(context)
             }
             insertSms()

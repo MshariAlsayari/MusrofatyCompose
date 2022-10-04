@@ -63,7 +63,6 @@ class SenderSmsListViewModel @Inject constructor(
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
                 val filtersResult = getFiltersUseCase.invoke(
-                    sender.senderName,
                     sender.id
                 )
                 _uiState.update {
@@ -80,7 +79,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getAllSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isAllSmsPageLoading = false) }
-            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterOption())
+            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterTimeOption())
             _uiState.update {
                 it.copy(
                     smsFlow         = smsResult,
@@ -92,7 +91,7 @@ class SenderSmsListViewModel @Inject constructor(
 
      fun getAllSmsBySenderId(senderId: Int){
         viewModelScope.launch {
-            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterOption())
+            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption())
             _uiState.update {
                 it.copy(
                     allSmsFlow         = smsResult)
@@ -104,7 +103,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFavoriteSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isFavoriteSmsPageLoading = false) }
-            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterOption())
+            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterTimeOption())
             _uiState.update {
                 it.copy(
                     favoriteSmsFlow = smsResult,
@@ -124,7 +123,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFinancialStatistics(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isStatisticsSmsPageLoading = true) }
-            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterOption())
+            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption())
             smsResult.collectLatest { list->
                 val result = getFinancialStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
@@ -158,7 +157,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun getFilterOptions(context: Context,selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getFilterTimeOptions(context: Context, selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
         val options = context.resources.getStringArray(R.array.filter_options)
         val list = mutableListOf<SelectedItemModel>()
         options.mapIndexed { index, value ->
@@ -174,7 +173,23 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-     fun getFilterOption():DateUtils.FilterOption{
+    fun getFilterOptions(context: Context,selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+        val options = context.resources.getStringArray(R.array.filter_options)
+        val list = mutableListOf<SelectedItemModel>()
+        _uiState.value.filters.mapIndexed { index, value ->
+            list.add(SelectedItemModel(
+                id = value.id,
+                value = value.title,
+                isSelected = selectedItem?.id == value.id
+            )
+            )
+        }
+
+        return list
+
+    }
+
+     fun getFilterTimeOption():DateUtils.FilterOption{
         return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 

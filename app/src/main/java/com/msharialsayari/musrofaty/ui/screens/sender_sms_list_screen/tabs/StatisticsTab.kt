@@ -50,7 +50,7 @@ fun BuildChartCompose(
 
         items(items = uiState.financialStatistics.values.toList() , itemContent =  {
             FinancialStatistics(model = FinancialStatisticsModel(
-                filterOption = viewModel.getFilterOption(),
+                filterOption = viewModel.getFilterTimeOption(),
                 currency = it.currency,
                 total = it.expenses.plus(it.income),
                 incomeTotal = it.income,

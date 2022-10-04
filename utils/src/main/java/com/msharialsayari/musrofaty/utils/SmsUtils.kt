@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
-import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
@@ -46,14 +45,23 @@ object SmsUtils {
     }
 
     private fun isOTPSms(sms:String?):Boolean{
-        return sms?.contains(Constants.OTP_ar, ignoreCase = true) == true || sms?.contains(Constants.OTP_en, ignoreCase = true)== true ||  sms?.contains(Constants.OTP_shortcut_en, ignoreCase = true)  ?:false
+        Constants.eliminatorList.forEach {
+            if (sms?.contains(it, ignoreCase = true) == true)
+                return true
+        }
+        return false
     }
 
 
-    fun getCurrency(smsBody: String? , currency:List<String>): String {
-        smsBody?.let {sms->
-            return currency.find { it.contains(sms, ignoreCase = true) } ?: ""
-        }?:run { return "" }
+    fun getCurrency(smsBody: String?, currencyList:List<String>): String {
+        smsBody?.let {
+            for (currency in currencyList) {
+                if (isSmsContainsCurrency(currency, smsBody)) {
+                    return currency
+                }
+            }
+        }
+        return ""
     }
 
 
@@ -95,7 +103,16 @@ object SmsUtils {
         return words.any { smsBody?.contains(it, ignoreCase = true) == true }
     }
 
-    fun isSACurrency(currency: String) = listSACurrency.any { it.equals(currency, ignoreCase = true) }
+    fun isSACurrency(currency: String) =   currency.equals(Constants.CURRENCY_1, ignoreCase = true) || currency.equals(
+        Constants.CURRENCY_2,
+        ignoreCase = true
+    ) || currency.equals(
+        Constants.CURRENCY_3,
+        ignoreCase = true
+    ) || currency.equals(
+        Constants.CURRENCY_4,
+        ignoreCase = true
+    )
 
     fun extractAmount(sms: String?, currencyList: List<String>): Double {
         var amount = 0.0

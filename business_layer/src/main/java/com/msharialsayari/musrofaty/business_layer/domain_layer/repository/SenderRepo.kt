@@ -32,6 +32,10 @@ class SenderRepo @Inject constructor(
         return dao.getActive()
     }
 
+    suspend fun getAllSenders(): List<SenderEntity> {
+        return dao.getAll()
+    }
+
     suspend fun getSenderById(senderId:Int):SenderModel{
         val model = dao.getSenderById(senderId).toSenderModel()
         return fillSenderModel(model)
@@ -69,7 +73,7 @@ class SenderRepo @Inject constructor(
 
     private suspend fun getSmsCurrency(body:String):String{
         val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.getCurrency(body, currency = currencyWord )
+        return SmsUtils.getCurrency(body, currencyList = currencyWord )
     }
 
     private suspend fun getAmount(body: String): Double {

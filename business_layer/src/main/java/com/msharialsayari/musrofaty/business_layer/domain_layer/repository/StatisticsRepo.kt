@@ -22,21 +22,20 @@ class StatisticsRepo @Inject constructor(
 
      suspend fun getFinancialStatistics(list: List<SmsEntity>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        var currency = ""
         list.forEach {
             var smsModel = it.toSmsModel()
             smsModel = senderRepo.fillSmsModel(smsModel)
             if (smsModel.smsType != SmsType.NOTHING) {
 
 
-                if (SmsUtils.isSACurrency(smsModel.currency) || currency.isEmpty() ) {
-                    currency = Constants.CURRENCY_1
+                if (SmsUtils.isSACurrency(smsModel.currency) || smsModel.currency.isEmpty() ) {
+                    smsModel.currency = Constants.CURRENCY_1
                 }
 
 
                 if (smsModel.amount > 0) {
-                    val financialSummary = map.getOrDefault(currency, FinancialStatistics(currency) )
-                    map[currency] = calculateSummary(financialSummary, smsModel.amount, smsModel.smsType)
+                    val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency) )
+                    map[smsModel.currency] = calculateSummary(financialSummary, smsModel.amount, smsModel.smsType)
                 }
 
 

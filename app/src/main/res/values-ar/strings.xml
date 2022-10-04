@@ -12,6 +12,8 @@
     <string name="common_sms_total">مجموع الرسائل</string>
     <string name="common_details">التفاصيل</string>
     <string name="common_filter_options">تصفية</string>
+    <string name="common_filter">فلتر</string>
+    <string name="common_no_selected">لم يتم التحديد</string>
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
         <item quantity="one">رسالة</item>
@@ -36,6 +38,7 @@
     <string name="tab_all_sms">الرسائل</string>
     <string name="tab_favorite_sms">المفضلة</string>
     <string name="tab_statistics">الإحصائيات</string>
+    <string name="create_filter">أنشئ فلتر</string>
 
 
 

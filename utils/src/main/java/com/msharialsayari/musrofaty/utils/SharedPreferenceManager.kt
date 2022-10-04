@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
-import com.yariksoffice.lingver.Lingver
 import java.util.*
 
 
@@ -15,6 +14,7 @@ object SharedPreferenceManager {
     private const val PREF_LANGUAGE                               = "key_preferredLang"
     private const val PREF_LANGUAGE_CHANGED                       = "PREF_LANGUAGE_CHANGED"
     private const val PREF_First_Lunched                          = "PREF_First_Lunched"
+    private const val PREF_SHOULD_MIGRATE_FOR_FILTERS             = "PREF_SHOULD_MIGRATE_FOR_FILTERS"
 
 
     fun storeLanguage(context: Context, locale: Locale) {
@@ -73,6 +73,18 @@ object SharedPreferenceManager {
         isChanged: Boolean = false
     ) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_First_Lunched, isChanged).apply()
+    }
+
+    fun shouldMigrateForFilters(context: Context): Boolean{
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            PREF_SHOULD_MIGRATE_FOR_FILTERS, true)
+    }
+
+    fun setShouldMigrateForFilters(
+        context: Context,
+        isChanged: Boolean = false
+    ) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_SHOULD_MIGRATE_FOR_FILTERS, isChanged).apply()
     }
 
 }

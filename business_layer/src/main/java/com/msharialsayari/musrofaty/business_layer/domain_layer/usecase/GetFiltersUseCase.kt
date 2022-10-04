@@ -10,8 +10,8 @@ class GetFiltersUseCase @Inject constructor(
     private val filterRepo: FilterRepo
 ) {
 
-    suspend operator fun invoke(senderName: String, senderId:Int): List<FilterAdvancedModel> {
-        return filterRepo.getAll(senderName,senderId)
+    suspend operator fun invoke(senderId:Int): List<FilterAdvancedModel> {
+        return filterRepo.getAll(senderId)
 
     }
 

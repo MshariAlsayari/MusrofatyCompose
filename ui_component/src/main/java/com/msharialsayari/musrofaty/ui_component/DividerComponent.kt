@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 object DividerComponent {
 
     @Composable
-    fun HorizontalDividerComponent(){
-        Divider(modifier = Modifier.fillMaxWidth().width(1.dp))
+    fun HorizontalDividerComponent(modifier: Modifier=Modifier){
+        Divider(modifier = modifier.fillMaxWidth().width(1.dp))
     }
 }

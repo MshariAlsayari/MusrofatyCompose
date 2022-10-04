@@ -11,6 +11,8 @@
     <string name="common_sms_total">SMS total</string>
     <string name="common_details">Details</string>
     <string name="common_filter_options">Filter</string>
+    <string name="common_filter">Filter</string>
+    <string name="common_no_selected">Not selected</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
@@ -29,6 +31,7 @@
     <string name="tab_all_sms">SMSs</string>
     <string name="tab_favorite_sms">Likes</string>
     <string name="tab_statistics">Statistics</string>
+    <string name="create_filter">Create filter</string>
 
 
     <!--permissions-->

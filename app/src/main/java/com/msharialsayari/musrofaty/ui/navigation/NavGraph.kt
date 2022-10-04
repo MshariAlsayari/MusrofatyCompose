@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
@@ -85,8 +86,20 @@ fun NavigationGraph(
                 },
                 onBack = {
                     navController.navigateUp()
+                },
+                onNavigateToFilterScreen = {
+                    navController.navigate(Screen.FilterScreen.route + "/${it}")
                 }
             )
+        }
+
+
+        composable(Screen.FilterScreen.route + "/{senderId}",
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
+            )) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val senderId = arguments?.getInt("senderId")?:0
+            FilterScreen(senderId)
         }
 
         composable(Screen.SinglePermission.route) {

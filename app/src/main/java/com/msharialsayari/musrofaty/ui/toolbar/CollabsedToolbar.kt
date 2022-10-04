@@ -84,7 +84,7 @@ fun CollapsingToolbar(
         elevation = Elevation,
         modifier = modifier
     ) {
-        Box (modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Box (modifier = Modifier.fillMaxSize().padding(vertical = 16.dp)) {
 
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -132,6 +132,7 @@ private fun CollapsedToolbarCompose(
 
 
     Box(modifier = modifier
+        .padding(horizontal = 16.dp )
         .fillMaxSize()
         .graphicsLayer { alpha = ((0.25f - progress) * 4).coerceIn(0f, 1f) },
     ) {

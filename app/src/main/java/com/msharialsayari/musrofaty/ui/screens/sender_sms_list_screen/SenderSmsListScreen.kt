@@ -14,6 +14,7 @@ import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -50,7 +52,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 private val MinToolbarHeight = 40.dp
-private val MaxToolbarHeight = 60.dp
+private val MaxToolbarHeight = 85.dp
 
 
 
@@ -59,6 +61,7 @@ private val MaxToolbarHeight = 60.dp
 @Composable
 fun SenderSmsListScreen(senderId: Int,
                         onDetailsClicked: (Int)->Unit,
+                        onNavigateToFilterScreen: (Int)->Unit,
                         onBack: ()->Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
@@ -70,9 +73,9 @@ fun SenderSmsListScreen(senderId: Int,
         uiState.isLoading -> PageLoading()
         uiState.sender != null ->
             PageContainer(
-                uiState.sender!!,
                 viewModel,
                 onDetailsClicked,
+                onNavigateToFilterScreen,
                 onBack)
     }
 
@@ -83,35 +86,53 @@ fun SenderSmsListScreen(senderId: Int,
 }
 
 @Composable
-fun FilterOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterOptionClicked:()->Unit){
+fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit){
     val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter_options,
-        list = viewModel.getFilterOptions(context, uiState.selectedFilterTimeOption),
+        list = viewModel.getFilterTimeOptions(context, uiState.selectedFilterTimeOption),
         onSelectItem = {
             uiState.selectedFilterTimeOption = it
-            onFilterOptionClicked()
+            onFilterSelected()
         }
     )
 }
 
+@Composable
+fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit){
+    val context                           = LocalContext.current
+    val uiState                           by viewModel.uiState.collectAsState()
+    BottomSheetComponent.SelectedItemListBottomSheetComponent(
+        title = R.string.common_filter,
+        list = viewModel.getFilterOptions(context, uiState.selectedFilter),
+        onSelectItem = {
+            uiState.selectedFilter = it
+            onFilterSelected()
+        }
+    )
+}
+
+
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageContainer(sender:SenderModel,
+fun PageContainer(
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
+                  onNavigateToFilterScreen: (Int)->Unit,
                   onBack: ()->Unit){
     val context                           = LocalContext.current
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState                      = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection            = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState                           by viewModel.uiState.collectAsState()
+    val isFilterTimeOptionBottomSheet     = remember { mutableStateOf(false) }
+    val coroutineScope                    = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-    val coroutineScope = rememberCoroutineScope()
 
 
     BackHandler(sheetState.isVisible) {
@@ -119,19 +140,39 @@ fun PageContainer(sender:SenderModel,
     }
 
     LaunchedEffect(key1 = Unit){
-        viewModel.getAllSmsBySenderId(sender.id)
+        viewModel.getAllSmsBySenderId(uiState.sender?.id?:0)
     }
 
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = {FilterOptionsBottomSheet(viewModel =viewModel, onFilterOptionClicked= {
-            coroutineScope.launch {
-                handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-            }
-            viewModel.onFilterChanged()
+        sheetContent = {
 
-        })}){
+            if (isFilterTimeOptionBottomSheet.value)
+                FilterTimeOptionsBottomSheet(viewModel =viewModel, onFilterSelected= {
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                    }
+                    viewModel.onFilterChanged()
+
+                })
+
+
+            else
+                FilterBottomSheet(viewModel =viewModel, onFilterSelected = {
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                    }
+                    viewModel.onFilterChanged()
+
+                })
+
+
+
+
+
+
+        }){
 
         Column(modifier = Modifier
             .nestedScroll(nestedScrollConnection)
@@ -140,13 +181,25 @@ fun PageContainer(sender:SenderModel,
 
         ) {
             CollapsedToolbar(
-                toolbarState     = toolbarState,
-                sender           = sender,
-                listSize         = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0,
-                onDetailsClicked = onDetailsClicked,
-                onBack           = onBack,
+                toolbarState             = toolbarState,
+                viewModel                = viewModel,
+                onDetailsClicked         = onDetailsClicked,
+                onBack                   = onBack,
+                onCreateFilterClicked    = { viewModel.uiState.value.sender?.id?.let {
+                    onNavigateToFilterScreen(
+                        it
+                    )
+                } },
                 onFilterIconClicked = {
                     coroutineScope.launch {
+                        isFilterTimeOptionBottomSheet.value = false
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                    }
+
+                },
+                onFilterTimeIconClicked = {
+                    coroutineScope.launch {
+                        isFilterTimeOptionBottomSheet.value = true
                         handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                     }
 
@@ -154,7 +207,7 @@ fun PageContainer(sender:SenderModel,
                 }
 
             )
-            Tabs(sender.id)
+            Tabs(uiState.sender?.id?:0)
         }
 
     }
@@ -198,16 +251,17 @@ fun Tabs(senderId: Int){
 
 @Composable
 fun CollapsedToolbar(toolbarState: ToolbarState,
-                     sender: SenderModel,
-                     listSize: Int,
+                     viewModel: SenderSmsListViewModel,
                      onDetailsClicked: (Int)->Unit,
+                     onCreateFilterClicked: ()->Unit,
                      onBack: ()->Unit,
+                     onFilterTimeIconClicked: ()->Unit,
                      onFilterIconClicked: ()->Unit){
     CollapsingToolbar(
         progress   = toolbarState.progress,
-        actions    = {ToolbarActionsComposable(onBack, onFilterIconClicked)},
-        collapsedComposable      = { CollapsedToolbarComposable(sender,listSize)},
-        expandedComposable = { ExpandedToolbarComposable(sender,listSize,onDetailsClicked)},
+        actions    = {ToolbarActionsComposable(viewModel,onBack, onFilterTimeIconClicked,onFilterIconClicked)},
+        collapsedComposable      = { CollapsedToolbarComposable(viewModel)},
+        expandedComposable = { ExpandedToolbarComposable(viewModel,onDetailsClicked, onCreateFilterClicked)},
         modifier   = Modifier
             .fillMaxWidth()
             .height(toolbarState.height.dp + 5.dp)
@@ -337,71 +391,131 @@ fun getNestedScrollConnection(listState   : LazyListState  = rememberLazyListSta
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ExpandedToolbarComposable(sender: SenderModel,
-                              smsSize:Int,
-                              onDetailsClicked: (Int)->Unit
+fun ExpandedToolbarComposable(
+    viewModel: SenderSmsListViewModel,
+    onDetailsClicked: (Int)->Unit,
+    onCreateFilterClicked: ()->Unit,
 ){
-    val context = LocalContext.current
-    val model = SenderComponentModel(
-        senderId    = sender.id,
-        senderName  = sender.senderName,
-        displayName = SenderModel.getDisplayName(context, sender),
-        senderType  = ContentModel.getDisplayName(context, sender.content),
-    )
-
-
 
     Column( modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SenderComponent(model =model)
+        UpperPartExpandedToolbar(viewModel, onDetailsClicked)
+        DividerComponent.HorizontalDividerComponent()
+        LowerPartExpandedToolbar(viewModel,onCreateFilterClicked)
+    }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+}
 
-        ) {
-            Column {
-                TextComponent.PlaceholderText(
-                    text = stringResource(id = R.string.common_sender_shortcut) + ": " + sender.senderName
-                )
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel,onDetailsClicked: (Int)->Unit){
+    val context = LocalContext.current
+    val uiState  by viewModel.uiState.collectAsState()
+    val sender = uiState.sender
+    val smsCount = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0
+    val model = SenderComponentModel(
+        senderId    = sender?.id ?:0,
+        senderName  = sender?.senderName ?: "",
+        displayName = SenderModel.getDisplayName(context, sender),
+        senderType  = ContentModel.getDisplayName(context, sender?.content),
+    )
+    SenderComponent(
+        modifier = Modifier.padding(horizontal = 16.dp ),
+        model =model)
 
-                TextComponent.PlaceholderText(
-                    text = stringResource(id = R.string.common_sms_total)+ ": "+ smsSize.toString() + " " + pluralStringResource(id = R.plurals.common_sms, count = smsSize)
-                )
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
 
-            }
-
-            ButtonComponent.OutlineButton(
-                text = R.string.common_details,
-                onClick = {
-                    onDetailsClicked(sender.id)
-                }
+    ) {
+        Column {
+            TextComponent.PlaceholderText(
+                text = stringResource(id = R.string.common_sender_shortcut) + ": " + sender?.senderName
             )
 
+            TextComponent.PlaceholderText(
+                text = stringResource(id = R.string.common_sms_total)+ ": "+ smsCount.toString() + " " + pluralStringResource(id = R.plurals.common_sms, count = smsCount)
+            )
+
+        }
+
+        ButtonComponent.OutlineButton(
+            text = R.string.common_details,
+            onClick = {
+                onDetailsClicked(sender?.id?:0)
+            }
+        )
+
+    }
+
+}
+
+@Composable
+fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: ()->Unit,){
+
+    val uiState  by viewModel.uiState.collectAsState()
+    val filters = uiState.filters
+    val selectedTimeFilter = uiState.selectedFilterTimeOption
+    val selectedFilter = uiState.selectedFilter
+
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+
+    ) {
+
+
+        TextComponent.PlaceholderText(
+            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value ?: stringArrayResource(id = R.array.filter_options)[0])
+        )
+
+
+        if (filters.isEmpty()){
+
+            Row(horizontalArrangement = Arrangement.SpaceAround) {
+                TextComponent.PlaceholderText(
+                    text = stringResource(id = R.string.common_filter)+ ": "
+                )
+
+                TextComponent.ClickableText(
+                    modifier= Modifier.clickable {
+                        onCreateFilterClicked()
+                    },
+                    text = stringResource(id = R.string.create_filter)
+                )
+            }
+
+        }else{
+            TextComponent.PlaceholderText(
+                text = stringResource(id = R.string.common_filter)+ ": "+ (selectedFilter?.value ?: stringResource(id = R.string.common_no_selected))
+            )
         }
 
 
 
 
-
-
     }
 
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CollapsedToolbarComposable(sender: SenderModel, smsSize:Int){
-    val context = LocalContext.current
+fun CollapsedToolbarComposable(viewModel:SenderSmsListViewModel){
+    val context  = LocalContext.current
+    val uiState  by viewModel.uiState.collectAsState()
+    val smsCount = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TextComponent.HeaderText(
-            text = SenderModel.getDisplayName(context, sender)
+            text = SenderModel.getDisplayName(context, uiState.sender)
         )
 
         TextComponent.BodyText(
-            text = smsSize.toString() + " " + pluralStringResource(id = R.plurals.common_sms, count = smsSize )
+            text = smsCount.toString() + " " + pluralStringResource(id = R.plurals.common_sms, count = smsCount )
         )
 
     }
@@ -410,10 +524,14 @@ fun CollapsedToolbarComposable(sender: SenderModel, smsSize:Int){
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ToolbarActionsComposable(onBack: () -> Unit, onFilterOptionsClick:()->Unit) {
+fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel, onBack:()->Unit, onFilterTimeIconClicked:()->Unit, onFilterIconClicked:()->Unit) {
+    val uiState  by viewModel.uiState.collectAsState()
+    val filters = uiState.filters
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon( Icons.Default.ArrowBack,
@@ -427,15 +545,30 @@ fun ToolbarActionsComposable(onBack: () -> Unit, onFilterOptionsClick:()->Unit) 
                 })
 
 
-        Icon( Icons.Default.DateRange,
+        Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-            contentDescription = null,
-            modifier = Modifier
-                .mirror()
-                .clickable {
-                    onFilterOptionsClick()
 
-                })
+            if (filters.isNotEmpty())
+            Icon(Icons.Default.Face,
+
+                contentDescription = null,
+                modifier = Modifier
+                    .mirror()
+                    .clickable {
+                        onFilterIconClicked()
+
+                    })
+
+            Icon(Icons.Default.DateRange,
+
+                contentDescription = null,
+                modifier = Modifier
+                    .mirror()
+                    .clickable {
+                        onFilterTimeIconClicked()
+
+                    })
+        }
 
 
 

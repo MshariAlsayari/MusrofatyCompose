@@ -108,7 +108,7 @@ class SmsRepo @Inject constructor(
     private suspend fun getSmsCurrency(body: String): String {
         val currencyWord =
             wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.getCurrency(body, currency = currencyWord)
+        return SmsUtils.getCurrency(body, currencyList = currencyWord)
     }
 
     private suspend fun getAmount(body: String): Double {

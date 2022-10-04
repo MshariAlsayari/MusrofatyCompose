@@ -66,7 +66,7 @@ fun FinancialStatistics(modifier:Modifier=Modifier,
             )
         }
 
-        DividerComponent.HorizontalDividerComponent()
+        DividerComponent.HorizontalDividerComponent(modifier = modifier)
     }
 
 

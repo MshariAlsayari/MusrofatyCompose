@@ -117,10 +117,23 @@ object Constants {
     const val english_en ="en"
 
 
+
     //SMS Eliminator
-    const val OTP_ar  ="كلمة المرور لمرة واحدة"
-    const val OTP_en  ="One time password"
-    const val OTP_shortcut_en  ="OTP"
+    const val OTP_ar = "كلمة المرور"
+    const val OTP2_ar = "كلمة مرور"
+    const val OTP_en = "password"
+    const val OTP_shortcut_en = "OTP"
+    const val dear_clients_ar = "عزيزنا"
+    const val dear_clients2_ar = "عميلنا"
+    const val sign_in_en = "sign in"
+    const val log_in_en = "log in"
+    const val sign_in_ar = "تسجيل"
+    const val sign_in2_ar = "دخول"
+    const val code_activate_ar = "رمز"
+    const val code_activate_en = "code"
+    const val code_detect_ar = "رمز التحقق"
+    const val code_detect_en = "detect code"
+    var eliminatorList = listOf(OTP_ar, OTP2_ar,OTP_en,OTP_shortcut_en,dear_clients_ar, dear_clients2_ar,sign_in_en,log_in_en,sign_in_ar,sign_in2_ar,code_activate_ar,code_activate_en,code_detect_ar,code_detect_en)
 
     // mada
     const val mada_ar  ="مدى"
