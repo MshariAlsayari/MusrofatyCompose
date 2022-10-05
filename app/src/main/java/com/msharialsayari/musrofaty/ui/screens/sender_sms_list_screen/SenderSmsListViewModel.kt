@@ -49,7 +49,7 @@ class SenderSmsListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val senderResult         = getSenderUseCase.invoke(senderId)
-            getFilters()
+            getFilters(senderResult.id)
             _uiState.update {
                 it.copy(
                     sender          = senderResult,
@@ -58,19 +58,15 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun getFilters(){
-        _uiState.value.sender?.let { sender->
-            viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true) }
-                val filtersResult = getFiltersUseCase.invoke(
-                    sender.id
+    private fun getFilters(senderId:Int){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val filtersResult = getFiltersUseCase.invoke(senderId)
+            _uiState.update {
+                it.copy(
+                    filters = filtersResult,
+                    isLoading = false
                 )
-                _uiState.update {
-                    it.copy(
-                        filters = filtersResult,
-                        isLoading = false
-                    )
-                }
             }
         }
     }
@@ -173,8 +169,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun getFilterOptions(context: Context,selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
-        val options = context.resources.getStringArray(R.array.filter_options)
+    fun getFilterOptions(selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
         _uiState.value.filters.mapIndexed { index, value ->
             list.add(SelectedItemModel(

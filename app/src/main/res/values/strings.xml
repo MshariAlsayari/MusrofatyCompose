@@ -14,6 +14,7 @@
     <string name="common_filter">Filter</string>
     <string name="common_no_selected">Not selected</string>
     <string name="common_add">Add</string>
+    <string name="common_create">Create</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>

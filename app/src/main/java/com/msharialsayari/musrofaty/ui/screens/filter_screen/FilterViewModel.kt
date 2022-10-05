@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddFilterWordUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.CreateNewFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FilterViewModel@Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
-    private val addFilterWordUseCase: AddFilterWordUseCase
+    private val addFilterWordUseCase: AddFilterWordUseCase,
+    private val createNewFilterUseCase: CreateNewFilterUseCase
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FilterUiState())
@@ -35,9 +37,29 @@ class FilterViewModel@Inject constructor(
     }
 
     fun onFilterTitleChanged(value:String){
-        viewModelScope.launch {
-
+        _uiState.update {
+            it.copy( title = value)
         }
+    }
+
+    fun removeWordFromFilter(value:String){
+        _uiState.value.words.toMutableList().removeIf { it.equals(value,ignoreCase = true) }
+        _uiState.update {
+            it.copy( words = _uiState.value.words)
+        }
+    }
+
+    fun onSaveBtnClicked(){
+
+    }
+
+    fun onCreateBtnClicked(){
+        viewModelScope.launch {
+            val words = FilterAdvancedModel.getFilterWordsAsString(_uiState.value.words)
+            val model = FilterAdvancedModel(words = words, title =_uiState.value.title , senderId = _uiState.value.senderId)
+            createNewFilterUseCase.invoke(model)
+        }
+
     }
 
     fun addFilterWord( value: String) {
@@ -50,10 +72,14 @@ class FilterViewModel@Inject constructor(
         }
     }
 
+
+
     data class FilterUiState(
         var isLoading: Boolean = false,
+        var senderId: Int = 0,
         var title: String = "",
         var words: List<String> = emptyList(),
+        var isCreateNewFilter:Boolean = false
 
         )
 }

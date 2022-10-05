@@ -61,7 +61,7 @@ private val MaxToolbarHeight = 85.dp
 @Composable
 fun SenderSmsListScreen(senderId: Int,
                         onDetailsClicked: (Int)->Unit,
-                        onNavigateToFilterScreen: (Int?)->Unit,
+                        onNavigateToFilterScreen: (Int,Int?)->Unit,
                         onBack: ()->Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
@@ -105,9 +105,14 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter,
-        list = viewModel.getFilterOptions(context, uiState.selectedFilter),
+        list = viewModel.getFilterOptions(uiState.selectedFilter),
+        canUnSelect = true,
         onSelectItem = {
-            uiState.selectedFilter = it
+            if (it.isSelected) {
+                uiState.selectedFilter = it
+            }else{
+                uiState.selectedFilter = null
+            }
             onFilterSelected()
         }
     )
@@ -120,7 +125,7 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
 fun PageContainer(
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
-                  onNavigateToFilterScreen: (Int?)->Unit,
+                  onNavigateToFilterScreen: (Int,Int?)->Unit,
                   onBack: ()->Unit){
     val context                           = LocalContext.current
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
@@ -185,7 +190,9 @@ fun PageContainer(
                 viewModel                = viewModel,
                 onDetailsClicked         = onDetailsClicked,
                 onBack                   = onBack,
-                onCreateFilterClicked    = {   onNavigateToFilterScreen(null)},
+                onCreateFilterClicked    = { uiState.sender?.let {
+                    onNavigateToFilterScreen(it.id, null)
+                } },
                 onFilterIconClicked = {
                     coroutineScope.launch {
                         isFilterTimeOptionBottomSheet.value = false

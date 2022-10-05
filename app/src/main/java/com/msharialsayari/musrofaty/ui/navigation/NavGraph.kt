@@ -87,26 +87,33 @@ fun NavigationGraph(
                 onBack = {
                     navController.navigateUp()
                 },
-                onNavigateToFilterScreen = {
-                    if (it == null)
-                        navController.navigate(Screen.FilterScreen.route)
+                onNavigateToFilterScreen = { senderId , filterId ->
+                    if (filterId == null)
+                        navController.navigate(Screen.FilterScreen.route+ "/${senderId}")
                     else
-                    navController.navigate(Screen.FilterScreen.route + "/${it}")
+                        navController.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
+
                 }
             )
         }
 
 
-        composable(Screen.FilterScreen.route) {
-            FilterScreen(null)
+        composable(Screen.FilterScreen.route+ "/{senderId}",
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
+            )) {backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val senderId = arguments?.getInt("senderId") ?: 0
+            FilterScreen(senderId, null)
         }
 
-        composable(Screen.FilterScreen.route + "/{filterId}",
-            arguments = listOf(navArgument("filterId") { type = NavType.IntType }
+        composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
+            arguments = listOf(navArgument("senderId") { type = NavType.IntType },
+                    navArgument("filterId") { type = androidx.navigation.NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
-            FilterScreen(filterId)
+            val senderId = arguments?.getInt("senderId") ?: 0
+            FilterScreen(senderId,filterId)
         }
 
         composable(Screen.SinglePermission.route) {

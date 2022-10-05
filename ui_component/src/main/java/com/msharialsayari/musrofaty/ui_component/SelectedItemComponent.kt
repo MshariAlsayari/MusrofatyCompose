@@ -13,14 +13,20 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, onSelect:(Boolean)->Unit) {
+fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, onSelect:(Boolean)->Unit, canUnSelect:Boolean = false) {
     ListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                if (!model.isSelected){
+
+                if (canUnSelect){
                     onSelect(!model.isSelected)
+                }else{
+                    if (!model.isSelected){
+                        onSelect(!model.isSelected)
+                    }
                 }
+
 
             },
         text = { TextComponent.BodyText(text = model.value) },

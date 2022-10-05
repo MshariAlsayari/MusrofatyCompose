@@ -2,10 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.filter_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,24 +13,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
+import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterScreen(filterId:Int?){
+fun FilterScreen(senderId:Int , filterId:Int?){
     val viewModel:FilterViewModel = hiltViewModel()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val uiState                           by viewModel.uiState.collectAsState()
     val textFieldBottomSheetValue = remember {
         mutableStateOf("")
     }
     LaunchedEffect(key1 = Unit){
         filterId?.let { viewModel.getFilter(it) }
+        uiState.isCreateNewFilter = filterId == null
+        uiState.senderId = senderId
     }
 
 
@@ -99,6 +104,7 @@ fun FilterScreen(filterId:Int?){
 
                 }
             })
+            BtnAction(viewModel)
 
         }
 
@@ -123,6 +129,7 @@ fun FilterTitle(viewModel: FilterViewModel){
         label = R.string.filter_title,
         onValueChanged = {
             textState.value = it
+            viewModel.onFilterTitleChanged( textState.value)
 
 
         }
@@ -131,7 +138,7 @@ fun FilterTitle(viewModel: FilterViewModel){
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:(String)->Unit){
 
@@ -184,6 +191,23 @@ fun AddFilter(onAddFilterClicked:(String)->Unit){
 
 }
 
+@Composable
+fun BtnAction(viewModel: FilterViewModel){
+    val uiState                           by viewModel.uiState.collectAsState()
+   ButtonComponent.ActionButton(
+       text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
+       onClick = {
+           if (uiState.isCreateNewFilter){
+               viewModel.onCreateBtnClicked()
+           }else{
+               viewModel.onSaveBtnClicked()
+           }
+       }
+
+   )
+
+}
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show: Boolean) {
 
@@ -194,3 +218,34 @@ suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, sho
     }
 
 }
+
+
+//val deleteAction = Action<String>(
+//    { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
+//    { ActionIcon(id = R.drawable.ic_delete) },
+//    backgroundColor = colorResource(R.color.deletAction),
+//    onClicked = { position, item ->
+//        viewModel.removeWordFromFilter(item)
+//
+//    })
+//
+//Column {
+//    VerticalEasyList(
+//        modifier= Modifier.wrapContentSize(),
+//        list = uiState.words,
+//        view = {
+//            TextComponent.BodyText(
+//                modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
+//                text = it
+//            )
+//
+//        },
+//        dividerView = { DividerComponent.HorizontalDividerComponent() },
+//        onItemClicked = { item, position -> onAddFilterClicked(item) },
+//        startActions = listOf(deleteAction),
+//        loadingProgress = { ProgressBar.CircleProgressBar() },
+//    )
+//
+//    AddFilter(onAddFilterClicked = onAddFilterClicked)
+//
+//}

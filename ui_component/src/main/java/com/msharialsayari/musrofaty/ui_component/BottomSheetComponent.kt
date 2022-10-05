@@ -42,6 +42,7 @@ object BottomSheetComponent {
     fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
                                              @StringRes title:Int,
                                              list: List<SelectedItemModel>,
+                                             canUnSelect:Boolean = false,
                                              onSelectItem:(SelectedItemModel)->Unit
     ){
 
@@ -49,7 +50,9 @@ object BottomSheetComponent {
             TextComponent.HeaderText(text = stringResource(id = title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
             DividerComponent.HorizontalDividerComponent()
             list.forEach {item->
-                StringSelectedItemComponent(model = item, onSelect = {
+                StringSelectedItemComponent(model = item,
+                    canUnSelect = canUnSelect,
+                    onSelect = {
                     item.isSelected = it
                     onSelectItem(item)
                 })

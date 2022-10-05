@@ -15,6 +15,8 @@
     <string name="common_filter">فلتر</string>
     <string name="common_no_selected">لم يتم التحديد</string>
     <string name="common_add">إضافة</string>
+    <string name="common_create">إنشاء</string>
+
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
         <item quantity="one">رسالة</item>
