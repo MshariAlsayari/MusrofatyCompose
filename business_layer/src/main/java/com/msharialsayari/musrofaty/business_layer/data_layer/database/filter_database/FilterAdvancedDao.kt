@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_d
 
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FilterAdvancedDao {
@@ -11,6 +12,15 @@ interface FilterAdvancedDao {
 
     @Query("SELECT * FROM FilterAdvancedEntity WHERE senderId =:senderId ")
     suspend fun getSenderFilters(senderId: Int): List<FilterAdvancedEntity>
+
+    @Query("SELECT * FROM FilterAdvancedEntity WHERE id =:id ")
+     fun getFilter(id: Int): Flow<FilterAdvancedEntity>
+
+    @Query("SELECT * FROM FilterAdvancedEntity WHERE id =:id ")
+    suspend fun getFilterById(id: Int): FilterAdvancedEntity
+
+    @Query("UPDATE FilterAdvancedEntity SET words =:word WHERE id =:id ")
+    suspend fun addFilterWord(id: Int,word:String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg filterEntity: FilterAdvancedEntity)

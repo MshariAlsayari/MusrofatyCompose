@@ -61,7 +61,7 @@ private val MaxToolbarHeight = 85.dp
 @Composable
 fun SenderSmsListScreen(senderId: Int,
                         onDetailsClicked: (Int)->Unit,
-                        onNavigateToFilterScreen: (Int)->Unit,
+                        onNavigateToFilterScreen: (Int?)->Unit,
                         onBack: ()->Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
@@ -120,7 +120,7 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
 fun PageContainer(
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
-                  onNavigateToFilterScreen: (Int)->Unit,
+                  onNavigateToFilterScreen: (Int?)->Unit,
                   onBack: ()->Unit){
     val context                           = LocalContext.current
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
@@ -185,11 +185,7 @@ fun PageContainer(
                 viewModel                = viewModel,
                 onDetailsClicked         = onDetailsClicked,
                 onBack                   = onBack,
-                onCreateFilterClicked    = { viewModel.uiState.value.sender?.id?.let {
-                    onNavigateToFilterScreen(
-                        it
-                    )
-                } },
+                onCreateFilterClicked    = {   onNavigateToFilterScreen(null)},
                 onFilterIconClicked = {
                     coroutineScope.launch {
                         isFilterTimeOptionBottomSheet.value = false

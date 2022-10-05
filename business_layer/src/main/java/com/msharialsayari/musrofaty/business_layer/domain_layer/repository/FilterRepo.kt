@@ -29,6 +29,18 @@ class FilterRepo @Inject constructor(
         return finalList
     }
 
+    suspend fun getFilter(id:Int): FilterAdvancedModel {
+        return dao.getFilterById(id).toFilterAdvancedModel()
+
+    }
+
+    suspend fun addFilterWord(id:Int, word:String) {
+         val entity =  dao.getFilterById(id)
+         val list =   FilterAdvancedModel.getFilterWordsAsList(entity.words).toMutableList()
+         list.add(word)
+         dao.addFilterWord(id, FilterAdvancedModel.getFilterWordsAsString(list))
+    }
+
 
     suspend fun insert(vararg list: FilterAdvancedModel) {
         val filters: MutableList<FilterAdvancedEntity> = mutableListOf()

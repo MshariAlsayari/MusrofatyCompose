@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--margin-->
+    <dimen name="default_margin10">10dp</dimen>
+    <dimen name="default_margin16">16dp</dimen>
+    <dimen name="default_margin20">20dp</dimen>
+    <dimen name="default_margin30">30dp</dimen>
+    <dimen name="default_margin40">40dp</dimen>
+
+
+    <!--text_size-->
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_big">20sp</dimen>
+
+
+    <dimen name="gridSpacing">4dp</dimen>
+
+
+    <dimen name="btn_height60">60dp</dimen>
+
+
+    <!--rows_size-->
+    <dimen name="row_height100">100dp</dimen>
+</resources>

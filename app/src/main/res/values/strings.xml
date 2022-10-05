@@ -13,6 +13,7 @@
     <string name="common_filter_options">Filter</string>
     <string name="common_filter">Filter</string>
     <string name="common_no_selected">Not selected</string>
+    <string name="common_add">Add</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
@@ -53,6 +54,12 @@
         <item>This year</item>
         <item>Range date</item>
     </string-array>
+
+
+    <!--Filter-->
+    <string name="filter_title">Name</string>
+    <string name="filter_add_word">Add a filter word</string>
+
 
 
 </resources>

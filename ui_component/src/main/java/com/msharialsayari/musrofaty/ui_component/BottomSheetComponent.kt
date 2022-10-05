@@ -23,6 +23,7 @@ object BottomSheetComponent {
             TextFieldComponent.BoarderTextFieldComponent(
                 modifier = modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
+                errorMsg = "",
                 onValueChanged = {
                     text.value= it
                 }

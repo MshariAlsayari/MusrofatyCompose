@@ -88,18 +88,25 @@ fun NavigationGraph(
                     navController.navigateUp()
                 },
                 onNavigateToFilterScreen = {
+                    if (it == null)
+                        navController.navigate(Screen.FilterScreen.route)
+                    else
                     navController.navigate(Screen.FilterScreen.route + "/${it}")
                 }
             )
         }
 
 
-        composable(Screen.FilterScreen.route + "/{senderId}",
-            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
+        composable(Screen.FilterScreen.route) {
+            FilterScreen(null)
+        }
+
+        composable(Screen.FilterScreen.route + "/{filterId}",
+            arguments = listOf(navArgument("filterId") { type = NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
-            val senderId = arguments?.getInt("senderId")?:0
-            FilterScreen(senderId)
+            val filterId = arguments?.getInt("filterId")
+            FilterScreen(filterId)
         }
 
         composable(Screen.SinglePermission.route) {
