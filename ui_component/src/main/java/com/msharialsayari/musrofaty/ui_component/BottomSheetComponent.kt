@@ -30,6 +30,7 @@ object BottomSheetComponent {
             )
             ButtonComponent.ActionButton(text = model.buttonText, onClick = {
                 model.onActionButtonClicked(text.value)
+                text.value = ""
             })
 
         }

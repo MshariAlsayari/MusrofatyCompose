@@ -29,6 +29,9 @@ import kotlinx.coroutines.launch
 fun FilterScreen(filterId:Int?){
     val viewModel:FilterViewModel = hiltViewModel()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val textFieldBottomSheetValue = remember {
+        mutableStateOf("")
+    }
     LaunchedEffect(key1 = Unit){
         filterId?.let { viewModel.getFilter(it) }
     }
@@ -67,7 +70,7 @@ fun FilterScreen(filterId:Int?){
         sheetContent = {
             val model = TextFieldBottomSheetModel(
                 title = R.string.filter_add_word,
-                textFieldValue = "",
+                textFieldValue = textFieldBottomSheetValue.value,
                 buttonText = R.string.common_add,
                 onActionButtonClicked = { value ->
                     viewModel.addFilterWord(value)
@@ -90,6 +93,7 @@ fun FilterScreen(filterId:Int?){
             modifier = Modifier.fillMaxSize()) {
             FilterTitle(viewModel)
             FilterList(viewModel, onAddFilterClicked = {
+                textFieldBottomSheetValue.value = it
                 coroutineScope.launch {
                     handleVisibilityOfBottomSheet(sheetState, true)
 
@@ -129,7 +133,7 @@ fun FilterTitle(viewModel: FilterViewModel){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:()->Unit){
+fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:(String)->Unit){
 
     val uiState                           by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
@@ -140,9 +144,17 @@ fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:()->Unit){
         ) {
 
             itemsIndexed(items = uiState.words) { index, item, ->
-                TextComponent.BodyText(text = item , modifier = Modifier.padding(dimensionResource(
-                    id = R.dimen.default_margin16
-                )))
+                TextComponent.BodyText(
+                    modifier = Modifier
+                        .padding(
+                            dimensionResource(
+                                id = R.dimen.default_margin16
+                            )
+                        )
+                        .clickable {
+                            onAddFilterClicked(item)
+                        },
+                    text = item )
                 DividerComponent.HorizontalDividerComponent()
             }
 
@@ -155,12 +167,12 @@ fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:()->Unit){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddFilter(onAddFilterClicked:()->Unit){
+fun AddFilter(onAddFilterClicked:(String)->Unit){
 
     Column(modifier = Modifier
         .fillMaxWidth()
         .clickable {
-            onAddFilterClicked()
+            onAddFilterClicked("")
         }) {
         DividerComponent.HorizontalDividerComponent()
         ListItem(
