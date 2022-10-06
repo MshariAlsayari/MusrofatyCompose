@@ -101,7 +101,7 @@ fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSele
 }
 
 @Composable
-fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit,   onCreateFilterClicked: ()->Unit ){
+fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit,   onCreateFilterClicked: ()->Unit, onFilterLongPressed:(Int)->Unit ){
     val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
@@ -120,7 +120,12 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
                 uiState.selectedFilter = null
             }
             onFilterSelected()
+        },
+        onLongPress = {
+            onFilterLongPressed(it.id)
         }
+
+
     )
 }
 
@@ -170,7 +175,9 @@ fun PageContainer(
 
 
             else
-                FilterBottomSheet(viewModel =viewModel, onFilterSelected = {
+                FilterBottomSheet(
+                    viewModel =viewModel,
+                    onFilterSelected = {
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                     }
@@ -180,6 +187,11 @@ fun PageContainer(
                     onCreateFilterClicked = {
                         uiState.sender?.let {
                             onNavigateToFilterScreen(it.id, null)
+                        }
+                    },
+                    onFilterLongPressed = {filterId->
+                        uiState.sender?.let {senderModel->
+                            onNavigateToFilterScreen(senderModel.id, filterId)
                         }
                     }
                 )

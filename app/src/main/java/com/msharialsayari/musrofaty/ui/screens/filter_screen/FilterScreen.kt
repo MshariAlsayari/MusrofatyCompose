@@ -10,7 +10,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -30,16 +33,21 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
     val uiState                           by viewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = Unit){
-        filterId?.let { viewModel.getFilter(it) }
-        uiState.isCreateNewFilter = filterId == null
-        uiState.senderId = senderId
+        filterId?.let {
+            viewModel.getFilter(it)
+        }
     }
+    uiState.isCreateNewFilter = filterId == null
+    uiState.filterId = filterId ?: 0
+    uiState.senderId = senderId
+
+
 
 
     Column(
         modifier = Modifier.fillMaxSize()) {
         FilterTitle(viewModel)
-        FilterList(viewModel)
+        FilterWord(viewModel)
         BtnAction(viewModel, onDone)
 
     }
@@ -54,16 +62,15 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
 fun FilterTitle(viewModel: FilterViewModel){
 
     val uiState                           by viewModel.uiState.collectAsState()
-    val textState = remember { mutableStateOf(uiState.title) }
     TextFieldComponent.BoarderTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.default_margin16)),
-        textValue = textState.value,
+        textValue = uiState.title,
         label = R.string.filter_title,
+        errorMsg = uiState.titleValidationModel.errorMsg,
         onValueChanged = {
-            textState.value = it
-            viewModel.onFilterTitleChanged( textState.value)
+            viewModel.onFilterTitleChanged(it)
 
 
         }
@@ -74,21 +81,18 @@ fun FilterTitle(viewModel: FilterViewModel){
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterList(viewModel: FilterViewModel){
+fun FilterWord(viewModel: FilterViewModel){
 
     val uiState                           by viewModel.uiState.collectAsState()
-
-
-    val textState = remember { mutableStateOf(uiState.title) }
     TextFieldComponent.BoarderTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.default_margin16)),
-        textValue = textState.value,
+        textValue = uiState.words,
         label = R.string.filter_add_word,
+        errorMsg = uiState.wordValidationModel.errorMsg,
         onValueChanged = {
-            textState.value = it
-            viewModel.onFilterWordChanged( textState.value)
+            viewModel.onFilterWordChanged( it)
 
 
         }
@@ -121,12 +125,15 @@ fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
    ButtonComponent.ActionButton(
        text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
        onClick = {
-           if (uiState.isCreateNewFilter){
-               viewModel.onCreateBtnClicked()
-               onDone()
-           }else{
-               viewModel.onSaveBtnClicked()
-               onDone()
+
+           if (viewModel.validate()) {
+               if (uiState.isCreateNewFilter) {
+                   viewModel.onCreateBtnClicked()
+                   onDone()
+               } else {
+                   viewModel.onSaveBtnClicked()
+                   onDone()
+               }
            }
        }
 

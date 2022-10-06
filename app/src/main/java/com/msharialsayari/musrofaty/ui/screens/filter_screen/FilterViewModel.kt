@@ -1,12 +1,17 @@
 package com.msharialsayari.musrofaty.ui.screens.filter_screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddFilterWordUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.CreateNewFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateFilterUseCase
+import com.msharialsayari.musrofaty.utils.StringsUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -16,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class FilterViewModel@Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
-    private val addFilterWordUseCase: AddFilterWordUseCase,
-    private val createNewFilterUseCase: CreateNewFilterUseCase
+    private val createNewFilterUseCase: CreateNewFilterUseCase,
+    private val updateFilterUseCase: UpdateFilterUseCase,
+    @ApplicationContext val context: Context
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FilterUiState())
@@ -42,11 +48,42 @@ class FilterViewModel@Inject constructor(
         }
     }
 
+    fun validate(): Boolean {
+        val title = uiState.value.title.trim()
+        val word = uiState.value.words.trim()
+        val titleValidationModel = ValidationModel()
+        val wordValidationModel = ValidationModel()
+        if (title.isEmpty()){
+            titleValidationModel.isValid = false
+            titleValidationModel.errorMsg = context.getString(R.string.validation_field_mandatory)
+        } else if (StringsUtils.containSpecialCharacter(title)){
+            titleValidationModel.isValid = false
+            titleValidationModel.errorMsg = context.getString(R.string.validation_contain_special_character)
+        }
+
+        if (word.isEmpty()){
+            wordValidationModel.isValid = false
+            wordValidationModel.errorMsg = context.getString(R.string.validation_field_mandatory)
+        }else if (StringsUtils.containSpecialCharacter(word)){
+            wordValidationModel.isValid = false
+            wordValidationModel.errorMsg = context.getString(R.string.validation_contain_special_character)
+        }
+
+        _uiState.update {
+            it.copy( titleValidationModel = titleValidationModel, wordValidationModel = wordValidationModel)
+        }
+
+        return titleValidationModel.isValid && wordValidationModel.isValid
+    }
+
 
 
 
     fun onSaveBtnClicked(){
-
+        viewModelScope.launch {
+            val model = FilterAdvancedModel(words = _uiState.value.words.trim(), title =_uiState.value.title.trim() , senderId = _uiState.value.senderId, id = _uiState.value.filterId )
+            updateFilterUseCase.invoke(model)
+        }
     }
 
     fun onCreateBtnClicked(){
@@ -69,9 +106,11 @@ class FilterViewModel@Inject constructor(
     data class FilterUiState(
         var isLoading: Boolean = false,
         var senderId: Int = 0,
+        var filterId: Int = 0,
         var title: String = "",
         var words: String = "",
-        var isCreateNewFilter:Boolean = false
-
+        var isCreateNewFilter:Boolean = false,
+        var titleValidationModel:ValidationModel = ValidationModel(),
+        var wordValidationModel:ValidationModel = ValidationModel(),
         )
 }

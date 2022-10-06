@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui_component
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -11,24 +12,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, onSelect:(Boolean)->Unit, canUnSelect:Boolean = false) {
+fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, canUnSelect:Boolean = false, onSelect:(Boolean)->Unit,onLongPress:(SelectedItemModel)->Unit = {} ) {
     ListItem(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-
-                if (canUnSelect){
-                    onSelect(!model.isSelected)
-                }else{
-                    if (!model.isSelected){
+            .combinedClickable(
+                onClick = {
+                    if (canUnSelect){
                         onSelect(!model.isSelected)
+                    }else{
+                        if (!model.isSelected){
+                            onSelect(!model.isSelected)
+                        }
                     }
-                }
-
-
-            },
+                },
+                onLongClick = {
+                              onLongPress(model)
+                },
+            ),
         text = { TextComponent.BodyText(text = model.value) },
         trailing = {
             if (model.isSelected) {

@@ -51,6 +51,10 @@ class FilterRepo @Inject constructor(
         dao.insertAll(*filters.toTypedArray())
     }
 
+    suspend fun update(model: FilterAdvancedModel) {
+        dao.update(model.toFilterAdvancedEntity())
+    }
+
     suspend fun delete(list: List<FilterAdvancedModel>) {
         val finalList = mutableListOf<FilterAdvancedEntity>()
         list.forEach {

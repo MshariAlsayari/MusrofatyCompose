@@ -25,6 +25,10 @@ interface FilterAdvancedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg filterEntity: FilterAdvancedEntity)
 
+
+    @Update
+    suspend fun update(filterEntity: FilterAdvancedEntity)
+
     @Delete
     suspend fun delete(vararg filterEntity: FilterAdvancedEntity)
 }

@@ -12,7 +12,7 @@ class UpdateFilterUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(filterAdvancedModel: FilterAdvancedModel) {
-        filterRepo.insert(filterAdvancedModel)
+        filterRepo.update(filterAdvancedModel)
     }
 
 

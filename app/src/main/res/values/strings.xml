@@ -62,5 +62,10 @@
     <string name="filter_add_word">Add a filter word</string>
 
 
+    <!--validation-->
+    <string name="validation_field_mandatory">The field is mandatory</string>
+    <string name="validation_contain_special_character">can\'t contain a special character</string>
+
+
 
 </resources>

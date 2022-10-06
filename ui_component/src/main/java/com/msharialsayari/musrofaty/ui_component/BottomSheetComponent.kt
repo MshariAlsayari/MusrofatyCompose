@@ -44,7 +44,8 @@ object BottomSheetComponent {
                                              list: List<SelectedItemModel>,
                                              trailIcon : (@Composable ()->Unit)? = null,
                                              canUnSelect:Boolean = false,
-                                             onSelectItem:(SelectedItemModel)->Unit
+                                             onSelectItem:(SelectedItemModel)->Unit,
+                                             onLongPress:(SelectedItemModel)->Unit = {}
     ){
 
         Column(modifier = modifier) {
@@ -63,7 +64,11 @@ object BottomSheetComponent {
                     onSelect = {
                     item.isSelected = it
                     onSelectItem(item)
-                })
+                },
+                    onLongPress = {
+                        onLongPress(it)
+                    }
+                )
             }
 
 

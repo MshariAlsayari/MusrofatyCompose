@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.utils
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import java.util.regex.Pattern
 
 object StringsUtils {
 
@@ -83,5 +84,10 @@ object StringsUtils {
         val truncated = value / (divideBy / 10) //the number part of the output times 10
         val hasDecimal = truncated < 100 && truncated / 10.0 != (truncated / 10).toDouble()
         return if (hasDecimal) (truncated / 10.0).toString() + suffix else (truncated / 10).toString() + suffix
+    }
+
+    fun containSpecialCharacter(value: String):Boolean{
+        val special: Pattern = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]")
+        return special.matcher(value).find()
     }
 }
