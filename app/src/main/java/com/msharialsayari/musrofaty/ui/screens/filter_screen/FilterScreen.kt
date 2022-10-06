@@ -1,40 +1,34 @@
 package com.msharialsayari.musrofaty.ui.screens.filter_screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
-import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
-import com.msharialsayari.musrofaty.ui_component.*
-import kotlinx.coroutines.launch
+import com.msharialsayari.musrofaty.ui_component.ButtonComponent
+import com.msharialsayari.musrofaty.ui_component.DividerComponent
+import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterScreen(senderId:Int , filterId:Int?){
+fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
     val viewModel:FilterViewModel = hiltViewModel()
-    val keyboardController = LocalSoftwareKeyboardController.current
     val uiState                           by viewModel.uiState.collectAsState()
-    val textFieldBottomSheetValue = remember {
-        mutableStateOf("")
-    }
+
     LaunchedEffect(key1 = Unit){
         filterId?.let { viewModel.getFilter(it) }
         uiState.isCreateNewFilter = filterId == null
@@ -42,71 +36,11 @@ fun FilterScreen(senderId:Int , filterId:Int?){
     }
 
 
-
-
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
-    )
-    val coroutineScope = rememberCoroutineScope()
-
-    BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-    }
-
-    if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
-        DisposableEffect(Unit) {
-            onDispose {
-                keyboardController?.hide()
-            }
-        }
-
-    } else {
-        DisposableEffect(Unit) {
-            onDispose {
-                keyboardController?.show()
-            }
-        }
-
-    }
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
-            val model = TextFieldBottomSheetModel(
-                title = R.string.filter_add_word,
-                textFieldValue = textFieldBottomSheetValue.value,
-                buttonText = R.string.common_add,
-                onActionButtonClicked = { value ->
-                    viewModel.addFilterWord(value)
-
-                    coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
-
-                    }
-                },
-
-                )
-
-            BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
-
-        },
-        modifier = Modifier.fillMaxSize()
-    ){
-
-        Column(
-            modifier = Modifier.fillMaxSize()) {
-            FilterTitle(viewModel)
-            FilterList(viewModel, onAddFilterClicked = {
-                textFieldBottomSheetValue.value = it
-                coroutineScope.launch {
-                    handleVisibilityOfBottomSheet(sheetState, true)
-
-                }
-            })
-            BtnAction(viewModel)
-
-        }
+    Column(
+        modifier = Modifier.fillMaxSize()) {
+        FilterTitle(viewModel)
+        FilterList(viewModel)
+        BtnAction(viewModel, onDone)
 
     }
 
@@ -140,35 +74,25 @@ fun FilterTitle(viewModel: FilterViewModel){
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterList(viewModel: FilterViewModel,onAddFilterClicked:(String)->Unit){
+fun FilterList(viewModel: FilterViewModel){
 
     val uiState                           by viewModel.uiState.collectAsState()
-    val listState  = rememberLazyListState()
 
-        LazyColumn(
-            modifier = Modifier,
-            state = listState,
-        ) {
 
-            itemsIndexed(items = uiState.words) { index, item, ->
-                TextComponent.BodyText(
-                    modifier = Modifier
-                        .padding(
-                            dimensionResource(
-                                id = R.dimen.default_margin16
-                            )
-                        )
-                        .clickable {
-                            onAddFilterClicked(item)
-                        },
-                    text = item )
-                DividerComponent.HorizontalDividerComponent()
-            }
+    val textState = remember { mutableStateOf(uiState.title) }
+    TextFieldComponent.BoarderTextFieldComponent(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(id = R.dimen.default_margin16)),
+        textValue = textState.value,
+        label = R.string.filter_add_word,
+        onValueChanged = {
+            textState.value = it
+            viewModel.onFilterWordChanged( textState.value)
 
-            item {
-                AddFilter(onAddFilterClicked = onAddFilterClicked)
-            }
+
         }
+    )
 
 }
 
@@ -192,15 +116,17 @@ fun AddFilter(onAddFilterClicked:(String)->Unit){
 }
 
 @Composable
-fun BtnAction(viewModel: FilterViewModel){
+fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
     val uiState                           by viewModel.uiState.collectAsState()
    ButtonComponent.ActionButton(
        text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
        onClick = {
            if (uiState.isCreateNewFilter){
                viewModel.onCreateBtnClicked()
+               onDone()
            }else{
                viewModel.onSaveBtnClicked()
+               onDone()
            }
        }
 
@@ -208,44 +134,5 @@ fun BtnAction(viewModel: FilterViewModel){
 
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show: Boolean) {
-
-    if (show) {
-        sheetState.show()
-    } else {
-        sheetState.hide()
-    }
-
-}
 
 
-//val deleteAction = Action<String>(
-//    { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
-//    { ActionIcon(id = R.drawable.ic_delete) },
-//    backgroundColor = colorResource(R.color.deletAction),
-//    onClicked = { position, item ->
-//        viewModel.removeWordFromFilter(item)
-//
-//    })
-//
-//Column {
-//    VerticalEasyList(
-//        modifier= Modifier.wrapContentSize(),
-//        list = uiState.words,
-//        view = {
-//            TextComponent.BodyText(
-//                modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
-//                text = it
-//            )
-//
-//        },
-//        dividerView = { DividerComponent.HorizontalDividerComponent() },
-//        onItemClicked = { item, position -> onAddFilterClicked(item) },
-//        startActions = listOf(deleteAction),
-//        loadingProgress = { ProgressBar.CircleProgressBar() },
-//    )
-//
-//    AddFilter(onAddFilterClicked = onAddFilterClicked)
-//
-//}

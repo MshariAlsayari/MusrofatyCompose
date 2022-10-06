@@ -188,6 +188,10 @@ class SenderSmsListViewModel @Inject constructor(
         return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 
+    fun getFilter(): Int? {
+        return _uiState.value.selectedFilter?.id
+    }
+
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,

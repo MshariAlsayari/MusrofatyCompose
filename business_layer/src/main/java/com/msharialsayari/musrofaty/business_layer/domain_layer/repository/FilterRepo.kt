@@ -68,8 +68,9 @@ class FilterRepo @Inject constructor(
            val sender =  senders.find { it.senderName.equals(filter.bankName , ignoreCase = true) }
             if (sender != null){
                 val entity = filter.toFilterModel(sender.id).toFilterAdvancedEntity()
+                val newWord = FilterAdvancedModel.getFilterWordsAsList(entity.words)[0]
+                entity.words = newWord
                 filterAdvanced.add(entity)
-
             }
         }
         dao.insertAll(*filterAdvanced.toTypedArray())

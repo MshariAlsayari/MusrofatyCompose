@@ -30,7 +30,7 @@ class FilterViewModel@Inject constructor(
             }
             val result = getFilterUseCase(filterId)
             _uiState.update {
-                it.copy(isLoading = false, words = FilterAdvancedModel.getFilterWordsAsList(result.words), title =result.title)
+                it.copy(isLoading = false, words = result.words, title =result.title)
             }
         }
 
@@ -42,12 +42,8 @@ class FilterViewModel@Inject constructor(
         }
     }
 
-    fun removeWordFromFilter(value:String){
-        _uiState.value.words.toMutableList().removeIf { it.equals(value,ignoreCase = true) }
-        _uiState.update {
-            it.copy( words = _uiState.value.words)
-        }
-    }
+
+
 
     fun onSaveBtnClicked(){
 
@@ -55,21 +51,17 @@ class FilterViewModel@Inject constructor(
 
     fun onCreateBtnClicked(){
         viewModelScope.launch {
-            val words = FilterAdvancedModel.getFilterWordsAsString(_uiState.value.words)
-            val model = FilterAdvancedModel(words = words, title =_uiState.value.title , senderId = _uiState.value.senderId)
+            val model = FilterAdvancedModel(words = _uiState.value.words, title =_uiState.value.title , senderId = _uiState.value.senderId)
             createNewFilterUseCase.invoke(model)
         }
 
     }
 
-    fun addFilterWord( value: String) {
-        viewModelScope.launch {
-            val newList = _uiState.value.words.toMutableList()
-            newList.add(value)
-            _uiState.update {
-                it.copy(words = newList)
-            }
+    fun onFilterWordChanged( value: String) {
+        _uiState.update {
+            it.copy( words = value)
         }
+
     }
 
 
@@ -78,7 +70,7 @@ class FilterViewModel@Inject constructor(
         var isLoading: Boolean = false,
         var senderId: Int = 0,
         var title: String = "",
-        var words: List<String> = emptyList(),
+        var words: String = "",
         var isCreateNewFilter:Boolean = false
 
         )

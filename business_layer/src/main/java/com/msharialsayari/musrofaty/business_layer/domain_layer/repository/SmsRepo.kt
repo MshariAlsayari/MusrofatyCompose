@@ -27,6 +27,7 @@ class SmsRepo @Inject constructor(
     private val datasource: SmsDataSource,
     private val wordDetectorRepo: WordDetectorRepo,
     private val senderRepo: SenderRepo,
+    private val filterRepo: FilterRepo,
     @ApplicationContext val context: Context
 ) {
 
@@ -44,7 +45,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String = "",startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
+     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
         val pagingSourceFactory = {
             when (filterOption) {
                 DateUtils.FilterOption.ALL -> dao.getAllSms(senderId)

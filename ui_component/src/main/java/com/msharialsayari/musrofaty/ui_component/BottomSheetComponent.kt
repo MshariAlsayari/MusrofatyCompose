@@ -1,9 +1,7 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +19,9 @@ object BottomSheetComponent {
             TextComponent.HeaderText(text = stringResource(id = model.title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
             DividerComponent.HorizontalDividerComponent()
             TextFieldComponent.BoarderTextFieldComponent(
-                modifier = modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
                 errorMsg = "",
                 onValueChanged = {
@@ -42,12 +42,20 @@ object BottomSheetComponent {
     fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
                                              @StringRes title:Int,
                                              list: List<SelectedItemModel>,
+                                             trailIcon : (@Composable ()->Unit)? = null,
                                              canUnSelect:Boolean = false,
                                              onSelectItem:(SelectedItemModel)->Unit
     ){
 
         Column(modifier = modifier) {
-            TextComponent.HeaderText(text = stringResource(id = title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
+            if (trailIcon == null)
+                TextComponent.HeaderText(text = stringResource(id = title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
+            else{
+                Row(modifier = Modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextComponent.HeaderText(text = stringResource(id = title) )
+                    trailIcon()
+                }
+            }
             DividerComponent.HorizontalDividerComponent()
             list.forEach {item->
                 StringSelectedItemComponent(model = item,

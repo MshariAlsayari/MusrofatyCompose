@@ -103,7 +103,9 @@ fun NavigationGraph(
             )) {backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId, null)
+            FilterScreen(senderId, null,onDone = {
+                navController.navigateUp()
+            })
         }
 
         composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
@@ -113,7 +115,9 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId,filterId)
+            FilterScreen(senderId,filterId, onDone = {
+                navController.navigateUp()
+            })
         }
 
         composable(Screen.SinglePermission.route) {

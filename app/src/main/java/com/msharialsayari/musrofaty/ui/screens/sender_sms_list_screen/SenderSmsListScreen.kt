@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -100,12 +101,17 @@ fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSele
 }
 
 @Composable
-fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit){
+fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit,   onCreateFilterClicked: ()->Unit ){
     val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter,
         list = viewModel.getFilterOptions(uiState.selectedFilter),
+        trailIcon = {
+                    Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
+                        onCreateFilterClicked()
+                    } )
+        },
         canUnSelect = true,
         onSelectItem = {
             if (it.isSelected) {
@@ -170,7 +176,13 @@ fun PageContainer(
                     }
                     viewModel.onFilterChanged()
 
-                })
+                },
+                    onCreateFilterClicked = {
+                        uiState.sender?.let {
+                            onNavigateToFilterScreen(it.id, null)
+                        }
+                    }
+                )
 
 
 
