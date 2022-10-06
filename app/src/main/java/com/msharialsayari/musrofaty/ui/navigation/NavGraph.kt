@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
+import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
@@ -110,12 +111,25 @@ fun NavigationGraph(
 
         composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType },
-                    navArgument("filterId") { type = androidx.navigation.NavType.IntType }
+                    navArgument("filterId") { type = NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
             val senderId = arguments?.getInt("senderId") ?: 0
             FilterScreen(senderId,filterId, onDone = {
+                navController.navigateUp()
+            })
+        }
+
+
+        composable(Screen.CategoriesList.route + "/{storeName}" + "/{categoryId}",
+            arguments = listOf(navArgument("storeName") { type = NavType.StringType },
+                    navArgument("categoryId") { type = NavType.IntType }
+            )) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val storeName = arguments?.getString("storeName")?:""
+            val categoryId = arguments?.getInt("categoryId")
+            CategoriesScreen(storeName,categoryId, onDone = {
                 navController.navigateUp()
             })
         }

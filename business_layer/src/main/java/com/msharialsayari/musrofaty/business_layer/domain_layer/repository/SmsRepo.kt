@@ -9,6 +9,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsEntity
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -27,7 +28,7 @@ class SmsRepo @Inject constructor(
     private val datasource: SmsDataSource,
     private val wordDetectorRepo: WordDetectorRepo,
     private val senderRepo: SenderRepo,
-    private val filterRepo: FilterRepo,
+    private val storeRepo: StoreRepo,
     @ApplicationContext val context: Context
 ) {
 
@@ -125,7 +126,14 @@ class SmsRepo @Inject constructor(
     suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.map { smsEntityList.add(it.toSmsEntity()) }
+        smsList.map {
+            smsEntityList.add(it.toSmsEntity())
+            if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
+                val model = StoreModel(storeName = it.storeName)
+                storeRepo.insertStore(model)
+            }
+
+        }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
 
