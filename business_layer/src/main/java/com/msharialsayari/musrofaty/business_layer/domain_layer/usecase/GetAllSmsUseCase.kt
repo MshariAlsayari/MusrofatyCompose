@@ -14,7 +14,7 @@ class GetAllSmsUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-    suspend operator fun invoke(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
-        return smsRepo.getAllSms(senderId,filterOption,startDate,endDate)
+     operator fun invoke(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="",startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
+        return smsRepo.getAllSms(senderId,filterOption,query,startDate,endDate)
     }
 }

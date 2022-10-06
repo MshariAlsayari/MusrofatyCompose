@@ -45,15 +45,15 @@ class SmsRepo @Inject constructor(
     }
 
 
-     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
+     fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="",startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
         val pagingSourceFactory = {
             when (filterOption) {
-                DateUtils.FilterOption.ALL -> dao.getAllSms(senderId)
-                DateUtils.FilterOption.TODAY -> dao.getTodaySms(senderId)
-                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSms(senderId)
-                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSms(senderId)
-                DateUtils.FilterOption.YEAR -> dao.getCurrentYearSms(senderId)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDateSms(senderId,startDate,endDate)
+                DateUtils.FilterOption.ALL -> dao.getAllSms(senderId,query)
+                DateUtils.FilterOption.TODAY -> dao.getTodaySms(senderId,query)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSms(senderId,query)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSms(senderId,query)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYearSms(senderId,query)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateSms(senderId,query,startDate,endDate)
             }
         }
 
@@ -65,28 +65,28 @@ class SmsRepo @Inject constructor(
 
     }
 
-    fun getSmsBySenderId(senderId: Int,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
+    fun getSmsBySenderId(senderId: Int,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="", startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
         return when (filterOption) {
-            DateUtils.FilterOption.ALL -> dao.getSmsBySenderId(senderId)
-            DateUtils.FilterOption.TODAY -> dao.getTodaySmsBySenderId(senderId)
-            DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSmsBySenderId(senderId)
-            DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSmsBySenderId(senderId)
-            DateUtils.FilterOption.YEAR -> dao.getCurrentYearSmsBySenderId(senderId)
-            DateUtils.FilterOption.RANGE -> dao.getRangeDateSmsBySenderId(senderId,startDate,endDate)
+            DateUtils.FilterOption.ALL -> dao.getSmsBySenderId(senderId,query)
+            DateUtils.FilterOption.TODAY -> dao.getTodaySmsBySenderId(senderId,query)
+            DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSmsBySenderId(senderId,query)
+            DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSmsBySenderId(senderId,query)
+            DateUtils.FilterOption.YEAR -> dao.getCurrentYearSmsBySenderId(senderId,query)
+            DateUtils.FilterOption.RANGE -> dao.getRangeDateSmsBySenderId(senderId,query,startDate,endDate)
         }
     }
 
 
-    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0 , endDate:Long= 0): Flow<PagingData<SmsEntity>> {
+    fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="", startDate:Long = 0 , endDate:Long= 0): Flow<PagingData<SmsEntity>> {
 
         val pagingSourceFactory = {
             when (filterOption) {
-                DateUtils.FilterOption.ALL -> dao.getAllFavoriteSms(senderId,isFavorite )
-                DateUtils.FilterOption.TODAY -> dao.getTodayFavoriteSms(senderId,isFavorite)
-                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekFavoriteSms(senderId,isFavorite)
-                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthFavoriteSms(senderId,isFavorite)
-                DateUtils.FilterOption.YEAR -> dao.getCurrentYearFavoriteSms(senderId,isFavorite)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDateFavoriteSms(senderId,isFavorite, startDate, endDate )
+                DateUtils.FilterOption.ALL -> dao.getAllFavoriteSms(senderId,isFavorite,query )
+                DateUtils.FilterOption.TODAY -> dao.getTodayFavoriteSms(senderId,isFavorite,query)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeekFavoriteSms(senderId,isFavorite,query)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthFavoriteSms(senderId,isFavorite,query)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYearFavoriteSms(senderId,isFavorite,query)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateFavoriteSms(senderId,isFavorite,query, startDate, endDate )
             }
         }
         return Pager(

@@ -42,7 +42,7 @@
     <string name="tab_favorite_sms">المفضلة</string>
     <string name="tab_statistics">الإحصائيات</string>
     <string name="create_filter">أنشئ فلتر</string>
-
+    <string name="on_long_press_on_filter">اضغط مطولا على أحد الفلاتر لتتمكن من التعديل</string>
 
 
     <!--Settings-->

@@ -16,4 +16,6 @@
     <color name="incomeColor">#01852D</color>
     <color name="expensesColor">#CC0311</color>
 
+    <color name="onBackground">#000000</color>
+
 </resources>

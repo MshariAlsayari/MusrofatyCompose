@@ -13,8 +13,8 @@ class GetFavoriteSmsUseCase  @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-    operator fun invoke(senderId: Int, isFavorite:Boolean = true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0 , endDate:Long= 0): Flow<PagingData<SmsEntity>> {
-        return smsRepo.getAllFavoriteSms(senderId,isFavorite,filterOption,startDate, endDate)
+    operator fun invoke(senderId: Int, isFavorite:Boolean = true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="", startDate:Long = 0 , endDate:Long= 0): Flow<PagingData<SmsEntity>> {
+        return smsRepo.getAllFavoriteSms(senderId,isFavorite,filterOption,query,startDate, endDate)
 
     }
 }

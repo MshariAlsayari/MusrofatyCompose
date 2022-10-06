@@ -27,6 +27,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -106,6 +107,7 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter,
+        description= R.string.on_long_press_on_filter,
         list = viewModel.getFilterOptions(uiState.selectedFilter),
         trailIcon = {
                     Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
@@ -576,7 +578,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel, onBack:()->Unit,
 
 
             if (filters.isNotEmpty())
-            Icon(Icons.Default.Face,
+            Icon(painter = painterResource(id = R.drawable.ic_filter),
 
                 contentDescription = null,
                 modifier = Modifier

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -15,11 +16,15 @@ import androidx.compose.ui.unit.dp
 object ButtonComponent {
 
     @Composable
-    fun ActionButton(@StringRes text: Int, onClick: () -> Unit = {}) {
+    fun ActionButton(modifier: Modifier=Modifier,@StringRes text: Int, color:Int?=null,onClick: () -> Unit = {}) {
         Button(
             onClick  = onClick,
             shape    = MaterialTheme.shapes.large,
-            modifier = Modifier
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = color?.let { colorResource(id = it) } ?:MaterialTheme.colors.primary
+
+            ),
+            modifier = modifier
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.btn_height60)),
             ) {

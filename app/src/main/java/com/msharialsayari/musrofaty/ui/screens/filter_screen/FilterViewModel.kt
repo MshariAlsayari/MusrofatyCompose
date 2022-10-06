@@ -7,6 +7,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.CreateNewFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateFilterUseCase
 import com.msharialsayari.musrofaty.utils.StringsUtils
@@ -23,6 +24,7 @@ class FilterViewModel@Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
     private val createNewFilterUseCase: CreateNewFilterUseCase,
     private val updateFilterUseCase: UpdateFilterUseCase,
+    private val deleteFilterUseCase: DeleteFilterUseCase,
     @ApplicationContext val context: Context
     ) : ViewModel() {
 
@@ -92,6 +94,12 @@ class FilterViewModel@Inject constructor(
             createNewFilterUseCase.invoke(model)
         }
 
+    }
+
+    fun onDeleteBtnClicked(){
+        viewModelScope.launch {
+            deleteFilterUseCase.invoke(_uiState.value.filterId)
+        }
     }
 
     fun onFilterWordChanged( value: String) {

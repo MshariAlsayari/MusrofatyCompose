@@ -12,7 +12,7 @@ class GetSmsBySenderIdUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-    operator fun invoke(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, startDate:Long = 0, endDate:Long= 0): Flow<List<SmsEntity>> {
-        return smsRepo.getSmsBySenderId(senderId,filterOption,startDate, endDate)
+    operator fun invoke(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="", startDate:Long = 0, endDate:Long= 0): Flow<List<SmsEntity>> {
+        return smsRepo.getSmsBySenderId(senderId,filterOption,query,startDate, endDate)
     }
 }

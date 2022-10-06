@@ -1,10 +1,7 @@
 package com.msharialsayari.musrofaty.ui.screens.filter_screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
@@ -122,22 +119,40 @@ fun AddFilter(onAddFilterClicked:(String)->Unit){
 @Composable
 fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
     val uiState                           by viewModel.uiState.collectAsState()
-   ButtonComponent.ActionButton(
-       text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
-       onClick = {
 
-           if (viewModel.validate()) {
-               if (uiState.isCreateNewFilter) {
-                   viewModel.onCreateBtnClicked()
-                   onDone()
-               } else {
-                   viewModel.onSaveBtnClicked()
-                   onDone()
-               }
-           }
-       }
+    Row {
+        ButtonComponent.ActionButton(
+            modifier =Modifier.weight(1f),
+            text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
+            onClick = {
 
-   )
+                if (viewModel.validate()) {
+                    if (uiState.isCreateNewFilter) {
+                        viewModel.onCreateBtnClicked()
+                        onDone()
+                    } else {
+                        viewModel.onSaveBtnClicked()
+                        onDone()
+                    }
+                }
+            }
+
+        )
+
+        if (!uiState.isCreateNewFilter)
+        ButtonComponent.ActionButton(
+            modifier =Modifier.weight(1f),
+            color= R.color.deletAction,
+            text =  R.string.common_delete,
+            onClick = {
+                viewModel.onDeleteBtnClicked()
+                onDone()
+            }
+
+        )
+
+    }
+
 
 }
 

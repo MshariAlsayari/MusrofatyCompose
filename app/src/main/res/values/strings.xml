@@ -34,6 +34,7 @@
     <string name="tab_favorite_sms">Likes</string>
     <string name="tab_statistics">Statistics</string>
     <string name="create_filter">Create filter</string>
+    <string name="on_long_press_on_filter">long click to modify filter details</string>
 
 
     <!--permissions-->

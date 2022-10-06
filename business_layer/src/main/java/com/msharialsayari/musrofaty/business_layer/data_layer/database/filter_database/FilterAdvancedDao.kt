@@ -31,4 +31,7 @@ interface FilterAdvancedDao {
 
     @Delete
     suspend fun delete(vararg filterEntity: FilterAdvancedEntity)
+
+    @Query("DELETE FROM FilterAdvancedEntity  WHERE id =:id ")
+    suspend fun delete(id: Int)
 }
