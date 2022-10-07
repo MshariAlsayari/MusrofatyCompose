@@ -12,14 +12,14 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsL
 
 
 @Composable
-fun AllSmsTab(senderId:Int){
+fun AllSmsTab(senderId:Int, onSmsClicked:(String)->Unit){
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit){ viewModel.getAllSms(senderId) }
 
     when{
         uiState.isAllSmsPageLoading -> PageLoading()
-        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!! )
+        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked )
     }
 
 

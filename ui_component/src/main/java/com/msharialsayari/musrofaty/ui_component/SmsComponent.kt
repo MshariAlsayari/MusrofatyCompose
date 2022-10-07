@@ -121,6 +121,7 @@ private fun SmsActionRowComponent(
             )
 
         }
+        DividerComponent.HorizontalDividerComponent()
 
     }
 

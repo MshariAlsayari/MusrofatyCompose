@@ -64,7 +64,8 @@ private val MaxToolbarHeight = 85.dp
 fun SenderSmsListScreen(senderId: Int,
                         onDetailsClicked: (Int)->Unit,
                         onNavigateToFilterScreen: (Int,Int?)->Unit,
-                        onBack: ()->Unit
+                        onBack: ()->Unit,
+                        onSmsClicked: (String) -> Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
@@ -78,7 +79,9 @@ fun SenderSmsListScreen(senderId: Int,
                 viewModel,
                 onDetailsClicked,
                 onNavigateToFilterScreen,
-                onBack)
+                onBack,
+                onSmsClicked
+            )
     }
 
 
@@ -139,7 +142,9 @@ fun PageContainer(
                   viewModel: SenderSmsListViewModel,
                   onDetailsClicked: (Int)->Unit,
                   onNavigateToFilterScreen: (Int,Int?)->Unit,
-                  onBack: ()->Unit){
+                  onBack: ()->Unit,
+                  onSmsClicked: (String) -> Unit
+){
     val context                           = LocalContext.current
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState                      = rememberToolbarState(toolbarHeightRange)
@@ -236,7 +241,7 @@ fun PageContainer(
                 }
 
             )
-            Tabs(uiState.sender?.id?:0)
+            Tabs(uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
         }
 
     }
@@ -245,7 +250,7 @@ fun PageContainer(
 }
 
 @Composable
-fun Tabs(senderId: Int){
+fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
     Column {
         var tabIndex by remember { mutableStateOf(0) }
         val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_statistics)
@@ -269,8 +274,8 @@ fun Tabs(senderId: Int){
                 }
             }
             when (tabIndex) {
-                0 ->  AllSmsTab(senderId = senderId)
-                1 ->  FavoriteSmsTab(senderId = senderId)
+                0 ->  AllSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
+                1 ->  FavoriteSmsTab(senderId = senderId,onSmsClicked = onSmsClicked)
                 2 ->  StatisticsTab(senderId = senderId)
             }
         }
@@ -316,7 +321,8 @@ fun PageLoading(){
 @Composable
 fun LazySenderSms(
     list: LazyPagingItems<SmsEntity>,
-    viewModel: SenderSmsListViewModel
+    viewModel: SenderSmsListViewModel,
+    onSmsClicked:(String)->Unit
 ) {
     val context    = LocalContext.current
     val listState  = rememberLazyListState()
@@ -333,6 +339,9 @@ fun LazySenderSms(
                 if (item != null) {
 
                     SmsComponent(
+                        modifier = Modifier.clickable {
+                            onSmsClicked(item.id)
+                        },
                         model = viewModel.wrapSendersToSenderComponentModel(item, context),
                         onActionClicked = { model, action ->
                             when (action) {
@@ -344,8 +353,6 @@ fun LazySenderSms(
                             }
                         })
 
-                    if (index != list.itemSnapshotList.size - 1)
-                        DividerComponent.HorizontalDividerComponent()
 
 
                 }

@@ -21,6 +21,7 @@ import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetai
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
+import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 
 @Composable
@@ -94,6 +95,9 @@ fun NavigationGraph(
                     else
                         navController.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
 
+                },
+                onSmsClicked = {
+                    navController.navigate(Screen.SmsScreen.route + "/${it}")
                 }
             )
         }
@@ -132,6 +136,14 @@ fun NavigationGraph(
             CategoriesScreen(storeName,categoryId, onDone = {
                 navController.navigateUp()
             })
+        }
+
+        composable(Screen.SmsScreen.route+ "/{smsId}",
+            arguments = listOf(navArgument("smsId") { type = NavType.StringType }
+            )) {backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val smsId = arguments?.getString("smsId")
+            smsId?.let { SmsScreen(it) }
         }
 
         composable(Screen.SinglePermission.route) {

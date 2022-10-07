@@ -18,7 +18,7 @@ interface SmsDao {
     suspend fun getSmsBySenderName(senderName:String): List<SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE id = :id")
-    suspend fun getSms(id:String): SmsEntity?
+    suspend fun getSms(id:String): SmsEntity
 
     @Query("UPDATE SmsEntity SET isFavorite =:favorite WHERE id=:id")
     suspend fun favoriteSms(id:String, favorite:Boolean)

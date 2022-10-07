@@ -19,7 +19,6 @@ import javax.inject.Singleton
 class StoreRepo @Inject constructor(
     private val dao: StoreDao,
     private val categoryRepo: CategoryRepo,
-    private val smsRepo: SmsRepo,
     @ApplicationContext val context: Context
 ) {
 

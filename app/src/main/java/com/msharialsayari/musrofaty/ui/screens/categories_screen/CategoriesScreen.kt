@@ -31,7 +31,7 @@ fun CategoriesScreen(storeName:String, categoryId:Int?, onDone:()->Unit){
 @Composable
 fun CategoriesLazyList(viewModel:CategoriesViewModel, selectedCategoryId :Int?){
     val uiState by viewModel.uiState.collectAsState()
-    val categories = uiState.categories?.collectAsState(initial = emptyList<CategoryEntity>())?.value ?: emptyList()
+    val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
 
     val deleteAction = Action<CategoryEntity>(
         { TextComponent.BodyText(text = stringResource(id = com.msharialsayari.musrofaty.R.string.common_delete)) },

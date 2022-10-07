@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
@@ -43,6 +44,11 @@ class SmsRepo @Inject constructor(
 
     suspend fun favoriteSms(smsId: String, favorite: Boolean) {
         return dao.favoriteSms(smsId, favorite)
+    }
+
+
+    suspend fun getSms(smsId: String) :SmsModel{
+        return fillSmsModel(dao.getSms(smsId).toSmsModel())
     }
 
 
