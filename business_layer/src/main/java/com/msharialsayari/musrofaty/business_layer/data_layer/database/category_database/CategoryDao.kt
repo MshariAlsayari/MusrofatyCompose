@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -8,7 +9,7 @@ interface CategoryDao {
 
 
     @Query("SELECT * FROM CategoryEntity")
-    suspend fun getAll(): List<CategoryEntity>
+     fun getAll(): Flow<List<CategoryEntity>>
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity")

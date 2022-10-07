@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryMo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SmsCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,6 +31,10 @@ class CategoryRepo @Inject constructor(
             categoryList.add(model)
         }
         return categoryList
+    }
+
+    fun getAll():Flow<List<CategoryEntity>>{
+        return dao.getAll()
     }
 
 
