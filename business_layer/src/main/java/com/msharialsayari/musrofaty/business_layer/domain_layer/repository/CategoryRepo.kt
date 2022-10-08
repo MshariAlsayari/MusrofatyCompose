@@ -92,7 +92,7 @@ class CategoryRepo @Inject constructor(
         dao.delete(*categoryList.toTypedArray())
     }
 
-    suspend fun resetDefaultCategories() {
+    suspend fun insertDefaultCategoryList() {
         val categoryList: MutableList<CategoryEntity> = mutableListOf()
         SmsCategory.getAll().map {
             categoryList.add(it.toCategoryEntity())

@@ -4,11 +4,15 @@ package com.msharialsayari.musrofaty.ui.screens.splash_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.*
+import com.msharialsayari.musrofaty.jobs.InsertCategoryJob
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
