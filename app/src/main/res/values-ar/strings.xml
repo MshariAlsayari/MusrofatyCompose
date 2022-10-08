@@ -16,6 +16,7 @@
     <string name="common_no_selected">لم يتم التحديد</string>
     <string name="common_add">إضافة</string>
     <string name="common_create">إنشاء</string>
+    <string name="common_no_category">غير محددة</string>
 
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
@@ -42,7 +43,7 @@
     <string name="tab_favorite_sms">المفضلة</string>
     <string name="tab_statistics">الإحصائيات</string>
     <string name="create_filter">أنشئ فلتر</string>
-    <string name="on_long_press_on_filter">اضغط مطولا على أحد الفلاتر لتتمكن من التعديل</string>
+    <string name="common_long_click_to_modify">اضغط مطولا على أحد العناصر لتتمكن من التعديل</string>
 
 
     <!--Settings-->

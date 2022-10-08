@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/drawable/transparent_image.xml" value="0.232" />
         <entry key="business_layer/src/main/res/drawable/ic_ahli.xml" value="0.3365" />
         <entry key="business_layer/src/main/res/drawable/ic_alinma.xml" value="0.3365" />
+        <entry key="ui_component/src/main/res/drawable/ic_copy.xml" value="0.233" />
         <entry key="ui_component/src/main/res/drawable/ic_navigation.xml" value="0.583" />
       </map>
     </option>

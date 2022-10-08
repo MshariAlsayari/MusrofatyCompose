@@ -117,17 +117,6 @@ class SendersDetailsViewModel @Inject constructor(
         var contents: List<ContentModel> = emptyList()
     ) {
 
-        fun pinSender(pin: Boolean): SenderModel? {
-            val model = sender
-            model?.isPined = pin
-            return sender
-        }
-
-        fun activeSender(active: Boolean): SenderModel? {
-            val model = sender
-            model?.isActive = active
-            return sender
-        }
 
         fun changeArabicDisplayName(name: String): SenderModel? {
             val model = sender

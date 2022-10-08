@@ -22,7 +22,7 @@ data class StoreEntity(
 @Parcelize
 data class StoreAndCategoryModel(
     var store: StoreModel,
-    var category: CategoryModel
+    var category: CategoryModel? = null
 ) : Parcelable
 
 

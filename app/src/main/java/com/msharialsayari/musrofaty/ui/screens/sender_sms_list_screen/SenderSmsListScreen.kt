@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -110,7 +109,7 @@ fun FilterBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Un
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter,
-        description= R.string.on_long_press_on_filter,
+        description= R.string.common_long_click_to_modify,
         list = viewModel.getFilterOptions(uiState.selectedFilter),
         trailIcon = {
                     Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
@@ -349,7 +348,7 @@ fun LazySenderSms(
                                     model.id,
                                     model.isFavorite
                                 )
-                                SmsActionType.SHARE -> {}
+                                SmsActionType.COPY -> {}
                             }
                         })
 

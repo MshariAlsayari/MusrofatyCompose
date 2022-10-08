@@ -69,10 +69,7 @@ class StoreRepo @Inject constructor(
             storeModel = StoreModel(storeName = storeName , categoryId = -1)
         }
 
-        var categoryModel: CategoryModel? = categoryRepo.getCategory(storeModel.categoryId)
-
-        if (categoryModel == null)
-            categoryModel = CategoryModel(id = -1)
+        val categoryModel: CategoryModel? = categoryRepo.getCategory(storeModel.categoryId)
 
         return StoreAndCategoryModel(storeModel,categoryModel)
     }

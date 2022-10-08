@@ -15,6 +15,7 @@
     <string name="common_no_selected">Not selected</string>
     <string name="common_add">Add</string>
     <string name="common_create">Create</string>
+    <string name="common_no_category">No category selected</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
@@ -34,7 +35,7 @@
     <string name="tab_favorite_sms">Likes</string>
     <string name="tab_statistics">Statistics</string>
     <string name="create_filter">Create filter</string>
-    <string name="on_long_press_on_filter">long click to modify filter details</string>
+    <string name="common_long_click_to_modify">long click to modify</string>
 
 
     <!--permissions-->

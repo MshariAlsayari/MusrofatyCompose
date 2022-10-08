@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.utils.DateUtils
 
 
@@ -25,7 +27,8 @@ import com.msharialsayari.musrofaty.utils.DateUtils
 fun SmsComponent(
     modifier: Modifier = Modifier,
     model: SmsComponentModel,
-    onActionClicked: (SmsComponentModel, SmsActionType) -> Unit
+    onActionClicked: (SmsComponentModel, SmsActionType) -> Unit,
+    onCategoryClicked: (String) -> Unit = {}
 ) {
     Column(
         modifier = modifier,
@@ -33,6 +36,7 @@ fun SmsComponent(
     ) {
         SenderInfoComponent(model.senderDisplayName, model.senderCategory, model.senderIcon)
         SmsBodyComponent(model.body)
+        StoreAndCategoryComponent(model, onCategoryClicked = onCategoryClicked)
         SmsInfoRowComponent(model)
         SmsActionRowComponent(model, onActionClicked = { model, action ->
             onActionClicked(model, action)
@@ -79,6 +83,47 @@ private fun SmsInfoRowComponent(
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun StoreAndCategoryComponent(
+    model: SmsComponentModel,
+    onCategoryClicked:(String)->Unit
+){
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        if (model.storeName.isNotEmpty())
+        ListItem(
+            text = { Text(text = stringResource(id = R.string.store)) },
+            trailing = {
+                TextComponent.PlaceholderText(
+                    text = model.storeName,
+                  )
+            }
+        )
+        if (model.storeName.isNotEmpty() && model.storeCategory.isNotEmpty())
+        DividerComponent.HorizontalDividerComponent()
+
+
+        if (model.storeCategory.isNotEmpty())
+        ListItem(
+            text = { Text(text = stringResource(id = R.string.category)) },
+            trailing = {
+                TextComponent.ClickableText(
+                    text = model.storeCategory,
+                    modifier = Modifier.clickable {
+                        onCategoryClicked(model.storeCategory)
+                    })
+            }
+        )
+
+    }
+
+
+
+}
+
 @Composable
 private fun SmsActionRowComponent(
     model: SmsComponentModel,
@@ -113,10 +158,10 @@ private fun SmsActionRowComponent(
             )
             Icon(
                 modifier = Modifier.clickable {
-                    onActionClicked(model, SmsActionType.SHARE)
+                    onActionClicked(model, SmsActionType.COPY)
                 },
                 tint = colorResource(id = R.color.lightGray),
-                imageVector = Icons.Outlined.Share,
+                painter = painterResource(id = R.drawable.ic_copy),
                 contentDescription = null
             )
 
@@ -129,7 +174,7 @@ private fun SmsActionRowComponent(
 }
 
 enum class SmsActionType {
-    FAVORITE, SHARE
+    FAVORITE, COPY
 
 }
 
@@ -142,5 +187,7 @@ data class SmsComponentModel(
     var senderDisplayName: String = "",
     var senderCategory: String = "",
     var senderIcon: Int? = null,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var storeName: String = "",
+    var storeCategory: String = "",
 )

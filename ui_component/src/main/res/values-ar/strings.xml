@@ -4,4 +4,6 @@
     <string name="no_result">لا يوجد نتائج</string>
     <string name="income">الإيرادات</string>
     <string name="expenses">المصروفات</string>
+    <string name="store">المتجر</string>
+    <string name="category">الفئة</string>
 </resources>

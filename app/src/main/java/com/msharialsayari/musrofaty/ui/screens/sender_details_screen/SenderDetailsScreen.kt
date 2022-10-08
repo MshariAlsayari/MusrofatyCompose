@@ -153,10 +153,13 @@ fun SenderDetailsScreen(senderId: Int) {
                     text = { Text(text = stringResource(id = R.string.sender_category)) },
                     trailing = {
                         TextComponent.ClickableText(
-                            text = ContentModel.getDisplayName(
+                            text = if (ContentModel.getDisplayName(
                                 context = context,
                                 uiState.sender?.content
-                            ),
+                            ).isNotEmpty()) ContentModel.getDisplayName(
+                                context = context,
+                                uiState.sender?.content
+                            ) else context.getString(androidx.compose.ui.R.string.not_selected) ,
                             modifier = Modifier.clickable {
                                 bottomSheetType.value = SenderDetailsBottomSheet.CONTENT
                                 coroutineScope.launch {
