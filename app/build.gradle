@@ -121,7 +121,7 @@ dependencies {
 
 
 
-
+    //pdf
     implementation 'com.itextpdf:itextg:5.5.10'
 
     //change language
@@ -145,6 +145,12 @@ dependencies {
 
     //Chart and graph library
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //workManager
+    implementation("androidx.work:work-runtime-ktx:$workManagerVersion")
+    implementation 'androidx.hilt:hilt-work:1.0.0'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0'
+
 
 
 
