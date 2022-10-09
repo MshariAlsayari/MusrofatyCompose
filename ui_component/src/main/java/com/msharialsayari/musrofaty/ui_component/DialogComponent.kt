@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -79,68 +80,84 @@ object DialogComponent {
 
         val errorArabicField = remember { mutableStateOf("") }
         val errorEnglishField = remember { mutableStateOf("") }
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+        Card(
+            elevation = 8.dp,
+            shape = RoundedCornerShape(0.dp)
         ) {
-            TextComponent.HeaderText(text = stringResource(id = R.string.category))
-            DividerComponent.HorizontalDividerComponent()
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                TextFieldComponent.BoarderTextFieldComponent(
-                    textValue = arabicField.value,
-                    errorMsg = errorArabicField.value,
-                    onValueChanged = {
-                        arabicField.value = it
-                    }
-                )
+            Column{
+                TextComponent.HeaderText(
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
+                    text = stringResource(id = R.string.category))
+                DividerComponent.HorizontalDividerComponent()
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.default_margin16)),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    TextFieldComponent.BoarderTextFieldComponent(
+                        textValue = arabicField.value,
+                        errorMsg = errorArabicField.value,
+                        placeholder = R.string.arabic,
+                        onValueChanged = {
+                            arabicField.value = it
+                        }
+                    )
 
 
-                TextFieldComponent.BoarderTextFieldComponent(
-                    textValue = englishField.value,
-                    errorMsg = errorEnglishField.value,
-                    onValueChanged = {
-                        englishField.value = it
-                    }
-                )
+                    TextFieldComponent.BoarderTextFieldComponent(
+                        textValue = englishField.value,
+                        errorMsg = errorEnglishField.value,
+                        placeholder = R.string.english,
+                        onValueChanged = {
+                            englishField.value = it
+                        }
+                    )
+
+                }
+
+                Row (
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = dimensionResource(id = R.dimen.default_margin16) , end = dimensionResource(id = R.dimen.default_margin16) , bottom = dimensionResource(id = R.dimen.default_margin16) ),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ){
+                    ButtonComponent.ActionButton(
+                        modifier =Modifier.weight(1f),
+                        text = R.string.add,
+                        onClick = {
+                            if (!arabicField.value.notEmpty()) {
+                                errorArabicField.value =
+                                    context.getString(R.string.validation_field_mandatory)
+                            } else {
+                                errorArabicField.value = ""
+                            }
+
+                            if (!englishField.value.notEmpty()) {
+                                errorEnglishField.value =
+                                    context.getString(R.string.validation_field_mandatory)
+                            } else {
+                                errorEnglishField.value = ""
+                            }
+
+                            if (arabicField.value.notEmpty() && englishField.value.notEmpty()) {
+                                onClickPositiveBtn(arabicField.value, englishField.value)
+                            }
+                        }
+                    )
+
+
+                    ButtonComponent.ActionButton(
+                        modifier =Modifier.weight(1f),
+                        text = R.string.cancel,
+                        color = R.color.deletAction,
+                        onClick = {
+                            onClickNegativeBtn()
+                        }
+                    )
+
+                }
 
             }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                ButtonComponent.ActionButton(
-                    text = R.string.add,
-                    onClick = {
-                        if (!arabicField.value.notEmpty()) {
-                            errorArabicField.value = context.getString(R.string.validation_field_mandatory)
-                        } else {
-                            errorArabicField.value = ""
-                        }
-
-                        if (!englishField.value.notEmpty()) {
-                            errorEnglishField.value = context.getString(R.string.validation_field_mandatory)
-                        }else{
-                            errorEnglishField.value = ""
-                        }
-
-                        if (arabicField.value.notEmpty() && englishField.value.notEmpty()){
-                            onClickPositiveBtn(arabicField.value, englishField.value)
-                        }
-                    }
-                )
-
-
-                ButtonComponent.ActionButton(
-                    text = R.string.cancel,
-                    color = R.color.deletAction,
-                    onClick = {
-                        onClickNegativeBtn()
-                    }
-                )
-
-            }
-
         }
 
     }

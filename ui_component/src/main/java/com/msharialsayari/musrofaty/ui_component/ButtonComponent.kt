@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -25,7 +24,6 @@ object ButtonComponent {
 
             ),
             modifier = modifier
-                .fillMaxWidth()
                 .height(dimensionResource(R.dimen.btn_height60)),
             ) {
             Text(text = stringResource(id = text), color = MaterialTheme.colors.onBackground)

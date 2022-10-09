@@ -68,6 +68,15 @@ class CategoryRepo @Inject constructor(
         dao.insert(*categoryList.toTypedArray())
     }
 
+    suspend fun insert(vararg model: CategoryModel) {
+        val categoryList: MutableList<CategoryEntity> = mutableListOf()
+        model.map {
+            categoryList.add(it.toCategoryEntity())
+        }
+
+        dao.insert(*categoryList.toTypedArray())
+    }
+
     suspend fun update(categoryModel: CategoryModel) {
         dao.update(categoryModel.toCategoryEntity())
     }

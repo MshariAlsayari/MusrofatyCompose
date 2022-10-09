@@ -12,13 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
-import com.msharialsayari.musrofaty.ui_component.ProgressBar
-import com.msharialsayari.musrofaty.ui_component.SmsActionType
-import com.msharialsayari.musrofaty.ui_component.SmsComponent
+import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,6 +50,7 @@ fun PageCompose(viewModel: SmsViewModel, sms:SmsModel){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope                    = rememberCoroutineScope()
+    val openDialog = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -59,6 +59,12 @@ fun PageCompose(viewModel: SmsViewModel, sms:SmsModel){
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+    }
+
+    if (openDialog.value){
+        AddCategoryDialog(viewModel, onDismiss = {
+            openDialog.value = false
+        })
     }
 
     ModalBottomSheetLayout(
@@ -74,7 +80,8 @@ fun PageCompose(viewModel: SmsViewModel, sms:SmsModel){
 
                     },
                     onCreateCategoryClicked = {
-
+                        openDialog.value = true
+                        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
                     },
                     onCategoryLongPressed = {filterId->
 
@@ -136,6 +143,29 @@ fun CategoryBottomSheet(viewModel: SmsViewModel, onCategorySelected:()->Unit, on
 
 
     )
+}
+
+@Composable
+fun AddCategoryDialog(viewModel: SmsViewModel, onDismiss:()->Unit){
+
+    Dialog(onDismissRequest = onDismiss) {
+
+        DialogComponent.AddCategoryDialog(
+            onClickPositiveBtn = {ar,en->
+                viewModel.addCategory(CategoryModel(
+                    valueEn = en,
+                    valueAr = ar,
+                    isDefault = false,
+                ))
+
+                onDismiss()
+
+            },
+            onClickNegativeBtn = onDismiss
+        )
+
+    }
+
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)

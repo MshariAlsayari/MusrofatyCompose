@@ -6,9 +6,10 @@
     <string name="category">Category</string>
     <string name="income">Income</string>
     <string name="expenses">Expenses</string>
-
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
 
     <!--validation-->
     <string name="validation_field_mandatory">The field is mandatory</string>

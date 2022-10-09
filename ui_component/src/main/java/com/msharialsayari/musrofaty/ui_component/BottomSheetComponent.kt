@@ -1,15 +1,10 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.ListItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +22,7 @@ object BottomSheetComponent {
             TextComponent.HeaderText(text = stringResource(id = model.title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
             DividerComponent.HorizontalDividerComponent()
             TextFieldComponent.BoarderTextFieldComponent(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
@@ -36,7 +31,9 @@ object BottomSheetComponent {
                     text.value= it
                 }
             )
-            ButtonComponent.ActionButton(text = model.buttonText, onClick = {
+            ButtonComponent.ActionButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = model.buttonText, onClick = {
                 model.onActionButtonClicked(text.value)
                 text.value = ""
             })
@@ -58,7 +55,7 @@ object BottomSheetComponent {
                                              onLongPress:(SelectedItemModel)->Unit = {}
     ){
 
-        Column(modifier = modifier.fillMaxSize()
+        Column(modifier = modifier
             .verticalScroll(rememberScrollState())) {
             if (trailIcon == null){
                 TextComponent.HeaderText(

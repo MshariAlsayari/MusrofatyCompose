@@ -12,7 +12,10 @@ import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +27,7 @@ class SmsViewModel @Inject constructor(
     private val getStoreAndCategoryUseCase: GetStoreAndCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
+    private val addCategoryUseCase: AddCategoryUseCase,
     @ApplicationContext val context: Context
 ):ViewModel() {
 
@@ -33,7 +37,7 @@ class SmsViewModel @Inject constructor(
     fun getData(id:String){
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isLoading = true)
+                it.copy(isLoading = false)
             }
             val smsResult = getSmsUseCase.invoke(id)
             val senderResult = getSenderUseCase.invoke(smsResult.senderId)
@@ -79,6 +83,12 @@ class SmsViewModel @Inject constructor(
 
          return list
 
+    }
+
+    fun addCategory(model: CategoryModel){
+        viewModelScope.launch {
+            addCategoryUseCase.invoke(model)
+        }
     }
 
     fun favoriteSms(id:String , favorite:Boolean){
