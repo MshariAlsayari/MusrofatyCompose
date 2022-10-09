@@ -6,4 +6,11 @@
     <string name="expenses">المصروفات</string>
     <string name="store">المتجر</string>
     <string name="category">الفئة</string>
+
+    <string name="add">إضافة</string>
+    <string name="cancel">إلغاء</string>
+
+    <!--validation-->
+    <string name="validation_field_mandatory">يجب تعبئة الحقل</string>
+    <string name="validation_contain_special_character">لا يمكن آن يحتوي على رمز</string>
 </resources>

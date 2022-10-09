@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +23,8 @@ class SmsViewModel @Inject constructor(
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val getStoreAndCategoryUseCase: GetStoreAndCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase
+    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
+    @ApplicationContext val context: Context
 ):ViewModel() {
 
     private val _uiState = MutableStateFlow(SmsUiState())
@@ -37,15 +39,33 @@ class SmsViewModel @Inject constructor(
             val senderResult = getSenderUseCase.invoke(smsResult.senderId)
             val storeAndCategoryResult = getStoreAndCategoryUseCase.invoke(smsResult.storeName)
             val categoriesResult = getCategoriesUseCase.invoke()
+            initSelectedItem(storeAndCategoryResult)
             _uiState.update {
-                it.copy(isLoading = false, sms = smsResult, sender = senderResult, storeAndCategoryModel = storeAndCategoryResult, categories = categoriesResult)
+                it.copy(isLoading = false,
+                    sms = smsResult,
+                    sender = senderResult,
+                    storeAndCategoryModel = storeAndCategoryResult,
+                    categories = categoriesResult )
             }
         }
 
     }
 
+    private fun initSelectedItem(storeAndCategoryResult: StoreAndCategoryModel) {
+        if (storeAndCategoryResult.category != null){
+            val category = storeAndCategoryResult.category
+            if (category != null) {
+                _uiState.update {
+                    it.copy(
+                        selectedCategory = SelectedItemModel(id=category.id, value =CategoryModel.getDisplayName(context = context, category) ,isSelected = true),
+                    )
+                }
+            }
+        }
+    }
 
-     fun getCategoryItems(context: Context, categories: List<CategoryEntity> ): List<SelectedItemModel> {
+
+    fun getCategoryItems(context: Context, categories: List<CategoryEntity> ): List<SelectedItemModel> {
          val list = mutableListOf<SelectedItemModel>()
              categories.map { value ->
                  list.add(

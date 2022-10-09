@@ -57,13 +57,6 @@ fun PageCompose(onLoadingDone:()->Unit){
     val dark = isSystemInDarkTheme()
     val imageRes = if (dark) R.drawable.ic_water_marker_dark_mode else R.drawable.ic_water_marker_light_mode
 
-    val workManager = WorkManager.getInstance(content)
-    val insertCategoryWork: WorkRequest =
-        OneTimeWorkRequestBuilder<InsertCategoryJob>()
-            .build()
-
-    workManager.enqueue(insertCategoryWork)
-
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

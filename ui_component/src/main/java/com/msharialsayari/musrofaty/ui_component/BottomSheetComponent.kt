@@ -3,6 +3,8 @@ package com.msharialsayari.musrofaty.ui_component
 import androidx.annotation.StringRes
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
@@ -56,7 +58,8 @@ object BottomSheetComponent {
                                              onLongPress:(SelectedItemModel)->Unit = {}
     ){
 
-        Column(modifier = modifier) {
+        Column(modifier = modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())) {
             if (trailIcon == null){
                 TextComponent.HeaderText(
                     text = stringResource(id = title),

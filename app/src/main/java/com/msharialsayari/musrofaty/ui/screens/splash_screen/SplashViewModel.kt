@@ -29,6 +29,7 @@ class SplashViewModel @Inject constructor(
     private val contentRepo: ContentRepo,
     private val senderRepo: SenderRepo,
     private val filtersRepo: FilterRepo,
+    private val categoryRepo: CategoryRepo,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -89,6 +90,14 @@ class SplashViewModel @Inject constructor(
 
     }
 
+    private fun insertCategories(){
+        viewModelScope.launch {
+            categoryRepo.insertDefaultCategoryList()
+
+        }
+    }
+
+
 
     private fun initData() {
         val isFirst = SharedPreferenceManager.isFirstLunch(context)
@@ -98,6 +107,7 @@ class SplashViewModel @Inject constructor(
                 insertWordsDetector()
                 insertDefaultSenders()
                 migrateForFilters()
+                insertCategories()
                 SharedPreferenceManager.setFirstLunch(context)
             }
             insertSms()
