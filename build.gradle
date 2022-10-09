@@ -12,6 +12,7 @@ buildscript {
         archCompomentVersion         = '2.1.0'
         gsonVersion                  = '2.8.9'
         workManagerVersion           = '2.7.1'
+        constraint_version           = '1.0.1'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {

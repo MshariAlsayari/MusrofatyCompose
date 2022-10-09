@@ -76,6 +76,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.5.1'
     implementation "androidx.navigation:navigation-compose:$composeNavVersion"
+    implementation "androidx.constraintlayout:constraintlayout-compose:$constraint_version"
+
 
     //permission
     implementation 'com.google.accompanist:accompanist-permissions:0.21.1-beta'
@@ -111,10 +113,6 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation("androidx.room:room-paging:$roomVersion")
-
-
-
-
     implementation "androidx.paging:paging-compose:1.0.0-alpha16"
 
 

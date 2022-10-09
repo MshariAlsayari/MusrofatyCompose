@@ -98,7 +98,7 @@ object DialogComponent {
                     TextFieldComponent.BoarderTextFieldComponent(
                         textValue = arabicField.value,
                         errorMsg = errorArabicField.value,
-                        placeholder = R.string.arabic,
+                        label = R.string.arabic,
                         onValueChanged = {
                             arabicField.value = it
                         }
@@ -108,7 +108,7 @@ object DialogComponent {
                     TextFieldComponent.BoarderTextFieldComponent(
                         textValue = englishField.value,
                         errorMsg = errorEnglishField.value,
-                        placeholder = R.string.english,
+                        label = R.string.english,
                         onValueChanged = {
                             englishField.value = it
                         }

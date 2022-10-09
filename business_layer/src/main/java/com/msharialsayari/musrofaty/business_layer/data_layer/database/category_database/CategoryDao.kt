@@ -23,7 +23,7 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity WHERE id = :id")
-    suspend fun getCategoryAndStores(id: Int): CategoryWithStore?
+     fun getCategoryAndStores(id: Int): Flow<CategoryWithStore>?
 
 
     @Query("UPDATE CategoryEntity SET value_ar = :valueAr WHERE id = :id")

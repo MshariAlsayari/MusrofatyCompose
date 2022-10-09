@@ -16,6 +16,8 @@
     <string name="common_add">Add</string>
     <string name="common_create">Create</string>
     <string name="common_no_category">No category selected</string>
+    <string name="common_english">English</string>
+    <string name="common_arabic">Arabic</string>
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
@@ -67,6 +69,10 @@
     <!--validation-->
     <string name="validation_field_mandatory">The field is mandatory</string>
     <string name="validation_contain_special_character">can\'t contain a special character</string>
+
+    <!--Category-->
+    <string name="stores">Stores</string>
+    <string name="stores_description">This is the of stores that linked with %s Category</string>
 
 
 

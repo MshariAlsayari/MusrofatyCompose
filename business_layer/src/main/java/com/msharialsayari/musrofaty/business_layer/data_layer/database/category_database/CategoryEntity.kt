@@ -23,7 +23,7 @@ data class CategoryEntity(
 ) : Parcelable
 
 data class CategoryWithStore(
-    @Embedded val category: CategoryEntity,
+    @Embedded val category: CategoryEntity?= null,
     @Relation(
         parentColumn = "id",
         entityColumn = "categoryId"

@@ -21,7 +21,7 @@ import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmsScreen(smsId:String){
+fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit){
     val viewModel:SmsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit ){
@@ -30,7 +30,10 @@ fun SmsScreen(smsId:String){
 
     when{
         uiState.isLoading -> ProgressCompose()
-        uiState.sms != null -> PageCompose(viewModel,uiState.sms!!)
+        uiState.sms != null -> PageCompose(viewModel,uiState.sms!!, onCategoryLongPressed = {
+            onNavigateToCategoryScreen(it)
+
+        })
     }
 
 }
@@ -46,7 +49,7 @@ fun ProgressCompose(){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: SmsViewModel, sms:SmsModel){
+fun PageCompose(viewModel: SmsViewModel, sms:SmsModel,onCategoryLongPressed:(Int)->Unit){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope                    = rememberCoroutineScope()
@@ -84,7 +87,8 @@ fun PageCompose(viewModel: SmsViewModel, sms:SmsModel){
                         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
                     },
                     onCategoryLongPressed = {filterId->
-
+                        onCategoryLongPressed(filterId)
+                        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
                     }
                 )
 

@@ -3,10 +3,8 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 import android.content.Context
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStoreModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.toStoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SmsCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryEntity
@@ -22,16 +20,7 @@ class CategoryRepo @Inject constructor(
 ) {
 
 
-    suspend fun getAllCategory(): List<CategoryWithStoreModel> {
-        val categoryList = mutableListOf<CategoryWithStoreModel>()
-        dao.getAllCategoriesWithStores().map {
-            val model = CategoryWithStoreModel(
-                category = it.category.toCategoryModel(),
-                stores = it.stores.map { store -> store.toStoreModel() })
-            categoryList.add(model)
-        }
-        return categoryList
-    }
+
 
     fun getAll():Flow<List<CategoryEntity>>{
         return dao.getAll()
@@ -42,20 +31,8 @@ class CategoryRepo @Inject constructor(
         return dao.getCategory(categoryId)?.toCategoryModel()
     }
 
-    suspend fun getCategoryAndStores(categoryId: Int): CategoryWithStoreModel? {
-        val categoryWithStoresEntity = dao.getCategoryAndStores(categoryId)
-        var categoryEntity: CategoryEntity? = null
-        var storiesEntity: List<StoreEntity>? = null
-        categoryEntity = categoryWithStoresEntity?.category ?: dao.getCategory(categoryId)
-        storiesEntity = categoryWithStoresEntity?.stores
-
-        return if (categoryEntity != null)
-            CategoryWithStoreModel(
-                category = categoryEntity.toCategoryModel(),
-                stores = storiesEntity?.map { it.toStoreModel() } ?: emptyList())
-        else
-            null
-
+     fun getCategoryAndStores(categoryId: Int): Flow<CategoryWithStore>? {
+       return dao.getCategoryAndStores(categoryId)
     }
 
 

@@ -17,6 +17,8 @@
     <string name="common_add">إضافة</string>
     <string name="common_create">إنشاء</string>
     <string name="common_no_category">غير محددة</string>
+    <string name="common_english">إنجليزي</string>
+    <string name="common_arabic">عربي</string>
 
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
@@ -71,5 +73,12 @@
     <!--validation-->
     <string name="validation_field_mandatory">يجب تعبئة الحقل</string>
     <string name="validation_contain_special_character">لا يمكن آن يحتوي على رمز</string>
+
+
+    <!--Category-->
+    <string name="stores">المتاجر</string>
+    <string name="stores_description">قائمة المتاجر المرتبطة بفئة %s</string>
+
+
 
 </resources>

@@ -6,7 +6,7 @@ sealed class Screen(val route: String) {
     object Splash : Screen("splash_screen")
     object SenderDetails : Screen("sender_details")
     object SenderSmsList : Screen("sender_sms_list")
-    object CategoriesList : Screen("category_list")
+    object CategoryScreen : Screen("category_screen")
     object FilterScreen : Screen("filter_screen")
     object SmsScreen : Screen("sms_screen")
     object SinglePermission : Screen("single_permission_screen")

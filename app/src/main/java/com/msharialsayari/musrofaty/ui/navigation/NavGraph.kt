@@ -125,26 +125,29 @@ fun NavigationGraph(
             })
         }
 
-
-        composable(Screen.CategoriesList.route + "/{storeName}" + "/{categoryId}",
-            arguments = listOf(navArgument("storeName") { type = NavType.StringType },
-                    navArgument("categoryId") { type = NavType.IntType }
-            )) { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val storeName = arguments?.getString("storeName")?:""
-            val categoryId = arguments?.getInt("categoryId")
-            CategoriesScreen(storeName,categoryId, onDone = {
-                navController.navigateUp()
-            })
-        }
-
         composable(Screen.SmsScreen.route+ "/{smsId}",
             arguments = listOf(navArgument("smsId") { type = NavType.StringType }
             )) {backStackEntry ->
             val arguments = backStackEntry.arguments
             val smsId = arguments?.getString("smsId")
-            smsId?.let { SmsScreen(it) }
+            smsId?.let { SmsScreen(it, onNavigateToCategoryScreen = {
+                navController.navigate(Screen.CategoryScreen.route + "/${it}")
+            }) }
         }
+
+
+        composable(Screen.CategoryScreen.route + "/{categoryId}",
+            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val categoryId = arguments?.getInt("categoryId")
+            categoryId?.let {
+                CategoriesScreen(categoryId, onDone = {
+                    navController.navigateUp()
+                })
+            }
+        }
+
+
 
         composable(Screen.SinglePermission.route) {
             singlePermission("")
