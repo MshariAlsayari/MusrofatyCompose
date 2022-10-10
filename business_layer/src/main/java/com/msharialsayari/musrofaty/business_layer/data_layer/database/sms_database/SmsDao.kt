@@ -42,7 +42,7 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
     fun getCurrentYearSms(senderId:Int, query:String=""): PagingSource<Int,SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
     fun getRangeDateSms(senderId:Int, query:String="", startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
 
 
@@ -63,7 +63,7 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
     fun getCurrentYearFavoriteSms(senderId:Int, isFavorite: Boolean = true, query:String=""): PagingSource<Int,SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isFavorite=:isFavorite AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
     fun getRangeDateFavoriteSms(senderId:Int, isFavorite: Boolean = true, query:String="", startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
 
 
@@ -83,7 +83,7 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
     fun getCurrentYearSmsBySenderId(senderId:Int, query:String=""): Flow<List<SmsEntity>>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%d-%m-%Y', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%d-%m-%Y', date(:endDate/1000,'unixepoch', 'localtime')) ")
+    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
     fun getRangeDateSmsBySenderId(senderId:Int, query:String="", startDate:Long, endDate:Long): Flow<List<SmsEntity>>
 
 }

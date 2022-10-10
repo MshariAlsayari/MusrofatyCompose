@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -82,7 +83,7 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
             SenderSmsListScreen(
-                senderId,
+                senderId = senderId,
                 onDetailsClicked = {
                 navController.navigate(Screen.SenderDetails.route + "/${it}")
                 },

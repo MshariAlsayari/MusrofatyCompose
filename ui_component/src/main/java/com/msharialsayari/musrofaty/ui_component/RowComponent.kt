@@ -213,7 +213,7 @@ object RowComponent {
                 ) {
 
                     TextComponent.PlaceholderText(
-                        text = item.cardType
+                        text = item.storeName
                     )
 
                     TextComponent.PlaceholderText(
@@ -290,7 +290,7 @@ data class CategoryStatisticsModel(
 
 data class CategoryDetailsStatisticsModel(
     var smsId: String = "",
-    var cardType: String = "مدى",
+    var storeName: String = "مدى",
     var amount: Double = 0.0,
     var currency: String = "",
     var timestamp:Long= 0

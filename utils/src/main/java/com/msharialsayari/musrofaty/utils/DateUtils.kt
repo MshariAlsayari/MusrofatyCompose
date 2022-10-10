@@ -32,6 +32,18 @@ object DateUtils {
     }
 
     @JvmStatic
+    fun parseDate(value:String , pattern: String = DEFAULT_DATE_PATTERN): Long {
+        val formatter = SimpleDateFormat(pattern, Locale.ENGLISH)
+        return formatter.parse(value)?.time ?:0
+    }
+
+    @JvmStatic
+    fun formatDate(date: String, pattern: String = DEFAULT_DATE_PATTERN): String {
+        val formatter: DateFormat = SimpleDateFormat(pattern, Locale.ENGLISH)
+        return formatter.format(formatter.parse(date)!!)
+    }
+
+    @JvmStatic
     fun getHowLongPostDate(context: Context, smsDate: Long): String {
         val diff: Long = getCurrentDate() - smsDate
         val seconds = diff / 1000

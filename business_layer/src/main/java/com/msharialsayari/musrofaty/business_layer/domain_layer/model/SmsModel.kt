@@ -33,4 +33,4 @@ data class SmsModel(
 fun SmsModel.toSmsEntity()=SmsEntity(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite)
 
 
-fun SmsModel.toCategoryDetailsStatisticsModel()= CategoryDetailsStatisticsModel(  smsId = id , cardType ="مدى", amount =amount, currency=currency,timestamp=timestamp)
+fun SmsModel.toCategoryDetailsStatisticsModel()= CategoryDetailsStatisticsModel(  smsId = id , storeName =storeName, amount =amount, currency=currency,timestamp=timestamp)

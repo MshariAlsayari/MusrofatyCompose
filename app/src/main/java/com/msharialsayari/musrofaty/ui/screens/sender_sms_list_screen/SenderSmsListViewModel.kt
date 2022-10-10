@@ -78,7 +78,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getAllSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isAllSmsPageLoading = false) }
-            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord())
+            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate,)
             _uiState.update {
                 it.copy(
                     smsFlow         = smsResult,
@@ -90,7 +90,7 @@ class SenderSmsListViewModel @Inject constructor(
 
      fun getAllSmsBySenderId(senderId: Int){
         viewModelScope.launch {
-            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord())
+            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
             _uiState.update {
                 it.copy(
                     allSmsFlow         = smsResult)
@@ -102,7 +102,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFavoriteSms(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isFavoriteSmsPageLoading = false) }
-            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord())
+            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
             _uiState.update {
                 it.copy(
                     favoriteSmsFlow = smsResult,
@@ -122,7 +122,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getFinancialStatistics(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord())
+            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
             smsResult.collectLatest { list->
                 val result = getFinancialStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
@@ -139,7 +139,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getCategoriesStatistics(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
-            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord())
+            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
             smsResult.collectLatest { list->
                 val result = getCategoriesStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
@@ -208,8 +208,33 @@ class SenderSmsListViewModel @Inject constructor(
         return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 
-    fun getFilterWord(): String {
+    private fun getFilterWord(): String {
         return _uiState.value.filters.find { it.id ==  _uiState.value.selectedFilter?.id }?.words ?:""
+    }
+
+    fun showStartDatePicker(){
+        _uiState.update {
+            it.copy(startDate = 0, endDate = 0, showStartDatePicker = true, showEndDatePicker = false)
+        }
+    }
+
+    fun dismissAllDatePicker(){
+        _uiState.update {
+            it.copy(startDate = 0, endDate = 0, showStartDatePicker = false, showEndDatePicker = false)
+        }
+    }
+
+    fun onStartDateSelected(value:Long){
+        _uiState.update {
+            it.copy(startDate = value, showStartDatePicker = false, showEndDatePicker = true)
+        }
+    }
+
+    fun onEndDateSelected(value:Long){
+        _uiState.update {
+            it.copy(endDate = value, showStartDatePicker = false, showEndDatePicker = false)
+        }
+
     }
 
 
@@ -228,6 +253,10 @@ class SenderSmsListViewModel @Inject constructor(
         var selectedFilter:SelectedItemModel? = null,
         var filters: List<FilterAdvancedModel> = emptyList(),
         var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
-        var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap()
+        var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap(),
+        var startDate: Long = 0,
+        var endDate: Long = 0,
+        var showStartDatePicker: Boolean = false,
+        var showEndDatePicker: Boolean = false,
     )
 }
