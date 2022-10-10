@@ -70,12 +70,8 @@ class CategoryRepo @Inject constructor(
 
     }
 
-    suspend fun delete(vararg list: CategoryModel) {
-        val categoryList: MutableList<CategoryEntity> = mutableListOf()
-        list.forEach {
-            categoryList.add(it.toCategoryEntity())
-        }
-        dao.delete(*categoryList.toTypedArray())
+    suspend fun delete(categoryModel: CategoryModel) {
+        dao.delete(categoryModel.toCategoryEntity())
     }
 
     suspend fun insertDefaultCategoryList() {

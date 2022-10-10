@@ -121,6 +121,10 @@ class StoreRepo @Inject constructor(
 
     }
 
+    suspend fun update(storeModel: StoreModel) {
+       dao.update(storeModel.toStoreEntity())
+    }
+
 
 
 }

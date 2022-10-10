@@ -37,7 +37,7 @@ interface CategoryDao {
     suspend fun deleteCategory(id: Int)
 
     @Delete
-    suspend fun delete(vararg categoryEntity: CategoryEntity)
+    suspend fun delete(categoryEntity: CategoryEntity)
 
 
     @Update

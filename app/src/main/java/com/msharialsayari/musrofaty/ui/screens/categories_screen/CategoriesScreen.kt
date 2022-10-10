@@ -1,7 +1,11 @@
 package com.msharialsayari.musrofaty.ui.screens.categories_screen
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -11,7 +15,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
@@ -20,11 +24,10 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
-import com.msharialsayari.musrofaty.ui_component.EmptyComponent
-import com.msharialsayari.musrofaty.ui_component.ProgressBar
-import com.msharialsayari.musrofaty.ui_component.TextComponent
-import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
+import kotlinx.coroutines.launch
 
 @Composable
 fun CategoriesScreen(categoryId:Int, onDone:()->Unit){
@@ -37,7 +40,7 @@ fun CategoriesScreen(categoryId:Int, onDone:()->Unit){
 
     when{
         uiState.isLoading -> ProgressCompose()
-        uiState.categoryWithStores != null -> PageCompose(viewModel)
+        uiState.categoryWithStores != null -> PageCompose(viewModel,onDone)
     }
 
 
@@ -55,27 +58,64 @@ fun ProgressCompose(){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: CategoriesViewModel){
+fun PageCompose(viewModel: CategoriesViewModel, onDone: () -> Unit){
 
-    ConstraintLayout {
-        val (fieldsContainer, listContainer, buttonsContainer) = createRefs()
+    val coroutineScope                    = rememberCoroutineScope()
+    val selectedStore = remember { mutableStateOf<StoreEntity?>(null) }
+    val openDialog = remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
 
-        FieldCategoryDisplayNameCompose(modifier = Modifier
-            .constrainAs(fieldsContainer) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
 
-            }
-            .padding(vertical = dimensionResource(id = R.dimen.default_margin16))
-            ,viewModel)
-        StoresLazyList(modifier = Modifier.constrainAs(listContainer) {
-            top    .linkTo(fieldsContainer.bottom)
-            start  .linkTo(parent.start)
-            end    .linkTo(parent.end)
-            bottom .linkTo(parent.bottom)
-        },viewModel)
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
+
+    if (openDialog.value){
+        AddCategoryDialog(viewModel, onDismiss = {
+            openDialog.value = false
+        })
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            CategoryBottomSheet(
+                viewModel =viewModel,
+                onCategorySelected = {newCategoryId->
+                    coroutineScope.launch {
+                       handleVisibilityOfBottomSheet(sheetState, false)
+                    }
+                    selectedStore.value?.storeName?.let { viewModel.onUpdateStoreCategory(it,newCategoryId) }
+
+                },
+                onCreateCategoryClicked = {
+                    openDialog.value = true
+                    coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+                },
+            )
+
+        }) {
+
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            FieldCategoryDisplayNameCompose(
+                modifier = Modifier
+                    .padding(vertical = dimensionResource(id = R.dimen.default_margin16)), viewModel
+            )
+
+            StoresLazyList(modifier = Modifier.weight(1f), viewModel, onItemClicked = {
+                coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, true) }
+                selectedStore.value = it
+
+            })
+
+            ActionButtonsCompose(modifier = Modifier, viewModel, onDone)
+        }
+    }
+
 
 }
 
@@ -97,22 +137,24 @@ fun FieldCategoryDisplayNameCompose(modifier: Modifier=Modifier,viewModel:Catego
     ) {
         TextFieldComponent.BoarderTextFieldComponent(
             modifier = Modifier.fillMaxWidth(),
-            textValue = arabicCategory.value,
-            errorMsg = "",
+            textValue = uiState.arabicCategory,
+            errorMsg = uiState.arabicCategoryValidationModel.errorMsg,
             label = R.string.common_arabic,
             onValueChanged = {
                 arabicCategory.value = it
+                viewModel.onArabicCategoryChanged(it)
             }
         )
 
 
         TextFieldComponent.BoarderTextFieldComponent(
             modifier = Modifier.fillMaxWidth(),
-            textValue = englishCategory.value,
-            errorMsg = "",
+            textValue =  uiState.englishCategory,
+            errorMsg = uiState.englishCategoryValidationModel.errorMsg,
             label = R.string.common_english,
             onValueChanged = {
                 englishCategory.value = it
+                viewModel.onEnglishCategoryChanged(it)
             }
         )
     }
@@ -121,7 +163,7 @@ fun FieldCategoryDisplayNameCompose(modifier: Modifier=Modifier,viewModel:Catego
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel){
+fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, onItemClicked:(StoreEntity)->Unit){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val categoryWithStore = uiState.categoryWithStores?.collectAsState(initial = CategoryWithStore(category = null, stores = emptyList()))?.value
@@ -131,6 +173,7 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel){
         { ActionIcon(id = R.drawable.ic_delete) },
         backgroundColor = colorResource(R.color.deletAction),
         onClicked = { position, item ->
+            viewModel.onDeleteStoreActionClicked(item.storeName)
 
         })
 
@@ -161,7 +204,10 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel){
 
             },
             dividerView = { HorizontalDividerComponent() },
-            onItemClicked = { item, position -> },
+            onItemClicked = { item, position ->
+                onItemClicked(item)
+
+            },
             isLoading = uiState.isLoading,
             startActions = listOf(deleteAction),
             loadingProgress = { ProgressBar.CircleProgressBar() },
@@ -172,6 +218,84 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel){
 
 
 
+
+}
+
+@Composable
+fun AddCategoryDialog(viewModel: CategoriesViewModel, onDismiss:()->Unit){
+
+    Dialog(onDismissRequest = onDismiss) {
+
+        DialogComponent.AddCategoryDialog(
+            onClickPositiveBtn = {ar,en->
+                viewModel.addCategory(CategoryModel(
+                    valueEn = en,
+                    valueAr = ar,
+                    isDefault = false,
+                ))
+
+                onDismiss()
+
+            },
+            onClickNegativeBtn = onDismiss
+        )
+
+    }
+
+}
+
+@Composable
+fun CategoryBottomSheet(viewModel: CategoriesViewModel, onCategorySelected:(Int)->Unit, onCreateCategoryClicked: ()->Unit ){
+    val context                           = LocalContext.current
+    val uiState                           by viewModel.uiState.collectAsState()
+    val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    BottomSheetComponent.SelectedItemListBottomSheetComponent(
+        title = R.string.sender_category,
+        list = viewModel.getCategoryItems(context, categories),
+        trailIcon = {
+            Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
+                onCreateCategoryClicked()
+            } )
+        },
+        onSelectItem = {
+               onCategorySelected(it.id)
+        },
+
+
+    )
+}
+
+@Composable
+fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDone: () -> Unit){
+    val uiState                           by viewModel.uiState.collectAsState()
+
+    Row (modifier = modifier){
+        ButtonComponent.ActionButton(
+            modifier =Modifier.weight(1f),
+            text =  R.string.common_save,
+            onClick = {
+
+                if (viewModel.validate()) {
+                    viewModel.onSaveBtnClicked()
+                    onDone()
+                }
+            }
+
+        )
+
+            ButtonComponent.ActionButton(
+                modifier =Modifier.weight(1f),
+                color= R.color.deletAction,
+                text =  R.string.common_delete,
+                onClick = {
+                    viewModel.onDeleteBtnClicked()
+                    onDone()
+
+                }
+
+            )
+
+    }
 
 }
 
