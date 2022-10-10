@@ -36,7 +36,7 @@ fun FinancialStatistics(modifier:Modifier=Modifier,
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            ChartComponent.PieChartCompose(
+            ChartComponent.FinancialPieChartCompose(
                 entries = arrayListOf(
                     PieEntry(percentIncome.toFloat(), ""),
                     PieEntry(percentExpenses.toFloat(), "")

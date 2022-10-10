@@ -45,6 +45,7 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
         modifier = Modifier.fillMaxSize()) {
         FilterTitle(viewModel)
         FilterWord(viewModel)
+        Spacer(modifier = Modifier.weight(1f))
         BtnAction(viewModel, onDone)
 
     }

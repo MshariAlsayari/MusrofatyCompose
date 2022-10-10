@@ -43,27 +43,15 @@ object StringsUtils {
 
     }
 
-    fun formatQuery (column:String , query:List<String>):String{
 
-        val queryBuilder = StringBuilder()
-        if (query.isNotEmpty()){
-            queryBuilder.append(" AND ")
-        }
-        query.mapIndexed { index, value ->
-            queryBuilder.append(column)
-            queryBuilder.append(" ")
-            queryBuilder.append("LIKE")
-            queryBuilder.append(" ")
-            queryBuilder.append("%$value%")
-            queryBuilder.append(" ")
-            if (index != query.lastIndex){
-                queryBuilder.append(" OR ")
-            }
-        }
-
-        return queryBuilder.toString()
-
+    fun formatDecimalNumber(number:Double, digitNumber:Int= 2):String{
+        return ("%.${digitNumber}f".format(
+            Locale.ENGLISH,
+            number
+        ))
     }
+
+
 
     fun formatLongNumbers(value: Long): String {
 

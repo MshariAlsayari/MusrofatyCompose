@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.ui_component.CategoryDetailsStatisticsModel
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
@@ -30,3 +31,6 @@ data class SmsModel(
 
 
 fun SmsModel.toSmsEntity()=SmsEntity(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite)
+
+
+fun SmsModel.toCategoryDetailsStatisticsModel()= CategoryDetailsStatisticsModel(  smsId = id , cardType ="مدى", amount =amount, currency=currency,timestamp=timestamp)

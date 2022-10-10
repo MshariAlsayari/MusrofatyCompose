@@ -41,8 +41,9 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentMod
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.StatisticsTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FinancialStatisticsTab
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
@@ -252,7 +253,7 @@ fun PageContainer(
 fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
     Column {
         var tabIndex by remember { mutableStateOf(0) }
-        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_statistics)
+        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_statistics,R.string.tab_statistics)
         Column {
             TabRow(
                 selectedTabIndex = tabIndex,
@@ -275,7 +276,8 @@ fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
             when (tabIndex) {
                 0 ->  AllSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
                 1 ->  FavoriteSmsTab(senderId = senderId,onSmsClicked = onSmsClicked)
-                2 ->  StatisticsTab(senderId = senderId)
+                2 ->  FinancialStatisticsTab(senderId = senderId)
+                3 ->  CategoriesStatisticsTab(senderId = senderId,onSmsClicked = onSmsClicked)
             }
         }
 

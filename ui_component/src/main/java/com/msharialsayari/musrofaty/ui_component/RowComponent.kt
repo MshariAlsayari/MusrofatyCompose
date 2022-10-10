@@ -1,14 +1,35 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.DateUtils.DEFAULT_DATE_PATTERN
+import com.msharialsayari.musrofaty.utils.StringsUtils
+import com.msharialsayari.musrofaty.utils.mirror
+
+const val EXPANSTION_TRANSITION_DURATION = 450
+const val EXPAND_ANIMATION_DURATION = 450
 
 object RowComponent {
 
@@ -107,4 +128,170 @@ object RowComponent {
         }
 
     }
+
+
+    @Composable
+    fun CategoryStatisticsRow(
+        modifier: Modifier = Modifier,
+        model: CategoryStatisticsModel,
+        onClick: (String) -> Unit
+    ) {
+        
+        val expanded = remember { mutableStateOf(false) }
+        
+        Column(modifier = modifier) {
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
+                    .clickable {
+                        expanded.value = !expanded.value
+                    }
+                ,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(RectangleShape)
+                        .background(Color(model.color))
+                )
+
+                TextComponent.PlaceholderText(
+                    text = model.category
+                )
+
+                TextComponent.PlaceholderText(
+                    text = StringsUtils.formatNumberWithComma(model.totalAmount.toString())
+                )
+
+                TextComponent.PlaceholderText(
+                    text = StringsUtils.formatDecimalNumber(model.percent) + " %"
+                )
+
+                TextComponent.PlaceholderText(
+                    text = model.currency
+                )
+                if (expanded.value)
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                    )
+                else
+                    Icon(
+                        modifier = Modifier.mirror(),
+                        painter = painterResource(id = R.drawable.ic_collapsed_arrow),
+                        contentDescription = null
+                    )
+
+            }
+
+
+            ExpandableContent(visible = expanded.value, initialVisibility = expanded.value, view = { CategoryDetailsStatisticsList(model.details, onItemClicked = onClick)})
+
+        }
+    }
+    
+    @Composable
+    fun CategoryDetailsStatisticsList(list:List<CategoryDetailsStatisticsModel>, onItemClicked: (String) -> Unit){
+        val listState = rememberLazyListState()
+        LazyColumn(
+            state = listState,
+        ) {
+
+            itemsIndexed(list) { index,item ->
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.default_margin10))
+                        .clickable { onItemClicked(item.smsId) },
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    TextComponent.PlaceholderText(
+                        text = item.cardType
+                    )
+
+                    TextComponent.PlaceholderText(
+                        text = StringsUtils.formatNumberWithComma(item.amount.toString())
+                    )
+
+                    TextComponent.PlaceholderText(
+                        text = DateUtils.getDateByTimestamp(item.timestamp, pattern = DEFAULT_DATE_PATTERN) ?:""
+                    )
+
+                    TextComponent.PlaceholderText(
+                        text = item.currency
+                    )
+                }
+
+                if (index !=list.lastIndex )
+                    DividerComponent.HorizontalDividerComponent()
+            }
+
+
+        }
+        
+    }
+
+
+    @OptIn(ExperimentalAnimationApi::class)
+    @Composable
+    fun ExpandableContent(
+        visible: Boolean = true,
+        initialVisibility: Boolean = false,
+        view: @Composable () -> Unit
+
+    ) {
+        val enterTransition = remember {
+            expandVertically(
+                expandFrom = Alignment.Top,
+                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+            ) + fadeIn(
+                initialAlpha = 0.3f,
+                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+            )
+        }
+        val exitTransition = remember {
+            shrinkVertically(
+                // Expand from the top.
+                shrinkTowards = Alignment.Top,
+                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+            ) + fadeOut(
+                // Fade in with the initial alpha of 0.3f.
+                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
+            )
+        }
+        AnimatedVisibility(
+            visible = visible,
+            initiallyVisible = initialVisibility,
+            enter = enterTransition,
+            exit = exitTransition
+        ) {
+            view()
+        }
+    }
+
 }
+
+
+data class CategoryStatisticsModel(
+    var color: Int = 0,
+    var category: String = "",
+    var totalAmount: Double = 0.0,
+    var percent: Double = 0.0,
+    var currency: String = "",
+    var details: List<CategoryDetailsStatisticsModel> = emptyList()
+)
+
+data class CategoryDetailsStatisticsModel(
+    var smsId: String = "",
+    var cardType: String = "مدى",
+    var amount: Double = 0.0,
+    var currency: String = "",
+    var timestamp:Long= 0
+)

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
@@ -27,6 +28,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
     private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
+    private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase
 
 ) : ViewModel() {
@@ -39,6 +41,7 @@ class SenderSmsListViewModel @Inject constructor(
         getAllSms(senderId)
         getFavoriteSms(senderId)
         getFinancialStatistics(senderId)
+        getCategoriesStatistics(senderId)
         getAllSmsBySenderId(senderId)
     }
 
@@ -118,14 +121,31 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun getFinancialStatistics(senderId: Int){
         viewModelScope.launch {
-            _uiState.update { it.copy(isStatisticsSmsPageLoading = true) }
+            _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
             val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord())
             smsResult.collectLatest { list->
                 val result = getFinancialStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
                     state.copy(
                         financialStatistics = result,
-                        isStatisticsSmsPageLoading = false
+                        isFinancialStatisticsSmsPageLoading = false
+                    )
+                }
+
+            }
+        }
+    }
+
+    fun getCategoriesStatistics(senderId: Int){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
+            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord())
+            smsResult.collectLatest { list->
+                val result = getCategoriesStatisticsUseCase.invoke(list)
+                _uiState.update { state ->
+                    state.copy(
+                        categoriesStatistics = result,
+                        isCategoriesStatisticsSmsPageLoading = false
                     )
                 }
 
@@ -197,7 +217,8 @@ class SenderSmsListViewModel @Inject constructor(
         var isLoading: Boolean = false,
         var isAllSmsPageLoading: Boolean = false,
         var isFavoriteSmsPageLoading: Boolean = false,
-        var isStatisticsSmsPageLoading: Boolean = false,
+        var isFinancialStatisticsSmsPageLoading: Boolean = false,
+        var isCategoriesStatisticsSmsPageLoading: Boolean = false,
         var isRefreshing: Boolean = false,
         val sender: SenderModel? = null,
         var smsFlow: Flow<PagingData<SmsEntity>>? =null,
@@ -206,6 +227,7 @@ class SenderSmsListViewModel @Inject constructor(
         var selectedFilterTimeOption:SelectedItemModel? = null,
         var selectedFilter:SelectedItemModel? = null,
         var filters: List<FilterAdvancedModel> = emptyList(),
-        var financialStatistics: Map<String, FinancialStatistics> = emptyMap()
+        var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
+        var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap()
     )
 }
