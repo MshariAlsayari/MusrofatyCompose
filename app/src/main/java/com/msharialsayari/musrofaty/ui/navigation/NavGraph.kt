@@ -22,6 +22,7 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsL
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.SendersManagementScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
+import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 
@@ -68,7 +69,10 @@ fun NavigationGraph(
         composable(BottomNavItem.Setting.screen_route) {
             SettingsScreen(onSendersClicked = {
                 navController.navigate(Screen.SendersManagementScreen.route)
-            })
+            },
+                onAnalysisClicked = {
+                    navController.navigate(Screen.SmsAnalysisScreen.route)
+                })
         }
 
         composable(Screen.SenderDetails.route + "/{senderId}",
@@ -157,6 +161,10 @@ fun NavigationGraph(
             SendersManagementScreen(onNavigateToSenderDetails = {
                 navController.navigate(Screen.SenderDetails.route + "/${it}")
             })
+        }
+
+        composable(Screen.SmsAnalysisScreen.route) {
+            SmsAnalysisScreen()
         }
 
 

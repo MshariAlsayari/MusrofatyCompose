@@ -10,7 +10,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 
 @Composable
-fun SettingsScreen(onSendersClicked:()->Unit) {
+fun SettingsScreen(onSendersClicked:()->Unit, onAnalysisClicked:()->Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -32,6 +32,13 @@ fun SettingsScreen(onSendersClicked:()->Unit) {
             header = stringResource(id = R.string.pref_managment_sender_title),
             body = stringResource(id = R.string.pref_managment_sender_summary),
             onClick = onSendersClicked
+        )
+
+        RowComponent.PreferenceRow(
+            iconId = R.drawable.ic_performance,
+            header = stringResource(id = R.string.pref_managment_analysis_title),
+            body = stringResource(id = R.string.pref_managment_analysis_summary),
+            onClick = onAnalysisClicked
         )
     }
 }

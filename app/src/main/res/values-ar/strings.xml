@@ -60,6 +60,8 @@
     <string name="pref_sms_summary">إمكانية التغيير في كفاءة تحليل الرسائل</string>
     <string name="pref_managment_sender_title">المرسلين</string>
     <string name="pref_managment_sender_summary">إمكانية إدارة المرسلين إضافة، تعطيل، حذف وأكثر</string>
+    <string name="pref_managment_analysis_title">التحليل</string>
+    <string name="pref_managment_analysis_summary">إمكانية زيادة كفاءة تحليل الرسائل</string>
 
 
     <!--filter options-->
