@@ -1,12 +1,8 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.background
@@ -41,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
@@ -296,7 +291,7 @@ fun PageContainer(
 fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
     Column {
         var tabIndex by remember { mutableStateOf(0) }
-        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_statistics,R.string.tab_statistics)
+        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_financial_statistics,R.string.tab_categories_statistics)
         Column {
             TabRow(
                 selectedTabIndex = tabIndex,

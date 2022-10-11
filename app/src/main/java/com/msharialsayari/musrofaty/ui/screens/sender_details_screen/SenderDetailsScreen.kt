@@ -2,9 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.sender_details_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,16 +14,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
-import com.msharialsayari.musrofaty.ui_component.SwitchComponent
-import com.msharialsayari.musrofaty.ui_component.TextComponent
-import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
+import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SenderDetailsScreen(senderId: Int) {
+fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
     val context = LocalContext.current
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -188,6 +183,35 @@ fun SenderDetailsScreen(senderId: Int) {
                         })
                     }
                 )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+
+                    ButtonComponent.ActionButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        text = R.string.common_save,
+                        onClick = {
+                            onDone()
+                        }
+                    )
+
+                    ButtonComponent.ActionButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        text = R.string.common_delete,
+                        color= R.color.deletAction,
+                        onClick = {
+                            viewModel.deleteSender()
+                            onDone()
+                        }
+                    )
+
+                }
+
 
             }
         }

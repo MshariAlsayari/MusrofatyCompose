@@ -1,11 +1,8 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSendersUseCase
@@ -71,7 +68,6 @@ class SendersListViewModel @Inject constructor(
         companion object {
             fun wrapSendersToSenderComponentModelList(
                 senders: List<SenderEntity>,
-                context: Context
             ): List<SenderComponentModel> {
                 val list = mutableListOf<SenderComponentModel>()
                 senders.map {

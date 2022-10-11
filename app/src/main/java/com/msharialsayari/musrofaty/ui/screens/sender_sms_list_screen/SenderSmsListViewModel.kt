@@ -52,6 +52,7 @@ class SenderSmsListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val senderResult         = getSenderUseCase.invoke(senderId)
+            if (senderResult !=null)
             getFilters(senderResult.id)
             _uiState.update {
                 it.copy(

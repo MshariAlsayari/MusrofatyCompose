@@ -12,7 +12,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSenderEn
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,9 +44,11 @@ class SenderRepo @Inject constructor(
         return dao.getAll()
     }
 
-    suspend fun getSenderById(senderId:Int):SenderModel{
-        val model = dao.getSenderById(senderId).toSenderModel()
+    suspend fun getSenderById(senderId:Int):SenderModel?{
+        val model = dao.getSenderById(senderId)?.toSenderModel()
+        if (model != null)
         return fillSenderModel(model)
+        return null
     }
 
     suspend fun getSenderByIdWithSms(senderId:Int):SenderWithRelationsModel{
@@ -134,6 +135,9 @@ class SenderRepo @Inject constructor(
     suspend fun insert(vararg model: SenderModel){
         val senders = model.toList().map { it.toSenderEntity() }.toList()
         dao.insert(*senders.toTypedArray())
+    }
 
+    suspend fun delete(senderId: Int){
+        dao.delete(senderId)
     }
 }

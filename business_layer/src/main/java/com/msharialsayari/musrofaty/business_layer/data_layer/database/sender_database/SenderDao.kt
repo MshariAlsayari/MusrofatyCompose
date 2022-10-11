@@ -12,7 +12,7 @@ interface SenderDao {
 
 
     @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
-    suspend fun getSenderById(senderId:Int):SenderEntity
+    suspend fun getSenderById(senderId:Int):SenderEntity?
 
     @Transaction
     @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
@@ -50,6 +50,9 @@ interface SenderDao {
 
     @Query("UPDATE SenderEntity SET isPined =0")
     suspend fun removePinFromAll()
+
+    @Query("DELETE FROM SenderEntity WHERE id =:senderId")
+    suspend fun delete(senderId:Int)
 
 
     @Update

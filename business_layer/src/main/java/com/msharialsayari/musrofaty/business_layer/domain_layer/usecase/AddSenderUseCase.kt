@@ -5,13 +5,13 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.Sende
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
-class GetSenderUseCase @Inject constructor(
+class AddSenderUseCase @Inject constructor(
     private val senderRepo: SenderRepo
-)  {
+) {
 
-    suspend operator fun invoke(senderId:Int): SenderModel? {
-        return senderRepo.getSenderById(senderId)
-
+    suspend operator fun invoke(senderModel: SenderModel) {
+        senderRepo.insert(senderModel)
     }
 }

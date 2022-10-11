@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
+import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.SendersManagementScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
@@ -76,7 +76,9 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            SenderDetailsScreen(senderId)
+            SenderDetailsScreen(senderId, onDone = {
+                navController.navigateUp()
+            })
         }
 
         composable(Screen.SenderSmsList.route + "/{senderId}",
@@ -148,6 +150,13 @@ fun NavigationGraph(
                     navController.navigateUp()
                 })
             }
+        }
+
+
+        composable(Screen.SendersManagementScreen.route) {
+            SendersManagementScreen(onNavigateToSenderDetails = {
+                navController.navigate(Screen.SenderDetails.route + "/${it}")
+            })
         }
 
 

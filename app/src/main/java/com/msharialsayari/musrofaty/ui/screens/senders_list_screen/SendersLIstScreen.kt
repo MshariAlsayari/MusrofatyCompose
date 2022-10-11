@@ -16,13 +16,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.ui_component.*
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -33,8 +30,8 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
     val senderItems                          = uiState.senders?.collectAsState(emptyList())
 
     val deleteAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
-        { ActionIcon(id = R.drawable.ic_delete)},
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_disable)) },
+        { ActionIcon(id = R.drawable.ic_visibility_off)},
         backgroundColor = colorResource(R.color.deletAction),
         onClicked = { position, item ->
             viewModel.disableSender(item.senderId)
@@ -61,10 +58,7 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
 
 
     VerticalEasyList(
-        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(
-            senderItems?.value?: emptyList(),
-            context
-        ),
+        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList()),
         view = { SenderComponent( modifier = Modifier.padding(
             dimensionResource(id = com.msharialsayari.musrofaty.ui_component.R.dimen.default_margin16)
         ), model = it) },

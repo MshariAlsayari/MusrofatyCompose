@@ -19,9 +19,10 @@
     <string name="common_no_category">غير محددة</string>
     <string name="common_english">إنجليزي</string>
     <string name="common_arabic">عربي</string>
-
     <string name="common_start_date">تاريخ البداية</string>
     <string name="common_end_date">تاريخ النهاية</string>
+    <string name="common_enable">تفعيل</string>
+    <string name="common_disable">تعطيل</string>
 
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
@@ -46,7 +47,8 @@
     <!--Sender Sms List-->
     <string name="tab_all_sms">الرسائل</string>
     <string name="tab_favorite_sms">المفضلة</string>
-    <string name="tab_statistics">الإحصائيات</string>
+    <string name="tab_financial_statistics">إحصائيات مالية</string>
+    <string name="tab_categories_statistics">ملخص الفئات</string>
     <string name="create_filter">أنشئ فلتر</string>
     <string name="common_long_click_to_modify">اضغط مطولا على أحد العناصر لتتمكن من التعديل</string>
 
@@ -83,6 +85,11 @@
     <!--Category-->
     <string name="stores">المتاجر</string>
     <string name="stores_description">قائمة المتاجر المرتبطة بفئة %s</string>
+
+
+    <!--Senders Management-->
+    <string name="tab_active_senders">المفعلين</string>
+    <string name="tab_unactive_senders">الفير مفعلين</string>
 
 
 
