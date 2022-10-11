@@ -12,6 +12,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSenderEn
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,6 +27,14 @@ class SenderRepo @Inject constructor(
         val senders = mutableListOf<SenderModel>()
         dao.getAllActive().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
         return senders
+    }
+
+     fun getActiveSenders():Flow<List<SenderEntity>>{
+        return dao.getActive()
+    }
+
+    fun getUnActiveSenders():Flow<List<SenderEntity>>{
+        return dao.getUnActive()
     }
 
      fun getSenders(): Flow<List<SenderEntity>> {

@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -79,14 +80,15 @@ object RowComponent {
 
     @Composable
     fun PreferenceRow(
-        iconId: Int,
+        modifier: Modifier=Modifier,
+        @DrawableRes iconId: Int,
         header: String = "",
         body: String = "",
         onClick: () -> Unit = {}
     ) {
 
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.row_height100))
                 .clickable {

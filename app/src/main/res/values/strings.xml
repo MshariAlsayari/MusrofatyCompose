@@ -51,6 +51,8 @@
     <string name="pref_appearance_summary">ability to change the language and the theme</string>
     <string name="pref_sms_title">SMS</string>
     <string name="pref_sms_summary">ability to change on sms detector performance</string>
+    <string name="pref_managment_sender_title">Senders</string>
+    <string name="pref_managment_sender_summary">ability to manage your senders Add,Disable,Delete and more</string>
 
     <!--filter options-->
     <string-array name="filter_options">

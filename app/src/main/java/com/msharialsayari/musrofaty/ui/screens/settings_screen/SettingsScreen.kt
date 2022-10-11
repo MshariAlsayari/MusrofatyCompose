@@ -10,7 +10,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(onSendersClicked:()->Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -25,6 +25,13 @@ fun SettingsScreen() {
             iconId = R.drawable.ic_performance,
             header = stringResource(id = R.string.pref_sms_title),
             body = stringResource(id = R.string.pref_sms_summary),
+        )
+
+        RowComponent.PreferenceRow(
+            iconId = R.drawable.ic_performance,
+            header = stringResource(id = R.string.pref_managment_sender_title),
+            body = stringResource(id = R.string.pref_managment_sender_summary),
+            onClick = onSendersClicked
         )
     }
 }

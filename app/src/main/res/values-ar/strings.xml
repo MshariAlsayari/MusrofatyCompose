@@ -56,6 +56,8 @@
     <string name="pref_appearance_summary">إمكانية تغير اللغة والنمط</string>
     <string name="pref_sms_title">الرسائل</string>
     <string name="pref_sms_summary">إمكانية التغيير في كفاءة تحليل الرسائل</string>
+    <string name="pref_managment_sender_title">المرسلين</string>
+    <string name="pref_managment_sender_summary">إمكانية إدارة المرسلين إضافة، تعطيل، حذف وأكثر</string>
 
 
     <!--filter options-->

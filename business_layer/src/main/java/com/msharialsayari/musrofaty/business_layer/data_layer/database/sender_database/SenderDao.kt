@@ -28,6 +28,9 @@ interface SenderDao {
     @Query("SELECT * FROM SenderEntity WHERE isActive = 1")
     fun getActive(): Flow<List<SenderEntity>>
 
+    @Query("SELECT * FROM SenderEntity WHERE isActive = 0")
+    fun getUnActive(): Flow<List<SenderEntity>>
+
     @Query("UPDATE SenderEntity SET isActive =:isActive WHERE id=:senderId")
     suspend fun activeSender(senderId:Int, isActive:Boolean)
 

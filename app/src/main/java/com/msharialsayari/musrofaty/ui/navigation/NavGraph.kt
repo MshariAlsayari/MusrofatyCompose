@@ -66,7 +66,9 @@ fun NavigationGraph(
             )
         }
         composable(BottomNavItem.Setting.screen_route) {
-            SettingsScreen()
+            SettingsScreen(onSendersClicked = {
+                navController.navigate(Screen.SendersManagementScreen.route)
+            })
         }
 
         composable(Screen.SenderDetails.route + "/{senderId}",
