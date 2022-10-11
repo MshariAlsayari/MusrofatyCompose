@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database
 
 import androidx.room.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -10,9 +11,11 @@ interface SenderDao {
     @Query("SELECT * FROM SenderEntity")
     suspend fun getAll():List<SenderEntity>
 
-
     @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
     suspend fun getSenderById(senderId:Int):SenderEntity?
+
+    @Query("SELECT * FROM SenderEntity WHERE LOWER(senderName)  = LOWER(:senderName)")
+    suspend fun getSmsBySenderName(senderName:String): SenderEntity?
 
     @Transaction
     @Query("SELECT * FROM SenderEntity WHERE id=:senderId")

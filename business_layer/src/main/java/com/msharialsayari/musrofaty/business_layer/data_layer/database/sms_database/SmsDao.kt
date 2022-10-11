@@ -14,8 +14,7 @@ interface SmsDao {
 
 
 
-    @Query("SELECT * FROM SmsEntity WHERE LOWER(senderName)  = LOWER(:senderName)")
-    suspend fun getSmsBySenderName(senderName:String): List<SmsEntity>
+
 
     @Query("SELECT * FROM SmsEntity WHERE id = :id")
     suspend fun getSms(id:String): SmsEntity

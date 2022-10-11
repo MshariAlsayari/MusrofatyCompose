@@ -133,7 +133,7 @@ class SenderRepo @Inject constructor(
     }
 
     suspend fun insert(vararg model: SenderModel){
-        val senders = model.toList().map { it.toSenderEntity() }.toList()
+        val senders = model.toList().filter { dao.getSmsBySenderName(it.senderName) == null }.map { it.toSenderEntity() }.toList()
         dao.insert(*senders.toTypedArray())
     }
 
