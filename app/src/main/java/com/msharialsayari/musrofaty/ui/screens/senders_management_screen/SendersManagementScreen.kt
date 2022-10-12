@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -40,13 +41,14 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit){
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun PageCompose(viewModel: SendersManagementViewModel,onNavigateToSenderDetails:(senderId:Int)->Unit){
 
     var tabIndex by remember { mutableStateOf(0) }
 
     val coroutineScope                    = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -55,6 +57,22 @@ fun PageCompose(viewModel: SendersManagementViewModel,onNavigateToSenderDetails:
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+    }
+
+    if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.hide()
+            }
+        }
+
+    } else {
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.show()
+            }
+        }
+
     }
 
     ModalBottomSheetLayout(

@@ -1,12 +1,11 @@
 package com.msharialsayari.musrofaty.ui_component
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 
 @Composable
@@ -15,6 +14,7 @@ fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel){
     Row(
         modifier = modifier
             .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
 
@@ -22,8 +22,12 @@ fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel){
 
         Column(modifier = Modifier
             .weight(1f)
-            .padding(start = dimensionResource(id = R.dimen.default_margin16))) {
+            .padding(start = dimensionResource(id = R.dimen.default_margin16)),
+            verticalArrangement = Arrangement.Center
+        ) {
+            if (model.displayName.notEmpty())
             TextComponent.HeaderText(text = model.displayName)
+            if (model.senderType.notEmpty())
             TextComponent.PlaceholderText(text = model.senderType)
         }
 

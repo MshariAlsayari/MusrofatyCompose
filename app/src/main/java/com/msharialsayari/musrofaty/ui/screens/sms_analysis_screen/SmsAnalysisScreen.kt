@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -34,13 +35,14 @@ fun SmsAnalysisScreen(){
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun PageCompose(viewModel: SmsAnalysisViewModel){
 
     var tabIndex by remember { mutableStateOf(0) }
 
     val coroutineScope                    = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -51,26 +53,37 @@ fun PageCompose(viewModel: SmsAnalysisViewModel){
         coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
+    if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.hide()
+            }
+        }
+
+    } else {
+        DisposableEffect(Unit) {
+            onDispose {
+                keyboardController?.show()
+            }
+        }
+
+    }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = {
-
-            BottomSheetComponent.TextFieldBottomSheetComponent(model = TextFieldBottomSheetModel(
-                title = R.string.common_sender_shortcut,
-                textFieldValue =  "",
-                buttonText = R.string.common_add,
-                onActionButtonClicked = { value ->
-
-                },
-
-                ))
-
-
-        }) {
+        sheetContent = { BottomSheetComponent.TextFieldBottomSheetComponent(model = TextFieldBottomSheetModel(
+            title = R.string.sms_analysis_bottom_sheet_title,
+            textFieldValue =  "",
+            buttonText = R.string.common_add,
+            onActionButtonClicked = { value ->
+                viewModel.addWordDetector(value, WordDetectorType.getById(tabIndex))
+                coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
+            },)) }
+    ){
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            val tabTitles = listOf(R.string.tab_active_senders, R.string.tab_unactive_senders, R.string.tab_unactive_senders)
+            val tabTitles = listOf(R.string.tab_expensess, R.string.tab_income, R.string.tab_currency)
             Column {
                 TabRow(
                     selectedTabIndex = tabIndex,
@@ -152,7 +165,7 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
         { ActionIcon(id = R.drawable.ic_delete ) },
         backgroundColor = colorResource(R.color.deletAction),
         onClicked = { position, item ->
-
+            viewModel.deleteWordDetector(item.id)
 
         })
 
@@ -164,7 +177,9 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
 
     VerticalEasyList(
         list            = list,
-        view            = { TextComponent.BodyText(modifier = Modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)), text = it.word) },
+        view            = { TextComponent.BodyText(modifier = Modifier
+            .fillMaxWidth()
+            .padding(dimensionResource(id = R.dimen.default_margin16)), text = it.word) },
         dividerView     = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked   = { item, position ->
 

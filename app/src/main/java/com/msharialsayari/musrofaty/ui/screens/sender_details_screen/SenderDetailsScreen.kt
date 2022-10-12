@@ -64,10 +64,10 @@ fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
                 SenderDetailsBottomSheet.DISPLAY_NAME_AR ->
                     model = TextFieldBottomSheetModel(
                     title = R.string.sender_display_name_en,
-                    textFieldValue = uiState.sender?.displayNameEn ?: "",
+                    textFieldValue = uiState.sender?.displayNameAr ?: "",
                     buttonText = R.string.common_save,
                     onActionButtonClicked = { value ->
-                        viewModel.changeDisplayName(value, false)
+                        viewModel.changeDisplayName(value, true)
                         coroutineScope.launch {
                             handleVisibilityOfBottomSheet(sheetState, false)
 

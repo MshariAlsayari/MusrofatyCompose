@@ -11,14 +11,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 object BottomSheetComponent {
 
     @Composable
     fun TextFieldBottomSheetComponent(modifier: Modifier= Modifier, model:TextFieldBottomSheetModel){
+        val context  = LocalContext.current
         val text  =  remember { mutableStateOf(model.textFieldValue) }
+        val error = remember { mutableStateOf("") }
         text.value = text.value
         Column(modifier = modifier) {
             TextComponent.HeaderText(text = stringResource(id = model.title) , modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16)))
@@ -28,7 +32,7 @@ object BottomSheetComponent {
                     .fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
-                errorMsg = "",
+                errorMsg = error.value,
                 onValueChanged = {
                     text.value= it
                 }
@@ -36,8 +40,13 @@ object BottomSheetComponent {
             ButtonComponent.ActionButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = model.buttonText, onClick = {
-                model.onActionButtonClicked(text.value)
-                text.value = ""
+                    if (text.value.notEmpty()) {
+                        model.onActionButtonClicked(text.value)
+                        text.value = ""
+                        error.value = ""
+                    }else{
+                        error.value = context.getString(R.string.validation_field_mandatory)
+                    }
             })
 
         }

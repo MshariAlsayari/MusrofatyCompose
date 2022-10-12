@@ -38,6 +38,10 @@ class WordDetectorRepo @Inject constructor(
         dao.insertAll(*words.toTypedArray())
     }
 
+    suspend fun delete( id: Int) {
+        dao.delete(id)
+    }
+
 
     suspend fun insertDefault() {
         val currency = Constants.listCurrencyWords.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()

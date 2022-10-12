@@ -23,12 +23,6 @@ fun SettingsScreen(onSendersClicked:()->Unit, onAnalysisClicked:()->Unit) {
 
         RowComponent.PreferenceRow(
             iconId = R.drawable.ic_performance,
-            header = stringResource(id = R.string.pref_sms_title),
-            body = stringResource(id = R.string.pref_sms_summary),
-        )
-
-        RowComponent.PreferenceRow(
-            iconId = R.drawable.ic_performance,
             header = stringResource(id = R.string.pref_managment_sender_title),
             body = stringResource(id = R.string.pref_managment_sender_summary),
             onClick = onSendersClicked

@@ -88,6 +88,21 @@
     <string name="tab_active_senders">Active</string>
     <string name="tab_unactive_senders">unActive</string>
 
+    <!--Sms Analysis-->
+    <string name="sms_analysis_bottom_sheet_title">Adding a word</string>
+
+
+    <string name="tab_currency">Currencies</string>
+    <string name="tab_currency_description">You can add/delete currencies that you want tha app calculate their incomes and expenses, make sure that a currency is matching a sender\'s currency</string>
+
+    <string name="tab_income">Incomes</string>
+    <string name="tab_income_description">You can add/delete incomes words to make the app able to recognize incomes SMSs</string>
+
+
+    <string name="tab_expensess">Expenses</string>
+    <string name="tab_expenses_description">You can add/delete expenses words to make the app able to recognize expenses SMSs</string>
+
+
 
 
 </resources>

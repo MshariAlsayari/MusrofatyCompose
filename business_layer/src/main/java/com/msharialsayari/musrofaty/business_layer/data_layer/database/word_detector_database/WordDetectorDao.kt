@@ -14,6 +14,9 @@ interface WordDetectorDao {
     @Query("SELECT * FROM WordDetectorEntity WHERE type COLLATE NOCASE IN (:type)")
      fun getAllFlowList(type:String): Flow<List<WordDetectorEntity>>
 
+    @Query("DELETE  FROM WordDetectorEntity WHERE id =:id")
+    suspend fun delete(id:Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg wordDetectorEntity: WordDetectorEntity)
 
