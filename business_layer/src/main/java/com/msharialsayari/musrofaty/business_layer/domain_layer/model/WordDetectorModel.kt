@@ -9,7 +9,6 @@ data class WordDetectorModel(
     var id: Int=0,
     var word: String,
     var type: String,
-    var isActive: Boolean=true,
 ) : Parcelable
 
-fun WordDetectorModel.toWordDetectorEntity()= WordDetectorEntity(id, word, type, isActive)
+fun WordDetectorModel.toWordDetectorEntity()= WordDetectorEntity(id, word, type)

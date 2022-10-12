@@ -76,18 +76,18 @@ class SenderRepo @Inject constructor(
 
 
     private suspend fun getSmsType(body:String): SmsType {
-        val expensesWord = wordDetectorRepo.getAllActive(WordDetectorType.EXPENSES_WORDS).map { it.word }
-        val incomesWord = wordDetectorRepo.getAllActive(WordDetectorType.INCOME_WORDS).map { it.word }
+        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_WORDS).map { it.word }
+        val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
         return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord )
     }
 
     private suspend fun getSmsCurrency(body:String):String{
-        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
         return SmsUtils.getCurrency(body, currencyList = currencyWord )
     }
 
     private suspend fun getAmount(body: String): Double {
-        val currencyWord = wordDetectorRepo.getAllActive(WordDetectorType.CURRENCY_WORDS).map { it.word }
+        val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
         return SmsUtils.extractAmount(body, currencyList = currencyWord)
     }
 

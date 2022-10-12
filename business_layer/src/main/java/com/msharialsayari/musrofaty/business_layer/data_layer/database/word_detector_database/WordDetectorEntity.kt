@@ -17,8 +17,6 @@ data class WordDetectorEntity (
     var word: String,
     @ColumnInfo(name = "type")
     var type: String,
-    @ColumnInfo(name = "isActive")
-    var isActive: Boolean=true,
 ):Parcelable
 
-fun WordDetectorEntity.toWordDetectorModel()= WordDetectorModel(id, word, type, isActive)
+fun WordDetectorEntity.toWordDetectorModel()= WordDetectorModel(id, word, type)

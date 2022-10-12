@@ -7,12 +7,15 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetect
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toWordDetectorEntity
 import com.msharialsayari.musrofaty.utils.Constants
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WordDetectorRepo @Inject constructor(
     private val dao: WordDetectorDao) {
+
+
 
 
     suspend fun getAll(type:WordDetectorType):List<WordDetectorModel> {
@@ -23,12 +26,8 @@ class WordDetectorRepo @Inject constructor(
         return returnedList
     }
 
-    suspend fun getAllActive(type:WordDetectorType):List<WordDetectorModel> {
-        val returnedList: MutableList<WordDetectorModel> = mutableListOf()
-        dao.getAllActive(type.name).map {
-            returnedList.add(it.toWordDetectorModel())
-        }
-        return returnedList
+     fun getAllFlowList(type:WordDetectorType):Flow<List<WordDetectorEntity>> {
+        return dao.getAllFlowList(type.name)
     }
 
     suspend fun insert(vararg list: WordDetectorModel) {
@@ -41,9 +40,9 @@ class WordDetectorRepo @Inject constructor(
 
 
     suspend fun insertDefault() {
-        val currency = Constants.listCurrencyWords.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name, isActive = true) }.toList()
-        val expenses = Constants.listExpenseWords.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name, isActive = true) }.toList()
-        val incomes = Constants.listIncomeWords.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name, isActive = true) }.toList()
+        val currency = Constants.listCurrencyWords.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()
+        val expenses = Constants.listExpenseWords.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name)}.toList()
+        val incomes = Constants.listIncomeWords.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name) }.toList()
         insert(*currency.toTypedArray())
         insert(*expenses.toTypedArray())
         insert(*incomes.toTypedArray())

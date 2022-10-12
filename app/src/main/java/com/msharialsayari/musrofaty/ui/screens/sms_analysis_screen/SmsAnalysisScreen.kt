@@ -1,18 +1,177 @@
 package com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
+import com.android.magic_recyclerview.model.Action
+import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui_component.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun SmsAnalysisScreen(){
     val viewModel:SmsAnalysisViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    Box {
-        Text(text = "Sms Analysis")
+
+
+    when{
+        uiState.isLoading -> LoadingPageCompose()
+        else -> PageCompose(viewModel = viewModel)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun PageCompose(viewModel: SmsAnalysisViewModel){
+
+    var tabIndex by remember { mutableStateOf(0) }
+
+    val coroutineScope                    = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
+
+
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+
+            BottomSheetComponent.TextFieldBottomSheetComponent(model = TextFieldBottomSheetModel(
+                title = R.string.common_sender_shortcut,
+                textFieldValue =  "",
+                buttonText = R.string.common_add,
+                onActionButtonClicked = { value ->
+
+                },
+
+                ))
+
+
+        }) {
+
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            val tabTitles = listOf(R.string.tab_active_senders, R.string.tab_unactive_senders, R.string.tab_unactive_senders)
+            Column {
+                TabRow(
+                    selectedTabIndex = tabIndex,
+                    indicator = {
+                        TabRowDefaults.Indicator(
+                            modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
+                            color = MaterialTheme.colors.secondary,
+                            height = TabRowDefaults.IndicatorHeight
+                        )
+                    }
+                ) {
+                    tabTitles.forEachIndexed { index, stringResId ->
+                        Tab(
+                            modifier = Modifier.background(MaterialTheme.colors.background),
+                            selected = tabIndex == index,
+                            onClick = { tabIndex = index },
+                            text = {
+                                Text(
+                                    text = stringResource(id = stringResId),
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            })
+                    }
+                }
+                when (tabIndex) {
+                    0 -> SmsAnalysisTab(
+                        viewModel = viewModel,
+                        word = WordDetectorType.EXPENSES_WORDS
+
+
+                    )
+                    1 -> SmsAnalysisTab(
+                        viewModel = viewModel,
+                        word = WordDetectorType.INCOME_WORDS
+                    )
+
+                    2 -> SmsAnalysisTab(
+                        viewModel = viewModel,
+                        word = WordDetectorType.CURRENCY_WORDS
+                    )
+                }
+            }
+
+
+            ButtonComponent.FloatingButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(dimensionResource(id = R.dimen.default_margin16)),
+                onClick = {
+                    coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, true) }
+                }
+            )
+
+
+        }
+    }
+
+}
+
+@Composable
+fun LoadingPageCompose(){
+    Box (
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        ProgressBar.CircleProgressBar()
 
     }
+
+}
+
+
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDetectorEntity>){
+    val uiState by viewModel.uiState.collectAsState()
+    val deleteAction = Action<WordDetectorEntity>(
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
+        { ActionIcon(id = R.drawable.ic_delete ) },
+        backgroundColor = colorResource(R.color.deletAction),
+        onClicked = { position, item ->
+
+
+        })
+
+
+
+
+
+
+
+    VerticalEasyList(
+        list            = list,
+        view            = { TextComponent.BodyText(modifier = Modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)), text = it.word) },
+        dividerView     = { DividerComponent.HorizontalDividerComponent() },
+        onItemClicked   = { item, position ->
+
+        },
+        isLoading       = uiState.isLoading,
+        startActions    = listOf(deleteAction),
+        loadingProgress = { ProgressBar.CircleProgressBar() },
+        emptyView       = { EmptyComponent.EmptyTextComponent() },
+    )
 }
