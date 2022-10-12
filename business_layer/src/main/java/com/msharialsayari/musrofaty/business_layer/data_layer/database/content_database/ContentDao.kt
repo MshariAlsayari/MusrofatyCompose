@@ -15,6 +15,9 @@ interface ContentDao {
     @Query("SELECT * FROM ContentEntity WHERE id=:id")
     suspend fun getContentById(id:Int): ContentEntity?
 
+    @Query("DELETE  FROM ContentEntity WHERE id=:id")
+    suspend fun delete(id:Int)
+
     @Update
     suspend fun update(contentEntity: ContentEntity)
 

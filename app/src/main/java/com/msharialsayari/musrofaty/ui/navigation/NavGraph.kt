@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
+import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
@@ -80,7 +81,10 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            SenderDetailsScreen(senderId, onDone = {
+            SenderDetailsScreen(senderId, onNavigateToContent = {
+                navController.navigate(Screen.ContentScreen.route + "/${it}")
+            },
+                onDone = {
                 navController.navigateUp()
             })
         }
@@ -165,6 +169,18 @@ fun NavigationGraph(
 
         composable(Screen.SmsAnalysisScreen.route) {
             SmsAnalysisScreen()
+        }
+
+        composable(Screen.ContentScreen.route + "/{contentId}",
+            arguments = listOf(navArgument("contentId") { type = NavType.IntType }
+            )) { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val contentId = arguments?.getInt("contentId")
+            contentId?.let {
+                ContentScreen(it, onDone = {
+                    navController.navigateUp()
+                })
+            }
         }
 
 

@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -11,21 +13,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
+fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()->Unit) {
     val context = LocalContext.current
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val bottomSheetType = remember { mutableStateOf<SenderDetailsBottomSheet?>(null) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val openDialog = remember { mutableStateOf(false) }
     viewModel.getSenderModel(senderId)
 
     val sheetState = rememberModalBottomSheetState(
@@ -52,6 +57,12 @@ fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
             }
         }
 
+    }
+
+    if (openDialog.value){
+        AddContentDialog(viewModel, onDismiss = {
+            openDialog.value = false
+        })
     }
 
     ModalBottomSheetLayout(
@@ -100,6 +111,16 @@ fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
                 BottomSheetComponent.SelectedItemListBottomSheetComponent(
                     title = R.string.sender_category,
                     list = uiState.wrapContentModel(context),
+                    description= R.string.common_long_click_to_modify,
+                    trailIcon = {
+                        Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
+                            openDialog.value = true
+                        })
+                    },
+                    onLongPress = {
+                                  onNavigateToContent(it.id)
+
+                    },
                     onSelectItem = {
                         viewModel.updateSenderCategory(it)
                         coroutineScope.launch {
@@ -218,6 +239,31 @@ fun SenderDetailsScreen(senderId: Int, onDone:()->Unit) {
 
 
     }
+}
+
+@Composable
+fun AddContentDialog(viewModel: SendersDetailsViewModel, onDismiss:()->Unit){
+
+    Dialog(onDismissRequest = onDismiss) {
+
+        DialogComponent.AddCategoryDialog(
+            onClickPositiveBtn = {ar,en->
+                viewModel.addContent(
+                    ContentModel(
+                    valueEn = en,
+                    valueAr = ar,
+                    contentKey = ContentKey.SENDERS.name
+                )
+                )
+
+                onDismiss()
+
+            },
+            onClickNegativeBtn = onDismiss
+        )
+
+    }
+
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)

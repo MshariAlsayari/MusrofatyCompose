@@ -23,7 +23,8 @@ class SendersDetailsViewModel @Inject constructor(
     private val updateSenderDisplayNameUseCase: UpdateSenderDisplayNameUseCase,
     private val getContentByKeyUseCase: GetContentByKeyUseCase,
     private val updateSenderCategoryUseCase: UpdateSenderCategoryUseCase,
-    private val deleteSenderUseCase: DeleteSenderUseCase
+    private val deleteSenderUseCase: DeleteSenderUseCase,
+    private val addContentUseCase: AddContentUseCase
 
 ) : ViewModel() {
 
@@ -82,6 +83,12 @@ class SendersDetailsViewModel @Inject constructor(
     fun deleteSender() {
         viewModelScope.launch {
             deleteSenderUseCase.invoke(id = uiState.value.sender?.id!!)
+        }
+    }
+
+    fun addContent(model: ContentModel){
+        viewModelScope.launch {
+            addContentUseCase.invoke(model)
         }
     }
 

@@ -11,6 +11,7 @@ sealed class Screen(val route: String) {
     object SmsScreen : Screen("sms_screen")
     object SendersManagementScreen : Screen("sender_management_screen")
     object SmsAnalysisScreen : Screen("sms_analysis_screen")
+    object ContentScreen : Screen("content_screen")
     object SinglePermission : Screen("single_permission_screen")
 
 }
