@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.navigation
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -13,8 +12,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
-import com.msharialsayari.musrofaty.ui.screens.apperance_screen.AppearanceScreen
+import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
@@ -28,11 +28,15 @@ import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisSc
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 
+
 @Composable
 fun NavigationGraph(
-    activity: Activity,
+    activity: MainActivity,
     navController: NavHostController,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    onLanguageChanged: () -> Unit,
+    onThemeChanged: () -> Unit,
+
 ) {
     NavHost(
         navController = navController,
@@ -91,8 +95,8 @@ fun NavigationGraph(
                 navController.navigate(Screen.ContentScreen.route + "/${it}")
             },
                 onDone = {
-                navController.navigateUp()
-            })
+                    navController.navigateUp()
+                })
         }
 
         composable(Screen.SenderSmsList.route + "/{senderId}",
@@ -103,14 +107,14 @@ fun NavigationGraph(
             SenderSmsListScreen(
                 senderId = senderId,
                 onDetailsClicked = {
-                navController.navigate(Screen.SenderDetails.route + "/${it}")
+                    navController.navigate(Screen.SenderDetails.route + "/${it}")
                 },
                 onBack = {
                     navController.navigateUp()
                 },
-                onNavigateToFilterScreen = { senderId , filterId ->
+                onNavigateToFilterScreen = { senderId, filterId ->
                     if (filterId == null)
-                        navController.navigate(Screen.FilterScreen.route+ "/${senderId}")
+                        navController.navigate(Screen.FilterScreen.route + "/${senderId}")
                     else
                         navController.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
 
@@ -122,41 +126,44 @@ fun NavigationGraph(
         }
 
 
-        composable(Screen.FilterScreen.route+ "/{senderId}",
+        composable(Screen.FilterScreen.route + "/{senderId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
-            )) {backStackEntry ->
+            )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId, null,onDone = {
+            FilterScreen(senderId, null, onDone = {
                 navController.navigateUp()
             })
         }
 
         composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType },
-                    navArgument("filterId") { type = NavType.IntType }
+                navArgument("filterId") { type = NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId,filterId, onDone = {
+            FilterScreen(senderId, filterId, onDone = {
                 navController.navigateUp()
             })
         }
 
-        composable(Screen.SmsScreen.route+ "/{smsId}",
+        composable(Screen.SmsScreen.route + "/{smsId}",
             arguments = listOf(navArgument("smsId") { type = NavType.StringType }
-            )) {backStackEntry ->
+            )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val smsId = arguments?.getString("smsId")
-            smsId?.let { SmsScreen(it, onNavigateToCategoryScreen = {
-                navController.navigate(Screen.CategoryScreen.route + "/${it}")
-            }) }
+            smsId?.let {
+                SmsScreen(it, onNavigateToCategoryScreen = {
+                    navController.navigate(Screen.CategoryScreen.route + "/${it}")
+                })
+            }
         }
 
 
         composable(Screen.CategoryScreen.route + "/{categoryId}",
-            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })) { backStackEntry ->
+            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
+        ) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val categoryId = arguments?.getInt("categoryId")
             categoryId?.let {
@@ -190,7 +197,11 @@ fun NavigationGraph(
         }
 
         composable(Screen.AppearanceScreen.route) {
-            AppearanceScreen()
+            AppearanceScreen(onLanguageChanged = {
+                onLanguageChanged()
+            },onThemeChanged = {
+                onThemeChanged()
+            })
         }
 
 

@@ -5,7 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import com.msharialsayari.musrofaty.utils.AppTheme
 
 private val DarkColorPalette = darkColors(
     primary = PrimaryColor,
@@ -27,19 +27,31 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun MusrofatyComposeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    appTheme: AppTheme = AppTheme.System,
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
+    val colors = if (IsLightTheme(appTheme)){
         LightColorPalette
-    }
+    }else
+        DarkColorPalette
 
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+
+
+
+        MaterialTheme(
+            colors = colors,
+            typography = Typography,
+            shapes = Shapes,
+            content = content
+        )
+}
+
+
+@Composable
+fun IsLightTheme(appTheme: AppTheme):Boolean{
+    return when(appTheme){
+        AppTheme.Light -> true
+        AppTheme.Dark -> false
+        AppTheme.System -> !isSystemInDarkTheme()
+    }
 }

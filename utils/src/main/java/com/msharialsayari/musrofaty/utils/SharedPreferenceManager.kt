@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import java.util.*
@@ -12,12 +11,27 @@ object SharedPreferenceManager {
 
 
     private const val PREF_LANGUAGE                                        = "key_preferredLang"
-    private const val PREF_LANGUAGE_CHANGED                                = "PREF_LANGUAGE_CHANGED"
+    private const val PREF_THEME                                           = "PREF_THEME"
     private const val PREF_First_Lunched                                   = "PREF_First_Lunched"
     private const val PREF_SHOULD_MIGRATE_FOR_FILTERS                      = "PREF_SHOULD_MIGRATE_FOR_FILTERS"
 
 
     private const val PREF_First_Lunched_Category                          = "PREF_First_Lunched_Category"
+
+    fun storeTheme(context: Context, theme: AppTheme) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .edit()
+            .putInt(PREF_THEME,theme.id)
+            .apply()
+
+    }
+
+    fun getTheme(context: Context):Int {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_THEME, AppTheme.System.id)
+
+
+    }
+
 
 
     fun storeLanguage(context: Context, locale: Locale) {
@@ -25,51 +39,26 @@ object SharedPreferenceManager {
                          .edit()
                          .putString(PREF_LANGUAGE, Gson().toJson(locale))
                          .apply()
-        setLanguageChanged(context)
-    }
-
-
-    fun isLanguageChanged(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                                .getBoolean(PREF_LANGUAGE_CHANGED, false)
 
     }
 
-    private fun setLanguageChanged(context: Context) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                         .edit()
-                         .putBoolean(PREF_LANGUAGE_CHANGED, true)
-                         .apply()
-    }
 
     fun getLanguage(context: Context): Locale {
-        val defaultLocale: Locale = Resources.getSystem().configuration.locales[0]
+        val defaultLocale = Locale("ar")
         val language = PreferenceManager.getDefaultSharedPreferences(context)
                                         .getString(PREF_LANGUAGE, Gson().toJson(defaultLocale))
         return Gson().fromJson(language, Locale::class.java)
     }
 
-    fun getLanguageOption(context: Context): Locale? {
-
-        val language = PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(PREF_LANGUAGE, null)
-        return if (language != null)
-            Gson().fromJson(language, Locale::class.java)
-        else
-            null
-    }
 
     fun applyLanguage(context: Context, locale: Locale): Context {
         val newContext: Context
         val res = context.resources
         val config = Configuration(res.configuration)
-
         Locale.setDefault(locale)
         config.setLocale(locale)
         newContext = context.createConfigurationContext(config)
         return newContext
-
-
     }
 
     fun isArabic(context: Context): Boolean {
@@ -89,9 +78,7 @@ object SharedPreferenceManager {
     }
 
 
-    fun isFirstLunchCategory(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_First_Lunched_Category, true)
-    }
+
 
      fun setFirstLunchCategory(
         context: Context,
@@ -100,18 +87,22 @@ object SharedPreferenceManager {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_First_Lunched_Category, isChanged).apply()
     }
 
-    fun shouldMigrateForFilters(context: Context): Boolean{
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-            PREF_SHOULD_MIGRATE_FOR_FILTERS, true)
-    }
 
-    fun setShouldMigrateForFilters(
-        context: Context,
-        isChanged: Boolean = false
-    ) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_SHOULD_MIGRATE_FOR_FILTERS, isChanged).apply()
-    }
 
+}
+
+enum class AppTheme(val id:Int){
+    Light(1),Dark(2), System(0);
+    companion object{
+        fun getThemById(id:Int):AppTheme{
+            return when(id){
+                1->Light
+                2->Dark
+                0->System
+                else -> throw Exception("The theme is not supported")
+            }
+        }
+    }
 }
 
 

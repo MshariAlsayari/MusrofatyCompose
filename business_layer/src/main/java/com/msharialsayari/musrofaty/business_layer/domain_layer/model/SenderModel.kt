@@ -135,6 +135,14 @@ data class SenderModel(
                 model?.displayNameEn ?: ""
             }
         }
+
+        fun getDisplayName(context: Context, model: SenderEntity?): String {
+            return if (SharedPreferenceManager.isArabic(context)) {
+                model?.displayNameAr ?: ""
+            } else {
+                model?.displayNameEn ?: ""
+            }
+        }
     }
 }
 
