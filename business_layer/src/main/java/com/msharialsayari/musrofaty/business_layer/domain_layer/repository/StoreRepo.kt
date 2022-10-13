@@ -1,17 +1,12 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.toStoreModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
-import com.msharialsayari.musrofaty.utils.SmsUtils
-import com.msharialsayari.musrofaty.utils.enums.SmsType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,40 +17,17 @@ class StoreRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    private suspend fun getAllSms(): List<SmsModel> {
-        return emptyList()
+     fun getAll(): Flow<List<StoreWithCategory>> {
+        return dao.getAll()
+
     }
 
 
-    private suspend fun getExpensesSms(): List<SmsModel> {
-        val smsList = getAllSms()
-        return smsList.filter { it.smsType == SmsType.EXPENSES }
-    }
-
-    private suspend fun getAllStores(): List<StoreModel> {
-        val returnedValue = mutableListOf<StoreModel>()
-        val storesList = getExpensesSms().filter { SmsUtils.getStoreName(it.body).isNotEmpty() }
-        storesList.forEach {
-            val storeName = SmsUtils.getStoreName(it.body ?: "")
-            var storeModel = getStoreByStoreName(storeName)
-
-            if (storeModel == null) {
-                storeModel = StoreModel(storeName = storeName, categoryId = -1)
-            }
-
-            if (returnedValue.find { it.storeName == storeName } == null) {
-                returnedValue.add(storeModel)
-            }
-        }
-
-        return returnedValue
-    }
 
 
 
     suspend fun getStoreByStoreName(storeName: String): StoreModel? {
         val storeEntity = dao.getStoreByName(storeName)
-
         storeEntity?.let {
             return it.toStoreModel()
         } ?: run { return null }
@@ -74,26 +46,7 @@ class StoreRepo @Inject constructor(
         return StoreAndCategoryModel(storeModel,categoryModel)
     }
 
-    suspend fun getStoreAndCategoryBySmsList(smsList:List<SmsModel>) : List<SmsModel>{
-        val finalList = mutableListOf<SmsModel>()
-        smsList.forEach {
-            it.storeAndCategoryModel = getStoreAndCategory(it.storeName)
-            finalList.add(it)
-        }
-        return finalList
 
-    }
-
-    suspend fun getListOfStoreAndCategory():List<StoreAndCategoryModel>{
-        val stores = getAllStores()
-        val returnedValue = mutableListOf<StoreAndCategoryModel>()
-        stores.map {
-            returnedValue.add(getStoreAndCategory(it.storeName))
-        }
-
-        return returnedValue
-
-    }
 
 
     suspend fun insertStore(storeModel: StoreModel) {

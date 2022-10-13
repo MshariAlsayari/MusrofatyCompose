@@ -27,6 +27,7 @@ import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
+import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 
 
 @Composable
@@ -65,10 +66,10 @@ fun NavigationGraph(
         composable(BottomNavItem.SendersList.screen_route) {
             SendersListScreen(
                 onNavigateToSenderDetails = {
-                    navController.navigate(Screen.SenderDetails.route + "/${it}")
+                    navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
                 },
                 onNavigateToSenderSmsList = {
-                    navController.navigate(Screen.SenderSmsList.route + "/${it}")
+                    navController.navigate(Screen.SenderSmsListScreen.route + "/${it}")
                 }
             )
         }
@@ -80,13 +81,16 @@ fun NavigationGraph(
                 onSendersClicked = {
                     navController.navigate(Screen.SendersManagementScreen.route)
                 },
+                onStoresClicked = {
+                    navController.navigate(Screen.StoresScreen.route)
+                },
                 onAnalysisClicked = {
                     navController.navigate(Screen.SmsAnalysisScreen.route)
                 }
             )
         }
 
-        composable(Screen.SenderDetails.route + "/{senderId}",
+        composable(Screen.SenderDetailsScreen.route + "/{senderId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
@@ -99,7 +103,7 @@ fun NavigationGraph(
                 })
         }
 
-        composable(Screen.SenderSmsList.route + "/{senderId}",
+        composable(Screen.SenderSmsListScreen.route + "/{senderId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
@@ -107,7 +111,7 @@ fun NavigationGraph(
             SenderSmsListScreen(
                 senderId = senderId,
                 onDetailsClicked = {
-                    navController.navigate(Screen.SenderDetails.route + "/${it}")
+                    navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
                 },
                 onBack = {
                     navController.navigateUp()
@@ -176,7 +180,7 @@ fun NavigationGraph(
 
         composable(Screen.SendersManagementScreen.route) {
             SendersManagementScreen(onNavigateToSenderDetails = {
-                navController.navigate(Screen.SenderDetails.route + "/${it}")
+                navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
             })
         }
 
@@ -202,6 +206,10 @@ fun NavigationGraph(
             },onThemeChanged = {
                 onThemeChanged()
             })
+        }
+
+        composable(Screen.StoresScreen.route) {
+            StoresScreen()
         }
 
 

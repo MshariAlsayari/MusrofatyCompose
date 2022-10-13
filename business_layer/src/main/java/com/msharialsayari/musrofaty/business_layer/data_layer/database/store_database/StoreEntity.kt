@@ -1,9 +1,8 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import kotlinx.parcelize.Parcelize
@@ -17,6 +16,17 @@ data class StoreEntity(
     @ColumnInfo(name = "categoryId")
     var categoryId: Int = 0,
 ) : Parcelable
+
+
+@Parcelize
+data class StoreWithCategory(
+    @Embedded val store: StoreEntity,
+    @Relation(
+        parentColumn = "storeName",
+        entityColumn = "id"
+    )
+    val category: CategoryEntity?=null,
+):Parcelable
 
 
 @Parcelize
