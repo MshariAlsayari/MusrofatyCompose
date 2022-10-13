@@ -1,9 +1,15 @@
 package com.msharialsayari.musrofaty.ui.screens.stores_screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
+import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class StoresViewModel @Inject constructor(
     private val getAllStoreWithCategoryUseCase: GetAllStoreWithCategoryUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val addCategoryUseCase: AddCategoryUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(StoresUiState())
@@ -23,6 +31,7 @@ class StoresViewModel @Inject constructor(
 
     init {
         getStores()
+        getCategories()
     }
 
     private fun getStores(){
@@ -37,8 +46,44 @@ class StoresViewModel @Inject constructor(
         }
     }
 
+
+    private fun getCategories(){
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            val result = getCategoriesUseCase.invoke()
+            _uiState.update {
+                it.copy(isLoading = false, categories = result)
+            }
+        }
+    }
+
+    fun addCategory(model: CategoryModel){
+        viewModelScope.launch {
+            addCategoryUseCase.invoke(model)
+        }
+    }
+
+    fun getCategoryItems(context: Context, categories: List<CategoryEntity> ): List<SelectedItemModel> {
+        val list = mutableListOf<SelectedItemModel>()
+        categories.map { value ->
+            list.add(
+                SelectedItemModel(
+                    id = value.id,
+                    value = CategoryModel.getDisplayName(context,value),
+                    isSelected = false
+                )
+            )
+        }
+
+        return list
+
+    }
+
     data class StoresUiState(
         var isLoading: Boolean = false,
-       var stores: Flow<List<StoreWithCategory>>? = null
+        var stores: Flow<List<StoreWithCategory>>? = null,
+        var categories: Flow<List<CategoryEntity>>? = null,
     )
 }

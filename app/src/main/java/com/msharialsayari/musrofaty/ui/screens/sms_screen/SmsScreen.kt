@@ -124,7 +124,7 @@ fun CategoryBottomSheet(viewModel: SmsViewModel, onCategorySelected:()->Unit, on
     val uiState                           by viewModel.uiState.collectAsState()
     val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.sender_category,
+        title = R.string.store_category,
         description= R.string.common_long_click_to_modify,
         list = viewModel.getCategoryItems(context, categories),
         trailIcon = {

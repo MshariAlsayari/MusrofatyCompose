@@ -250,7 +250,7 @@ fun CategoryBottomSheet(viewModel: CategoriesViewModel, onCategorySelected:(Int)
     val uiState                           by viewModel.uiState.collectAsState()
     val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.sender_category,
+        title = R.string.store_category,
         list = viewModel.getCategoryItems(context, categories),
         trailIcon = {
             Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {

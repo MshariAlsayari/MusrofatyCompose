@@ -109,7 +109,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                 BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
             }else{
                 BottomSheetComponent.SelectedItemListBottomSheetComponent(
-                    title = R.string.sender_category,
+                    title = R.string.store_category,
                     list = uiState.wrapContentModel(context),
                     description= R.string.common_long_click_to_modify,
                     trailIcon = {
@@ -166,7 +166,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                 )
 
                 ListItem(
-                    text = { Text(text = stringResource(id = R.string.sender_category)) },
+                    text = { Text(text = stringResource(id = R.string.store_category)) },
                     trailing = {
                         TextComponent.ClickableText(
                             text = if (ContentModel.getDisplayName(
