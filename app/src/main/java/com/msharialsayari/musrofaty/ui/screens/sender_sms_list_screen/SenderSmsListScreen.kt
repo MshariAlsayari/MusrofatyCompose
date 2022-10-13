@@ -41,7 +41,6 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
@@ -50,6 +49,7 @@ import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope

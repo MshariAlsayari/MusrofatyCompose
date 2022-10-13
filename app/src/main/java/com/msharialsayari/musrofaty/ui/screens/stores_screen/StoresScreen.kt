@@ -2,10 +2,10 @@ package com.msharialsayari.musrofaty.ui.screens.stores_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,24 +15,25 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
-import com.msharialsayari.musrofaty.utils.notEmpty
 import kotlinx.coroutines.launch
 
 @Composable
-fun StoresScreen() {
+fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit) {
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     when {
         uiState.isLoading -> PageLoading()
-        else -> PageCompose(viewModel)
+        else -> PageCompose(viewModel, onCategoryLongPressed = {
+            onNavigateToCategoryScreen(it)
+        })
     }
 }
 
@@ -49,17 +50,14 @@ fun PageLoading() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: StoresViewModel) {
+fun PageCompose(viewModel: StoresViewModel,onCategoryLongPressed:(Int)->Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope                    = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
-    )
+    val sheetState = rememberBottomSheetScaffoldState()
 
 
-    BackHandler(sheetState.isVisible) {
+    BackHandler(sheetState.bottomSheetState.isExpanded) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
@@ -71,16 +69,20 @@ fun PageCompose(viewModel: StoresViewModel) {
             })
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
+    BottomSheetScaffold(
+        scaffoldState = sheetState,
+        sheetPeekHeight = 0.dp,
         sheetContent = {
+
+
             CategoryBottomSheet(
                 viewModel =viewModel,
                 onCategorySelected = {
+                    viewModel.onCategorySelected(it)
+                    viewModel.changeStoreCategory()
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }
-
 
                 },
                 onCreateCategoryClicked = {
@@ -88,13 +90,15 @@ fun PageCompose(viewModel: StoresViewModel) {
                     coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
                 },
                 onCategoryLongPressed = {categoryId->
-
                     coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+                    onCategoryLongPressed(categoryId)
+
                 }
             )
 
         }) {
         StoresList(viewModel, onItemClicked = {
+            viewModel.onStoreSelected(it)
             coroutineScope.launch {
                 handleVisibilityOfBottomSheet(sheetState, true)
             }
@@ -107,38 +111,44 @@ fun PageCompose(viewModel: StoresViewModel) {
 fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val listState  = rememberLazyListState()
     val stores = uiState.stores?.collectAsState(initial = emptyList())?.value ?: emptyList()
 
-    VerticalEasyList(
-        list = stores,
-        view = { StoreAndCategoryCompose(it) },
-        onItemClicked = { item, position ->
-            onItemClicked(item)
-        },
-        dividerView = { DividerComponent.HorizontalDividerComponent() }
-    )
+    LazyColumn(
+        state = listState,
+    ) {
+        items(stores) {  item ->
+            StoreAndCategoryCompose(viewModel,item, onItemClicked={
+                onItemClicked(it)
+            })
+            DividerComponent.HorizontalDividerComponent()
+
+        }
+
+
+    }
 
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StoreAndCategoryCompose(item: StoreWithCategory) {
-    val context = LocalContext.current
+fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory, onItemClicked:(StoreWithCategory)->Unit) {
+
+
+    val uiState by viewModel.uiState.collectAsState()
+    val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
+
     ListItem(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                onItemClicked(item)
+            }
             .padding(all = dimensionResource(id = R.dimen.default_margin16)),
         text = { Text(text = item.store.storeName) },
         trailing = {
             TextComponent.ClickableText(
-                text = if (CategoryModel.getDisplayName(context, item.category)
-                        .notEmpty()
-                ) CategoryModel.getDisplayName(
-                    context,
-                    item.category
-                ) else context.getString(R.string.common_no_category),
-
-                )
+                text =  viewModel.getCategoryDisplayName( item.store.categoryId, categories))
         }
     )
 
@@ -158,7 +168,6 @@ fun CategoryBottomSheet(viewModel: StoresViewModel, onCategorySelected:(Selected
                 onCreateCategoryClicked()
             } )
         },
-
         onSelectItem = {
             onCategorySelected(it)
         },

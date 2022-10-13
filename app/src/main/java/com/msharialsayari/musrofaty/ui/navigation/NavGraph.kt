@@ -209,7 +209,11 @@ fun NavigationGraph(
         }
 
         composable(Screen.StoresScreen.route) {
-            StoresScreen()
+            StoresScreen(
+                onNavigateToCategoryScreen = {
+                    navController.navigate(Screen.CategoryScreen.route + "/${it}")
+                }
+            )
         }
 
 

@@ -19,6 +19,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
 
 
@@ -266,16 +267,7 @@ fun AddContentDialog(viewModel: SendersDetailsViewModel, onDismiss:()->Unit){
 
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show: Boolean) {
 
-    if (show) {
-        sheetState.show()
-    } else {
-        sheetState.hide()
-    }
-
-}
 
 enum class SenderDetailsBottomSheet {
     DISPLAY_NAME_AR, DISPLAY_NAME_EN, CONTENT

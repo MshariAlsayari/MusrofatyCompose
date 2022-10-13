@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -122,6 +123,17 @@ object BottomSheetComponent {
             sheetState.show()
         } else {
             sheetState.hide()
+        }
+
+    }
+
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+    suspend fun handleVisibilityOfBottomSheet(sheetState: BottomSheetScaffoldState, show: Boolean) {
+
+        if (show) {
+            sheetState.bottomSheetState.expand()
+        } else {
+            sheetState.bottomSheetState.collapse()
         }
 
     }
