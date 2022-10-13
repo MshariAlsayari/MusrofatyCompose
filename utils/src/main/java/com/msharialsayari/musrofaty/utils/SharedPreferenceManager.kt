@@ -49,6 +49,16 @@ object SharedPreferenceManager {
         return Gson().fromJson(language, Locale::class.java)
     }
 
+    fun getLanguageOption(context: Context): Locale? {
+
+        val language = PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(PREF_LANGUAGE, null)
+        return if (language != null)
+            Gson().fromJson(language, Locale::class.java)
+        else
+            null
+    }
+
     fun applyLanguage(context: Context, locale: Locale): Context {
         val newContext: Context
         val res = context.resources

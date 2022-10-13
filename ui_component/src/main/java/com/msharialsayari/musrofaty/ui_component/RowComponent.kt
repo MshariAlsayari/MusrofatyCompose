@@ -81,7 +81,7 @@ object RowComponent {
     @Composable
     fun PreferenceRow(
         modifier: Modifier=Modifier,
-        @DrawableRes iconId: Int,
+        @DrawableRes iconId: Int?=null,
         header: String = "",
         body: String = "",
         onClick: () -> Unit = {}
@@ -103,10 +103,12 @@ object RowComponent {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
-                Icon(
-                    painter = painterResource(id = iconId),
-                    contentDescription = ""
-                )
+                iconId?.let {
+                    Icon(
+                        painter = painterResource(id = iconId),
+                        contentDescription = ""
+                    )
+                }
 
 
                 Column(

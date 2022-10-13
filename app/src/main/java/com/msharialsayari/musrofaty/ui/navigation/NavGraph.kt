@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
+import com.msharialsayari.musrofaty.ui.screens.apperance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
@@ -68,12 +69,17 @@ fun NavigationGraph(
             )
         }
         composable(BottomNavItem.Setting.screen_route) {
-            SettingsScreen(onSendersClicked = {
-                navController.navigate(Screen.SendersManagementScreen.route)
-            },
+            SettingsScreen(
+                onAppearanceClicked = {
+                    navController.navigate(Screen.AppearanceScreen.route)
+                },
+                onSendersClicked = {
+                    navController.navigate(Screen.SendersManagementScreen.route)
+                },
                 onAnalysisClicked = {
                     navController.navigate(Screen.SmsAnalysisScreen.route)
-                })
+                }
+            )
         }
 
         composable(Screen.SenderDetails.route + "/{senderId}",
@@ -181,6 +187,10 @@ fun NavigationGraph(
                     navController.navigateUp()
                 })
             }
+        }
+
+        composable(Screen.AppearanceScreen.route) {
+            AppearanceScreen()
         }
 
 
