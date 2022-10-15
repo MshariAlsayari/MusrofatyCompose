@@ -124,8 +124,10 @@
 
 
     <!--Excel-->
-    <string name="excel_bankname_header">Bank name</string>
+    <string name="excel_sender_name_header">Sender name</string>
     <string name="excel_sms_body_header">SMS</string>
+    <string name="excel_store_name_header">Store name</string>
+    <string name="excel_store_category_header">Store category</string>
     <string name="excel_sms_type_header">SMS type</string>
     <string name="excel_expenses_amount_header">Expenses amount</string>
     <string name="excel_income_amount_header">Income amount</string>

@@ -131,8 +131,10 @@
 
 
     <!--Excel-->
-    <string name="excel_bankname_header">اسم البنك</string>
+    <string name="excel_sender_name_header">المرسل</string>
     <string name="excel_sms_body_header">الرسالة</string>
+    <string name="excel_store_name_header">المتجر</string>
+    <string name="excel_store_category_header">فئة المتجر</string>
     <string name="excel_sms_type_header">نوع الرسالة</string>
     <string name="excel_expenses_amount_header">مبلغ الصرف</string>
     <string name="excel_income_amount_header">مبلغ الدخل</string>

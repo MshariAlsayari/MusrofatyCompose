@@ -54,6 +54,27 @@ class SmsRepo @Inject constructor(
     }
 
 
+    suspend fun getAll(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsModel> {
+        val returnedList = mutableListOf<SmsModel>()
+        val smsListEntity =
+            when (filterOption) {
+                DateUtils.FilterOption.ALL -> dao.getAll(senderId,query)
+                DateUtils.FilterOption.TODAY -> dao.getToday(senderId,query)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(senderId,query)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(senderId,query)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(senderId,query)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDate(senderId,query,startDate,endDate)
+            }
+
+        smsListEntity.map {
+            returnedList.add(fillSmsModel( it.toSmsModel()))
+        }
+
+        return returnedList
+
+    }
+
+
      fun getAllSms(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,query:String="",startDate:Long = 0 , endDate:Long= 0 ): Flow<PagingData<SmsEntity>> {
         val pagingSourceFactory = {
             when (filterOption) {

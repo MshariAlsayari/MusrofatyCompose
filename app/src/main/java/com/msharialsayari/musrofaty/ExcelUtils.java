@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel;
 import com.msharialsayari.musrofaty.utils.DateUtils;
-import com.msharialsayari.musrofaty.utils.SmsUtils;
 import com.msharialsayari.musrofaty.utils.enums.SmsType;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -34,24 +33,13 @@ import java.util.Objects;
 
 public class ExcelUtils {
     public final String TAG = "ExcelUtil";
-    private final int BANK_NAME_COLUMN = 0;
-    private final int SMS_BODY_COLUMN = 1;
-    private final int EXPENSES_AMOUNT_COLUMN = 2;
-    private final int INCOME_AMOUNT_COLUMN = 3;
-    private final int AMOUNT_CURRENCY_COLUMN = 4;
-    private final int SMS_TYPE_COLUMN = 5;
-    private final int SMS_DATE = 6;
-    private final int COLUMN_WIDTH = 15 * 400;
     private Cell cell;
     private Sheet sheet;
     private Workbook workbook;
     private CellStyle headerCellStyle;
     private CellStyle dividerCellStyle;
     private ExcelModel importedExcelData;
-    private double totalIncomeAmount = 0.0;
-    private double totalExpensesAmount = 0.0;
-    private int smsSize = 0;
-    private int rowCount = 1;
+
     private Context context;
     private String fileName;
 
@@ -116,25 +104,14 @@ public class ExcelUtils {
         setHeaderCellStyle();
         setDividerCellStyle();
         sheet = workbook.createSheet(sheetName);
-        sheet.setColumnWidth(BANK_NAME_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(SMS_BODY_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(EXPENSES_AMOUNT_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(INCOME_AMOUNT_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(AMOUNT_CURRENCY_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(SMS_TYPE_COLUMN, COLUMN_WIDTH);
-        sheet.setColumnWidth(SMS_DATE, COLUMN_WIDTH);
+        int COLUMN_WIDTH = 15 * 400;
+        for (ExcelColumns value : ExcelColumns.values()) {
+            sheet.setColumnWidth(value.getIndex(), COLUMN_WIDTH);
+        }
         setHeaderRow(context);
 
     }
 
-    private void fillDivider() {
-        setDividerRow(rowCount);
-        rowCount++;
-        setDividerRow(rowCount);
-        rowCount++;
-        setDividerRow(rowCount);
-        rowCount++;
-    }
 
     /**
      * Checks if Storage is READ-ONLY
@@ -178,66 +155,24 @@ public class ExcelUtils {
 
         Row headerRow = sheet.createRow(0);
 
-        cell = headerRow.createCell(BANK_NAME_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_bankname_header));
-        cell.setCellStyle(headerCellStyle);
+        for (ExcelColumns value : ExcelColumns.values()) {
+            cell = headerRow.createCell(value.getIndex());
+            cell.setCellValue(context.getString(value.getTitle()));
+            cell.setCellStyle(headerCellStyle);
+        }
 
-        cell = headerRow.createCell(SMS_BODY_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_sms_body_header));
-        cell.setCellStyle(headerCellStyle);
-
-        cell = headerRow.createCell(EXPENSES_AMOUNT_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_expenses_amount_header));
-        cell.setCellStyle(headerCellStyle);
-
-        cell = headerRow.createCell(INCOME_AMOUNT_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_income_amount_header));
-        cell.setCellStyle(headerCellStyle);
-
-        cell = headerRow.createCell(AMOUNT_CURRENCY_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_amount_currency_header));
-        cell.setCellStyle(headerCellStyle);
-
-        cell = headerRow.createCell(SMS_TYPE_COLUMN);
-        cell.setCellValue(context.getString(R.string.excel_sms_type_header));
-        cell.setCellStyle(headerCellStyle);
-
-        cell = headerRow.createCell(SMS_DATE);
-        cell.setCellValue(context.getString(R.string.excel_sms_date_header));
-        cell.setCellStyle(headerCellStyle);
     }
 
     private void setDividerRow(int row) {
 
         Row headerRow = sheet.createRow(row);
 
-        cell = headerRow.createCell(BANK_NAME_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
+        for (ExcelColumns value : ExcelColumns.values()) {
+            cell = headerRow.createCell(value.getIndex());
+            cell.setCellValue("");
+            cell.setCellStyle(dividerCellStyle);
+        }
 
-        cell = headerRow.createCell(SMS_BODY_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
-
-        cell = headerRow.createCell(EXPENSES_AMOUNT_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
-
-        cell = headerRow.createCell(INCOME_AMOUNT_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
-
-        cell = headerRow.createCell(AMOUNT_CURRENCY_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
-
-        cell = headerRow.createCell(SMS_TYPE_COLUMN);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
-
-        cell = headerRow.createCell(SMS_DATE);
-        cell.setCellValue("");
-        cell.setCellStyle(dividerCellStyle);
     }
 
     /**
@@ -257,55 +192,44 @@ public class ExcelUtils {
 
             // Create Cells for each row
             //BankName Cell
-            cell = rowData.createCell(BANK_NAME_COLUMN);
+            cell = rowData.createCell(ExcelColumns.BANK_NAME_COLUMN.getIndex());
             cell.setCellValue(smsModel.getStoreName());
 
             //Sms Cell
-            cell = rowData.createCell(SMS_BODY_COLUMN);
+            cell = rowData.createCell(ExcelColumns.SMS_BODY.getIndex());
             cell.setCellValue(smsModel.getBody());
 
-
-            String smsCurrency = smsModel.getCurrency();
-            SmsType smsType = smsModel.getSmsType();
-            double amount = smsModel.getAmount();
             double incomeAmount = 0.0;
             double expensesAmount = 0.0;
-
-
-                switch (Objects.requireNonNull(smsType)) {
-                    case INCOME:
-                        incomeAmount = amount;
-                        break;
-                    case EXPENSES:
-                        expensesAmount = amount;
-                        break;
-                }
-
-
-
-            totalIncomeAmount += incomeAmount;
-            totalExpensesAmount += expensesAmount;
+            switch (Objects.requireNonNull(smsModel.getSmsType())) {
+                case INCOME:
+                    incomeAmount = smsModel.getAmount();
+                    break;
+                case EXPENSES:
+                    expensesAmount = smsModel.getAmount();
+                    break;
+            }
 
 
             //Expenses Amount  Cell
-            cell = rowData.createCell(EXPENSES_AMOUNT_COLUMN);
+            cell = rowData.createCell(ExcelColumns.EXPENSES_AMOUNT_COLUMN.getIndex());
             cell.setCellValue(String.valueOf(expensesAmount));
 
             //Income Amount  Cell
-            cell = rowData.createCell(INCOME_AMOUNT_COLUMN);
+            cell = rowData.createCell(ExcelColumns.INCOME_AMOUNT_COLUMN.getIndex());
             cell.setCellValue(String.valueOf(incomeAmount));
 
             //Amount Currency  Cell
-            cell = rowData.createCell(AMOUNT_CURRENCY_COLUMN);
-            cell.setCellValue(smsCurrency);
+            cell = rowData.createCell(ExcelColumns.AMOUNT_CURRENCY_COLUMN.getIndex());
+            cell.setCellValue(smsModel.getCurrency());
 
             //Sms type  Cell
-            cell = rowData.createCell(SMS_TYPE_COLUMN);
-            cell.setCellValue(context.getString(smsType.getValueString()));
+            cell = rowData.createCell(ExcelColumns.SMS_TYPE_COLUMN.getIndex());
+            cell.setCellValue(context.getString(smsModel.getSmsType().getValueString()));
 
 
-            cell = rowData.createCell(SMS_DATE);
-
+            //Sms date Cell
+            cell = rowData.createCell(ExcelColumns.SMS_DATE.getIndex());
             String date = DateUtils.getDateByTimestamp(smsModel.getTimestamp(), DateUtils.DEFAULT_DATE_TIME_PATTERN);
             cell.setCellValue(date);
         }
@@ -422,3 +346,77 @@ public class ExcelUtils {
     }
 
 }
+
+enum ExcelColumns{
+    BANK_NAME_COLUMN(0, R.string.excel_sender_name_header),
+    SMS_BODY(1, R.string.excel_sms_body_header),
+    STORE_NAME(2, R.string.excel_store_name_header),
+    STORE_CATEGORY(3, R.string.excel_store_category_header),
+    EXPENSES_AMOUNT_COLUMN(4, R.string.excel_expenses_amount_header),
+    INCOME_AMOUNT_COLUMN(5, R.string.excel_income_amount_header),
+    AMOUNT_CURRENCY_COLUMN(6, R.string.excel_amount_currency_header),
+    SMS_TYPE_COLUMN(7, R.string.excel_sms_type_header),
+    SMS_DATE(8, R.string.excel_sms_date_header);
+
+    private int index;
+    private int title;
+    ExcelColumns(int index, int title){
+        this.index = index;
+        this.title  = title;
+    }
+
+    public int getTitle() {
+        return title;
+    }
+
+    public void setTitle(int title) {
+        this.title = title;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+}
+
+
+// cell = headerRow.createCell(BANK_NAME_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_sender_name_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(SMS_BODY_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_sms_body_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//
+//         cell = headerRow.createCell(STORE_NAME);
+//         cell.setCellValue(context.getString(R.string.excel_expenses_amount_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(STORE_CATEGORY);
+//         cell.setCellValue(context.getString(R.string.excel_income_amount_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(EXPENSES_AMOUNT_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_expenses_amount_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(INCOME_AMOUNT_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_income_amount_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(AMOUNT_CURRENCY_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_amount_currency_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(SMS_TYPE_COLUMN);
+//         cell.setCellValue(context.getString(R.string.excel_sms_type_header));
+//         cell.setCellStyle(headerCellStyle);
+//
+//         cell = headerRow.createCell(SMS_DATE);
+//         cell.setCellValue(context.getString(R.string.excel_sms_date_header));
+//         cell.setCellStyle(headerCellStyle);
+

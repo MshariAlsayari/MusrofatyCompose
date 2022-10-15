@@ -32,7 +32,12 @@ class GenerateExcelFileJob @AssistedInject constructor(
         const val BANK_NAME_EXTRA = "BANK_NAME_EXTRA"
         const val Progress = "Progress"
         const val FILE_GENERATED_EXTRA = "FILE_GENERATED_EXTRA"
-        private const val delayDuration = 1L
+
+        const val FILTER_TIME_OPTION = "FILTER_TIME_OPTION"
+        const val FILTER_WORD = "FILE_GENERATED_EXTRA"
+        const val START_TIME = "FILE_GENERATED_EXTRA"
+        const val END_TIME = "FILE_GENERATED_EXTRA"
+
     }
 
 
