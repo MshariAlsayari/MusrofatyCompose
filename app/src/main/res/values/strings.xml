@@ -22,6 +22,7 @@
     <string name="common_end_date">End Date</string>
     <string name="common_enable">Enable</string>
     <string name="common_disable">Disable</string>
+    <string name="common_all">ALL</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
@@ -120,6 +121,16 @@
     <!--Appearance-->
     <string name="theme">Theme</string>
     <string name="language">Language</string>
+
+
+    <!--Excel-->
+    <string name="excel_bankname_header">Bank name</string>
+    <string name="excel_sms_body_header">SMS</string>
+    <string name="excel_sms_type_header">SMS type</string>
+    <string name="excel_expenses_amount_header">Expenses amount</string>
+    <string name="excel_income_amount_header">Income amount</string>
+    <string name="excel_amount_currency_header">Currency</string>
+    <string name="excel_sms_date_header">SMS Date</string>
 
 
 
