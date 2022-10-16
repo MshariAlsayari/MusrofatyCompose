@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutPDFParent"
+    android:layout_width="@dimen/pdf_width"
+    android:layout_height="@dimen/pdf_height"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/default_margin20"
+    android:paddingVertical="@dimen/default_margin30">
+
+    <LinearLayout
+        android:id="@+id/layoutPDFChild"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</LinearLayout>

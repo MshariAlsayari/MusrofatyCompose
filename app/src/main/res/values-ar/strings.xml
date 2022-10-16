@@ -146,6 +146,14 @@
     <string name="notification_generate_excel_file_done_message">تم إنشاء الملف بنجاح</string>
     <string name="notification_generate_excel_file_channel_name">إنشاء الملفات</string>
 
+    <!--PDF-->
+    <string name="file_created">تم إنشاء ملف PDF</string>
+    <string name="file_not_created">لم يتم إنشاء ملف PDF نرجوا المحالة مرة أخرى</string>
+    <string name="no_message_to_create_file">لايوجد رسايل لإنشاء ملف PDF</string>
+    <string name="page_number">صفحة: %d</string>
+    <string name="pdf_preview_title">استعراض الرسائل</string>
+    <string name="pdf_preview_pages">%d من %d</string>
+
 
 
 </resources>

@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty
+package com.msharialsayari.musrofaty.excei
 
 import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel

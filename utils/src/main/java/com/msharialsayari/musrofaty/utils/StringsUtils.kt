@@ -8,6 +8,7 @@ import java.util.regex.Pattern
 object StringsUtils {
 
 
+    @JvmStatic
     fun formatArabicDigits(stringContainDigits: String?): String? {
         return stringContainDigits?.let {
             String(it.map { ch ->
