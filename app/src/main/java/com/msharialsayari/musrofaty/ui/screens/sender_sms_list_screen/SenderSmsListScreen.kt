@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.compose.LazyPagingItems
@@ -56,11 +57,12 @@ import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SharingFileUtils
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -77,7 +79,8 @@ fun SenderSmsListScreen(
     onDetailsClicked: (Int)->Unit,
     onNavigateToFilterScreen: (Int,Int?)->Unit,
     onBack: ()->Unit,
-    onSmsClicked: (String) -> Unit
+    onSmsClicked: (String) -> Unit,
+    onExcelFileGenerated:()->Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
@@ -92,7 +95,8 @@ fun SenderSmsListScreen(
                 onDetailsClicked,
                 onNavigateToFilterScreen,
                 onBack,
-                onSmsClicked
+                onSmsClicked,
+                onExcelFileGenerated
             )
     }
 
@@ -155,21 +159,34 @@ fun PageContainer(
                   onDetailsClicked: (Int)->Unit,
                   onNavigateToFilterScreen: (Int,Int?)->Unit,
                   onBack: ()->Unit,
-                  onSmsClicked: (String) -> Unit
+                  onSmsClicked: (String) -> Unit,
+                  onExcelIconClicked: () -> Unit
 ){
 
     val context                           = LocalContext.current
-    val lifecycleOwner                    =  LocalLifecycleOwner.current
     val toolbarHeightRange                = with(LocalDensity.current) {MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState                      = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection            = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState                           by viewModel.uiState.collectAsState()
     val isFilterTimeOptionBottomSheet     = remember { mutableStateOf(false) }
     val coroutineScope                    = rememberCoroutineScope()
+    val workManager = WorkManager.getInstance(context)
+    val generateFileRequest = OneTimeWorkRequestBuilder<GenerateExcelFileJob>()
+        .setInputData(viewModel.getDataBuilder())
+        .build()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
+
+    val workInfos = workManager
+        .getWorkInfosForUniqueWorkLiveData("generate")
+        .observeAsState()
+        .value
+
+    val fileInfo = remember(key1 = workInfos) {
+        workInfos?.find { it.id == generateFileRequest.id }
+    }
 
 
     BackHandler(sheetState.isVisible) {
@@ -268,7 +285,7 @@ fun PageContainer(
                 onDetailsClicked         = onDetailsClicked,
                 onBack                   = onBack,
                 onExcelIconClicked = {
-                  generateExcelFile(viewModel = viewModel, context = context, lifecycleOwner=lifecycleOwner, onFileGenerated = {})
+                  viewModel.generateExcelFile(context, onExcelIconClicked)
                 },
                 onCreateFilterClicked    = { uiState.sender?.let {
                     onNavigateToFilterScreen(it.id, null)

@@ -7,9 +7,9 @@ import android.os.Environment;
 import android.util.Log;
 
 
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel;
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel;
 import com.msharialsayari.musrofaty.utils.DateUtils;
-import com.msharialsayari.musrofaty.utils.enums.SmsType;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -192,12 +192,20 @@ public class ExcelUtils {
 
             // Create Cells for each row
             //BankName Cell
-            cell = rowData.createCell(ExcelColumns.BANK_NAME_COLUMN.getIndex());
-            cell.setCellValue(smsModel.getStoreName());
+            cell = rowData.createCell(ExcelColumns.SENDER_NAME_COLUMN.getIndex());
+            cell.setCellValue(smsModel.getSenderName());
 
             //Sms Cell
             cell = rowData.createCell(ExcelColumns.SMS_BODY.getIndex());
             cell.setCellValue(smsModel.getBody());
+
+            //Store Name  Cell
+            cell = rowData.createCell(ExcelColumns.STORE_NAME.getIndex());
+            cell.setCellValue(smsModel.getStoreName());
+
+            //Store Category  Cell
+            cell = rowData.createCell(ExcelColumns.STORE_CATEGORY.getIndex());
+            cell.setCellValue(CategoryModel.Companion.getDisplayName(context, Objects.requireNonNull(smsModel.getStoreAndCategoryModel()).getCategory()));
 
             double incomeAmount = 0.0;
             double expensesAmount = 0.0;
@@ -348,7 +356,7 @@ public class ExcelUtils {
 }
 
 enum ExcelColumns{
-    BANK_NAME_COLUMN(0, R.string.excel_sender_name_header),
+    SENDER_NAME_COLUMN(0, R.string.excel_sender_name_header),
     SMS_BODY(1, R.string.excel_sms_body_header),
     STORE_NAME(2, R.string.excel_store_name_header),
     STORE_CATEGORY(3, R.string.excel_store_category_header),

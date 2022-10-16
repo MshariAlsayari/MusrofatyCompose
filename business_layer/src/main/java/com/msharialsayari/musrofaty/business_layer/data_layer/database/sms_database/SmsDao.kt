@@ -30,23 +30,23 @@ interface SmsDao {
     ////////Generate Excel File///////////
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%'")
-    fun getAll(senderId:Int, query:String=""): List<SmsEntity>
+    suspend fun getAll(senderId:Int, query:String=""): List<SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))")
-    fun getToday(senderId:Int, query:String=""): List<SmsEntity>
+    suspend fun getToday(senderId:Int, query:String=""): List<SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime'))")
-    fun getCurrentWeek(senderId:Int, query:String=""): List<SmsEntity>
+    suspend fun getCurrentWeek(senderId:Int, query:String=""): List<SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now'))")
-    fun getCurrentMonth(senderId:Int, query:String=""): List<SmsEntity>
+    suspend fun getCurrentMonth(senderId:Int, query:String=""): List<SmsEntity>
 
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
-    fun getCurrentYear(senderId:Int, query:String=""): List<SmsEntity>
+    suspend fun getCurrentYear(senderId:Int, query:String=""): List<SmsEntity>
 
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
-    fun getRangeDate(senderId:Int, query:String="", startDate:Long, endDate:Long): List<SmsEntity>
+    suspend fun getRangeDate(senderId:Int, query:String="", startDate:Long, endDate:Long): List<SmsEntity>
 
     ////////Generate Excel File///////////
 

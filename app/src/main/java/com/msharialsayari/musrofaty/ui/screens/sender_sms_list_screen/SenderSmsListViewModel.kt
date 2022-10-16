@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.work.Data
+import com.msharialsayari.musrofaty.ExcelModel
+import com.msharialsayari.musrofaty.ExcelUtils
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
@@ -15,11 +17,14 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
+import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +36,8 @@ class SenderSmsListViewModel @Inject constructor(
     private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
-    private val getFiltersUseCase: GetFiltersUseCase
+    private val getFiltersUseCase: GetFiltersUseCase,
+    private val getAllSmsUseCase: GetSmsListUseCase
 
 ) : ViewModel() {
 
@@ -248,6 +254,21 @@ class SenderSmsListViewModel @Inject constructor(
         builder.putLong(GenerateExcelFileJob.START_TIME, uiState.value.startDate)
         builder.putLong(GenerateExcelFileJob.END_TIME, uiState.value.endDate)
         return builder.build()
+    }
+
+    fun generateExcelFile(context: Context, onFileGenerated:()->Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = getAllSmsUseCase.invoke(
+                                        senderId     = _uiState.value.sender?.id?:0,
+                                        filterOption = getFilterTimeOption(),
+                                        query        = getFilterWord(),
+                                        startDate    = _uiState.value.startDate,
+                                        endDate      = _uiState.value.endDate)
+            val excelModel = ExcelModel(smsList = result)
+            val isGenerated = ExcelUtils(context, Constants.EXCEL_FILE_NAME).exportDataIntoWorkbook(excelModel)
+            if (isGenerated)
+            onFileGenerated()
+        }
     }
 
 

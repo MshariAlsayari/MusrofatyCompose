@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,6 +29,8 @@ import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisSc
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
+import com.msharialsayari.musrofaty.utils.Constants
+import com.msharialsayari.musrofaty.utils.SharingFileUtils
 
 
 @Composable
@@ -125,6 +128,11 @@ fun NavigationGraph(
                 },
                 onSmsClicked = {
                     navController.navigate(Screen.SmsScreen.route + "/${it}")
+                },
+                onExcelFileGenerated = {
+                    val fileURI = SharingFileUtils.accessFile(activity, Constants.EXCEL_FILE_NAME)
+                    val intent = SharingFileUtils.createSharingIntent(activity, fileURI)
+                    activity.startActivity(intent)
                 }
             )
         }
