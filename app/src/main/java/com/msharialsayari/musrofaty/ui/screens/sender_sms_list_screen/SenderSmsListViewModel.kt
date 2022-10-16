@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.work.Data
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
@@ -11,6 +12,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentMod
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -236,6 +238,16 @@ class SenderSmsListViewModel @Inject constructor(
             it.copy(endDate = value, showStartDatePicker = false, showEndDatePicker = false)
         }
 
+    }
+
+    fun  getDataBuilder():Data{
+        val builder = Data.Builder()
+        builder.putInt(GenerateExcelFileJob.SENDER_ID, _uiState.value.sender?.id?:0)
+        builder.putInt(GenerateExcelFileJob.FILTER_TIME_OPTION, uiState.value.selectedFilterTimeOption?.id?:0)
+        builder.putString(GenerateExcelFileJob.FILTER_WORD, uiState.value.selectedFilter?.value?:"")
+        builder.putLong(GenerateExcelFileJob.START_TIME, uiState.value.startDate)
+        builder.putLong(GenerateExcelFileJob.END_TIME, uiState.value.endDate)
+        return builder.build()
     }
 
 

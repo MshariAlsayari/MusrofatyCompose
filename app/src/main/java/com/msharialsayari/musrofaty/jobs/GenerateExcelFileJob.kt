@@ -6,9 +6,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
+import com.msharialsayari.musrofaty.ExcelModel
+import com.msharialsayari.musrofaty.ExcelUtils
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListUseCase
 import com.msharialsayari.musrofaty.utils.Constants
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
+import com.msharialsayari.musrofaty.utils.DateUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
@@ -17,42 +19,59 @@ import kotlinx.coroutines.withContext
 
 @HiltWorker
 class GenerateExcelFileJob @AssistedInject constructor(
-    @Assisted val appContext: Context,
-    @Assisted val workerParams: WorkerParameters,
-    val smsRepo: SmsRepo
-) :
-    CoroutineWorker(appContext, workerParams) {
+    @Assisted private val appContext: Context,
+    @Assisted private val workerParams: WorkerParameters,
+    private val getAllSmsUseCase: GetSmsListUseCase
+) : CoroutineWorker(appContext, workerParams) {
 
 
-    private var bankName = ""
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private var senderId = 0
+    private var filterTimeId = 0
+    private var filterWord = ""
+    private var startDate = 0L
+    private var endDate = 0L
+
+
 
 
     companion object {
-        const val BANK_NAME_EXTRA = "BANK_NAME_EXTRA"
+
         const val Progress = "Progress"
         const val FILE_GENERATED_EXTRA = "FILE_GENERATED_EXTRA"
 
+
+        const val SENDER_ID = "SENDER_ID"
         const val FILTER_TIME_OPTION = "FILTER_TIME_OPTION"
-        const val FILTER_WORD = "FILE_GENERATED_EXTRA"
-        const val START_TIME = "FILE_GENERATED_EXTRA"
-        const val END_TIME = "FILE_GENERATED_EXTRA"
+        const val FILTER_WORD = "FILTER_WORD"
+        const val START_TIME = "START_TIME"
+        const val END_TIME = "END_TIME"
 
     }
 
 
     override suspend fun doWork(): Result {
-
-        return Result.success()
+        senderId     = inputData.getInt(SENDER_ID, 0)
+        filterTimeId = inputData.getInt(FILTER_TIME_OPTION, 0)
+        filterWord   = inputData.getString(FILTER_WORD)?:""
+        startDate    = inputData.getLong(START_TIME,0L)
+        endDate      = inputData.getLong(END_TIME,0L)
+        val firstUpdate = workDataOf(Progress to 0)
+        val lastUpdate = workDataOf(Progress to 100)
+        setProgress(firstUpdate)
+        val smsResult = getSmsData()
+        val excelModel = ExcelModel(smsList = smsResult,)
+        val isGenerated = ExcelUtils(appContext, Constants.EXCEL_FILE_NAME).exportDataIntoWorkbook(excelModel)
+        setProgress(lastUpdate)
+        return Result.success(workDataOf(FILE_GENERATED_EXTRA to isGenerated))
     }
 
-    private fun createOutputData(isFileGenerated: Boolean): Data {
-        return Data.Builder()
-            .putBoolean(FILE_GENERATED_EXTRA, isFileGenerated)
-            .build()
-    }
 
     private suspend fun getSmsData() = withContext(Dispatchers.IO) {
-
+        getAllSmsUseCase.invoke(
+            senderId = senderId,
+            filterOption =DateUtils.FilterOption.getFilterOption(filterTimeId) ,
+            query = filterWord,
+            startDate = startDate,
+            endDate= endDate)
     }
 }

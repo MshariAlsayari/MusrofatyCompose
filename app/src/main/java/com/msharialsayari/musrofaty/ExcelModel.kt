@@ -7,5 +7,4 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ExcelModel(
     var smsList:  List<SmsModel> = listOf(),
-    var currencyList: List<String> = listOf()
 ) : Parcelable
