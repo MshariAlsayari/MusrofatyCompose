@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -29,25 +28,20 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LifecycleOwner
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import androidx.work.*
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
-import com.msharialsayari.musrofaty.notifications.makeStatusNotification
+import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
@@ -57,9 +51,7 @@ import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
-import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
-import com.msharialsayari.musrofaty.utils.SharingFileUtils
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
@@ -80,7 +72,8 @@ fun SenderSmsListScreen(
     onNavigateToFilterScreen: (Int,Int?)->Unit,
     onBack: ()->Unit,
     onSmsClicked: (String) -> Unit,
-    onExcelFileGenerated:()->Unit
+    onExcelFileGenerated:()->Unit,
+    onNavigateToPDFCreatorActivity:(PdfCreatorViewModel.PdfBundle)->Unit
 ) {
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
@@ -96,7 +89,8 @@ fun SenderSmsListScreen(
                 onNavigateToFilterScreen,
                 onBack,
                 onSmsClicked,
-                onExcelFileGenerated
+                onExcelFileGenerated,
+                onNavigateToPDFCreatorActivity
             )
     }
 
@@ -160,7 +154,8 @@ fun PageContainer(
                   onNavigateToFilterScreen: (Int,Int?)->Unit,
                   onBack: ()->Unit,
                   onSmsClicked: (String) -> Unit,
-                  onExcelIconClicked: () -> Unit
+                  onExcelIconClicked: () -> Unit,
+                  onNavigateToPDFCreatorActivity:(PdfCreatorViewModel.PdfBundle)->Unit
 ){
 
     val context                           = LocalContext.current
@@ -170,23 +165,12 @@ fun PageContainer(
     val uiState                           by viewModel.uiState.collectAsState()
     val isFilterTimeOptionBottomSheet     = remember { mutableStateOf(false) }
     val coroutineScope                    = rememberCoroutineScope()
-    val workManager = WorkManager.getInstance(context)
-    val generateFileRequest = OneTimeWorkRequestBuilder<GenerateExcelFileJob>()
-        .setInputData(viewModel.getDataBuilder())
-        .build()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
-    val workInfos = workManager
-        .getWorkInfosForUniqueWorkLiveData("generate")
-        .observeAsState()
-        .value
 
-    val fileInfo = remember(key1 = workInfos) {
-        workInfos?.find { it.id == generateFileRequest.id }
-    }
 
 
     BackHandler(sheetState.isVisible) {
@@ -280,10 +264,11 @@ fun PageContainer(
 
         ) {
             CollapsedToolbar(
-                toolbarState             = toolbarState,
-                viewModel                = viewModel,
-                onDetailsClicked         = onDetailsClicked,
-                onBack                   = onBack,
+                toolbarState                   = toolbarState,
+                viewModel                      = viewModel,
+                onDetailsClicked               = onDetailsClicked,
+                onBack                         = onBack,
+                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity,
                 onExcelIconClicked = {
                   viewModel.generateExcelFile(context, onExcelIconClicked)
                 },
@@ -315,66 +300,15 @@ fun PageContainer(
 
 }
 
-
-private  fun generateExcelFile(viewModel:SenderSmsListViewModel,context: Context, lifecycleOwner: LifecycleOwner, onFileGenerated:(Boolean)->Unit) {
-
-    val workManager = WorkManager.getInstance(context)
-    val generateExcelFileRequest: WorkRequest =
-        OneTimeWorkRequestBuilder<GenerateExcelFileJob>()
-            .setInputData(viewModel.getDataBuilder())
-            .build()
-
-
-
-
-    workManager.enqueue(generateExcelFileRequest)
-    workManager.getWorkInfoByIdLiveData(generateExcelFileRequest.id)
-        .observe(lifecycleOwner) { workInfo ->
-            if (workInfo != null) {
-                val progress = workInfo.progress
-                val outputData = workInfo.outputData
-                val value = progress.getInt(GenerateExcelFileJob.Progress, 0)
-                val isFileGenerated = outputData.getBoolean(GenerateExcelFileJob.FILE_GENERATED_EXTRA, false)
-                if (value == 0) {
-                    makeStatusNotification(
-                        context.getString(R.string.notification_generate_excel_file_title),
-                        context. getString(R.string.notification_generate_excel_file_starting_message),
-                        context
-                    )
-                }
-
-                when (workInfo.state) {
-                    WorkInfo.State.SUCCEEDED -> {
-                        if (isFileGenerated) {
-                            makeStatusNotification(
-                                context.getString(R.string.notification_generate_excel_file_title),
-                                context.getString(R.string.notification_generate_excel_file_done_message),
-                                context
-                            )
-                            onFileGenerated(isFileGenerated)
-
-                        }
-
-                    }
-                    WorkInfo.State.FAILED -> {
-                    }
-                    else -> {}
-                }
-
-
-            }
-        }
-
-}
-
 @Composable
 fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
     Column {
         var tabIndex by remember { mutableStateOf(0) }
         val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_financial_statistics,R.string.tab_categories_statistics)
         Column {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = tabIndex,
+                edgePadding = 0.dp,
                 indicator = {
                     TabRowDefaults.Indicator(
                         modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
@@ -410,10 +344,12 @@ fun CollapsedToolbar(toolbarState: ToolbarState,
                      onBack: ()->Unit,
                      onFilterTimeIconClicked: ()->Unit,
                      onFilterIconClicked: ()->Unit,
-                     onExcelIconClicked: ()->Unit){
+                     onExcelIconClicked: ()->Unit,
+                     onNavigateToPDFCreatorActivity:(PdfCreatorViewModel.PdfBundle)->Unit
+){
     CollapsingToolbar(
         progress   = toolbarState.progress,
-        actions    = {ToolbarActionsComposable(viewModel,onBack, onFilterTimeIconClicked,onFilterIconClicked, onExcelIconClicked)},
+        actions    = {ToolbarActionsComposable(viewModel,onBack, onFilterTimeIconClicked,onFilterIconClicked, onExcelIconClicked,onNavigateToPDFCreatorActivity)},
         collapsedComposable      = { CollapsedToolbarComposable(viewModel)},
         expandedComposable = { ExpandedToolbarComposable(viewModel,onDetailsClicked, onCreateFilterClicked)},
         modifier   = Modifier
@@ -683,7 +619,9 @@ fun CollapsedToolbarComposable(viewModel:SenderSmsListViewModel){
 fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
                              onBack:()->Unit, onFilterTimeIconClicked:()->Unit,
                              onFilterIconClicked:()->Unit,
-                             onExcelIconClicked:()->Unit) {
+                             onExcelIconClicked:()->Unit,
+                             onNavigateToPDFCreatorActivity:(PdfCreatorViewModel.PdfBundle)->Unit
+) {
     val uiState  by viewModel.uiState.collectAsState()
     val filters = uiState.filters
     val smsList = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value ?: emptyList()
@@ -713,9 +651,17 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
                     contentDescription = null,
                     modifier = Modifier
-                        .mirror()
                         .clickable {
                             onExcelIconClicked()
+
+                        })
+
+                Icon(painter = painterResource(id = R.drawable.ic_pdf),
+
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            onNavigateToPDFCreatorActivity(viewModel.getPdfBundle())
 
                         })
 

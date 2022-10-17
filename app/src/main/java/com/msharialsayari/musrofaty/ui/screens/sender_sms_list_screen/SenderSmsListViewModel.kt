@@ -15,6 +15,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdva
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
+import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
@@ -245,14 +246,14 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun  getDataBuilder():Data{
-        val builder = Data.Builder()
-        builder.putInt(GenerateExcelFileJob.SENDER_ID, _uiState.value.sender?.id?:0)
-        builder.putInt(GenerateExcelFileJob.FILTER_TIME_OPTION, uiState.value.selectedFilterTimeOption?.id?:0)
-        builder.putString(GenerateExcelFileJob.FILTER_WORD, uiState.value.selectedFilter?.value?:"")
-        builder.putLong(GenerateExcelFileJob.START_TIME, uiState.value.startDate)
-        builder.putLong(GenerateExcelFileJob.END_TIME, uiState.value.endDate)
-        return builder.build()
+    fun  getPdfBundle():PdfCreatorViewModel.PdfBundle{
+        return PdfCreatorViewModel.PdfBundle(
+            senderId = _uiState.value.sender?.id?:0,
+            filterTimeId = uiState.value.selectedFilterTimeOption?.id?:0,
+            filterWord = uiState.value.selectedFilter?.value?:"",
+            startDate = uiState.value.startDate,
+            endDate = uiState.value.endDate
+        )
     }
 
     fun generateExcelFile(context: Context, onFileGenerated:()->Unit) {

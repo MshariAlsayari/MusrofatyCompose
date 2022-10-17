@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.MainActivity
+import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
@@ -55,7 +56,7 @@ fun NavigationGraph(
                 intent.data = uri
                 activity.startActivityForResult(intent, 123)
             }, onLoadingDone = {
-                navController.navigate(BottomNavItem.Dashboard.screen_route) {
+                navController.navigate(BottomNavItem.Dashboard.route) {
                     popUpTo(Screen.Splash.route) {
                         inclusive = true
                     }
@@ -63,10 +64,10 @@ fun NavigationGraph(
             })
         }
 
-        composable(BottomNavItem.Dashboard.screen_route) {
+        composable(BottomNavItem.Dashboard.route) {
             DashboardScreen()
         }
-        composable(BottomNavItem.SendersList.screen_route) {
+        composable(BottomNavItem.SendersList.route) {
             SendersListScreen(
                 onNavigateToSenderDetails = {
                     navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
@@ -76,7 +77,7 @@ fun NavigationGraph(
                 }
             )
         }
-        composable(BottomNavItem.Setting.screen_route) {
+        composable(BottomNavItem.Setting.route) {
             SettingsScreen(
                 onAppearanceClicked = {
                     navController.navigate(Screen.AppearanceScreen.route)
@@ -133,6 +134,9 @@ fun NavigationGraph(
                     val fileURI = SharingFileUtils.accessFile(activity, Constants.EXCEL_FILE_NAME)
                     val intent = SharingFileUtils.createSharingIntent(activity, fileURI)
                     activity.startActivity(intent)
+                },
+                onNavigateToPDFCreatorActivity = {
+                    PdfCreatorActivity.startPdfCreatorActivity(activity,it)
                 }
             )
         }

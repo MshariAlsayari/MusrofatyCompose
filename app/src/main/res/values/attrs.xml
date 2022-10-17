@@ -2,5 +2,10 @@
 <resources>
     <attr name="colorBackground" format="color" />
     <attr name="colorBottomNavigationBackground" format="color" />
+    <attr name="colorStatusBar" format="color" />
+    <attr name="colorToolbar" format="color" />
+    <attr name="colorProgressBar" format="color" />
+
+
 
 </resources>

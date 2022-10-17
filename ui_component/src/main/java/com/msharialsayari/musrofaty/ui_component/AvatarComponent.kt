@@ -13,13 +13,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AvatarComponent(icon:Int) {
+fun AvatarComponent(icon:Int?) {
     Image(
         modifier = Modifier
             .width(50.dp)
             .height(50.dp)
-            .clip(CircleShape)
-            .background(color = Color.Gray),
-        painter = painterResource(id = icon), contentDescription = null
-    )
+            .clip(CircleShape),
+        painter = painterResource(id = icon?:R.drawable.ic_app), contentDescription = null)
 }

@@ -9,11 +9,11 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="60dp"
         android:background="?attr/colorToolbar"
         android:elevation="4dp"
         app:navigationIcon="@drawable/ic_arrow_back_white"
         app:titleTextColor="@color/white"
-        android:theme="@style/toolbarStyle" />
+        app:subtitleTextColor="@color/white" />
 
 </com.google.android.material.appbar.AppBarLayout>

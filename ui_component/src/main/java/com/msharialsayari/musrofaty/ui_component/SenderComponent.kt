@@ -18,7 +18,7 @@ fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel){
     ) {
 
 
-        AvatarComponent(model.senderIcon?: com.msharialsayari.musrofaty.utils.R.drawable.ic_launcher_foreground )
+        AvatarComponent(model.senderIcon )
 
         Column(modifier = Modifier
             .weight(1f)

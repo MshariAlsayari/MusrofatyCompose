@@ -19,6 +19,7 @@ import androidx.core.content.FileProvider
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
 import com.msharialsayari.musrofaty.notifications.makeStatusNotification
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -37,10 +38,24 @@ class PdfCreatorActivity : BasePDFCreator() {
     private val viewModel: PdfCreatorViewModel by viewModels()
 
     companion object {
-        const val LIST_SMS_EXTRA = "LIST_SMS_EXTRA"
-        const val IS_DELETED_SMS_LIST_EXTRA = "IS_DELETED_SMS_LIST_EXTRA"
-        const val BANK_NAME_EXTRA = "BANK_NAME_EXTRA"
-        const val GENERATE_ALL_SMS_LIST = "GENERATE_ALL_SMS_LIST"
+        private const val SENDER_ID = "SENDER_ID"
+        private const val FILTER_TIME_OPTION = "FILTER_TIME_OPTION"
+        private const val FILTER_WORD = "FILTER_WORD"
+        private const val START_TIME = "START_TIME"
+        private const val END_TIME = "END_TIME"
+
+        fun startPdfCreatorActivity(activity: Activity, pdfBundle: PdfCreatorViewModel.PdfBundle) {
+            val bundle = Bundle()
+
+            bundle.putInt(SENDER_ID, pdfBundle.senderId)
+            bundle.putInt(FILTER_TIME_OPTION, pdfBundle.filterTimeId)
+            bundle.putString(FILTER_WORD, pdfBundle.filterWord)
+            bundle.putLong(START_TIME, pdfBundle.startDate)
+            bundle.putLong(END_TIME, pdfBundle.endDate)
+
+            activity.startActivity(Intent(activity, PdfCreatorActivity::class.java).putExtras(bundle)
+            )
+        }
     }
 
     private lateinit var smsList: List<SmsModel>
@@ -59,16 +74,12 @@ class PdfCreatorActivity : BasePDFCreator() {
 
         initObserver()
         intent?.extras?.let {
-            if (it.containsKey(LIST_SMS_EXTRA) ){
-                smsList = it.getParcelableArrayList(LIST_SMS_EXTRA)?: listOf()
-                createPdfView(smsList, this)
-            }else {
-                viewModel.generateAllSms = it.getBoolean(GENERATE_ALL_SMS_LIST)
-                viewModel.bankName = (it.getSerializable(BANK_NAME_EXTRA) as? String) ?: ""
-                viewModel.getAllBanksSms()
-            }
-
-
+            viewModel.senderId     = it.getInt(GenerateExcelFileJob.SENDER_ID, 0)
+            viewModel.filterTimeId = it.getInt(GenerateExcelFileJob.FILTER_TIME_OPTION, 0)
+            viewModel.filterWord   = it.getString(GenerateExcelFileJob.FILTER_WORD)?:""
+            viewModel.startDate    = it.getLong(GenerateExcelFileJob.START_TIME,0L)
+            viewModel. endDate      = it.getLong(GenerateExcelFileJob.END_TIME,0L)
+            viewModel.getAllBanksSms()
         }
 
 
@@ -206,7 +217,7 @@ class PdfCreatorActivity : BasePDFCreator() {
         val pdfBankNameTextView = PDFTextView(applicationContext, PDFTextView.PDF_TEXT_SIZE.H1)
         val bankNameWord = SpannableString(
             String.format(
-                Lingver.getInstance().getLocale(),
+                SharedPreferenceManager.getLanguage(this),
                 SenderModel.getDisplayName(this, smsList[0].senderModel)
             )
         )
@@ -262,7 +273,7 @@ class PdfCreatorActivity : BasePDFCreator() {
         val pdfSmsDateLabelTextView = PDFTextView(applicationContext, PDFTextView.PDF_TEXT_SIZE.H2)
         val smsDateLabelWord = SpannableString(
             String.format(
-                Lingver.getInstance().getLocale(),
+                SharedPreferenceManager.getLanguage(this),
                 getString(R.string.excel_sms_date_header)
             )
         )

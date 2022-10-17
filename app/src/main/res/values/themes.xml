@@ -11,4 +11,22 @@
 
     </style>
 
+
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
+    <style name="lightTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:itemBackground">@color/white</item>
+        <item name="android:colorControlNormal">@color/lightGray</item>
+        <item name="colorStatusBar">@color/colorPrimary</item>
+        <item name="colorToolbar">@color/colorPrimary</item>
+        <item name="colorProgressBar">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="ProgressBarPrimary" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">?attr/colorProgressBar</item>
+        <item name="android:scaleY">1.3</item>
+    </style>
+
 </resources>

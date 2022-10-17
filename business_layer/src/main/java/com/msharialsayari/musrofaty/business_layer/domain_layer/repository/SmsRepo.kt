@@ -53,6 +53,33 @@ class SmsRepo @Inject constructor(
         return fillSmsModel(dao.getSms(smsId).toSmsModel())
     }
 
+    suspend fun getAllSmsForAllSenders(filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
+        val senders = senderRepo.getAllSenders().filter { it.isActive }
+        val smsList  = mutableListOf<SmsEntity>()
+        senders.forEach {
+
+            val list = when (filterOption) {
+                DateUtils.FilterOption.ALL -> dao.getAll(it.id, query)
+                DateUtils.FilterOption.TODAY -> dao.getToday(it.id, query)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(it.id, query)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(it.id, query)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(it.id, query)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDate(
+                    it.id,
+                    query,
+                    startDate,
+                    endDate
+                )
+            }
+
+
+            smsList.addAll(list)
+
+        }
+
+        return smsList
+
+    }
 
     suspend fun getAll(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsModel> {
         val returnedList = mutableListOf<SmsModel>()

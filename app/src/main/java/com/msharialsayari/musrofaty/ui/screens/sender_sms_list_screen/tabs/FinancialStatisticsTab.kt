@@ -25,7 +25,7 @@ fun FinancialStatisticsTab(senderId:Int){
     }
 
     when{
-        uiState.isFinancialStatisticsSmsPageLoading          -> PageLoading()
+        uiState.isFinancialStatisticsSmsPageLoading -> PageLoading()
         uiState.financialStatistics.isNotEmpty()    -> BuildChartCompose(viewModel = viewModel)
         uiState.financialStatistics.isEmpty()       -> EmptySmsCompose()
 

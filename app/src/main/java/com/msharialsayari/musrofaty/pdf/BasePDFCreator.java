@@ -18,7 +18,6 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.msharialsayari.musrofaty.R;
 import com.msharialsayari.musrofaty.base.BaseActivity;
 import com.msharialsayari.musrofaty.utils.StringsUtils;
-import com.msharialsayari.musrofaty.utils.pdf.PDFFooterView;
 import com.tejpratapsingh.pdfcreator.utils.FileManager;
 import com.tejpratapsingh.pdfcreator.utils.PDFUtil;
 import com.tejpratapsingh.pdfcreator.views.PDFBody;

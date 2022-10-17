@@ -9,4 +9,15 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
+    <style name="darkTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/blackOnyx</item>
+        <item name="android:navigationBarColor">@color/lightBlackOnyx</item>
+        <item name="android:itemBackground">@color/blackOnyx</item>
+        <item name="android:colorControlNormal">@color/lightGray</item>
+        <item name="colorStatusBar">@color/blackOnyx</item>
+        <item name="colorToolbar">@color/lightBlackOnyx</item>
+        <item name="colorProgressBar">@color/colorSecondary</item>
+    </style>
 </resources>

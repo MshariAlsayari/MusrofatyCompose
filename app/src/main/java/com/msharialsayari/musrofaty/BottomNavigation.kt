@@ -33,16 +33,16 @@ fun BottomNavigation(navController: NavController, items:List<BottomNavItem>, bo
                         icon = {
                             Icon(
                                 painterResource(id = item.icon),
-                                contentDescription = stringResource(item.title)
+                                contentDescription = stringResource(item.title!!)
                             )
                         },
-                        label = { Text(text = stringResource(item.title), fontSize = 9.sp) },
+                        label = { Text(text = stringResource(item.title!!), fontSize = 9.sp) },
                         selectedContentColor = MaterialTheme.colors.onBackground,
                         unselectedContentColor = MaterialTheme.colors.onBackground.copy(0.4f),
                         alwaysShowLabel = true,
-                        selected = currentRoute == item.screen_route,
+                        selected = currentRoute == item.route,
                         onClick = {
-                            navController.navigate(item.screen_route) {
+                            navController.navigate(item.route) {
 
                                 navController.graph.startDestinationRoute?.let { screen_route ->
                                     popUpTo(screen_route) {

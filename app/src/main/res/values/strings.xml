@@ -143,9 +143,9 @@
     <string name="file_created">the File created</string>
     <string name="file_not_created">sorry,the File not created please try again</string>
     <string name="no_message_to_create_file">There are no messages to create a PDF file</string>
-    <string name="page_number">Page: %d</string>
+    <string name="page_number">Page: %s</string>
     <string name="pdf_preview_title">Sms Preview</string>
-    <string name="pdf_preview_pages">%d of %d</string>
+    <string name="pdf_preview_pages">%1$s of %1$s</string>
 
 
 

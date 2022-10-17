@@ -14,15 +14,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.msharialsayari.musrofaty.ui.navigation.BaseScreen
 
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.theme.IsLightTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
+import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.utils.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -116,6 +120,7 @@ fun MainScreenView(
 ) {
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val topBarState = rememberSaveable { (mutableStateOf(true)) }
+    val screenTitleState = rememberSaveable { (mutableStateOf("")) }
     val navController = rememberNavController()
     val bottomNavigationItems = listOf(
         BottomNavItem.Dashboard,
@@ -126,22 +131,35 @@ fun MainScreenView(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     when (navBackStackEntry?.destination?.route) {
-        BottomNavItem.Dashboard.screen_route -> {
-            bottomBarState.value = true
-            topBarState.value = false
+        BottomNavItem.Dashboard.route -> {
+            bottomBarState.value   = true
+            topBarState.value      = true
+            screenTitleState.value = stringResource(id = BottomNavItem.Dashboard.title!!)
         }
-        BottomNavItem.SendersList.screen_route -> {
-            bottomBarState.value = true
-            topBarState.value = false
+        BottomNavItem.SendersList.route -> {
+            bottomBarState.value   = true
+            topBarState.value      = true
+            screenTitleState.value = stringResource(id = BottomNavItem.SendersList.title!!)
+
+
         }
-        BottomNavItem.Setting.screen_route -> {
+        BottomNavItem.Setting.route -> {
             bottomBarState.value = true
-            topBarState.value = false
+            topBarState.value = true
+            screenTitleState.value = stringResource(id = BottomNavItem.Setting.title!!)
         }
 
         else -> {
             bottomBarState.value = false
-            topBarState.value = false
+            val route = navBackStackEntry?.destination?.route?.split("/")?.get(0) ?: ""
+            if (BaseScreen.getScreenByRoute(route).title != null){
+                topBarState.value = true
+                screenTitleState.value = stringResource(id = BaseScreen.getScreenByRoute(route).title!!)
+            }else{
+                topBarState.value = false
+                screenTitleState.value = ""
+            }
+
         }
 
     }
@@ -154,6 +172,14 @@ fun MainScreenView(
                 items = bottomNavigationItems,
                 bottomBarState = bottomBarState
             )
+        },
+
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = screenTitleState.value,
+                topBarState = topBarState
+            )
+
         }
     ) { innerPadding ->
         NavigationGraph(
