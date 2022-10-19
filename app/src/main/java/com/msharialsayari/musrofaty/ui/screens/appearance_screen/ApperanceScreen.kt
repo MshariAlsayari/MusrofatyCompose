@@ -1,30 +1,54 @@
 package com.msharialsayari.musrofaty.ui.screens.appearance_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
-import com.msharialsayari.musrofaty.ui_component.RowComponent
-import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit){
     val viewModel:AppearanceViewModel = hiltViewModel()
+
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.AppearanceScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+
+        PageCompose(
+            viewModel = viewModel,
+            modifier = Modifier.padding(innerPadding),
+            onLanguageChanged=onLanguageChanged,
+            onThemeChanged=onThemeChanged
+        )
+
+    }
+
+}
+
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun PageCompose(viewModel: AppearanceViewModel,
+                modifier: Modifier=Modifier,
+                onLanguageChanged:()->Unit,
+                onThemeChanged:()->Unit){
     val isThemeBottomSheet = remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -37,13 +61,12 @@ fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit){
     }
 
 
-
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
 
             if (isThemeBottomSheet.value) {
-               ThemeBottomSheet(viewModel = viewModel, onSelect = {
+                ThemeBottomSheet(viewModel = viewModel, onSelect = {
 
                     viewModel.onThemeSelected(it)
                     onThemeChanged()
@@ -60,7 +83,7 @@ fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit){
                 })
             }
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
 
         Column(

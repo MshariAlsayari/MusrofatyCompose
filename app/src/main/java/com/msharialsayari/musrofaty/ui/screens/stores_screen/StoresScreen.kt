@@ -21,6 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.sms_screen.ProgressCompose
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
@@ -29,18 +31,33 @@ import kotlinx.coroutines.launch
 fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit) {
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    when {
-        uiState.isLoading -> PageLoading()
-        else -> PageCompose(viewModel, onCategoryLongPressed = {
-            onNavigateToCategoryScreen(it)
-        })
+
+
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.StoresScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        when {
+            uiState.isLoading -> PageLoading( modifier = Modifier.padding(innerPadding))
+            else -> PageCompose(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                onCategoryLongPressed = {
+                onNavigateToCategoryScreen(it)
+            })
+        }
     }
+
 }
 
 @Composable
-fun PageLoading() {
+fun PageLoading(modifier: Modifier=Modifier) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         ProgressBar.CircleProgressBar()
@@ -50,7 +67,7 @@ fun PageLoading() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: StoresViewModel,onCategoryLongPressed:(Int)->Unit) {
+fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCategoryLongPressed:(Int)->Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope                    = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }

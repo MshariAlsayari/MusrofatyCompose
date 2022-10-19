@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -17,10 +18,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui_component.ButtonComponent
-import com.msharialsayari.musrofaty.ui_component.DividerComponent
-import com.msharialsayari.musrofaty.ui_component.TextComponent
-import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.content_screen.ValueArTextField
+import com.msharialsayari.musrofaty.ui.screens.content_screen.ValueEnTextField
+import com.msharialsayari.musrofaty.ui_component.*
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -40,15 +41,28 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
 
 
 
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.FilterScreen.title,
+            )
 
-    Column(
-        modifier = Modifier.fillMaxSize()) {
-        FilterTitle(viewModel)
-        FilterWord(viewModel)
-        Spacer(modifier = Modifier.weight(1f))
-        BtnAction(viewModel, onDone)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            FilterTitle(viewModel)
+            FilterWord(viewModel)
+            Spacer(modifier = Modifier.weight(1f))
+            BtnAction(viewModel, onDone)
 
+        }
     }
+
+
+
+
+
 
 
 

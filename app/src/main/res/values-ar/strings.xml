@@ -44,6 +44,7 @@
     <string name="sender_pin">تثبيت المرسل</string>
     <string name="sender_active">تنشيط المرسل</string>
     <string name="store_category">فئة المتجر</string>
+    <string name="sender_category">فئة المرسل</string>
 
     <!--Sender Sms List-->
     <string name="tab_all_sms">الرسائل</string>

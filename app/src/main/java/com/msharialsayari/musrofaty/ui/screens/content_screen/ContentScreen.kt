@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.content_screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.categories_screen.PageCompose
+import com.msharialsayari.musrofaty.ui.screens.categories_screen.ProgressCompose
+import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
 
@@ -23,14 +28,25 @@ fun ContentScreen(contentId:Int, onDone:()->Unit){
        viewModel.getContent(contentId)
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()) {
-        ValueArTextField(viewModel)
-        ValueEnTextField(viewModel)
-        Spacer(modifier = Modifier.weight(1f))
-        BtnAction(viewModel, onDone)
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.ContentScreen.title,
+            )
 
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            ValueArTextField(viewModel)
+            ValueEnTextField(viewModel)
+            Spacer(modifier = Modifier.weight(1f))
+            BtnAction(viewModel, onDone)
+
+        }
     }
+
+
 
 
 }

@@ -18,16 +18,44 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.BtnAction
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterTitle
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterWord
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+
 @Composable
 fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()->Unit) {
-    val context = LocalContext.current
     val viewModel: SendersDetailsViewModel = hiltViewModel()
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.SenderDetailsScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        PageCompose(
+            modifier = Modifier.padding(innerPadding),
+            viewModel = viewModel,
+            senderId = senderId,
+            onNavigateToContent = onNavigateToContent,
+            onDone=onDone
+        )
+    }
+
+}
+
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@Composable
+fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,senderId: Int, onNavigateToContent:(Int)->Unit, onDone:()->Unit){
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsState()
     val bottomSheetType = remember { mutableStateOf<SenderDetailsBottomSheet?>(null) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -67,6 +95,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
     }
 
     ModalBottomSheetLayout(
+        modifier = modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
             var model:TextFieldBottomSheetModel? =null
@@ -75,18 +104,18 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
 
                 SenderDetailsBottomSheet.DISPLAY_NAME_AR ->
                     model = TextFieldBottomSheetModel(
-                    title = R.string.sender_display_name_en,
-                    textFieldValue = uiState.sender?.displayNameAr ?: "",
-                    buttonText = R.string.common_save,
-                    onActionButtonClicked = { value ->
-                        viewModel.changeDisplayName(value, true)
-                        coroutineScope.launch {
-                            handleVisibilityOfBottomSheet(sheetState, false)
+                        title = R.string.sender_display_name_en,
+                        textFieldValue = uiState.sender?.displayNameAr ?: "",
+                        buttonText = R.string.common_save,
+                        onActionButtonClicked = { value ->
+                            viewModel.changeDisplayName(value, true)
+                            coroutineScope.launch {
+                                handleVisibilityOfBottomSheet(sheetState, false)
 
-                        }
-                    },
+                            }
+                        },
 
-                )
+                        )
 
                 SenderDetailsBottomSheet.DISPLAY_NAME_EN -> model = TextFieldBottomSheetModel(
                     title = R.string.sender_display_name_en,
@@ -100,7 +129,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                         }
                     },
 
-                )
+                    )
 
                 SenderDetailsBottomSheet.CONTENT -> {}
                 else -> {}
@@ -110,7 +139,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                 BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
             }else{
                 BottomSheetComponent.SelectedItemListBottomSheetComponent(
-                    title = R.string.store_category,
+                    title = R.string.sender_category,
                     list = uiState.wrapContentModel(context),
                     description= R.string.common_long_click_to_modify,
                     trailIcon = {
@@ -119,7 +148,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                         })
                     },
                     onLongPress = {
-                                  onNavigateToContent(it.id)
+                        onNavigateToContent(it.id)
 
                     },
                     onSelectItem = {
@@ -131,7 +160,6 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                 )
             }
         },
-        modifier = Modifier.fillMaxSize()
     ) {
         Box(contentAlignment = Alignment.Center) {
 
@@ -171,9 +199,9 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
                     trailing = {
                         TextComponent.ClickableText(
                             text = if (ContentModel.getDisplayName(
-                                context = context,
-                                uiState.sender?.content
-                            ).isNotEmpty()) ContentModel.getDisplayName(
+                                    context = context,
+                                    uiState.sender?.content
+                                ).isNotEmpty()) ContentModel.getDisplayName(
                                 context = context,
                                 uiState.sender?.content
                             ) else context.getString(androidx.compose.ui.R.string.not_selected) ,
@@ -240,6 +268,7 @@ fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()
 
 
     }
+
 }
 
 @Composable

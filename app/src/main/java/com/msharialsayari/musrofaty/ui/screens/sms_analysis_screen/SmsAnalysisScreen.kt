@@ -19,6 +19,7 @@ import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
@@ -29,15 +30,27 @@ fun SmsAnalysisScreen(){
     val uiState by viewModel.uiState.collectAsState()
 
 
-    when{
-        uiState.isLoading -> LoadingPageCompose()
-        else -> PageCompose(viewModel = viewModel)
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.SmsAnalysisScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        when{
+            uiState.isLoading -> LoadingPageCompose(modifier = Modifier.padding(innerPadding))
+            else -> PageCompose(modifier = Modifier.padding(innerPadding),viewModel = viewModel)
+        }
     }
+
+
+
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageCompose(viewModel: SmsAnalysisViewModel){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsAnalysisViewModel){
 
     var tabIndex by remember { mutableStateOf(0) }
 
@@ -144,9 +157,9 @@ fun PageCompose(viewModel: SmsAnalysisViewModel){
 }
 
 @Composable
-fun LoadingPageCompose(){
+fun LoadingPageCompose(modifier: Modifier=Modifier){
     Box (
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
         ProgressBar.CircleProgressBar()

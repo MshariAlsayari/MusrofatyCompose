@@ -23,6 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.categories_screen.ProgressCompose
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.ActiveSendersTab
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.UnActiveSendersTab
@@ -35,15 +37,29 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit){
     val viewModel:SendersManagementViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    when{
-        uiState.isLoading -> LoadingPageCompose()
-        else -> PageCompose(viewModel = viewModel,onNavigateToSenderDetails=onNavigateToSenderDetails)
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.CategoryScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        when{
+            uiState.isLoading -> LoadingPageCompose(modifier = Modifier.padding(innerPadding))
+            else -> PageCompose(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                onNavigateToSenderDetails=onNavigateToSenderDetails)
+        }
     }
+
+
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageCompose(viewModel: SendersManagementViewModel,onNavigateToSenderDetails:(senderId:Int)->Unit){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewModel, onNavigateToSenderDetails:(senderId:Int)->Unit){
 
     var tabIndex by remember { mutableStateOf(0) }
 
@@ -76,6 +92,7 @@ fun PageCompose(viewModel: SendersManagementViewModel,onNavigateToSenderDetails:
     }
 
     ModalBottomSheetLayout(
+        modifier=modifier,
         sheetState = sheetState,
         sheetContent = {
 
@@ -202,9 +219,9 @@ fun SendersListCompose(viewModel: SendersManagementViewModel,list: List<SenderCo
 
 
 @Composable
-fun LoadingPageCompose(){
+fun LoadingPageCompose(modifier: Modifier=Modifier){
     Box (
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
             ){
         ProgressBar.CircleProgressBar()

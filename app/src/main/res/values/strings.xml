@@ -35,6 +35,7 @@
     <string name="sender_display_name_ar">Arabic Name</string>
     <string name="sender_display_name_en">English Name</string>
     <string name="store_category">Store Category</string>
+    <string name="sender_category">Sender Category</string>
     <string name="sender_pin">Pin</string>
     <string name="sender_active">Active</string>
 

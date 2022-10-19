@@ -23,6 +23,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
@@ -38,18 +39,29 @@ fun CategoriesScreen(categoryId:Int, onDone:()->Unit){
     }
 
 
-    when{
-        uiState.isLoading -> ProgressCompose()
-        uiState.categoryWithStores != null -> PageCompose(viewModel,onDone)
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.CategoryScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        when{
+            uiState.isLoading -> ProgressCompose(modifier = Modifier.padding(innerPadding))
+            uiState.categoryWithStores != null -> PageCompose(Modifier.padding(innerPadding),viewModel,onDone)
+        }
     }
+
+
 
 
 
 }
 
 @Composable
-fun ProgressCompose(){
-    Box(modifier = Modifier.fillMaxSize(),
+fun ProgressCompose(modifier: Modifier=Modifier,){
+    Box(modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center) {
         ProgressBar.CircleProgressBar()
 
@@ -58,7 +70,7 @@ fun ProgressCompose(){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: CategoriesViewModel, onDone: () -> Unit){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDone: () -> Unit){
 
     val coroutineScope                    = rememberCoroutineScope()
     val selectedStore = remember { mutableStateOf<StoreEntity?>(null) }

@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,6 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.LoadingPageCompose
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
@@ -30,19 +33,33 @@ fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit){
         viewModel.getData(smsId)
     }
 
-    when{
-        uiState.isLoading -> ProgressCompose()
-        uiState.sms != null -> PageCompose(viewModel,uiState.sms!!, onCategoryLongPressed = {
-            onNavigateToCategoryScreen(it)
 
-        })
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = Screen.SmsScreen.title,
+            )
+
+        }
+    ) { innerPadding ->
+        when{
+            uiState.isLoading -> ProgressCompose(modifier = Modifier.padding(innerPadding))
+            uiState.sms != null -> PageCompose(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                onCategoryLongPressed ={
+                    onNavigateToCategoryScreen(it)
+                })
+        }
     }
+
+
 
 }
 
 @Composable
-fun ProgressCompose(){
-    Box(modifier = Modifier.fillMaxSize(),
+fun ProgressCompose(modifier: Modifier=Modifier){
+    Box(modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center) {
         ProgressBar.CircleProgressBar()
 
@@ -51,9 +68,10 @@ fun ProgressCompose(){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: SmsViewModel, sms:SmsModel,onCategoryLongPressed:(Int)->Unit){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryLongPressed:(Int)->Unit){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+    val sms     = uiState.sms!!
     val coroutineScope                    = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
     val sheetState = rememberBottomSheetScaffoldState()
@@ -70,6 +88,7 @@ fun PageCompose(viewModel: SmsViewModel, sms:SmsModel,onCategoryLongPressed:(Int
     }
 
     BottomSheetScaffold(
+        modifier = modifier,
         scaffoldState = sheetState,
         sheetPeekHeight = 0.dp,
         sheetContent = {

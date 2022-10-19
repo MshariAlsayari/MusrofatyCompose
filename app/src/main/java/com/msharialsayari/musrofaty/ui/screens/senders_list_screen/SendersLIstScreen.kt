@@ -1,12 +1,17 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,13 +24,45 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui_component.*
+
+
+@Composable
+fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigateToSenderSmsList:(senderId:Int)->Unit) {
+
+    val viewModel: SendersListViewModel = hiltViewModel()
+
+    Scaffold(
+        topBar = {
+            AppBarComponent.TopBarComponent(
+                title = BottomNavItem.SendersList.title,
+                isParent = true
+            )
+
+        }
+    ) { innerPadding ->
+        PageCompose(
+            Modifier.padding(innerPadding),
+            viewModel,
+            onNavigateToSenderDetails,
+            onNavigateToSenderSmsList)
+
+    }
+
+
+
+}
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigateToSenderSmsList:(senderId:Int)->Unit) {
+fun PageCompose(
+    modifier: Modifier=Modifier,
+    viewModel:SendersListViewModel,
+    onNavigateToSenderDetails:(senderId:Int)->Unit,
+    onNavigateToSenderSmsList:(senderId:Int)->Unit
+){
     val context = LocalContext.current
-    val viewModel: SendersListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val senderItems                          = uiState.senders?.collectAsState(emptyList())
 
@@ -58,6 +95,7 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
 
 
     VerticalEasyList(
+        modifier = modifier,
         list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
         view = { SenderComponent( modifier = Modifier.padding(
             dimensionResource(id = com.msharialsayari.musrofaty.ui_component.R.dimen.default_margin16)
@@ -76,7 +114,6 @@ fun SendersListScreen(onNavigateToSenderDetails:(senderId:Int)->Unit, onNavigate
         emptyView = { EmptyComponent.EmptyTextComponent() },
         onRefresh = { viewModel.getAllSenders() }
     )
-
 
 }
 

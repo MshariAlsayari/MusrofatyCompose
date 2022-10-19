@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -19,25 +21,30 @@ import com.msharialsayari.musrofaty.utils.mirror
 object AppBarComponent {
 
     @Composable
-    fun TopBarComponent( title:String="", topBarState: MutableState<Boolean>,
-                        onArrowBackClicked:()->Unit={}, isParent:Boolean = true){
+    fun TopBarComponent( @StringRes title:Int?, onArrowBackClicked:()->Unit={}, isParent:Boolean = false){
         val navigationIcon: @Composable () -> Unit = {
                 Icon(
-                    modifier=Modifier.mirror().clickable { onArrowBackClicked() },
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = null
+                    Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    modifier= Modifier
+                        .mirror()
+                        .clickable { onArrowBackClicked() },
                 )
             }
 
+
+
+        val appbarTitle = if (title != null) stringResource(id = title) else ""
         AnimatedVisibility(
-            visible = topBarState.value,
+            visible = title != null,
         ) {
 
             TopAppBar(
-                title = { Text(title) },
+                title = { Text(appbarTitle) },
                 navigationIcon = if (isParent) null else navigationIcon,
                 contentColor = Color.White
             )
         }
+
     }
 }

@@ -119,8 +119,6 @@ fun MainScreenView(
     onThemeChanged: () -> Unit
 ) {
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
-    val topBarState = rememberSaveable { (mutableStateOf(true)) }
-    val screenTitleState = rememberSaveable { (mutableStateOf("")) }
     val navController = rememberNavController()
     val bottomNavigationItems = listOf(
         BottomNavItem.Dashboard,
@@ -133,32 +131,16 @@ fun MainScreenView(
     when (navBackStackEntry?.destination?.route) {
         BottomNavItem.Dashboard.route -> {
             bottomBarState.value   = true
-            topBarState.value      = true
-            screenTitleState.value = stringResource(id = BottomNavItem.Dashboard.title!!)
         }
         BottomNavItem.SendersList.route -> {
             bottomBarState.value   = true
-            topBarState.value      = true
-            screenTitleState.value = stringResource(id = BottomNavItem.SendersList.title!!)
-
-
         }
         BottomNavItem.Setting.route -> {
             bottomBarState.value = true
-            topBarState.value = true
-            screenTitleState.value = stringResource(id = BottomNavItem.Setting.title!!)
         }
 
         else -> {
             bottomBarState.value = false
-            val route = navBackStackEntry?.destination?.route?.split("/")?.get(0) ?: ""
-            if (BaseScreen.getScreenByRoute(route).title != null){
-                topBarState.value = true
-                screenTitleState.value = stringResource(id = BaseScreen.getScreenByRoute(route).title!!)
-            }else{
-                topBarState.value = false
-                screenTitleState.value = ""
-            }
 
         }
 
@@ -174,13 +156,6 @@ fun MainScreenView(
             )
         },
 
-        topBar = {
-            AppBarComponent.TopBarComponent(
-                title = screenTitleState.value,
-                topBarState = topBarState
-            )
-
-        }
     ) { innerPadding ->
         NavigationGraph(
             activity = activity,
