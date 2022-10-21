@@ -1,7 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.app.DatePickerDialog
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
@@ -51,12 +49,12 @@ import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import java.util.*
 
 private val MinToolbarHeight = 40.dp
 private val MaxToolbarHeight = 85.dp
@@ -101,15 +99,14 @@ fun SenderSmsListScreen(
 }
 
 @Composable
-fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:()->Unit){
+fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:(SelectedItemModel)->Unit){
     val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter_options,
         list = viewModel.getFilterTimeOptions(context, uiState.selectedFilterTimeOption),
         onSelectItem = {
-            uiState.selectedFilterTimeOption = it
-            onFilterSelected()
+            onFilterSelected(it)
         }
     )
 }
@@ -181,32 +178,39 @@ fun PageContainer(
         viewModel.getAllSmsBySenderId(uiState.sender?.id?:0)
     }
 
-    val startDatePicker = remember {
-        getDatePickerDialog(context = context, title = context.getString( R.string.common_start_date), onDateSelected = {
-            viewModel.onStartDateSelected(it)
-        }, onCancelClicked = {
-            viewModel.dismissAllDatePicker()
-        })
+
+
+
+    if (uiState.showStartDatePicker) {
+        ComposeDatePicker(
+            title = stringResource(id = R.string.common_start_date),
+            onDone = {
+                viewModel.onStartDateSelected(DateUtils.toTimestamp(it))
+            },
+            onDismiss = {
+                viewModel.dismissAllDatePicker()
+            }
+        )
     }
 
-    val endDatePicker = remember {
-        getDatePickerDialog(context = context,title =  context.getString( R.string.common_end_date), onDateSelected = {
-            viewModel.onEndDateSelected(it)
-            viewModel.onFilterChanged()
-        }, onCancelClicked = {
-            viewModel.dismissAllDatePicker()
-        })
+    if (uiState.showEndDatePicker) {
+        ComposeDatePicker(
+            title = stringResource(id = R.string.common_end_date),
+            onDone = {
+                viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
+                viewModel.onFilterTimeOptionSelected( SelectedItemModel(id = 5, value = "") )
+                viewModel.dismissAllDatePicker()
+                viewModel.getDate()
+
+
+            },
+            onDismiss = {
+                uiState.startDate = 0
+                uiState.endDate = 0
+                viewModel.dismissAllDatePicker()
+            }
+        )
     }
-
-
-
-
-        if (uiState.showStartDatePicker){
-            startDatePicker.show()
-        }else if (uiState.showEndDatePicker){
-            endDatePicker.show()
-        }
-
 
 
 
@@ -220,11 +224,12 @@ fun PageContainer(
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }
-                    if (uiState.selectedFilterTimeOption?.id != 5) {
-                        viewModel.onFilterChanged()
-                        viewModel.dismissAllDatePicker()
-                    } else {
+                    if (DateUtils.FilterOption.isRangeDateSelected(it.id )) {
                         viewModel.showStartDatePicker()
+                    } else {
+                        uiState.selectedFilterTimeOption = it
+                        viewModel.getDate()
+                        viewModel.dismissAllDatePicker()
                     }
 
                 }
@@ -235,7 +240,7 @@ fun PageContainer(
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }
-                    viewModel.onFilterChanged()
+                    viewModel.getDate()
 
                 },
                     onCreateFilterClicked = {
@@ -697,37 +702,3 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
 }
 
-fun getDatePickerDialog(context:Context, title:String="",
-                        minDate:Long?=null,
-                        maxDate:Long = DateUtils.getCurrentDate() ,
-                        onDateSelected:(Long)->Unit,
-                        onCancelClicked:()->Unit
-):DatePickerDialog{
-    val calender = Calendar.getInstance()
-    val year = calender.get(Calendar.YEAR)
-    val month = calender.get(Calendar.MONTH)
-    val day = calender.get(Calendar.DAY_OF_MONTH)
-
-    val datePicker = DatePickerDialog(
-        context, android.R.style.Theme_Material_Light_Dialog, {d, year1,month1,day1 ->
-            val formattedDate = DateUtils.formatDate(date = "$day1/${month1+1}/$year")
-            val timestamp = DateUtils.parseDate(formattedDate)
-            onDateSelected(timestamp)
-        }, year,month,day)
-
-    datePicker.setCancelable(false)
-    datePicker.setCanceledOnTouchOutside(false)
-    minDate?.let {
-        datePicker.datePicker.minDate = it
-    }
-
-    datePicker.datePicker.maxDate = maxDate
-    datePicker.setTitle(title)
-    datePicker.setOnCancelListener {
-        onCancelClicked()
-    }
-
-
-    return  datePicker
-
-}

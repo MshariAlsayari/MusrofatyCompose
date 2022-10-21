@@ -55,17 +55,29 @@ fun DashboardScreen() {
     if (uiState.showStartDatePicker) {
         ComposeDatePicker(
             title = stringResource(id = R.string.common_start_date),
-            startDate= LocalDate.of(
-                DateUtils.getSalaryCalender().get(Calendar.YEAR),
-                DateUtils.getSalaryCalender().get(Calendar.MONTH)+1 ,
-                DateUtils.getSalaryCalender().get(Calendar.DAY_OF_MONTH) ),
-            onDone = { it: LocalDate ->
-                // Hide dialog
-                viewModel.dismissAllDatePicker()
-                // Do something with the date
+            onDone = {
+                viewModel.onStartDateSelected(DateUtils.toTimestamp(it))
             },
             onDismiss = {
-                // Hide dialog
+                viewModel.dismissAllDatePicker()
+            }
+        )
+    }
+
+    if (uiState.showEndDatePicker) {
+        ComposeDatePicker(
+            title = stringResource(id = R.string.common_end_date),
+            onDone = {
+                viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
+                viewModel.onFilterTimeOptionSelected( SelectedItemModel(id = 5, value = "") )
+                viewModel.dismissAllDatePicker()
+                viewModel.getDate()
+
+
+            },
+            onDismiss = {
+                uiState.startDate = 0
+                uiState.endDate = 0
                 viewModel.dismissAllDatePicker()
             }
         )
@@ -107,11 +119,12 @@ fun DashboardScreen() {
                     coroutineScope.launch {
                         BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false)
                     }
-                    if (uiState.selectedFilterTimeOption?.id != 5) {
+                    if (DateUtils.FilterOption.isRangeDateSelected(it.id )) {
+                        viewModel.showStartDatePicker()
+                    } else {
+                        uiState.selectedFilterTimeOption = it
                         viewModel.getDate()
                         viewModel.dismissAllDatePicker()
-                    } else {
-                        viewModel.showStartDatePicker()
                     }
 
                 }
@@ -119,16 +132,8 @@ fun DashboardScreen() {
 
 
             }) {
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            ) {
 
-
-                FinancialCompose(viewModel)
-            }
+            FinancialCompose(Modifier.padding(innerPadding),viewModel)
         }
 
     }
@@ -136,34 +141,43 @@ fun DashboardScreen() {
 }
 
 @Composable
-fun FinancialCompose(viewModel: DashboardViewModel){
+fun FinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewModel){
 
+    val uiState by viewModel.uiState.collectAsState()
+
+
+    when {
+        uiState.isFinancialStatisticsSmsPageLoading -> ItemLoading()
+        uiState.financialStatistics.isEmpty()       -> EmptyCompose()
+        else                                        -> LazyFinancialCompose(modifier, viewModel)
+    }
+
+
+}
+
+@Composable
+fun LazyFinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewModel){
     val uiState by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
 
-    if (uiState.isFinancialStatisticsSmsPageLoading){
-        ItemLoading()
-    }else
-
     LazyColumn(
-        modifier = Modifier,
+        modifier = modifier,
         state = listState,
     ) {
 
-        items(items = uiState.financialStatistics.values.toList() , itemContent =  {
-            FinancialStatistics(model = FinancialStatisticsModel(
-                filterOption = viewModel.getFilterTimeOption(),
-                currency = it.currency,
-                total = it.expenses.plus(it.income),
-                incomeTotal = it.income,
-                expensesTotal = it.expenses,
-            )
+        items(items = uiState.financialStatistics.values.toList(), itemContent = {
+            FinancialStatistics(
+                model = FinancialStatisticsModel(
+                    filterOption = viewModel.getFilterTimeOption(),
+                    currency = it.currency,
+                    total = it.expenses.plus(it.income),
+                    incomeTotal = it.income,
+                    expensesTotal = it.expenses,
+                )
             )
 
 
         })
-
-
 
 
     }
@@ -172,15 +186,14 @@ fun FinancialCompose(viewModel: DashboardViewModel){
 
 
 @Composable
-fun FilterTimeOptionsBottomSheet(viewModel: DashboardViewModel, onFilterSelected:()->Unit){
+fun FilterTimeOptionsBottomSheet(viewModel: DashboardViewModel, onFilterSelected:(SelectedItemModel)->Unit){
     val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter_options,
         list = viewModel.getFilterTimeOptions(context, uiState.selectedFilterTimeOption),
         onSelectItem = {
-            uiState.selectedFilterTimeOption = it
-            onFilterSelected()
+            onFilterSelected(it)
         }
     )
 }
@@ -193,6 +206,14 @@ fun ItemLoading(){
         contentAlignment = Alignment.Center
     ) {
         ProgressBar.CircleProgressBar()
+    }
+
+}
+
+@Composable
+fun EmptyCompose(){
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        EmptyComponent.EmptyTextComponent()
     }
 
 }

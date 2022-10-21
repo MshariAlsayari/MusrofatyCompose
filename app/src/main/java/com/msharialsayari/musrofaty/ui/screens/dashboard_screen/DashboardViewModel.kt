@@ -56,6 +56,7 @@ class DashboardViewModel @Inject constructor(
             list.add(SelectedItemModel(
                 id = index,
                 value = value,
+                description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
                 isSelected = if (selectedItem != null) selectedItem.id == index else index == 0
             )
             )
@@ -73,7 +74,7 @@ class DashboardViewModel @Inject constructor(
 
     fun dismissAllDatePicker(){
         _uiState.update {
-            it.copy(startDate = 0, endDate = 0, showStartDatePicker = false, showEndDatePicker = false)
+            it.copy(showStartDatePicker = false, showEndDatePicker = false)
         }
     }
 
@@ -90,9 +91,24 @@ class DashboardViewModel @Inject constructor(
 
     }
 
+    fun onFilterTimeOptionSelected(item:SelectedItemModel){
+        _uiState.update {
+            it.copy(selectedFilterTimeOption = item)
+        }
+    }
 
-     fun getFilterTimeOption(): DateUtils.FilterOption{
-        return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
+
+
+    fun getFilterTimeOption(): DateUtils.FilterOption{
+         return if (_uiState.value.selectedFilterTimeOption != null) {
+             DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
+         }else{
+             _uiState.value.startDate=DateUtils.getSalaryDate()
+             _uiState.value.endDate=DateUtils.getCurrentDate()
+             _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = 5, value = "", isSelected = true)
+             DateUtils.FilterOption.RANGE
+         }
+
     }
 
 

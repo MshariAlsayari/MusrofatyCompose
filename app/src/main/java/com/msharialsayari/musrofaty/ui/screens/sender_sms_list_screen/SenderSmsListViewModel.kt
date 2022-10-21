@@ -9,10 +9,7 @@ import com.msharialsayari.musrofaty.excei.ExcelModel
 import com.msharialsayari.musrofaty.excei.ExcelUtils
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
@@ -44,7 +41,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
-    fun onFilterChanged(){
+    fun getDate(){
         val senderId = _uiState.value.sender?.id!!
         getAllSms(senderId)
         getFavoriteSms(senderId)
@@ -189,6 +186,7 @@ class SenderSmsListViewModel @Inject constructor(
             list.add(SelectedItemModel(
                 id = index,
                 value = value,
+                description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
                 isSelected = if (selectedItem != null) selectedItem.id == index else index == 0
             )
             )
@@ -229,7 +227,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun dismissAllDatePicker(){
         _uiState.update {
-            it.copy(startDate = 0, endDate = 0, showStartDatePicker = false, showEndDatePicker = false)
+            it.copy(showStartDatePicker = false, showEndDatePicker = false)
         }
     }
 
@@ -271,6 +269,12 @@ class SenderSmsListViewModel @Inject constructor(
             ).exportDataIntoWorkbook(excelModel)
             if (isGenerated)
             onFileGenerated()
+        }
+    }
+
+    fun onFilterTimeOptionSelected(item:SelectedItemModel){
+        _uiState.update {
+            it.copy(selectedFilterTimeOption = item)
         }
     }
 

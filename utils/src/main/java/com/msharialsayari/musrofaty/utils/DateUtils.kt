@@ -3,6 +3,8 @@ package com.msharialsayari.musrofaty.utils
 import android.content.Context
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 object DateUtils {
@@ -219,6 +221,19 @@ object DateUtils {
         return currentCalender
     }
 
+    fun toTimestamp(date:LocalDate):Long{
+        val calendar = Calendar.getInstance()
+        calendar.set(date.year,date.monthValue-1,date.dayOfMonth)
+        return calendar.timeInMillis
+    }
+
+    fun formattedRangeDate(start:Long, end:Long, pattern: String = DEFAULT_DATE_PATTERN):String{
+        val formattedStartDate = getDateByTimestamp(start,pattern)?:""
+        val formattedEndDate   = getDateByTimestamp(end,pattern)?:""
+        return "$formattedStartDate - $formattedEndDate"
+
+    }
+
 
 
     enum class NumberType {
@@ -243,6 +258,9 @@ object DateUtils {
                 }
 
             }
+
+
+            fun isRangeDateSelected(selectedId:Int?):Boolean = selectedId == 5
         }
 
 
