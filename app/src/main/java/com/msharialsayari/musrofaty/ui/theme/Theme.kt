@@ -14,6 +14,7 @@ private val DarkColorPalette = darkColors(
     secondaryVariant = SecondaryColor,
     background = BlackOnyx,
     surface = BlackOnyx,
+    onPrimary = White
 )
 
 private val LightColorPalette = lightColors(
@@ -22,7 +23,8 @@ private val LightColorPalette = lightColors(
     secondary = SecondaryColor,
     secondaryVariant = SecondaryColor,
     background = White,
-    surface = White
+    surface = White,
+    onPrimary = White
 )
 
 @Composable
@@ -30,7 +32,7 @@ fun MusrofatyComposeTheme(
     appTheme: AppTheme = AppTheme.System,
     content: @Composable () -> Unit
 ) {
-    val colors = if (IsLightTheme(appTheme)){
+    val colors = if (isLightTheme(appTheme)){
         LightColorPalette
     }else
         DarkColorPalette
@@ -48,7 +50,7 @@ fun MusrofatyComposeTheme(
 
 
 @Composable
-fun IsLightTheme(appTheme: AppTheme):Boolean{
+fun isLightTheme(appTheme: AppTheme):Boolean{
     return when(appTheme){
         AppTheme.Light -> true
         AppTheme.Dark -> false

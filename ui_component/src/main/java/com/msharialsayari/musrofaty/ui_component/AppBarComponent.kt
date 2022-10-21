@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -21,7 +22,7 @@ import com.msharialsayari.musrofaty.utils.mirror
 object AppBarComponent {
 
     @Composable
-    fun TopBarComponent( @StringRes title:Int?, onArrowBackClicked:()->Unit={}, isParent:Boolean = false){
+    fun TopBarComponent( @StringRes title:Int?, onArrowBackClicked:()->Unit={}, actions: @Composable RowScope.() -> Unit = {}, isParent:Boolean = false){
         val navigationIcon: @Composable () -> Unit = {
                 Icon(
                     Icons.Default.ArrowBack,
@@ -42,6 +43,7 @@ object AppBarComponent {
             TopAppBar(
                 title = { Text(appbarTitle) },
                 navigationIcon = if (isParent) null else navigationIcon,
+                actions = actions,
                 contentColor = Color.White
             )
         }

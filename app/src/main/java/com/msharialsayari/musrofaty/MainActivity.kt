@@ -14,19 +14,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.msharialsayari.musrofaty.ui.navigation.BaseScreen
 
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
-import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.theme.IsLightTheme
+import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
-import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.utils.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,7 +67,7 @@ class MainActivity : ComponentActivity() {
 private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTheme){
 
 
-    activity.window.statusBarColor = if (IsLightTheme(appTheme = theme)) {
+    activity.window.statusBarColor = if (isLightTheme(appTheme = theme)) {
         ContextCompat.getColor(activity, R.color.white)
 
     } else {
@@ -80,7 +76,7 @@ private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTh
 
 
 
-    if (IsLightTheme(appTheme = theme)) {
+    if (isLightTheme(appTheme = theme)) {
         val view: View = activity.window.decorView
         view.systemUiVisibility = view.systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     } else {
@@ -88,7 +84,7 @@ private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTh
         view.systemUiVisibility = view.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     }
 
-    activity.window.navigationBarColor = if (IsLightTheme(appTheme = theme)) {
+    activity.window.navigationBarColor = if (isLightTheme(appTheme = theme)) {
         ContextCompat.getColor(activity, R.color.white)
     } else {
         ContextCompat.getColor(activity, R.color.black)

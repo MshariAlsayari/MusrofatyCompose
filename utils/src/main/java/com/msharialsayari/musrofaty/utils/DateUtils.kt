@@ -191,33 +191,32 @@ object DateUtils {
 
     }
 
-    fun getLastMonth(): Long {
-        val calender =  Calendar.getInstance()
-        calender.add(Calendar.MONTH, -1)
-        return calender.timeInMillis
+    fun getSalaryDate():Long{
+        val currentCalender = Calendar.getInstance()
+        val salaryDay = 27
+        val day = currentCalender.get(Calendar.DAY_OF_MONTH)
+        if (day < salaryDay ) {
+            currentCalender.add(Calendar.MONTH, -1)
+        }
+
+        val year = currentCalender.get(Calendar.YEAR)
+        val month = currentCalender.get(Calendar.MONTH)
+        currentCalender.set(year,month,salaryDay)
+        return currentCalender.timeInMillis
     }
 
-    fun getNextMonth(): Long {
-        val calender =  Calendar.getInstance()
-        calender.add(Calendar.MONTH, +1)
-        return calender.timeInMillis
-    }
+    fun getSalaryCalender(): Calendar {
+        val currentCalender = Calendar.getInstance()
+        val salaryDay = 15
+        val day = currentCalender.get(Calendar.DAY_OF_MONTH)
+        if (day < salaryDay ) {
+            currentCalender.add(Calendar.MONTH, -1)
+        }
 
-
-    fun getYesterday(): Long {
-        val calender =  Calendar.getInstance()
-        calender.add(Calendar.DAY_OF_MONTH, -1)
-        return calender.timeInMillis
-    }
-
-    fun getToday(): Long {
-        return Calendar.getInstance().timeInMillis
-    }
-
-    fun getTomorrow(): Long {
-        val calender =  Calendar.getInstance()
-        calender.add(Calendar.DAY_OF_MONTH, 1)
-        return calender.timeInMillis
+        val year = currentCalender.get(Calendar.YEAR)
+        val month = currentCalender.get(Calendar.MONTH)
+        currentCalender.set(year,month,salaryDay)
+        return currentCalender
     }
 
 

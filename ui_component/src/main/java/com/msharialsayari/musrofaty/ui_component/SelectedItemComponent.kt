@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -33,6 +34,7 @@ fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedIt
                 },
             ),
         text = { TextComponent.BodyText(text = model.value) },
+        secondaryText = { TextComponent.PlaceholderText(text = model.description) },
         trailing = {
             if (model.isSelected) {
                 Icon(Icons.Default.CheckCircle, contentDescription = null)
@@ -47,5 +49,6 @@ fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedIt
 data class SelectedItemModel(
     var id: Int,
     var value: String,
+    var description: String="",
     var isSelected: Boolean = false,
 )
