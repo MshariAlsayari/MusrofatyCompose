@@ -7,6 +7,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryMo
 
 
 enum class SmsCategory(val valueAr: String, val valueEn: String) {
+    NO_CATEGORY("غير محدد", "No category"),
     RESTAURANT("مطاعم", "Restaurant"),
     COFFEE("كوفيات", "Coffee"),
     SUPER_MARKET("سوبرماركت", "Super Market"),

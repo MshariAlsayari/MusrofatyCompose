@@ -1,6 +1,8 @@
 package com.msharialsayari.musrofaty.ui.screens.stores_screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,8 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,24 +127,57 @@ fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCatego
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
     val stores = uiState.stores?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    val groupedStores = stores.groupBy { it.store.categoryId }.toSortedMap(compareBy<Int> { it }.thenBy { it }.reversed())
 
     LazyColumn(
         state = listState,
     ) {
-        items(stores) {  item ->
-            StoreAndCategoryCompose(viewModel,item, onItemClicked={
-                onItemClicked(it)
-            })
-            DividerComponent.HorizontalDividerComponent()
 
+        groupedStores.forEach { (categoryId, stores) ->
+
+            stickyHeader {
+
+                Row(modifier = Modifier
+                    .background(MaterialTheme.colors.secondary)
+                    .padding(5.dp)
+                    .fillMaxWidth(),
+
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    TextComponent.HeaderText(
+                        text =  viewModel.getCategoryDisplayName( categoryId, categories),
+                    )
+
+
+                    TextComponent.BodyText(
+                        text = stringResource(id = R.string.common_total) + ": " +  stores.size.toString(),
+                    )
+
+                }
+
+            }
+
+
+            items(stores) {  item ->
+                StoreAndCategoryCompose(viewModel,item, onItemClicked={
+                    onItemClicked(it)
+                })
+                DividerComponent.HorizontalDividerComponent()
+
+            }
         }
+
 
 
     }

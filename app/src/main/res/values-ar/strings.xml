@@ -10,6 +10,7 @@
     <string name="common_save">حفظ</string>
     <string name="common_sender_shortcut">الاسم المختصر</string>
     <string name="common_sms_total">مجموع الرسائل</string>
+    <string name="common_total">المجموع</string>
     <string name="common_details">التفاصيل</string>
     <string name="common_filter_options">تصفية</string>
     <string name="common_filter">فلتر</string>
