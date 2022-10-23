@@ -40,7 +40,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit){
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
-                title = Screen.CategoryScreen.title,
+                title = Screen.SendersManagementScreen.title,
             )
 
         }
@@ -213,8 +213,16 @@ fun SendersListCompose(viewModel: SendersManagementViewModel,list: List<SenderCo
         startActions    = listOf(deleteAction),
         endActions      = listOf(modifyAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
-        emptyView       = { EmptyComponent.EmptyTextComponent() },
+        emptyView       = { EmptyCompose() },
     )
+}
+
+@Composable
+fun EmptyCompose(){
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        EmptyComponent.EmptyTextComponent()
+    }
+
 }
 
 

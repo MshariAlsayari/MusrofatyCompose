@@ -25,6 +25,8 @@
     <string name="common_enable">تفعيل</string>
     <string name="common_disable">تعطيل</string>
     <string name="common_all">الكل</string>
+    <string name="common_copied">تم النسخ</string>
+
 
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
@@ -38,6 +40,12 @@
     <!--permissions-->
     <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
+
+    <!--Dashboard-->
+    <string name="empty_financial_statistics">لايوجد أي رسائل سحب/إيداع في الفترة المختارة</string>
+
+    <!--Senders-->
+    <string name="empty_senders">لم يتم إضافة أي مرسل لقراءة رسائله</string>
 
     <!--Sender Details-->
     <string name="sender_display_name_ar">الاسم بالعربي</string>

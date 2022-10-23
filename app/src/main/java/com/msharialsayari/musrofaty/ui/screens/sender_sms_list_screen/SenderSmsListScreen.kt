@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
@@ -36,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
@@ -410,7 +412,10 @@ fun LazySenderSms(
                                     model.id,
                                     model.isFavorite
                                 )
-                                SmsActionType.COPY -> {}
+                                SmsActionType.COPY -> {
+                                    Utils.copyToClipboard(item.body,context)
+                                    Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                                }
                             }
                         })
 

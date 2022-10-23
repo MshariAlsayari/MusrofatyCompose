@@ -213,7 +213,7 @@ fun ItemLoading(){
 @Composable
 fun EmptyCompose(){
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        EmptyComponent.EmptyTextComponent()
+        EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
     }
 
 }

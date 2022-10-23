@@ -1,10 +1,7 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -111,9 +108,17 @@ fun PageCompose(
         startActions = listOf(deleteAction),
         endActions = listOf(pinAction, modifyAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
-        emptyView = { EmptyComponent.EmptyTextComponent() },
+        emptyView = { EmptyCompose()},
         onRefresh = { viewModel.getAllSenders() }
     )
+
+}
+
+@Composable
+fun EmptyCompose(){
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_senders))
+    }
 
 }
 

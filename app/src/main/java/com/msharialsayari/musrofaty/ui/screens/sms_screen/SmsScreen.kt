@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sms_screen
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -128,7 +130,10 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                             model.id,
                             model.isFavorite
                         )
-                        SmsActionType.COPY -> {}
+                        SmsActionType.COPY -> {
+                            Utils.copyToClipboard(model.body,context)
+                            Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 })
 

@@ -24,12 +24,24 @@
     <string name="common_enable">Enable</string>
     <string name="common_disable">Disable</string>
     <string name="common_all">ALL</string>
+    <string name="common_copied">copied</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>
         <item quantity="other">SMSs</item>
     </plurals>
+
+    <!--permissions-->
+    <string name="permission_dialog_message">You should allow the Read SMS permission</string>
+    <string name="permission_dialog_positive_button">Go to settings</string>
+
+
+    <!--Dashboard-->
+    <string name="empty_financial_statistics">there are no sms in selected period</string>
+
+    <!--Senders-->
+    <string name="empty_senders">No senders have been added</string>
 
 
     <!--Sender Details-->
@@ -49,9 +61,6 @@
     <string name="common_long_click_to_modify">long click to modify</string>
 
 
-    <!--permissions-->
-    <string name="permission_dialog_message">You should allow the Read SMS permission</string>
-    <string name="permission_dialog_positive_button">Go to settings</string>
 
     <!--Settings-->
     <string name="pref_appearance_title">Appearance</string>
