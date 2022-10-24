@@ -7,6 +7,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsForSendersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val getAllSmsForSendersUseCase: GetAllSmsForSendersUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
+    private val loadSmsUseCase: LoadSmsUseCase
 ):ViewModel(){
 
 
@@ -31,6 +33,20 @@ class DashboardViewModel @Inject constructor(
     fun getDate(){
         getFinancialStatistics()
 
+    }
+
+    fun loadSms(){
+        viewModelScope.launch {
+            _uiState.update { it.copy( isRefreshing = true) }
+            loadSmsUseCase.invoke()
+            getFinancialStatistics()
+            _uiState.update { state ->
+                state.copy(
+                    isRefreshing = false
+                )
+            }
+
+        }
     }
 
     private fun getFinancialStatistics(){
@@ -114,6 +130,7 @@ class DashboardViewModel @Inject constructor(
 
     data class DashboardUiState(
         var isLoading: Boolean = false,
+        var isRefreshing: Boolean = false,
         var allSmsFlow: Flow<List<SmsEntity>>? =null,
         var selectedFilterTimeOption: SelectedItemModel? = null,
         var startDate: Long = 0,

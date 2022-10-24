@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui_component.*
@@ -133,7 +135,13 @@ fun DashboardScreen() {
 
             }) {
 
-            FinancialCompose(Modifier.padding(innerPadding),viewModel)
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(uiState.isRefreshing),
+                onRefresh = { viewModel.loadSms() },
+            ) {
+
+                FinancialCompose(Modifier.padding(innerPadding), viewModel)
+            }
         }
 
     }
