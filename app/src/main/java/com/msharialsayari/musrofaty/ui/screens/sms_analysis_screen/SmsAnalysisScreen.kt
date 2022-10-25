@@ -176,7 +176,7 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
     val deleteAction = Action<WordDetectorEntity>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
         { ActionIcon(id = R.drawable.ic_delete ) },
-        backgroundColor = colorResource(R.color.deletAction),
+        backgroundColor = colorResource(R.color.delete_action_color),
         onClicked = { position, item ->
             viewModel.deleteWordDetector(item.id)
 

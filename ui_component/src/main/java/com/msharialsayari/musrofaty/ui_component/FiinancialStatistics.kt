@@ -42,8 +42,8 @@ fun FinancialStatistics(modifier:Modifier=Modifier,
                     PieEntry(percentExpenses.toFloat(), "")
                 ),
                 colors = arrayListOf(
-                    context.getColor(R.color.incomeColor),
-                    context.getColor(R.color.expensesColor)
+                    context.getColor(R.color.income_color),
+                    context.getColor(R.color.expenses_color)
                 )
             )
 
@@ -86,7 +86,7 @@ fun FinancialStatisticsInfo(modifier:Modifier=Modifier,
                 .size(20.dp)
                 .clip(RectangleShape)
                 .background(
-                    if (isIncome) colorResource(id = R.color.incomeColor) else colorResource(id = R.color.expensesColor)
+                    if (isIncome) colorResource(id = R.color.income_color) else colorResource(id = R.color.expenses_color)
                 )
         )
 

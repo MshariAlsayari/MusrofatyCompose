@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF186747</color>
-    <color name="colorDarkPrimary">#FF006039</color>
-    <color name="colorSecondary">#FFA37E2C</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="blackOnyx">#1d252d</color>
-    <color name="lightBlackOnyx">#333a42</color>
-    <color name="deletAction">#F60313</color>
-    <color name="lightGray">#979797</color>
+
 </resources>

@@ -24,7 +24,6 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.categories_screen.ProgressCompose
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.ActiveSendersTab
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.UnActiveSendersTab
@@ -183,7 +182,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel,list: List<SenderCo
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = if (isActiveTab) R.string.common_disable else  R.string.common_enable)) },
         { ActionIcon(id = if (isActiveTab) R.drawable.ic_visibility_off else R.drawable.ic_visibility) },
-        backgroundColor = colorResource(if (isActiveTab)  R.color.deletAction else R.color.pinAction ),
+        backgroundColor = colorResource(if (isActiveTab)  R.color.delete_action_color else R.color.pin_action_color ),
         onClicked = { position, item ->
             viewModel.updateSenderVisibility(item.senderId, !isActiveTab)
 
@@ -195,7 +194,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel,list: List<SenderCo
     val modifyAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
         { ActionIcon(id = R.drawable.ic_modify) },
-        backgroundColor = colorResource(R.color.modifyAction),
+        backgroundColor = colorResource(R.color.modify_action_color),
         onClicked = { position, item ->
             onNavigateToSenderDetails(item.senderId)
 

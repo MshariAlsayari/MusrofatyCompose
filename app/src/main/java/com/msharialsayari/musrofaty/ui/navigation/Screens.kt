@@ -3,36 +3,8 @@ package com.msharialsayari.musrofaty.ui.navigation
 import com.msharialsayari.musrofaty.R
 
 
-open class BaseScreen(val route: String, var title:Int?=null){
+open class BaseScreen(val route: String, var title:Int?=null)
 
-
-    companion object {
-
-        fun getScreenByRoute(route: String): BaseScreen {
-            return when (route) {
-                Screen.Splash.route -> Screen.Splash
-                Screen.SenderDetailsScreen.route -> Screen.SenderDetailsScreen
-                Screen.SenderSmsListScreen.route -> Screen.SenderSmsListScreen
-                Screen.CategoryScreen.route -> Screen.CategoryScreen
-                Screen.FilterScreen.route -> Screen.FilterScreen
-                Screen.SmsScreen.route -> Screen.SmsScreen
-                Screen.SendersManagementScreen.route -> Screen.SendersManagementScreen
-                Screen.SmsAnalysisScreen.route -> Screen.SmsAnalysisScreen
-                Screen.ContentScreen.route -> Screen.ContentScreen
-                Screen.AppearanceScreen.route -> Screen.AppearanceScreen
-                Screen.StoresScreen.route -> Screen.StoresScreen
-                Screen.SinglePermission.route -> Screen.SinglePermission
-                BottomNavItem.Dashboard.route -> BottomNavItem.Dashboard
-                BottomNavItem.SendersList.route -> BottomNavItem.SendersList
-                BottomNavItem.Setting.route -> BottomNavItem.Setting
-                else -> {
-                    Screen.SinglePermission
-                }
-            }
-        }
-    }
-
-}
 sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title) {
     object Splash                  : Screen("splash_screen")
     object SenderDetailsScreen     : Screen("sender_details_screen", title = R.string.sender_details_title_screen)

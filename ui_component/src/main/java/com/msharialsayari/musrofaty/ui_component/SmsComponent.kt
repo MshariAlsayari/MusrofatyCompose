@@ -154,13 +154,13 @@ private fun SmsActionRowComponent(
                 },
                 imageVector = Icons.Outlined.Favorite,
                 contentDescription = null,
-                tint = if (isFavoriteState.value) Color.Red else colorResource(id = R.color.lightGray)
+                tint = if (isFavoriteState.value) Color.Red else colorResource(id = R.color.light_gray)
             )
             Icon(
                 modifier = Modifier.clickable {
                     onActionClicked(model, SmsActionType.COPY)
                 },
-                tint = colorResource(id = R.color.lightGray),
+                tint = colorResource(id = R.color.light_gray),
                 painter = painterResource(id = R.drawable.ic_copy),
                 contentDescription = null
             )

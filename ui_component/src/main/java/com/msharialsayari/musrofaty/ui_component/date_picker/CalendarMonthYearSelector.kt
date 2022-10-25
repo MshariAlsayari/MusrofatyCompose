@@ -53,10 +53,10 @@ internal fun CalendarMonthYearSelector(
         )
         Spacer(modifier = Modifier.weight(1F))
         IconButton(onClick = onPreviousMonth) {
-            Icon(Icons.Default.ArrowBack, "ChevronLeft", Modifier.mirror())
+            Icon(Icons.Default.KeyboardArrowLeft, "ChevronLeft", Modifier.mirror())
         }
         IconButton(onClick = onNextMonth) {
-            Icon(Icons.Default.ArrowForward, "ChevronRight", Modifier.mirror())
+            Icon(Icons.Default.KeyboardArrowRight, "ChevronRight", Modifier.mirror())
         }
     }
 }

@@ -2,22 +2,22 @@
 <resources>
 
     <style name="Theme.MusrofatyCompose" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/blackOnyx</item>
-        <item name="colorBackground">@color/blackOnyx</item>
-        <item name="colorBottomNavigationBackground">@color/blackOnyx</item>
-        <item name="android:statusBarColor">@color/blackOnyx</item>
+        <item name="android:windowBackground">@color/black_onyx</item>
+        <item name="colorBackground">@color/black_onyx</item>
+        <item name="colorBottomNavigationBackground">@color/black_onyx</item>
+        <item name="android:statusBarColor">@color/black_onyx</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
     <style name="darkTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/blackOnyx</item>
-        <item name="android:navigationBarColor">@color/lightBlackOnyx</item>
-        <item name="android:itemBackground">@color/blackOnyx</item>
-        <item name="android:colorControlNormal">@color/lightGray</item>
-        <item name="colorStatusBar">@color/blackOnyx</item>
-        <item name="colorToolbar">@color/lightBlackOnyx</item>
-        <item name="colorProgressBar">@color/colorSecondary</item>
+        <item name="android:windowBackground">@color/black_onyx</item>
+        <item name="android:navigationBarColor">@color/light_black_onyx</item>
+        <item name="android:itemBackground">@color/black_onyx</item>
+        <item name="android:colorControlNormal">@color/light_gray</item>
+        <item name="colorStatusBar">@color/black_onyx</item>
+        <item name="colorToolbar">@color/light_black_onyx</item>
+        <item name="colorProgressBar">@color/secondary_color</item>
     </style>
 </resources>

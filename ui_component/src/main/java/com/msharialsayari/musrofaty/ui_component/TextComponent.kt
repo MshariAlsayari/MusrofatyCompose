@@ -54,7 +54,7 @@ object TextComponent {
         Text(
             text = text,
             modifier = modifier,
-            color= colorResource(id = R.color.lightGray),
+            color= colorResource(id = R.color.light_gray),
             textAlign = alignment,
             fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
             fontWeight = FontWeight.Normal

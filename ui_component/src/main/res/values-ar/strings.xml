@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">uicomponent</string>
     <string name="number_of_sms">عدد الرسائل</string>
     <string name="no_result">لا يوجد نتائج</string>
     <string name="income">الإيرادات</string>

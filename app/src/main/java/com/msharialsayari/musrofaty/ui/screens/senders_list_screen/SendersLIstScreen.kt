@@ -66,7 +66,7 @@ fun PageCompose(
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_disable)) },
         { ActionIcon(id = R.drawable.ic_visibility_off)},
-        backgroundColor = colorResource(R.color.deletAction),
+        backgroundColor = colorResource(R.color.delete_action_color),
         onClicked = { position, item ->
             viewModel.disableSender(item.senderId)
         })
@@ -74,7 +74,7 @@ fun PageCompose(
     val pinAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_pin)) },
         { ActionIcon(id = R.drawable.ic_pin) },
-        backgroundColor = colorResource(R.color.pinAction),
+        backgroundColor = colorResource(R.color.pin_action_color),
         onClicked = { position, item ->
             viewModel.pinSender(item.senderId)
         })
@@ -83,7 +83,7 @@ fun PageCompose(
     val modifyAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
         { ActionIcon(id = R.drawable.ic_modify) },
-        backgroundColor = colorResource(R.color.modifyAction),
+        backgroundColor = colorResource(R.color.modify_action_color),
         onClicked = { position, item ->
             //Navigate to senderDetailScreen
 

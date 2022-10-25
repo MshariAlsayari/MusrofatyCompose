@@ -149,7 +149,7 @@ object DialogComponent {
                     ButtonComponent.ActionButton(
                         modifier =Modifier.weight(1f),
                         text = R.string.cancel,
-                        color = R.color.deletAction,
+                        color = R.color.red,
                         onClick = {
                             onClickNegativeBtn()
                         }

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="onBackground">#FFFFFF</color>
-    <color name="toolbarBackground">@color/lightBlackOnyx</color>
+
+    <color name="on_background_color">@color/white</color>
+    <color name="toolbar_background_color">@color/light_black_onyx</color>
+    <color name="text_header_color">@color/light_black_onyx</color>
+    <color name="icon_background_color">@color/white</color>
+
 </resources>

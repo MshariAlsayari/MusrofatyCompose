@@ -183,7 +183,7 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, on
     val deleteAction = Action<StoreEntity>(
         { TextComponent.BodyText(text = stringResource(id = com.msharialsayari.musrofaty.R.string.common_delete)) },
         { ActionIcon(id = R.drawable.ic_delete) },
-        backgroundColor = colorResource(R.color.deletAction),
+        backgroundColor = colorResource(R.color.delete_action_color),
         onClicked = { position, item ->
             viewModel.onDeleteStoreActionClicked(item.storeName)
 
@@ -297,7 +297,7 @@ fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewMo
 
             ButtonComponent.ActionButton(
                 modifier =Modifier.weight(1f),
-                color= R.color.deletAction,
+                color= R.color.delete_action_color,
                 text =  R.string.common_delete,
                 onClick = {
                     viewModel.onDeleteBtnClicked()

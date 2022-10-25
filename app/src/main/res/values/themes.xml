@@ -17,10 +17,10 @@
     <style name="lightTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:itemBackground">@color/white</item>
-        <item name="android:colorControlNormal">@color/lightGray</item>
-        <item name="colorStatusBar">@color/colorPrimary</item>
-        <item name="colorToolbar">@color/colorPrimary</item>
-        <item name="colorProgressBar">@color/colorPrimary</item>
+        <item name="android:colorControlNormal">@color/light_gray</item>
+        <item name="colorStatusBar">@color/primary_color</item>
+        <item name="colorToolbar">@color/primary_color</item>
+        <item name="colorProgressBar">@color/primary_color</item>
     </style>
 
 

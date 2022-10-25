@@ -71,7 +71,7 @@ private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTh
         ContextCompat.getColor(activity, R.color.white)
 
     } else {
-        ContextCompat.getColor(activity, R.color.blackOnyx)
+        ContextCompat.getColor(activity, R.color.black_onyx)
     }
 
 
