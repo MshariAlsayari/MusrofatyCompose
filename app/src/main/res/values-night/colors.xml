@@ -4,7 +4,11 @@
 
     <color name="on_background_color">@color/white</color>
     <color name="toolbar_background_color">@color/light_black_onyx</color>
-    <color name="text_header_color">@color/light_black_onyx</color>
+    <color name="text_header_color">@color/air</color>
+    <color name="text_body_color">@color/air</color>
     <color name="icon_background_color">@color/white</color>
+    <color name="active_color">@color/secondary_color</color>
+    <color name="selected_item_color">@color/white</color>
+    <color name="text_clickable_color">@color/secondary_color</color>
 
 </resources>

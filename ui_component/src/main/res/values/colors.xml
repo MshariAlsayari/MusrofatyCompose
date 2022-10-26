@@ -25,6 +25,8 @@
     <color name="text_header_color">@color/black</color>
     <color name="text_body_color">@color/black</color>
     <color name="text_place_holder_color">@color/light_gray</color>
-    <color name="text_clickable_color">@color/secondary_color</color>
+    <color name="text_clickable_color">@color/primary_color</color>
     <color name="icon_background_color">@color/light_gray</color>
+    <color name="active_color">@color/primary_color</color>
+    <color name="selected_item_color">@color/primary_color</color>
 </resources>

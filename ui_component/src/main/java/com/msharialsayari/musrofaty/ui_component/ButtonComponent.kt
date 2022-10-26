@@ -29,7 +29,7 @@ object ButtonComponent {
             modifier = modifier
                 .height(dimensionResource(R.dimen.btn_height60)),
             ) {
-            Text(text = stringResource(id = text), color = MaterialTheme.colors.onBackground)
+            Text(text = stringResource(id = text), color = MaterialTheme.colors.onPrimary)
         }
     }
 

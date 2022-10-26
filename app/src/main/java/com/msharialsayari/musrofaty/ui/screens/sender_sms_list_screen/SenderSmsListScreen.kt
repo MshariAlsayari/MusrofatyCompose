@@ -27,10 +27,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.*
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -643,7 +640,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon( Icons.Default.ArrowBack,
-
+            tint = colorResource(id = R.color.icon_background_color),
             contentDescription = null,
             modifier = Modifier
                 .mirror()
@@ -658,7 +655,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
             if (smsList.isNotEmpty()){
                 Icon(painter = painterResource(id = R.drawable.ic_excel),
-
+                    tint = colorResource(id = R.color.icon_background_color),
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
@@ -667,7 +664,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
                         })
 
                 Icon(painter = painterResource(id = R.drawable.ic_pdf),
-
+                    tint = colorResource(id = R.color.icon_background_color),
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
@@ -680,7 +677,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
             if (filters.isNotEmpty())
             Icon(painter = painterResource(id = R.drawable.ic_filter),
-
+                tint = colorResource(id = R.color.icon_background_color),
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
@@ -690,7 +687,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
                     })
 
             Icon(Icons.Default.DateRange,
-
+                tint = colorResource(id = R.color.icon_background_color),
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()

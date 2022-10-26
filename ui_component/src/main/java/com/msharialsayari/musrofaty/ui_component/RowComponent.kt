@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -106,6 +107,7 @@ object RowComponent {
                 iconId?.let {
                     Icon(
                         painter = painterResource(id = iconId),
+                        tint = colorResource(id = R.color.icon_background_color),
                         contentDescription = ""
                     )
                 }

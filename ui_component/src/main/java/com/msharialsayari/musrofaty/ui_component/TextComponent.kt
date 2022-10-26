@@ -4,6 +4,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
@@ -16,12 +17,15 @@ object TextComponent {
     fun HeaderText(
         modifier: Modifier = Modifier,
         alignment: TextAlign = TextAlign.Start,
-        text: String
+        color:Color = colorResource(id = R.color.text_header_color),
+        text: String,
+
     ) {
         Text(
             text = text,
             modifier = modifier,
             textAlign = alignment,
+            color= color,
             fontSize = dimensionResource(id = R.dimen.text_big).value.sp,
             fontWeight = FontWeight.Bold
         )
@@ -33,12 +37,14 @@ object TextComponent {
     fun BodyText(
         modifier: Modifier = Modifier,
         alignment: TextAlign = TextAlign.Start,
+        color:Color = colorResource(id = R.color.text_body_color),
         text: String
     ) {
         Text(
             text = text,
             modifier = modifier,
             textAlign = alignment,
+            color= color,
             fontSize = dimensionResource(id = R.dimen.text_medium).value.sp
         )
 
@@ -49,12 +55,13 @@ object TextComponent {
     fun PlaceholderText(
         modifier: Modifier = Modifier,
         alignment: TextAlign = TextAlign.Start,
+        color:Color = colorResource(id = R.color.text_place_holder_color),
         text: String
     ) {
         Text(
             text = text,
             modifier = modifier,
-            color= colorResource(id = R.color.light_gray),
+            color= color,
             textAlign = alignment,
             fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
             fontWeight = FontWeight.Normal
@@ -67,13 +74,14 @@ object TextComponent {
     fun ClickableText(
         modifier: Modifier = Modifier,
         alignment: TextAlign = TextAlign.Start,
+        color:Color = colorResource(id = R.color.text_clickable_color),
         text: String
     ) {
         Text(
             text = text,
             modifier = modifier,
             textAlign = alignment,
-            color= MaterialTheme.colors.secondary,
+            color=color,
             fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
             fontWeight = FontWeight.Normal
         )

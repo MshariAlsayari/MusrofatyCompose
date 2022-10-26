@@ -17,6 +17,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -148,7 +149,7 @@ fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Un
             stickyHeader {
 
                 Row(modifier = Modifier
-                    .background(MaterialTheme.colors.secondary)
+                    .background(colorResource(id = R.color.active_color))
                     .padding(5.dp)
                     .fillMaxWidth(),
 
@@ -157,11 +158,14 @@ fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Un
 
                     TextComponent.HeaderText(
                         text =  viewModel.getCategoryDisplayName( categoryId, categories),
+                        color = MaterialTheme.colors.onSecondary
                     )
 
 
                     TextComponent.BodyText(
+
                         text = stringResource(id = R.string.common_total) + ": " +  stores.size.toString(),
+                        color = MaterialTheme.colors.onSecondary
                     )
 
                 }

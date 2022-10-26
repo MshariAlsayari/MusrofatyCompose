@@ -24,6 +24,6 @@ sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title)
 
 sealed class BottomNavItem(var icon:Int,route: String, title: Int? = null): BaseScreen(route, title){
     object Dashboard   : BottomNavItem(title= R.string.dashboard_title_screen ,icon=R.drawable.ic_dashboard, route="dashboard_item")
-    object SendersList : BottomNavItem(title= R.string.senders_list_title_screen,icon=R.drawable.ic_dashboard, route="senders_list_item")
+    object SendersList : BottomNavItem(title= R.string.senders_list_title_screen,icon=R.drawable.ic_list, route="senders_list_item")
     object Setting     : BottomNavItem(title= R.string.settings_title_screen,icon=R.drawable.ic_settings , route="settings_item")
 }

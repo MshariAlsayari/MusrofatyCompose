@@ -14,17 +14,19 @@ private val DarkColorPalette = darkColors(
     secondaryVariant = SecondaryColor,
     background = BlackOnyx,
     surface = BlackOnyx,
-    onPrimary = White
+    onPrimary = White,
+    onSecondary = White,
 )
 
 private val LightColorPalette = lightColors(
     primary = PrimaryDarkColor,
     primaryVariant = PrimaryDarkColor,
-    secondary = SecondaryColor,
+    secondary = PrimaryDarkColor,
     secondaryVariant = SecondaryColor,
     background = White,
     surface = White,
-    onPrimary = White
+    onPrimary = White,
+    onSecondary = White
 )
 
 @Composable
