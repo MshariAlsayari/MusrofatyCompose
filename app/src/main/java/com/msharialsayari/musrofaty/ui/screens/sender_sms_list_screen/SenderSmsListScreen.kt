@@ -211,6 +211,12 @@ fun PageContainer(
         )
     }
 
+    if(uiState.showGeneratingExcelFileDialog){
+        DialogComponent.LoadingDialog(
+            message = R.string.notification_generate_excel_file_starting_message ,
+        )
+    }
+
 
 
 

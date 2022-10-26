@@ -12,7 +12,22 @@ def versionMinor = 0
 def versionPatch = 0
 def versionBuild = 0// bump for dogfood builds, public betas, etc.
 
+
+def keystoreProperties = rootProject.file('../musrofatyCompose/keystore.properties')
+def props = new Properties()
 android {
+
+    signingConfigs {
+
+        release {
+
+            props.load(new FileInputStream(keystoreProperties))
+            storeFile file(props['storeFile'])
+            storePassword props['storePassword']
+            keyAlias props['keyAlias']
+            keyPassword props['keyPassword']
+        }
+    }
     compileSdk 33
 
     defaultConfig {
@@ -159,8 +174,7 @@ dependencies {
     implementation 'com.github.tejpratap46:PDFCreatorAndroid:1.3'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
-    //Date picker
-    implementation 'com.squaredem:composecalendar:1.0.4'
+
 
 
 

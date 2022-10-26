@@ -1,19 +1,24 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.msharialsayari.musrofaty.utils.notEmpty
 
 object DialogComponent {
@@ -91,7 +96,8 @@ object DialogComponent {
                     text = stringResource(id = R.string.category))
                 DividerComponent.HorizontalDividerComponent()
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(dimensionResource(id = R.dimen.default_margin16)),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -117,8 +123,13 @@ object DialogComponent {
                 }
 
                 Row (
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = dimensionResource(id = R.dimen.default_margin16) , end = dimensionResource(id = R.dimen.default_margin16) , bottom = dimensionResource(id = R.dimen.default_margin16) ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = dimensionResource(id = R.dimen.default_margin16),
+                            end = dimensionResource(id = R.dimen.default_margin16),
+                            bottom = dimensionResource(id = R.dimen.default_margin16)
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ){
                     ButtonComponent.ActionButton(
@@ -160,5 +171,41 @@ object DialogComponent {
             }
         }
 
+    }
+
+    @Composable
+    fun LoadingDialog(
+        @StringRes message: Int
+    ) {
+
+        Dialog(
+            onDismissRequest = {},
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
+        ) {
+
+            Card(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+
+                Row(
+                    Modifier
+                        .padding(dimensionResource(id = R.dimen.default_margin16)),
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16)),
+                    verticalAlignment = Alignment.CenterVertically
+
+                ) {
+
+                    ProgressBar.CircleProgressBar()
+                    TextComponent.PlaceholderText(text = stringResource(id = message))
+
+                }
+
+            }
+        }
+        
     }
 }

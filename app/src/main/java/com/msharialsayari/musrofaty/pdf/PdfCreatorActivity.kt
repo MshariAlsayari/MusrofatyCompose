@@ -19,7 +19,6 @@ import androidx.core.content.FileProvider
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
 import com.msharialsayari.musrofaty.notifications.makeStatusNotification
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -28,7 +27,6 @@ import com.tejpratapsingh.pdfcreator.utils.PDFUtil.PDFUtilListener
 import com.tejpratapsingh.pdfcreator.views.PDFBody
 import com.tejpratapsingh.pdfcreator.views.PDFHeaderView
 import com.tejpratapsingh.pdfcreator.views.basic.*
-import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -38,11 +36,11 @@ class PdfCreatorActivity : BasePDFCreator() {
     private val viewModel: PdfCreatorViewModel by viewModels()
 
     companion object {
-        private const val SENDER_ID = "SENDER_ID"
-        private const val FILTER_TIME_OPTION = "FILTER_TIME_OPTION"
-        private const val FILTER_WORD = "FILTER_WORD"
-        private const val START_TIME = "START_TIME"
-        private const val END_TIME = "END_TIME"
+         const val SENDER_ID = "SENDER_ID"
+         const val FILTER_TIME_OPTION = "FILTER_TIME_OPTION"
+         const val FILTER_WORD = "FILTER_WORD"
+         const val START_TIME = "START_TIME"
+         const val END_TIME = "END_TIME"
 
         fun startPdfCreatorActivity(activity: Activity, pdfBundle: PdfCreatorViewModel.PdfBundle) {
             val bundle = Bundle()
@@ -74,11 +72,11 @@ class PdfCreatorActivity : BasePDFCreator() {
 
         initObserver()
         intent?.extras?.let {
-            viewModel.senderId     = it.getInt(GenerateExcelFileJob.SENDER_ID, 0)
-            viewModel.filterTimeId = it.getInt(GenerateExcelFileJob.FILTER_TIME_OPTION, 0)
-            viewModel.filterWord   = it.getString(GenerateExcelFileJob.FILTER_WORD)?:""
-            viewModel.startDate    = it.getLong(GenerateExcelFileJob.START_TIME,0L)
-            viewModel. endDate      = it.getLong(GenerateExcelFileJob.END_TIME,0L)
+            viewModel.senderId     = it.getInt(SENDER_ID, 0)
+            viewModel.filterTimeId = it.getInt(FILTER_TIME_OPTION, 0)
+            viewModel.filterWord   = it.getString(FILTER_WORD)?:""
+            viewModel.startDate    = it.getLong(START_TIME,0L)
+            viewModel. endDate      = it.getLong(END_TIME,0L)
             viewModel.getAllBanksSms()
         }
 

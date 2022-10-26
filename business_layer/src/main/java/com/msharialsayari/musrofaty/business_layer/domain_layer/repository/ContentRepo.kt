@@ -36,7 +36,6 @@ class ContentRepo @Inject constructor(
         dao.delete(id)
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg model: ContentModel){
         val list = model.toList().map { it.toContentEntity() }.toList()
         dao.insert(*list.toTypedArray())

@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.work.Data
 import com.msharialsayari.musrofaty.excei.ExcelModel
 import com.msharialsayari.musrofaty.excei.ExcelUtils
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
-import com.msharialsayari.musrofaty.jobs.GenerateExcelFileJob
+import com.msharialsayari.musrofaty.notifications.makeStatusNotification
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
@@ -255,7 +254,11 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     fun generateExcelFile(context: Context, onFileGenerated:()->Unit) {
+
         viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update {
+                it.copy(showGeneratingExcelFileDialog = true)
+            }
             val result = getAllSmsUseCase.invoke(
                                         senderId     = _uiState.value.sender?.id?:0,
                                         filterOption = getFilterTimeOption(),
@@ -267,8 +270,13 @@ class SenderSmsListViewModel @Inject constructor(
                 context,
                 Constants.EXCEL_FILE_NAME
             ).exportDataIntoWorkbook(excelModel)
-            if (isGenerated)
-            onFileGenerated()
+            if (isGenerated) {
+                onFileGenerated()
+            }
+
+            _uiState.update {
+                it.copy(showGeneratingExcelFileDialog = false)
+            }
         }
     }
 
@@ -299,5 +307,6 @@ class SenderSmsListViewModel @Inject constructor(
         var endDate: Long = 0,
         var showStartDatePicker: Boolean = false,
         var showEndDatePicker: Boolean = false,
+        var showGeneratingExcelFileDialog:Boolean= false
     )
 }

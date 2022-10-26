@@ -43,7 +43,7 @@ fun SettingsScreen(onAppearanceClicked:()->Unit,onSendersClicked:()->Unit, onSto
             )
 
             RowComponent.PreferenceRow(
-                iconId = R.drawable.ic_performance,
+                iconId = R.drawable.ic_senders,
                 header = stringResource(id = R.string.pref_managment_sender_title),
                 body = stringResource(id = R.string.pref_managment_sender_summary),
                 onClick = onSendersClicked
@@ -51,14 +51,14 @@ fun SettingsScreen(onAppearanceClicked:()->Unit,onSendersClicked:()->Unit, onSto
 
 
             RowComponent.PreferenceRow(
-                iconId = R.drawable.ic_performance,
+                iconId = R.drawable.ic_stores,
                 header = stringResource(id = R.string.pref_managment_stores_title),
                 body = stringResource(id = R.string.pref_managment_stores_summary),
                 onClick = onStoresClicked
             )
 
             RowComponent.PreferenceRow(
-                iconId = R.drawable.ic_performance,
+                iconId = R.drawable.ic_analytics,
                 header = stringResource(id = R.string.pref_managment_analysis_title),
                 body = stringResource(id = R.string.pref_managment_analysis_summary),
                 onClick = onAnalysisClicked

@@ -16,15 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.jobs.InsertCategoryJob
 import com.msharialsayari.musrofaty.ui.permission.PermissionStatus
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
+import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.ui_component.DialogComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 
 
 @Composable
@@ -51,11 +50,16 @@ fun SplashScreen(settingPermission:()->Unit, onLoadingDone:()->Unit) {
 
 @Composable
 fun PageCompose(onLoadingDone:()->Unit){
-    val content = LocalContext.current
+    val context = LocalContext.current
     val viewModel: SplashViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val dark = isSystemInDarkTheme()
-    val imageRes = if (dark) R.drawable.ic_water_marker_dark_mode else R.drawable.ic_water_marker_light_mode
+    val light = isLightTheme(appTheme = AppTheme.getThemById(SharedPreferenceManager.getTheme(context)))
+    val imageRes = if (light)  R.drawable.ic_water_marker_light_mode else R.drawable.ic_water_marker_dark_mode
+
+
+    LaunchedEffect(key1 = Unit){
+        viewModel.insertSms()
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),

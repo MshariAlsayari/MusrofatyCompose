@@ -43,13 +43,10 @@ class WordDetectorRepo @Inject constructor(
     }
 
 
-    suspend fun insertDefault() {
-        val currency = Constants.listCurrencyWords.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()
-        val expenses = Constants.listExpenseWords.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name)}.toList()
-        val incomes = Constants.listIncomeWords.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name) }.toList()
-        insert(*currency.toTypedArray())
-        insert(*expenses.toTypedArray())
-        insert(*incomes.toTypedArray())
+
+
+    suspend fun insert(list: List<WordDetectorModel>){
+        insert(*list.toTypedArray())
     }
 
 
