@@ -113,7 +113,7 @@ private fun ExpandedToolbarCompose(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .graphicsLayer { alpha = progress * Alpha }
+            .graphicsLayer { alpha = progress }
     ) {
         content?.invoke()
 

@@ -24,6 +24,7 @@ import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 
 import java.util.*
@@ -114,13 +115,23 @@ fun MainScreenView(
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ) {
+    val context = LocalContext.current
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val navController = rememberNavController()
-    val bottomNavigationItems = listOf(
-        BottomNavItem.Dashboard,
-        BottomNavItem.SendersList,
-        BottomNavItem.Setting
-    )
+    val bottomNavigationItems = if (!SharedPreferenceManager.isArabic(context)) {
+        listOf(
+            BottomNavItem.Dashboard,
+            BottomNavItem.SendersList,
+            BottomNavItem.Setting
+        )
+
+    }else{
+        listOf(
+            BottomNavItem.Setting,
+            BottomNavItem.SendersList,
+            BottomNavItem.Dashboard,
+        )
+    }
 
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

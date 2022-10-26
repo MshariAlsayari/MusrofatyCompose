@@ -132,10 +132,8 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewMode
                             selected = tabIndex == index,
                             onClick = { tabIndex = index },
                             text = {
-                                Text(
-                                    text = stringResource(id = stringResId),
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                TextComponent.ClickableText(text = stringResource(id = stringResId), color = if(tabIndex == index) MaterialTheme.colors.secondary else colorResource(id = R.color.light_gray) )
+
                             })
                     }
                 }

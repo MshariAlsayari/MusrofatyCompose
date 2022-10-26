@@ -114,10 +114,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsAnalysisViewModel){
                             selected = tabIndex == index,
                             onClick = { tabIndex = index },
                             text = {
-                                Text(
-                                    text = stringResource(id = stringResId),
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                TextComponent.ClickableText(text = stringResource(id = stringResId), color = if(tabIndex == index) MaterialTheme.colors.secondary else colorResource(id = R.color.light_gray) )
                             })
                     }
                 }
@@ -200,6 +197,14 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
         isLoading       = uiState.isLoading,
         startActions    = listOf(deleteAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
-        emptyView       = { EmptyComponent.EmptyTextComponent() },
+        emptyView       = { EmptyCompose() },
     )
+}
+
+@Composable
+fun EmptyCompose(){
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
+    }
+
 }

@@ -326,7 +326,9 @@ fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
                         modifier = Modifier.background(MaterialTheme.colors.background),
                         selected = tabIndex == index,
                         onClick = { tabIndex = index },
-                        text = { Text(text = stringResource(id = stringResId), color = MaterialTheme.colors.onBackground) })
+                        text = {
+                            TextComponent.ClickableText(text = stringResource(id = stringResId), color = if(tabIndex == index) MaterialTheme.colors.secondary else colorResource(id = R.color.light_gray) )
+                        })
                 }
             }
             when (tabIndex) {
