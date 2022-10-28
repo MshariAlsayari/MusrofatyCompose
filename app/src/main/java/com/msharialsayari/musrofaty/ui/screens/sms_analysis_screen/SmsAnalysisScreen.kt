@@ -91,7 +91,8 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsAnalysisViewModel){
             onActionButtonClicked = { value ->
                 viewModel.addWordDetector(value, WordDetectorType.getById(tabIndex))
                 coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
-            },)) }
+            },)
+        ) }
     ){
 
         Box(modifier = Modifier.fillMaxSize()) {

@@ -7,12 +7,10 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.utils.StringsUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*

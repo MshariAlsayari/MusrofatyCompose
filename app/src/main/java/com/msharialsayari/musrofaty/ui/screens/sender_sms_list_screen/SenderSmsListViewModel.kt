@@ -10,7 +10,6 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
-import com.msharialsayari.musrofaty.notifications.makeStatusNotification
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
@@ -178,11 +177,12 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun getFilterTimeOptions(context: Context, selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getFilterTimeOptions(context: Context, selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val options = context.resources.getStringArray(R.array.filter_options)
         val list = mutableListOf<SelectedItemModel>()
         options.mapIndexed { index, value ->
-            list.add(SelectedItemModel(
+            list.add(
+                SelectedItemModel(
                 id = index,
                 value = value,
                 description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
@@ -195,10 +195,11 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun getFilterOptions(selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getFilterOptions(selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
         _uiState.value.filters.mapIndexed { index, value ->
-            list.add(SelectedItemModel(
+            list.add(
+                SelectedItemModel(
                 id = value.id,
                 value = value.title,
                 isSelected = selectedItem?.id == value.id
@@ -210,7 +211,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-     fun getFilterTimeOption():DateUtils.FilterOption{
+     fun getFilterTimeOption(): DateUtils.FilterOption{
         return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 
@@ -280,7 +281,7 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun onFilterTimeOptionSelected(item:SelectedItemModel){
+    fun onFilterTimeOptionSelected(item: SelectedItemModel){
         _uiState.update {
             it.copy(selectedFilterTimeOption = item)
         }
@@ -298,8 +299,8 @@ class SenderSmsListViewModel @Inject constructor(
         var smsFlow: Flow<PagingData<SmsEntity>>? =null,
         var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? =null,
         var allSmsFlow: Flow<List<SmsEntity>>? =null,
-        var selectedFilterTimeOption:SelectedItemModel? = null,
-        var selectedFilter:SelectedItemModel? = null,
+        var selectedFilterTimeOption: SelectedItemModel? = null,
+        var selectedFilter: SelectedItemModel? = null,
         var filters: List<FilterAdvancedModel> = emptyList(),
         var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
         var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap(),

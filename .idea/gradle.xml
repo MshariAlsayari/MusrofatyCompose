@@ -12,9 +12,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/business_layer" />
-            <option value="$PROJECT_DIR$/ui_component" />
-            <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
       </GradleProjectSettings>

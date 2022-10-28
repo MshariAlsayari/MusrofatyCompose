@@ -65,11 +65,12 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    fun getFilterTimeOptions(context: Context, selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getFilterTimeOptions(context: Context, selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val options = context.resources.getStringArray(R.array.filter_options)
         val list = mutableListOf<SelectedItemModel>()
         options.mapIndexed { index, value ->
-            list.add(SelectedItemModel(
+            list.add(
+                SelectedItemModel(
                 id = index,
                 value = value,
                 description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
@@ -107,7 +108,7 @@ class DashboardViewModel @Inject constructor(
 
     }
 
-    fun onFilterTimeOptionSelected(item:SelectedItemModel){
+    fun onFilterTimeOptionSelected(item: SelectedItemModel){
         _uiState.update {
             it.copy(selectedFilterTimeOption = item)
         }
@@ -119,8 +120,8 @@ class DashboardViewModel @Inject constructor(
          return if (_uiState.value.selectedFilterTimeOption != null) {
              DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
          }else{
-             _uiState.value.startDate=DateUtils.getSalaryDate()
-             _uiState.value.endDate=DateUtils.getCurrentDate()
+             _uiState.value.startDate= DateUtils.getSalaryDate()
+             _uiState.value.endDate= DateUtils.getCurrentDate()
              _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = 5, value = "", isSelected = true)
              DateUtils.FilterOption.RANGE
          }

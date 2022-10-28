@@ -55,7 +55,8 @@ fun BuildChartCompose(
                 total = it.expenses.plus(it.income),
                 incomeTotal = it.income,
                 expensesTotal = it.expenses,
-            ))
+            )
+            )
 
 
         })

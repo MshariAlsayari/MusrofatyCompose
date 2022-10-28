@@ -95,7 +95,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
         modifier = modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
-            var model:TextFieldBottomSheetModel? =null
+            var model: TextFieldBottomSheetModel? =null
 
             when (bottomSheetType.value) {
 

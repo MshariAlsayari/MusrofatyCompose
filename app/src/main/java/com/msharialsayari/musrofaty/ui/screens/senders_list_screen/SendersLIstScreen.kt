@@ -95,7 +95,7 @@ fun PageCompose(
         modifier = modifier,
         list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
         view = { SenderComponent( modifier = Modifier.padding(
-            dimensionResource(id = com.msharialsayari.musrofaty.ui_component.R.dimen.default_margin16)
+            dimensionResource(id = R.dimen.default_margin16)
         ), model = it) },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MusrofatyCompose</string>
+    <string name="app_name">Musrofaty</string>
 
 
     <!--commons-->
@@ -157,6 +157,54 @@
     <string name="page_number">Page: %s</string>
     <string name="pdf_preview_title">Sms Preview</string>
     <string name="pdf_preview_pages">%1$s of %1$s</string>
+
+    <string name="number_of_sms">Total of Sms</string>
+    <string name="no_result">No Result</string>
+    <string name="store">Store</string>
+    <string name="category">Category</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+
+
+
+
+    <!--Content-->
+    <string name="sms_category_no_category">No category</string>
+    <string name="banks">Bank</string>
+    <string name="general_services">Services</string>
+    <string name="digital_wallet">Digital Wallet</string>
+
+    <string name="incomes_sms_type">Incomes</string>
+    <string name="expenses_sms_type">Expenses</string>
+    <string name="nothing_sms_type">No Type</string>
+
+    <!--   Time duration -->
+    <string name="common_minute">Minute</string>
+    <string name="common_two_minutes">Minutes</string>
+    <string name="common_minutes">Minutes</string>
+    <string name="common_second">Second</string>
+    <string name="common_two_seconds">Seconds</string>
+    <string name="common_seconds">Seconds</string>
+    <string name="common_hour">Hour</string>
+    <string name="common_two_hours">Hours</string>
+    <string name="common_hours">Hours</string>
+    <string name="common_day">Day</string>
+    <string name="common_two_days">Days</string>
+    <string name="common_days">Days</string>
+    <string name="common_week">Week</string>
+    <string name="common_two_weeks">Weeks</string>
+    <string name="common_weeks">Weeks</string>
+    <string name="common_month">Month</string>
+    <string name="common_two_months">Months</string>
+    <string name="common_months">Months</string>
+    <string name="common_year">Year</string>
+    <string name="common_two_years">Years</string>
+    <string name="common_years">Years</string>
+    <string name="common_ago">ago</string>
 
 
 

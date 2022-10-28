@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MusrofatyCompose</string>
+    <string name="app_name">مصروفاتي</string>
 
     <!--commons-->
     <string name="common_delete">حذف</string>
@@ -163,6 +163,60 @@
     <string name="page_number">صفحة:%s</string>
     <string name="pdf_preview_title">استعراض الرسائل</string>
     <string name="pdf_preview_pages">%2$s من %1$s</string>
+
+
+
+
+
+
+
+    <!--Content-->
+    <string name="sms_category_no_category">غير محدد</string>
+    <string name="banks">مصرف</string>
+    <string name="general_services">خدمات عامة</string>
+    <string name="digital_wallet">محفظة رقمية</string>
+
+
+
+    <string name="number_of_sms">عدد الرسائل</string>
+    <string name="no_result">لا يوجد نتائج</string>
+    <string name="income">الإيرادات</string>
+    <string name="expenses">المصروفات</string>
+    <string name="store">المتجر</string>
+    <string name="category">الفئة</string>
+    <string name="add">إضافة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="english">إنجليزي</string>
+    <string name="arabic">عربي</string>
+
+    <string name="incomes_sms_type">إيرادات</string>
+    <string name="expenses_sms_type">مصروفات</string>
+    <string name="nothing_sms_type">غير محدد</string>
+
+    <!--   Time duration -->
+    <string name="common_minute">دقيقة</string>
+    <string name="common_two_minutes">دقيقتين</string>
+    <string name="common_minutes">دقائق</string>
+    <string name="common_second">ثانية</string>
+    <string name="common_two_seconds">ثانيتين</string>
+    <string name="common_seconds">ثواني</string>
+    <string name="common_hour">ساعة</string>
+    <string name="common_two_hours">ساعتين</string>
+    <string name="common_hours">ساعات</string>
+    <string name="common_day">يوم</string>
+    <string name="common_two_days">يومين</string>
+    <string name="common_days">أيام</string>
+    <string name="common_week">اسبوع</string>
+    <string name="common_two_weeks">اسبوعين</string>
+    <string name="common_weeks">اسابيع</string>
+    <string name="common_month">شهر</string>
+    <string name="common_two_months">شهرين</string>
+    <string name="common_months">اشهر</string>
+    <string name="common_year">سنة</string>
+    <string name="common_two_years">سنتين</string>
+    <string name="common_years">سنوات</string>
+    <string name="common_ago">منذ</string>
+
 
 
 

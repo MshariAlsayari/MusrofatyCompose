@@ -107,7 +107,8 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewMode
                     }
                 },
 
-                ))
+                )
+            )
 
 
         }) {
@@ -175,7 +176,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewMode
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun SendersListCompose(viewModel: SendersManagementViewModel,list: List<SenderComponentModel>,onNavigateToSenderDetails:(senderId:Int)->Unit, isActiveTab:Boolean){
+fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderComponentModel>, onNavigateToSenderDetails:(senderId:Int)->Unit, isActiveTab:Boolean){
     val uiState by viewModel.uiState.collectAsState()
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = if (isActiveTab) R.string.common_disable else  R.string.common_enable)) },

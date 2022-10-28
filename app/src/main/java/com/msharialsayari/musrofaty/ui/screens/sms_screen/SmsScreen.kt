@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -20,9 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.LoadingPageCompose
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch

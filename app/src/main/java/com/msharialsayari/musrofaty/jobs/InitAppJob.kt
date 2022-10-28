@@ -49,7 +49,7 @@ class InitAppJob @AssistedInject constructor(
 
     private suspend fun initIncomesWords(){
         if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.INCOME_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext,WordsType.INCOME_WORDS)
+            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.INCOME_WORDS)
             val incomes = words.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name) }.toList()
             wordDetectorRepo.insert(incomes)
         }else{
@@ -60,7 +60,7 @@ class InitAppJob @AssistedInject constructor(
 
     private suspend fun initExpensesWords(){
         if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.EXPENSES_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext,WordsType.EXPENSES_WORDS)
+            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.EXPENSES_WORDS)
             val expenses = words.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name) }.toList()
             wordDetectorRepo.insert(expenses)
         }else{
@@ -72,7 +72,7 @@ class InitAppJob @AssistedInject constructor(
 
     private suspend fun initCurrencyWords(){
         if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.CURRENCY_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext,WordsType.CURRENCY_WORDS)
+            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.CURRENCY_WORDS)
             val currency = words.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()
             wordDetectorRepo.insert(currency)
         }else{
@@ -90,7 +90,7 @@ class InitAppJob @AssistedInject constructor(
         val digitalWalletSender =sendersContent.find{it.valueAr == SendersKey.DIGITALWALLET.valueAr}
 
         if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.BANKS_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext,WordsType.BANKS_WORDS)
+            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.BANKS_WORDS)
             val senders = words.map {    SenderModel(
                 contentId = banksSender?.id ?:0,
                 senderName = it,

@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.ui.screens.splash_screen
 
 import android.Manifest
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

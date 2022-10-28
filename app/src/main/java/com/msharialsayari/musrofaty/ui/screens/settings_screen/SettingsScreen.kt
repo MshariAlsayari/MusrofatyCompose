@@ -4,17 +4,14 @@ package com.msharialsayari.musrofaty.ui.screens.settings_screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.RowComponent
-import com.msharialsayari.musrofaty.ui_component.TextComponent
 
 @Composable
 fun SettingsScreen(onAppearanceClicked:()->Unit,onSendersClicked:()->Unit, onStoresClicked:()->Unit,onAnalysisClicked:()->Unit) {

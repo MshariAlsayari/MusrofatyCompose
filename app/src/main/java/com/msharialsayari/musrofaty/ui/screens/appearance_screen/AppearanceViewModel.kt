@@ -62,31 +62,35 @@ class AppearanceViewModel @Inject constructor(
         }
     }
 
-    fun getLanguageOptions(selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getLanguageOptions(selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
-        val newContext = SharedPreferenceManager.applyLanguage(context,SharedPreferenceManager.getLanguage(context))
+        val newContext = SharedPreferenceManager.applyLanguage(context, SharedPreferenceManager.getLanguage(context))
         val options = newContext.resources.getStringArray(R.array.language_options)
         options.mapIndexed { index, value ->
-            list.add(SelectedItemModel(
+            list.add(
+                SelectedItemModel(
                 id = index,
                 value = value,
                 isSelected = selectedItem?.id == index
-            ))
+            )
+            )
         }
 
         return list
 
     }
 
-    fun getThemeOptions(selectedItem:SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getThemeOptions(selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
         val options = context.resources.getStringArray(R.array.theme_options)
         options.mapIndexed { index, value ->
-            list.add(SelectedItemModel(
+            list.add(
+                SelectedItemModel(
                 id = index,
                 value = value,
                 isSelected = selectedItem?.id == index
-            ))
+            )
+            )
         }
 
         return list
@@ -128,9 +132,9 @@ class AppearanceViewModel @Inject constructor(
     data class AppearanceUIState(
         var isLoading:Boolean = false,
         var currentLanguageOption:String= "",
-        var selectedCurrentLanguage:SelectedItemModel? = null,
+        var selectedCurrentLanguage: SelectedItemModel? = null,
 
         var currentThemeOption:String= "",
-        var selectedCurrentTheme:SelectedItemModel? = null,
+        var selectedCurrentTheme: SelectedItemModel? = null,
     )
 }
