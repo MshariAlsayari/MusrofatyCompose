@@ -47,7 +47,7 @@
 
 
         <receiver
-            android:name=".widget.FinancialWidgetReceiver"
+            android:name=".widget.financial.FinancialWidgetReceiver"
             android:enabled="@bool/glance_appwidget_available"
             android:exported="false">
             <intent-filter>
