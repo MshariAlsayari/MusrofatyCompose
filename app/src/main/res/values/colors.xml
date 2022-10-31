@@ -29,4 +29,5 @@
     <color name="icon_background_color">@color/light_gray</color>
     <color name="active_color">@color/primary_color</color>
     <color name="selected_item_color">@color/primary_color</color>
+    <color name="background_color">@color/white</color>
 </resources>

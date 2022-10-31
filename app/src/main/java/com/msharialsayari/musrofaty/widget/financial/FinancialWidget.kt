@@ -1,5 +1,9 @@
 package com.msharialsayari.musrofaty.widget.financial
 
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
@@ -41,5 +45,21 @@ class FinancialWidget : GlanceAppWidget() {
 
 
 class FinancialWidgetReceiver : GlanceAppWidgetReceiver() {
+
+    companion object {
+        private const val TAG = "FinancialWidgetReceiver"
+    }
+
     override val glanceAppWidget: GlanceAppWidget = FinancialWidget()
+
+//    override fun onReceive(context: Context, intent: Intent) {
+//        StringBuilder().apply {
+//            append("Action: ${intent.action}\n")
+//            append("URI: ${intent.toUri(Intent.URI_INTENT_SCHEME)}\n")
+//            toString().also { log ->
+//                Log.d(TAG, log)
+//                Toast.makeText(context, log, Toast.LENGTH_LONG).show()
+//            }
+//        }
+//    }
 }
