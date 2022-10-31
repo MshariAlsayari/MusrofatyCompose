@@ -76,6 +76,10 @@ fun SenderSmsListScreen(
     val uiState                           by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit){ viewModel.getSender(senderId) }
 
+    if (uiState.navigateBack){
+        onBack()
+    }
+
 
     when{
         uiState.isLoading -> PageLoading()

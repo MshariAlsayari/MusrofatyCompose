@@ -13,6 +13,9 @@ interface SenderDao {
     @Query("SELECT * FROM SenderEntity WHERE id=:senderId")
     suspend fun getSenderById(senderId:Int):SenderEntity?
 
+    @Query("SELECT * FROM SenderEntity WHERE id=:senderId AND isActive=1")
+    suspend fun getActiveSenderById(senderId:Int):SenderEntity?
+
     @Query("SELECT * FROM SenderEntity WHERE LOWER(senderName)  = LOWER(:senderName)")
     suspend fun getSmsBySenderName(senderName:String): SenderEntity?
 

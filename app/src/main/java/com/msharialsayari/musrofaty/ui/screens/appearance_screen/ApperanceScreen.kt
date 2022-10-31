@@ -16,13 +16,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit){
+fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit, onBackPressed:()->Unit){
     val viewModel:AppearanceViewModel = hiltViewModel()
 
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.AppearanceScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

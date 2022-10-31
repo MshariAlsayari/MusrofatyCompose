@@ -30,7 +30,7 @@ import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 
 @Composable
 fun DashboardScreen() {

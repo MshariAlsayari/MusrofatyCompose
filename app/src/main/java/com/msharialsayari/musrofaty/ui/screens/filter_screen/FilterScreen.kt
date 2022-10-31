@@ -24,7 +24,7 @@ import com.msharialsayari.musrofaty.ui_component.*
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
+fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()->Unit){
     val viewModel:FilterViewModel = hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
 
@@ -43,6 +43,7 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.FilterScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

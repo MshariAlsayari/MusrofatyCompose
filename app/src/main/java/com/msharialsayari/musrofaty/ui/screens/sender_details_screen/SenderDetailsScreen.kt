@@ -26,12 +26,13 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()->Unit) {
+fun SenderDetailsScreen(senderId: Int, onNavigateToContent:(Int)->Unit,onDone:()->Unit,onBackPressed:()->Unit) {
     val viewModel: SendersDetailsViewModel = hiltViewModel()
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SenderDetailsScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

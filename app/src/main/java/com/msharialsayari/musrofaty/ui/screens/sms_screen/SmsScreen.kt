@@ -25,7 +25,7 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit){
+fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit,onBackPressed:()->Unit){
     val viewModel:SmsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit ){
@@ -37,6 +37,7 @@ fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SmsScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

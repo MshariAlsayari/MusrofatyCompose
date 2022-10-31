@@ -25,7 +25,7 @@ import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmsAnalysisScreen(){
+fun SmsAnalysisScreen(onBackPressed:()->Unit){
     val viewModel:SmsAnalysisViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -34,6 +34,7 @@ fun SmsAnalysisScreen(){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SmsAnalysisScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

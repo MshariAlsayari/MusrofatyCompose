@@ -32,7 +32,7 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit){
+fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBackPressed:()->Unit){
     val viewModel:SendersManagementViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -40,6 +40,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SendersManagementScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

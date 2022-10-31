@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SenderSmsListViewModel @Inject constructor(
-    private val getSenderUseCase: GetSenderUseCase,
+    private val getSenderUseCase: GetActiveSenderUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val getAllSms: GetAllSmsUseCase,
     private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
@@ -54,12 +54,13 @@ class SenderSmsListViewModel @Inject constructor(
     fun getSender(senderId: Int){
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val senderResult         = getSenderUseCase.invoke(senderId)
-            if (senderResult !=null)
-            getFilters(senderResult.id)
+            val senderResult = getSenderUseCase.invoke(senderId)
+            if (senderResult != null)
+                getFilters(senderResult.id)
             _uiState.update {
                 it.copy(
                     sender          = senderResult,
+                    navigateBack    = senderResult == null,
                     isLoading       = false )
             }
         }
@@ -290,6 +291,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     data class SenderSmsListUiState(
         var isLoading: Boolean = false,
+        var navigateBack: Boolean = false,
         var isAllSmsPageLoading: Boolean = false,
         var isFavoriteSmsPageLoading: Boolean = false,
         var isFinancialStatisticsSmsPageLoading: Boolean = false,

@@ -18,7 +18,7 @@ import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
 
 @Composable
-fun ContentScreen(contentId:Int, onDone:()->Unit){
+fun ContentScreen(contentId:Int, onDone:()->Unit,onBackPressed:()->Unit){
     val viewModel: ContentViewModel = hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
 
@@ -30,6 +30,7 @@ fun ContentScreen(contentId:Int, onDone:()->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.ContentScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

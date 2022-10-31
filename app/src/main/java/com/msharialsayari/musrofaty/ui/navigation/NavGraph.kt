@@ -98,12 +98,12 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            SenderDetailsScreen(senderId, onNavigateToContent = {
-                navController.navigate(Screen.ContentScreen.route + "/${it}")
-            },
-                onDone = {
-                    navController.navigateUp()
-                })
+            SenderDetailsScreen(
+                senderId = senderId,
+                onNavigateToContent = { navController.navigate(Screen.ContentScreen.route + "/${it}") },
+                onDone = { navController.navigateUp() },
+                onBackPressed = { navController.navigateUp() }
+            )
         }
 
         composable(Screen.SenderSmsListScreen.route + "/{senderId}",
@@ -113,12 +113,8 @@ fun NavigationGraph(
             val senderId = arguments?.getInt("senderId") ?: 0
             SenderSmsListScreen(
                 senderId = senderId,
-                onDetailsClicked = {
-                    navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
-                },
-                onBack = {
-                    navController.navigateUp()
-                },
+                onDetailsClicked = { navController.navigate(Screen.SenderDetailsScreen.route + "/${it}") },
+                onBack = { navController.navigateUp() },
                 onNavigateToFilterScreen = { senderId, filterId ->
                     if (filterId == null)
                         navController.navigate(Screen.FilterScreen.route + "/${senderId}")
@@ -146,9 +142,12 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId, null, onDone = {
-                navController.navigateUp()
-            })
+            FilterScreen(
+                senderId=senderId,
+                filterId = null,
+                onDone = { navController.navigateUp() },
+                onBackPressed = { navController.navigateUp() }
+            )
         }
 
         composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
@@ -158,9 +157,12 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId, filterId, onDone = {
-                navController.navigateUp()
-            })
+            FilterScreen(
+                senderId=senderId,
+                filterId=filterId,
+                onDone = { navController.navigateUp() },
+                onBackPressed = { navController.navigateUp() }
+            )
         }
 
         composable(Screen.SmsScreen.route + "/{smsId}",
@@ -169,9 +171,11 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val smsId = arguments?.getString("smsId")
             smsId?.let {
-                SmsScreen(it, onNavigateToCategoryScreen = {
-                    navController.navigate(Screen.CategoryScreen.route + "/${it}")
-                })
+                SmsScreen(
+                    smsId=it,
+                    onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
+                    onBackPressed = { navController.navigateUp() }
+                )
             }
         }
 
@@ -182,21 +186,24 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val categoryId = arguments?.getInt("categoryId")
             categoryId?.let {
-                CategoriesScreen(categoryId, onDone = {
-                    navController.navigateUp()
-                })
+                CategoriesScreen(
+                    categoryId=categoryId,
+                    onDone = { navController.navigateUp() },
+                    onBackPressed = { navController.navigateUp() })
             }
         }
 
 
         composable(Screen.SendersManagementScreen.route) {
-            SendersManagementScreen(onNavigateToSenderDetails = {
-                navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
-            })
+            SendersManagementScreen(
+                onNavigateToSenderDetails = { navController.navigate(Screen.SenderDetailsScreen.route + "/${it}") },
+                onBackPressed = { navController.navigateUp() })
         }
 
         composable(Screen.SmsAnalysisScreen.route) {
-            SmsAnalysisScreen()
+            SmsAnalysisScreen(
+                onBackPressed = { navController.navigateUp() }
+            )
         }
 
         composable(Screen.ContentScreen.route + "/{contentId}",
@@ -205,25 +212,25 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val contentId = arguments?.getInt("contentId")
             contentId?.let {
-                ContentScreen(it, onDone = {
-                    navController.navigateUp()
-                })
+                ContentScreen(
+                    contentId=it,
+                    onDone = { navController.navigateUp() },
+                    onBackPressed = { navController.navigateUp() })
             }
         }
 
         composable(Screen.AppearanceScreen.route) {
-            AppearanceScreen(onLanguageChanged = {
-                onLanguageChanged()
-            },onThemeChanged = {
-                onThemeChanged()
-            })
+            AppearanceScreen(
+                onLanguageChanged = { onLanguageChanged() },
+                onThemeChanged = { onThemeChanged() },
+                onBackPressed = { navController.navigateUp() }
+            )
         }
 
         composable(Screen.StoresScreen.route) {
             StoresScreen(
-                onNavigateToCategoryScreen = {
-                    navController.navigate(Screen.CategoryScreen.route + "/${it}")
-                }
+                onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
+                onBackPressed = { navController.navigateUp() }
             )
         }
 

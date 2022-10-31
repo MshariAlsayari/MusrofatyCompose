@@ -31,7 +31,7 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit) {
+fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,onBackPressed:()->Unit) {
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -40,6 +40,7 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit) {
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.StoresScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

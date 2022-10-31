@@ -31,7 +31,7 @@ import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDivi
 import kotlinx.coroutines.launch
 
 @Composable
-fun CategoriesScreen(categoryId:Int, onDone:()->Unit){
+fun CategoriesScreen(categoryId:Int, onDone:()->Unit,onBackPressed:()->Unit){
     val viewModel :CategoriesViewModel= hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit ){
@@ -43,6 +43,7 @@ fun CategoriesScreen(categoryId:Int, onDone:()->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.CategoryScreen.title,
+                onArrowBackClicked = onBackPressed
             )
 
         }

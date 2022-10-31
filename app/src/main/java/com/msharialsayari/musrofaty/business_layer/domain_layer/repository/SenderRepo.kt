@@ -51,6 +51,13 @@ class SenderRepo @Inject constructor(
         return null
     }
 
+    suspend fun getActiveSenderById(senderId:Int):SenderModel?{
+        val model = dao.getActiveSenderById(senderId)?.toSenderModel()
+        if (model != null)
+            return fillSenderModel(model)
+        return null
+    }
+
     suspend fun getSenderByIdWithSms(senderId:Int):SenderWithRelationsModel{
         val model =  dao.getSenderByIdWithSms(senderId)
         var senderModel = model.sender.toSenderModel()
