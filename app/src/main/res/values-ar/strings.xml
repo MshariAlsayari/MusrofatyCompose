@@ -88,6 +88,15 @@
     </string-array>
 
 
+    <string name="filter_options_all_title">الكل</string>
+    <string name="filter_options_today_title">اليوم</string>
+    <string name="filter_options_week_title">الأسبوع الحالي</string>
+    <string name="filter_options_month_title">الشهر الحالي</string>
+    <string name="filter_options_year_title">السنة الحالية</string>
+    <string name="filter_options_range_title">تحديد تاريخ</string>
+    <string name="filter_options_week_subtitle">الإسبوع يبدأ من يوم الإثنين إلى يوم الأحد</string>
+    <string name="empty"/>
+
     <!--Theme-->
     <string-array name="theme_options">
         <item>افتراضات النظام</item>

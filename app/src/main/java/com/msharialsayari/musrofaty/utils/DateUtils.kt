@@ -1,11 +1,11 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
+import com.msharialsayari.musrofaty.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
-import com.msharialsayari.musrofaty.R
 
 object DateUtils {
 
@@ -244,8 +244,15 @@ object DateUtils {
         SECONDS, MINUTES, HOURS, DAYS
     }
 
-    enum class FilterOption{
-        ALL,TODAY, WEEK,MONTH,YEAR,RANGE;
+    enum class FilterOption(val id :Int, val title:Int,val subtitle:Int= R.string.empty){
+        ALL(0, R.string.filter_options_all_title),
+        TODAY(1, R.string.filter_options_today_title),
+        WEEK(2, R.string.filter_options_week_title, R.string.filter_options_week_subtitle),
+        MONTH(3, R.string.filter_options_month_title),
+        YEAR(4, R.string.filter_options_year_title),
+        RANGE(5, R.string.filter_options_range_title);
+
+
         companion object{
             fun getFilterOption(id:Int? = 0): FilterOption {
                 return when(id){

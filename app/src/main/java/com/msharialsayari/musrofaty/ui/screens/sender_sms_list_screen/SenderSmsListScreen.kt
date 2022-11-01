@@ -103,15 +103,10 @@ fun SenderSmsListScreen(
 
 @Composable
 fun FilterTimeOptionsBottomSheet(viewModel: SenderSmsListViewModel, onFilterSelected:(SelectedItemModel)->Unit){
-    val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
-    BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.common_filter_options,
-        list = viewModel.getFilterTimeOptions(context, uiState.selectedFilterTimeOption),
-        onSelectItem = {
-            onFilterSelected(it)
-        }
-    )
+    BottomSheetComponent.TimeOptionsBottomSheet(selectedItem = uiState.selectedFilterTimeOption, startDate = uiState.startDate, endDate = uiState.endDate){
+        onFilterSelected(it)
+    }
 }
 
 @Composable
@@ -581,7 +576,7 @@ fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterCl
 
 
         TextComponent.PlaceholderText(
-            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value ?: stringArrayResource(id = R.array.filter_options)[0])
+            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value ?: stringResource(id = DateUtils.FilterOption.ALL.title))
         )
 
 

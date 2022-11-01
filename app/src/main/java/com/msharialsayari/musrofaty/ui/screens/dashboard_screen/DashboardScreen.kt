@@ -14,9 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -193,15 +191,10 @@ fun LazyFinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewMod
 
 @Composable
 fun FilterTimeOptionsBottomSheet(viewModel: DashboardViewModel, onFilterSelected:(SelectedItemModel)->Unit){
-    val context                           = LocalContext.current
     val uiState                           by viewModel.uiState.collectAsState()
-    BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.common_filter_options,
-        list = viewModel.getFilterTimeOptions(context, uiState.selectedFilterTimeOption),
-        onSelectItem = {
-            onFilterSelected(it)
-        }
-    )
+    BottomSheetComponent.TimeOptionsBottomSheet(selectedItem = uiState.selectedFilterTimeOption, startDate = uiState.startDate, endDate = uiState.endDate){
+        onFilterSelected(it)
+    }
 }
 
 

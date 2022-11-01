@@ -1,9 +1,7 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsForSendersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
@@ -12,7 +10,10 @@ import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,23 +66,7 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    fun getFilterTimeOptions(context: Context, selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
-        val options = context.resources.getStringArray(R.array.filter_options)
-        val list = mutableListOf<SelectedItemModel>()
-        options.mapIndexed { index, value ->
-            list.add(
-                SelectedItemModel(
-                id = index,
-                value = value,
-                description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
-                isSelected = if (selectedItem != null) selectedItem.id == index else index == 0
-            )
-            )
-        }
 
-        return list
-
-    }
 
     fun showStartDatePicker(){
         _uiState.update {

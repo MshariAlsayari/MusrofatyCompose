@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.excei.ExcelModel
 import com.msharialsayari.musrofaty.excei.ExcelUtils
-import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
@@ -178,23 +180,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-    fun getFilterTimeOptions(context: Context, selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
-        val options = context.resources.getStringArray(R.array.filter_options)
-        val list = mutableListOf<SelectedItemModel>()
-        options.mapIndexed { index, value ->
-            list.add(
-                SelectedItemModel(
-                id = index,
-                value = value,
-                description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && index == 5) DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate) else "",
-                isSelected = if (selectedItem != null) selectedItem.id == index else index == 0
-            )
-            )
-        }
 
-        return list
-
-    }
 
     fun getFilterOptions(selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()

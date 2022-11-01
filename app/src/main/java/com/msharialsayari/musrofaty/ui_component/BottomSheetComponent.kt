@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import com.msharialsayari.musrofaty.utils.notEmpty
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 object BottomSheetComponent {
 
@@ -139,6 +140,35 @@ object BottomSheetComponent {
         } else {
             sheetState.bottomSheetState.collapse()
         }
+
+    }
+
+
+    @Composable
+    fun TimeOptionsBottomSheet(selectedItem: SelectedItemModel? = null,  startDate:Long=0,endDate:Long=0, onFilterSelected:(SelectedItemModel)->Unit ){
+        val context  = LocalContext.current
+
+        val options = DateUtils.FilterOption.values()
+        val list = mutableListOf<SelectedItemModel>()
+        options.map { item ->
+            list.add(
+                SelectedItemModel(
+                    id = item.id,
+                    value = context.getString(item.title),
+                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(startDate,endDate) else context.getString(item.subtitle),
+                    isSelected = if (selectedItem != null) selectedItem.id == item.id else item.id == 0
+                )
+            )
+        }
+
+        SelectedItemListBottomSheetComponent(
+            title = R.string.common_filter_options,
+            list = list,
+            onSelectItem = {
+                onFilterSelected(it)
+            }
+        )
+
 
     }
 

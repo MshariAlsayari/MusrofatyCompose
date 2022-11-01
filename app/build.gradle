@@ -10,7 +10,7 @@ plugins {
 def versionMajor = 2
 def versionMinor = 0
 def versionPatch = 0
-def versionBuild = 0// bump for dogfood builds, public betas, etc.
+def versionBuild = 2// bump for dogfood builds, public betas, etc.
 
 
 def keystoreProperties = rootProject.file('../musrofatyCompose/keystore.properties')
@@ -45,11 +45,12 @@ android {
         buildFeatures {
             viewBinding true
         }
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
