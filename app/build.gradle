@@ -10,24 +10,13 @@ plugins {
 def versionMajor = 2
 def versionMinor = 0
 def versionPatch = 0
-def versionBuild = 2// bump for dogfood builds, public betas, etc.
+def versionBuild = 4// bump for dogfood builds, public betas, etc.
 
 
-def keystoreProperties = rootProject.file('../musrofatyCompose/keystore.properties')
+def keystoreProperties = rootProject.file('keystore.properties')
 def props = new Properties()
 android {
 
-    signingConfigs {
-
-        release {
-
-            props.load(new FileInputStream(keystoreProperties))
-            storeFile file(props['storeFile'])
-            storePassword props['storePassword']
-            keyAlias props['keyAlias']
-            keyPassword props['keyPassword']
-        }
-    }
     compileSdk 33
 
     defaultConfig {
@@ -45,18 +34,51 @@ android {
         buildFeatures {
             viewBinding true
         }
-        signingConfig signingConfigs.debug
+    }
+
+    signingConfigs {
+
+        release {
+
+            if (keystoreProperties.exists()) {
+                props.load(new FileInputStream(keystoreProperties))
+                storeFile file(props['storeFile'])
+                keyAlias props['keyAlias']
+                storePassword props['storePassword']
+                keyPassword props['keyPassword']
+
+            } else {
+                println 'keystore.properties not found'
+                android.buildTypes.release.signingConfig = null
+            }
+        }
+
+        debug {
+
+            if (keystoreProperties.exists()) {
+                props.load(new FileInputStream(keystoreProperties))
+                storeFile file(props['storeFile'])
+                keyAlias props['keyAlias']
+                storePassword props['storePassword']
+                keyPassword props['keyPassword']
+            } else {
+                println 'keystore.properties not found'
+                android.buildTypes.debug.signingConfig = null
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
             applicationIdSuffix ".d"
             versionNameSuffix "-debug"
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {

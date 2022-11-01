@@ -198,7 +198,7 @@ enum class AppTheme(val id:Int){
                 1-> Light
                 2-> Dark
                 0-> System
-                else -> throw Exception("The theme is not supported")
+                else -> System
             }
         }
     }
