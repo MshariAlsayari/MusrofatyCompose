@@ -8,6 +8,9 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.msharialsayari.musrofaty.R
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 
 
 fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
@@ -45,7 +48,9 @@ fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<
     dataSet.colors = colors
 
     val data = PieData(dataSet)
-    data.setValueFormatter(PercentFormatter())
+    val valueFormatter = PercentFormatter()
+    valueFormatter.mFormat = DecimalFormat("###,###,##0.0",DecimalFormatSymbols(Locale.ENGLISH))
+    data.setValueFormatter(valueFormatter)
     data.setValueTextSize(11f)
     data.setValueTextColor(this.context.getColor(R.color.white))
     this.data = data
@@ -85,24 +90,13 @@ fun PieChart.drawChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
     dataSet.sliceSpace = 1f
     dataSet.selectionShift = 5f
 
-//    val colors: ArrayList<Int> = ArrayList()
-
-//    for (c in ColorTemplate.VORDIPLOM_COLORS) colors.add(c)
-//
-//    for (c in ColorTemplate.JOYFUL_COLORS) colors.add(c)
-//
-//    for (c in ColorTemplate.COLORFUL_COLORS) colors.add(c)
-//
-//    for (c in ColorTemplate.LIBERTY_COLORS) colors.add(c)
-//
-//    for (c in ColorTemplate.PASTEL_COLORS) colors.add(c)
-//
-//    colors.add(ColorTemplate.getHoloBlue())
 
     dataSet.colors = colors
 
     val data = PieData(dataSet)
-    data.setValueFormatter(PercentFormatter())
+    val valueFormatter = PercentFormatter()
+    valueFormatter.mFormat = DecimalFormat("###,###,##0.0",DecimalFormatSymbols(Locale.ENGLISH))
+    data.setValueFormatter(valueFormatter)
     data.setValueTextSize(11f)
     data.setValueTextColor(Color.TRANSPARENT)
     this.data = data
