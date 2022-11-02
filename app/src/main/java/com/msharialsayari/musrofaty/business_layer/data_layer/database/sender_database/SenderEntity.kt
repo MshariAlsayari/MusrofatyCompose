@@ -14,7 +14,7 @@ data class SenderEntity(
     @ColumnInfo(name = "id")
     var id: Int = 0,
     @ColumnInfo(name = "senderName")
-    var senderName: String,
+    var senderName: String = "",
     @ColumnInfo(name = "displayNameAr")
     var displayNameAr: String = "",
     @ColumnInfo(name = "displayNameEn")

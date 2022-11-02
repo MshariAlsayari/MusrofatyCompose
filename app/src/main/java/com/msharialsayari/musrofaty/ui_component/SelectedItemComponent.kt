@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
@@ -36,7 +37,7 @@ fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedIt
         secondaryText = { TextComponent.PlaceholderText(text = model.description) },
         trailing = {
             if (model.isSelected) {
-                Icon(Icons.Default.CheckCircle, contentDescription = null)
+                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colors.secondary)
             }
 
         }

@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -41,6 +42,10 @@ class SenderSmsListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
+    init {
+        Log.i("Mshari", "init SenderSmsListViewModel ")
+    }
+
     fun getDate(){
         val senderId = _uiState.value.sender?.id!!
         getAllSms(senderId)
@@ -50,6 +55,12 @@ class SenderSmsListViewModel @Inject constructor(
         getAllSmsBySenderId(senderId)
     }
 
+
+    fun onTabSelected(tabIndex:Int){
+        _uiState.update {
+            it.copy(selectedTabIndex = tabIndex)
+        }
+    }
 
 
 
@@ -276,6 +287,7 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     data class SenderSmsListUiState(
+        var selectedTabIndex:Int = 0 ,
         var isLoading: Boolean = false,
         var navigateBack: Boolean = false,
         var isAllSmsPageLoading: Boolean = false,

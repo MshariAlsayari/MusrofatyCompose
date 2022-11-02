@@ -19,7 +19,7 @@ fun AllSmsTab(senderId:Int, onSmsClicked:(String)->Unit){
 
     when{
         uiState.isAllSmsPageLoading -> PageLoading()
-        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked )
+        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems(), onSmsClicked = onSmsClicked )
     }
 
 

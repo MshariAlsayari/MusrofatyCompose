@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FloatExponentialDecaySpec
@@ -54,6 +55,7 @@ import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 private val MinToolbarHeight = 40.dp
 private val MaxToolbarHeight = 85.dp
@@ -301,7 +303,7 @@ fun PageContainer(
                 }
 
             )
-            Tabs(uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
+            Tabs(viewModel = viewModel, senderId= uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
         }
 
     }
@@ -310,10 +312,14 @@ fun PageContainer(
 }
 
 @Composable
-fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
+fun Tabs(viewModel: SenderSmsListViewModel,senderId: Int, onSmsClicked: (String) -> Unit){
+    val uiState                           by viewModel.uiState.collectAsState()
+    val tabIndex = uiState.selectedTabIndex
+    val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_financial_statistics,R.string.tab_categories_statistics)
     Column {
-        var tabIndex by remember { mutableStateOf(0) }
-        val tabTitles = listOf(R.string.tab_all_sms, R.string.tab_favorite_sms,R.string.tab_financial_statistics,R.string.tab_categories_statistics)
+
+        Log.i("Mshari", "tabIndex ${tabIndex.absoluteValue} ")
+
         Column {
             ScrollableTabRow(
                 selectedTabIndex = tabIndex,
@@ -330,7 +336,7 @@ fun Tabs(senderId: Int, onSmsClicked: (String) -> Unit){
                     Tab(
                         modifier = Modifier.background(MaterialTheme.colors.background),
                         selected = tabIndex == index,
-                        onClick = { tabIndex = index },
+                        onClick = { viewModel.onTabSelected(index) },
                         text = {
                             TextComponent.ClickableText(text = stringResource(id = stringResId), color = if(tabIndex == index) MaterialTheme.colors.secondary else colorResource(id = R.color.light_gray) )
                         })
@@ -384,17 +390,17 @@ fun PageLoading(){
 
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+
 @Composable
 fun LazySenderSms(
-    list: LazyPagingItems<SmsEntity>,
+    list: LazyPagingItems<SmsEntity>?,
     viewModel: SenderSmsListViewModel,
     onSmsClicked:(String)->Unit
 ) {
     val context    = LocalContext.current
     val listState  = rememberLazyListState()
 
-    if (list.itemSnapshotList.isNotEmpty()) {
+    if (list?.itemSnapshotList?.isNotEmpty() == true) {
 
         LazyColumn(
             modifier = Modifier,

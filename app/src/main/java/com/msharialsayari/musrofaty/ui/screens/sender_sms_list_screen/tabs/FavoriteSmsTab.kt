@@ -18,7 +18,7 @@ fun FavoriteSmsTab( senderId:Int, onSmsClicked:(String)->Unit){
 
     when{
         uiState.isFavoriteSmsPageLoading -> PageLoading()
-        uiState.favoriteSmsFlow != null  -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked  )
+        uiState.favoriteSmsFlow != null  -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems(), onSmsClicked = onSmsClicked  )
     }
 
 }
