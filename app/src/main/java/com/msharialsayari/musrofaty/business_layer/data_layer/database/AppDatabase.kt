@@ -165,7 +165,7 @@ val MIGRATION_17_18= object : Migration(17,18) {
 val MIGRATION_18_19= object : Migration(18,19) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("DROP TABLE `SenderEntity`" )
-        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT DEFAULT('')  NOT NULL,`displayNameAr` TEXT DEFAULT('') NOT NULL  ,`displayNameEn` TEXT DEFAULT('') NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER DEFAULT(0) NOT NULL )")
+        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT   NOT NULL,`displayNameAr` TEXT  NOT NULL  ,`displayNameEn` TEXT  NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER  NOT NULL )")
 
 
     }

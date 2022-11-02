@@ -14,13 +14,13 @@ data class SenderEntity(
     @ColumnInfo(name = "id")
     var id: Int = 0,
     @ColumnInfo(name = "senderName")
-    var senderName: String = "",
+    var senderName: String ,
     @ColumnInfo(name = "displayNameAr")
-    var displayNameAr: String = "",
+    var displayNameAr: String ,
     @ColumnInfo(name = "displayNameEn")
-    var displayNameEn: String = "",
+    var displayNameEn: String,
     @ColumnInfo(name = "contentId")
-    var contentId: Int = 0,
+    var contentId: Int ,
     @ColumnInfo(name = "isPined")
     var isPined: Boolean = false,
     @ColumnInfo(name = "isActive")
