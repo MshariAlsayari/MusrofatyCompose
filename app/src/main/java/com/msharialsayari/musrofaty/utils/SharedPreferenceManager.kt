@@ -53,7 +53,7 @@ object SharedPreferenceManager {
 
 
     fun getLanguage(context: Context): Locale {
-        val defaultLocale = Locale("ar")
+        val defaultLocale = Locale(Constants.arabic_ar)
         val language = PreferenceManager.getDefaultSharedPreferences(context)
                                         .getString(PREF_LANGUAGE, Gson().toJson(defaultLocale))
         return Gson().fromJson(language, Locale::class.java)

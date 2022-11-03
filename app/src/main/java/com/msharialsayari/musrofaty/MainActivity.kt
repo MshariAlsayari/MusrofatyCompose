@@ -8,7 +8,10 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -20,15 +23,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.msharialsayari.musrofaty.jobs.InitAppJob
-
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
-import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
+import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
-
 import java.util.*
 
 
@@ -40,9 +41,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            uiState.currentLocale?.let { SetLanguage(activity = this, locale = it) }
+            SetLanguage(activity = this, locale =  uiState.currentLocale)
             SetStatusAndNavigationBarColor(this, uiState.currentTheme)
-            MusrofatyComposeTheme(appTheme = uiState.currentTheme) {
+            MusrofatyComposeTheme(appTheme = uiState.currentTheme, appLocale = uiState.currentLocale) {
                 MainScreenView(
                     this,
                     onLanguageChanged = {
@@ -126,20 +127,11 @@ fun MainScreenView(
     val context = LocalContext.current
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val navController = rememberNavController()
-    val bottomNavigationItems = if (!SharedPreferenceManager.isArabic(context)) {
-        listOf(
-            BottomNavItem.Dashboard,
-            BottomNavItem.SendersList,
-            BottomNavItem.Setting
-        )
-
-    }else{
-        listOf(
-            BottomNavItem.Setting,
-            BottomNavItem.SendersList,
-            BottomNavItem.Dashboard,
-        )
-    }
+    val bottomNavigationItems =     listOf(
+        BottomNavItem.Dashboard,
+        BottomNavItem.SendersList,
+        BottomNavItem.Setting
+    )
 
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

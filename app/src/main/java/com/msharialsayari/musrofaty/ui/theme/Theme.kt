@@ -5,7 +5,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.Constants
+import java.util.*
 
 private val DarkColorPalette = darkColors(
     primary = PrimaryColor,
@@ -32,6 +37,7 @@ private val LightColorPalette = lightColors(
 @Composable
 fun MusrofatyComposeTheme(
     appTheme: AppTheme = AppTheme.System,
+    appLocale:Locale,
     content: @Composable () -> Unit
 ) {
     val colors = if (isLightTheme(appTheme)){
@@ -39,15 +45,16 @@ fun MusrofatyComposeTheme(
     }else
         DarkColorPalette
 
+    val direction = if (appLocale.language.lowercase() == Constants.arabic_ar.lowercase()) LayoutDirection.Rtl else LayoutDirection.Ltr
 
-
-
+    CompositionLocalProvider(LocalLayoutDirection provides direction) {
         MaterialTheme(
             colors = colors,
             typography = Typography,
             shapes = Shapes,
             content = content
         )
+    }
 }
 
 

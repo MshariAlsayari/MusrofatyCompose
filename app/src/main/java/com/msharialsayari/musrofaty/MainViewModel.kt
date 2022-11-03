@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
 
 
     data class MainUiState(
-        var currentLocale:Locale?=null,
+        var currentLocale:Locale=Locale("ar"),
         var currentTheme: AppTheme = AppTheme.System
     )
 }
