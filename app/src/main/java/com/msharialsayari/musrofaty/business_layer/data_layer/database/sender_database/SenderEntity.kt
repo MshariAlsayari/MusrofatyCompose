@@ -21,9 +21,9 @@ data class SenderEntity(
     var displayNameEn: String,
     @ColumnInfo(name = "contentId")
     var contentId: Int ,
-    @ColumnInfo(name = "isPined")
+    @ColumnInfo(name = "isPined" , defaultValue = "0")
     var isPined: Boolean = false,
-    @ColumnInfo(name = "isActive")
+    @ColumnInfo(name = "isActive" , defaultValue = "1")
     var isActive: Boolean = true,
 ) : Parcelable
 
