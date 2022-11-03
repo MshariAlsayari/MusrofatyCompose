@@ -2,37 +2,16 @@ package com.msharialsayari.musrofaty.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.Constants
 import java.util.*
 
-private val DarkColorPalette = darkColors(
-    primary = PrimaryColor,
-    primaryVariant = PrimaryDarkColor,
-    secondary = SecondaryColor,
-    secondaryVariant = SecondaryColor,
-    background = BlackOnyx,
-    surface = BlackOnyx,
-    onPrimary = White,
-    onSecondary = White,
-)
-
-private val LightColorPalette = lightColors(
-    primary = PrimaryDarkColor,
-    primaryVariant = PrimaryDarkColor,
-    secondary = PrimaryDarkColor,
-    secondaryVariant = SecondaryColor,
-    background = White,
-    surface = White,
-    onPrimary = White,
-    onSecondary = White
-)
 
 @Composable
 fun MusrofatyComposeTheme(
@@ -41,20 +20,51 @@ fun MusrofatyComposeTheme(
     content: @Composable () -> Unit
 ) {
     val colors = if (isLightTheme(appTheme)){
-        LightColorPalette
+        LightColors
     }else
-        DarkColorPalette
+        DarkColors
 
     val direction = if (appLocale.language.lowercase() == Constants.arabic_ar.lowercase()) LayoutDirection.Rtl else LayoutDirection.Ltr
 
-    CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        MaterialTheme(
-            colors = colors,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
-        )
+    ProvideMusrofatyTheme(colors) {
+        CompositionLocalProvider(LocalLayoutDirection provides direction) {
+            MaterialTheme(
+                colors = mapBasicColors(colors= colors, darkTheme = !colors.isLight),
+                typography = Typography,
+                shapes = Shapes,
+                content = content
+            )
+        }
     }
+}
+
+
+@Composable
+fun ProvideMusrofatyTheme(
+    colors: MusrofatyColors,
+    content: @Composable () -> Unit
+) {
+    val rememberedColors = remember {
+        colors.copy()
+    }.apply { updateColorsFrom(colors) }
+
+
+    CompositionLocalProvider(
+        LocalCustomColors provides rememberedColors,
+        content = content
+    )
+}
+
+object YamamahTheme {
+    val colors: MusrofatyColors
+        @Composable
+        get() = LocalCustomColors.current
+
+
+}
+
+private val LocalCustomColors = staticCompositionLocalOf {
+    MusrofatyColors()
 }
 
 
