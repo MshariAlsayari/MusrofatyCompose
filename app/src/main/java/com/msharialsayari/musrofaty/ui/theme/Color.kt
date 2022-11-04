@@ -7,9 +7,13 @@ import androidx.compose.ui.graphics.Color
 
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
+val Red = Color(0xFFCC0311)
 val BlackOnyx = Color(0xFF1D252D)
+val Air = Color(0xFFf3f3f1)
+val LightGray = Color(0xFF979797)
 val LightBlackOnyx = Color(0xFF333A42)
-val deleteAction = Color(0xFF333A42)
+
+
 
 
 
@@ -20,7 +24,7 @@ private val secondary        = primary
 private val secondaryVariant = primary
 private val background       = White
 private val surface          = background
-private val error            = Color.Red
+private val error            = Red
 private val onPrimary        = White
 private val onSecondary      = White
 private val onBackground     = Black
@@ -57,6 +61,9 @@ val LightColors = MusrofatyColors(
     onBackground = onBackground,
     onSurface = onSurface,
     onError = onError,
+    toolbarColor = primary ,
+    onBackgroundIconColor = LightGray,
+    activeColor = primary,
     isLight = true
 )
 
@@ -73,6 +80,9 @@ val DarkColors = MusrofatyColors(
     onBackground = onBackgroundDark,
     onSurface = onSurfaceDark,
     onError = onErrorDark,
+    toolbarColor = LightBlackOnyx,
+    onBackgroundIconColor = White ,
+    activeColor = secondaryDark,
     isLight = false
 )
 
@@ -92,6 +102,9 @@ class MusrofatyColors(
     onBackground: Color = Color.Unspecified,
     onSurface: Color = Color.Unspecified,
     onError: Color = Color.Unspecified,
+    toolbarColor: Color = Color.Unspecified,
+    onBackgroundIconColor: Color = Color.Unspecified,
+    activeColor: Color = Color.Unspecified,
     isLight: Boolean = true
 ) {
     var primary by mutableStateOf(primary, structuralEqualityPolicy())
@@ -118,8 +131,17 @@ class MusrofatyColors(
         internal set
     var onError by mutableStateOf(onError, structuralEqualityPolicy())
         internal set
-    var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
 
+
+    var toolbarColor by mutableStateOf(toolbarColor, structuralEqualityPolicy())
+        internal set
+    var onBackgroundIconColor by mutableStateOf(onBackgroundIconColor, structuralEqualityPolicy())
+        internal set
+    var activeColor by mutableStateOf(activeColor, structuralEqualityPolicy())
+        internal set
+
+
+    var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
         internal set
 
     fun updateColorsFrom(other: MusrofatyColors) {
@@ -135,6 +157,9 @@ class MusrofatyColors(
         onBackground = other.onBackground
         onSurface = other.onSurface
         onError = other.onError
+        toolbarColor = other.toolbarColor
+        onBackgroundIconColor = other.onBackgroundIconColor
+        activeColor = other.activeColor
         isLight = other.isLight
 
     }
@@ -152,6 +177,9 @@ class MusrofatyColors(
         onBackground: Color = this.onBackground,
         onSurface: Color = this.onSurface,
         onError: Color = this.onError,
+        toolbarColor: Color = this.toolbarColor,
+        onBackgroundIconColor: Color = this.onBackgroundIconColor,
+        activeColor : Color = this.activeColor,
         isLight: Boolean = this.isLight,
 
     ): MusrofatyColors = MusrofatyColors(
@@ -167,6 +195,9 @@ class MusrofatyColors(
         onBackground,
         onSurface,
         onError,
+        toolbarColor,
+        onBackgroundIconColor,
+        activeColor,
         isLight
     )
 }
