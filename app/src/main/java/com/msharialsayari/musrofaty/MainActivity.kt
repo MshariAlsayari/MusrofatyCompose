@@ -23,6 +23,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.msharialsayari.musrofaty.jobs.InitAppJob
+import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
@@ -37,7 +38,6 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppJob(this)
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
@@ -71,6 +71,15 @@ private fun initAppJob(context: Context){
         workManager.enqueue(initAppJob)
         SharedPreferenceManager.setFirstLunch(context)
     }
+}
+
+private fun insertSmsJob(context: Context){
+    val workManager = WorkManager.getInstance(context)
+    val initAppJob: WorkRequest =
+        OneTimeWorkRequestBuilder<InsertSmsJob>()
+            .build()
+    workManager.enqueue(initAppJob)
+
 }
 
 @Composable
