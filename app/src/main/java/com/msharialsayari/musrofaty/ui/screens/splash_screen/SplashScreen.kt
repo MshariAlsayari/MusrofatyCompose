@@ -1,12 +1,14 @@
 package com.msharialsayari.musrofaty.ui.screens.splash_screen
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,26 +62,16 @@ fun PageCompose(onLoadingDone:()->Unit){
     val imageRes = if (light)  R.drawable.ic_water_marker_light_mode else R.drawable.ic_water_marker_dark_mode
     val insertSmsRequest = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
     val workManager = WorkManager.getInstance(context)
-    val workInfo = workManager.getWorkInfosForUniqueWorkLiveData("Insert")
-        .observeAsState()
-        .value
+    val workInfo = workManager.getWorkInfoByIdLiveData(insertSmsRequest.id).observeAsState()
 
-    val insertInfo = remember(key1 = workInfo) {
-        workInfo?.find { it.id == insertSmsRequest.id }
-    }
-
-
-
-    when(insertInfo?.state){
+    when(workInfo.value?.state){
         WorkInfo.State.SUCCEEDED -> {
             LaunchedEffect(Unit) {
                 onLoadingDone()
             }
 
         }
-        else->{
-            Log.i("Inserting status" , insertInfo?.state?.name ?: "null")
-        }
+        else->{}
 
     }
 

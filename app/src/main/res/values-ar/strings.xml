@@ -128,6 +128,7 @@
     <!--Senders Management-->
     <string name="tab_active_senders">المفعلين</string>
     <string name="tab_unactive_senders">الفير مفعلين</string>
+    <string name="add_sender_description">اذهب إلى تطبيق الرسائل لمعرفة اسم المرسل المختصر مثال "AlRajhiBank"</string>
 
 
     <!--Sms Analysis-->

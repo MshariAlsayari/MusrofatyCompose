@@ -123,16 +123,6 @@ class SenderRepo @Inject constructor(
 
 
 
-    suspend fun getAllSendersWithSms(): List<SenderWithRelationsModel>{
-        val sendersWithSms = mutableListOf<SenderWithRelationsModel>()
-          dao.getAllSendersWithSms().forEach {
-              val model = SenderWithRelationsModel(sender =  fillSenderModel( it.sender.toSenderModel()), sms = it.sms.map { it.toSmsModel() }.toList())
-              sendersWithSms.add(model)
-
-        }
-
-        return sendersWithSms
-    }
 
     private suspend fun fillSenderModel(senderModel: SenderModel): SenderModel {
         senderModel.content = contentRepo.getContentById(senderModel.contentId)

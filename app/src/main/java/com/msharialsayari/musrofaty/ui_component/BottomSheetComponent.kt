@@ -30,13 +30,19 @@ object BottomSheetComponent {
         Column(modifier = modifier) {
             TextComponent.HeaderText(
                 text = stringResource(id = model.title),
-                modifier = modifier.padding(dimensionResource(id = R.dimen.default_margin16))
+                modifier = modifier.padding(start =dimensionResource(id = R.dimen.default_margin16), end =dimensionResource(id = R.dimen.default_margin16) , top =dimensionResource(id = R.dimen.default_margin16) )
             )
-            DividerComponent.HorizontalDividerComponent()
+            model.description?.let {description->
+                TextComponent.PlaceholderText(
+                    text = stringResource(id = description),
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
+                )
+            }
+            DividerComponent.HorizontalDividerComponent(Modifier.padding(vertical = dimensionResource(id = R.dimen.default_margin16)),)
             TextFieldComponent.BoarderTextFieldComponent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.default_margin16)),
+                    .padding(start =dimensionResource(id = R.dimen.default_margin16), end =dimensionResource(id = R.dimen.default_margin16) , bottom =dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
                 errorMsg = error.value,
                 onValueChanged = {
@@ -177,6 +183,7 @@ object BottomSheetComponent {
 
 data class TextFieldBottomSheetModel(
     @StringRes var title:Int,
+    @StringRes var description:Int?=null,
     var textFieldValue:String="",
     @StringRes var buttonText:Int,
     var onActionButtonClicked:(String)->Unit,

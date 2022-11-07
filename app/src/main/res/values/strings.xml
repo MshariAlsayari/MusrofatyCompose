@@ -123,6 +123,8 @@
     <!--Senders Management-->
     <string name="tab_active_senders">Active</string>
     <string name="tab_unactive_senders">unActive</string>
+    <string name="add_sender_description">go to the SMS app to get The sender shortcut ex:"AlRajhiBank\"</string>
+
 
     <!--Sms Analysis-->
     <string name="sms_analysis_bottom_sheet_title">Adding a word</string>
