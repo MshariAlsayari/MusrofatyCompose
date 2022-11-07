@@ -8,7 +8,10 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetActiveSendersUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetUnActiveSendersUseCase
 import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,7 +28,6 @@ class SendersManagementViewModel @Inject constructor(
     private val getUnActiveSendersUseCase: GetUnActiveSendersUseCase,
     private val activeSendersUseCase: ActiveSenderUseCase,
     private val addSenderUseCase: AddSenderUseCase,
-    private val loadSmsUseCase: LoadSmsUseCase,
     @ApplicationContext val context: Context
 ):ViewModel() {
 
@@ -92,20 +94,6 @@ class SendersManagementViewModel @Inject constructor(
         val insertSmsRequest = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
         val workManager = WorkManager.getInstance(context)
         workManager.beginUniqueWork("Insert", ExistingWorkPolicy.KEEP, insertSmsRequest).enqueue()
-        }
-    }
-
-    fun loadSms(){
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
-            loadSmsUseCase.invoke()
-
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
         }
     }
 
