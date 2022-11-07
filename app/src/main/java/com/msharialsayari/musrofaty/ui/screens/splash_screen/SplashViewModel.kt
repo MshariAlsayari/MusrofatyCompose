@@ -51,10 +51,6 @@ init {
                 initSenders()
                 initFilters()
                 initCategories()
-//                Handler().postDelayed({
-//                    insertSms()
-//                }, 2000)
-
                 SharedPreferenceManager.setFirstLunch(context)
             }
 
