@@ -35,7 +35,8 @@ class SenderSmsListViewModel @Inject constructor(
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
-    private val getAllSmsUseCase: GetSmsListUseCase
+    private val getAllSmsUseCase: GetSmsListUseCase,
+    private val loadSmsUseCase: LoadSmsUseCase
 
 ) : ViewModel() {
 
@@ -53,6 +54,14 @@ class SenderSmsListViewModel @Inject constructor(
         getFinancialStatistics(senderId)
         getCategoriesStatistics(senderId)
         getAllSmsBySenderId(senderId)
+    }
+
+    fun refreshSms(){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+             loadSmsUseCase.invoke()
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
     }
 
 

@@ -9,19 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.ui.permission.PermissionStatus
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.theme.isLightTheme
@@ -60,20 +54,6 @@ fun PageCompose(onLoadingDone:()->Unit){
     val uiState by viewModel.uiState.collectAsState()
     val light = isLightTheme(appTheme = AppTheme.getThemById(SharedPreferenceManager.getTheme(context)))
     val imageRes = if (light)  R.drawable.ic_water_marker_light_mode else R.drawable.ic_water_marker_dark_mode
-    val insertSmsRequest = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
-    val workManager = WorkManager.getInstance(context)
-    val workInfo = workManager.getWorkInfoByIdLiveData(insertSmsRequest.id).observeAsState()
-
-    when(workInfo.value?.state){
-        WorkInfo.State.SUCCEEDED -> {
-            LaunchedEffect(Unit) {
-                onLoadingDone()
-            }
-
-        }
-        else->{}
-
-    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -88,7 +68,6 @@ fun PageCompose(onLoadingDone:()->Unit){
         }
 
         if (!uiState.isLoading) {
-            workManager.beginUniqueWork("Insert",ExistingWorkPolicy.KEEP, insertSmsRequest).enqueue()
             LaunchedEffect(Unit) {
                 onLoadingDone()
             }

@@ -51,7 +51,10 @@ init {
                 initSenders()
                 initFilters()
                 initCategories()
+                insertSms()
                 SharedPreferenceManager.setFirstLunch(context)
+            }else{
+                insertSms()
             }
 
 

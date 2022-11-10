@@ -12,6 +12,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSe
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetActiveSendersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetUnActiveSendersUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSmsUseCase
 import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -91,9 +93,6 @@ class SendersManagementViewModel @Inject constructor(
         viewModelScope.launch {
         val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
         addSenderUseCase.invoke(model)
-        val insertSmsRequest = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
-        val workManager = WorkManager.getInstance(context)
-        workManager.beginUniqueWork("Insert", ExistingWorkPolicy.KEEP, insertSmsRequest).enqueue()
         }
     }
 

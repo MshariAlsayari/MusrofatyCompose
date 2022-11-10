@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
@@ -34,12 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
+import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.FinancialCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
@@ -268,43 +273,51 @@ fun PageContainer(
 
         }){
 
-        Column(modifier = Modifier
-            .nestedScroll(nestedScrollConnection)
-            .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(uiState.isRefreshing),
+            onRefresh = { viewModel.refreshSms() },
         ) {
-            CollapsedToolbar(
-                toolbarState                   = toolbarState,
-                viewModel                      = viewModel,
-                onDetailsClicked               = onDetailsClicked,
-                onBack                         = onBack,
-                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity,
-                onExcelIconClicked = {
-                  viewModel.generateExcelFile(context, onExcelIconClicked)
-                },
-                onCreateFilterClicked    = { uiState.sender?.let {
-                    onNavigateToFilterScreen(it.id, null)
-                } },
-                onFilterIconClicked = {
-                    coroutineScope.launch {
-                        isFilterTimeOptionBottomSheet.value = false
-                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+
+            Column(modifier = Modifier
+                .nestedScroll(nestedScrollConnection)
+                .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                CollapsedToolbar(
+                    toolbarState                   = toolbarState,
+                    viewModel                      = viewModel,
+                    onDetailsClicked               = onDetailsClicked,
+                    onBack                         = onBack,
+                    onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity,
+                    onExcelIconClicked = {
+                        viewModel.generateExcelFile(context, onExcelIconClicked)
+                    },
+                    onCreateFilterClicked    = { uiState.sender?.let {
+                        onNavigateToFilterScreen(it.id, null)
+                    } },
+                    onFilterIconClicked = {
+                        coroutineScope.launch {
+                            isFilterTimeOptionBottomSheet.value = false
+                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                        }
+
+                    },
+                    onFilterTimeIconClicked = {
+                        coroutineScope.launch {
+                            isFilterTimeOptionBottomSheet.value = true
+                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                        }
+
+
                     }
 
-                },
-                onFilterTimeIconClicked = {
-                    coroutineScope.launch {
-                        isFilterTimeOptionBottomSheet.value = true
-                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-                    }
-
-
-                }
-
-            )
-            Tabs(viewModel = viewModel, senderId= uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
+                )
+                Tabs(viewModel = viewModel, senderId= uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
+            }
         }
+
+
 
     }
 
@@ -452,8 +465,14 @@ fun LazySenderSms(
 
 @Composable
 fun EmptySmsCompose(){
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        EmptyComponent.EmptyTextComponent()
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
     }
 }
 
