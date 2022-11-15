@@ -197,4 +197,19 @@ class SmsRepo @Inject constructor(
     }
 
 
+    suspend fun insert(senderName:String) {
+        val smsList = datasource.loadBanksSms(context,senderName)
+        val smsEntityList = mutableListOf<SmsEntity>()
+        smsList.map {
+            smsEntityList.add(it.toSmsEntity())
+            if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
+                val model = StoreModel(storeName = it.storeName)
+                storeRepo.insertStore(model)
+            }
+
+        }
+        dao.insertAll(*smsEntityList.toTypedArray())
+    }
+
+
 }

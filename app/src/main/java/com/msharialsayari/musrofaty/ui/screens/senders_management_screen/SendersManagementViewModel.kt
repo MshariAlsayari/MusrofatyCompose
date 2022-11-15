@@ -3,17 +3,12 @@ package com.msharialsayari.musrofaty.ui.screens.senders_management_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetActiveSendersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetUnActiveSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSmsUseCase
-import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel

@@ -8,7 +8,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PinSenderUseCase
 import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,11 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SendersListViewModel @Inject constructor(
-    private val getSendersUseCase: GetSendersUseCase,
     private val getFlowSendersUserCase: GetFlowSendersUserCase,
     private val activeSenderUseCase: ActiveSenderUseCase,
     private val pinSenderUseCase: PinSenderUseCase,
-    private val loadSmsUseCase: LoadSmsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersUiState())
@@ -47,11 +45,7 @@ class SendersListViewModel @Inject constructor(
         }
     }
 
-    fun loadSms(){
-        viewModelScope.launch {
-          loadSmsUseCase.invoke()
-        }
-    }
+
 
 
     fun disableSender(senderId:Int){

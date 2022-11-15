@@ -36,16 +36,14 @@ class SenderSmsListViewModel @Inject constructor(
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
     private val getAllSmsUseCase: GetSmsListUseCase,
-    private val loadSmsUseCase: LoadSmsUseCase
+    private val loadSenderSmsUseCase: LoadSenderSmsUseCase
 
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
-    init {
-        Log.i("Mshari", "init SenderSmsListViewModel ")
-    }
+
 
     fun getDate(){
         val senderId = _uiState.value.sender?.id!!
@@ -59,7 +57,8 @@ class SenderSmsListViewModel @Inject constructor(
     fun refreshSms(){
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
-             loadSmsUseCase.invoke()
+            val senderName = _uiState.value.sender?.senderName
+            senderName?.let { loadSenderSmsUseCase.invoke(it) }
             _uiState.update { it.copy(isRefreshing = false) }
         }
     }

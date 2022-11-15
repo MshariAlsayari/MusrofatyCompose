@@ -111,7 +111,6 @@ fun PageCompose(
         emptyView = { EmptyCompose()},
         onRefresh = {
             viewModel.getAllSenders()
-            viewModel.loadSms()
         }
     )
 
