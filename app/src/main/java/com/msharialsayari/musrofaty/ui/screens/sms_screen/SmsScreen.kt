@@ -132,6 +132,10 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                             Utils.copyToClipboard(model.body,context)
                             Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
                         }
+
+                        SmsActionType.ShARE -> {
+                            Utils.shareText(model.body, context)
+                        }
                     }
                 })
 

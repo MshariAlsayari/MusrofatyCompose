@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -44,7 +45,6 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
-import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.FinancialCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
@@ -61,6 +61,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+
 
 private val MinToolbarHeight = 40.dp
 private val MaxToolbarHeight = 85.dp
@@ -420,7 +421,7 @@ fun LazySenderSms(
             state = listState,
         ) {
 
-            itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item, ->
+            itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item ->
 
                 if (item != null) {
 
@@ -438,6 +439,10 @@ fun LazySenderSms(
                                 SmsActionType.COPY -> {
                                     Utils.copyToClipboard(item.body,context)
                                     Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                                }
+
+                                SmsActionType.ShARE -> {
+                                    Utils.shareText(item.body, context )
                                 }
                             }
                         })
@@ -584,7 +589,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel,onDetailsClicked:
 }
 
 @Composable
-fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: ()->Unit,){
+fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: () -> Unit){
 
     val uiState  by viewModel.uiState.collectAsState()
     val filters = uiState.filters

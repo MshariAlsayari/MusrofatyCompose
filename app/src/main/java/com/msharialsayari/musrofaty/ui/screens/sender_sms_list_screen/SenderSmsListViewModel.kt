@@ -36,7 +36,8 @@ class SenderSmsListViewModel @Inject constructor(
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
     private val getAllSmsUseCase: GetSmsListUseCase,
-    private val loadSenderSmsUseCase: LoadSenderSmsUseCase
+    private val loadSenderSmsUseCase: LoadSenderSmsUseCase,
+    private val shareTextUseCase: ShareTextUseCase
 
 ) : ViewModel() {
 
