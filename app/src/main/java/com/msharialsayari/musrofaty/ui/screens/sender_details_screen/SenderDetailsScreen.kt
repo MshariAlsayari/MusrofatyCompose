@@ -55,7 +55,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
-    val bottomSheetType = remember { mutableStateOf<SenderDetailsBottomSheet?>(null) }
+    val bottomSheetType = remember { mutableStateOf(SenderDetailsBottomSheet.DISPLAY_NAME_AR) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val openDialog = remember { mutableStateOf(false) }
     viewModel.getSenderModel(senderId)
@@ -96,67 +96,48 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
         modifier = modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
-            var model: TextFieldBottomSheetModel? =null
 
             when (bottomSheetType.value) {
 
-                SenderDetailsBottomSheet.DISPLAY_NAME_AR ->
-                    model = TextFieldBottomSheetModel(
-                        title = R.string.sender_display_name_en,
-                        textFieldValue = uiState.sender?.displayNameAr ?: "",
-                        buttonText = R.string.common_save,
-                        onActionButtonClicked = { value ->
-                            viewModel.changeDisplayName(value, true)
-                            coroutineScope.launch {
-                                handleVisibilityOfBottomSheet(sheetState, false)
-
-                            }
-                        },
-
-                        )
-
-                SenderDetailsBottomSheet.DISPLAY_NAME_EN -> model = TextFieldBottomSheetModel(
-                    title = R.string.sender_display_name_en,
-                    textFieldValue = uiState.sender?.displayNameEn ?: "",
-                    buttonText = R.string.common_save,
-                    onActionButtonClicked = { value ->
-                        viewModel.changeDisplayName(value, false)
+                SenderDetailsBottomSheet.DISPLAY_NAME_AR ->{
+                    ArabicNameBottomSheetCompose(textFieldValue = uiState.sender?.displayNameAr, onActionClicked = {
+                        viewModel.changeDisplayName(it, true)
                         coroutineScope.launch {
                             handleVisibilityOfBottomSheet(sheetState, false)
 
                         }
-                    },
+                    })
+                }
 
-                    )
 
-                SenderDetailsBottomSheet.CONTENT -> {}
-                else -> {}
-            }
+                SenderDetailsBottomSheet.DISPLAY_NAME_EN ->{
+                    EnglishNameBottomSheetCompose(textFieldValue = uiState.sender?.displayNameEn, onActionClicked = {
+                        viewModel.changeDisplayName(it, false)
+                        coroutineScope.launch {
+                            handleVisibilityOfBottomSheet(sheetState, false)
 
-            if (model!= null) {
-                BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
-            }else{
-                BottomSheetComponent.SelectedItemListBottomSheetComponent(
-                    title = R.string.sender_category,
-                    list = uiState.wrapContentModel(context),
-                    description= R.string.common_long_click_to_modify,
-                    trailIcon = {
-                        Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
-                            openDialog.value = true
-                        })
-                    },
-                    onLongPress = {
-                        onNavigateToContent(it.id)
+                        }
+                    })
+                }
 
-                    },
-                    onSelectItem = {
+
+
+                SenderDetailsBottomSheet.CONTENT -> {
+                    SenderCategoryBottomSheetCompose(
+                    categories = uiState.wrapContentModel(context),
+                    onAddCategoryClicked = { openDialog.value = true },
+                    onCategorySelected = {
                         viewModel.updateSenderCategory(it)
                         coroutineScope.launch {
                             handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                         }
-                    }
-                )
+                    },
+                    onCategoryLongClicked = {
+                        onNavigateToContent(it.id)
+                    })
+                }
             }
+
         },
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -164,73 +145,37 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
 
             Column(modifier = Modifier.fillMaxSize()) {
 
-                ListItem(
-                    text = { Text(text = stringResource(id = R.string.sender_display_name_ar)) },
-                    trailing = {
-                        TextComponent.ClickableText(
-                            text = uiState.sender?.displayNameAr ?: "",
-                            modifier = Modifier.clickable {
-                                bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_AR
-                                coroutineScope.launch {
-                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-                                }
-                            })
+                ClickableTextListItemCompose(title = stringResource(id = R.string.sender_display_name_ar) ,value =  uiState.sender?.displayNameAr, onClick = {
+                    bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_AR
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                     }
-                )
+                })
 
-                ListItem(
-                    text = { Text(text = stringResource(id = R.string.sender_display_name_en)) },
-                    trailing = {
-                        TextComponent.ClickableText(
-                            text = uiState.sender?.displayNameEn ?: "",
-                            modifier = Modifier.clickable {
-                                bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_EN
-                                coroutineScope.launch {
-                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-                                }
-                            })
+                ClickableTextListItemCompose(title = stringResource(id = R.string.sender_display_name_en) ,value =  uiState.sender?.displayNameEn, onClick = {
+                    bottomSheetType.value = SenderDetailsBottomSheet.DISPLAY_NAME_EN
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                     }
-                )
+                })
 
-                ListItem(
-                    text = { Text(text = stringResource(id = R.string.store_category)) },
-                    trailing = {
-                        TextComponent.ClickableText(
-                            text = if (ContentModel.getDisplayName(
-                                    context = context,
-                                    uiState.sender?.content
-                                ).isNotEmpty()) ContentModel.getDisplayName(
-                                context = context,
-                                uiState.sender?.content
-                            ) else context.getString(androidx.compose.ui.R.string.not_selected) ,
-                            modifier = Modifier.clickable {
-                                bottomSheetType.value = SenderDetailsBottomSheet.CONTENT
-                                coroutineScope.launch {
-                                    handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-                                }
-                            })
+                ClickableTextListItemCompose(title = stringResource(id = R.string.sender_category) ,value =  viewModel.getSenderContentDisplayName(context = context), onClick = {
+                    bottomSheetType.value = SenderDetailsBottomSheet.CONTENT
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                     }
-                )
-
-                ListItem(
-                    text = { Text(text = stringResource(id = R.string.sender_pin)) },
-                    trailing = {
-                        SwitchComponent(checked = uiState.isPin, onChecked = { check ->
-                            viewModel.pinSender(check)
-                        })
-                    }
-                )
+                })
 
 
-                ListItem(
-                    text = { Text(text = stringResource(id = R.string.sender_active)) },
-                    trailing = {
-                        SwitchComponent(checked = uiState.isActive, onChecked = { check ->
-                            viewModel.activeSender(check)
+                SwitchListItemCompose(title = stringResource(id = R.string.sender_pin), isChecked = uiState.isPin, onCheck = {
+                    viewModel.pinSender(it)
+                })
 
-                        })
-                    }
-                )
+
+                SwitchListItemCompose(title = stringResource(id = R.string.sender_active), isChecked = uiState.isActive, onCheck = {
+                    viewModel.activeSender(it)
+                })
+
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -269,6 +214,40 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ClickableTextListItemCompose(title:String?, value:String?, onClick:()->Unit){
+
+    ListItem(
+        text = { TextComponent.BodyText(text = title?:"") },
+        trailing = {
+            TextComponent.ClickableText(
+                text = value?:"",
+                modifier = Modifier.clickable {
+                    onClick()
+                })
+        }
+    )
+
+}
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SwitchListItemCompose(title:String?, isChecked:Boolean, onCheck:(Boolean)->Unit){
+
+    ListItem(
+        text = { TextComponent.BodyText(text = title?:"") },
+        trailing = {
+            SwitchComponent(checked = isChecked, onChecked = { check ->
+                onCheck(check)
+
+            })
+        }
+    )
+
+}
+
 @Composable
 fun AddContentDialog(viewModel: SendersDetailsViewModel, onDismiss:()->Unit){
 
@@ -291,6 +270,63 @@ fun AddContentDialog(viewModel: SendersDetailsViewModel, onDismiss:()->Unit){
         )
 
     }
+
+}
+
+@Composable
+fun ArabicNameBottomSheetCompose(textFieldValue:String?,onActionClicked:(String)->Unit){
+    val model = TextFieldBottomSheetModel(
+        title = R.string.sender_display_name_ar,
+        textFieldValue = textFieldValue ?: "",
+        buttonText = R.string.common_save,
+        onActionButtonClicked = { value ->
+            onActionClicked(value)
+        })
+
+    BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
+
+}
+
+@Composable
+fun EnglishNameBottomSheetCompose(textFieldValue:String?,onActionClicked:(String)->Unit){
+    val model = TextFieldBottomSheetModel(
+        title = R.string.sender_display_name_en,
+        textFieldValue = textFieldValue ?: "",
+        buttonText = R.string.common_save,
+        onActionButtonClicked = { value ->
+            onActionClicked(value)
+        })
+
+    BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
+
+}
+
+
+@Composable
+fun SenderCategoryBottomSheetCompose(categories:List<SelectedItemModel>,
+                                     onAddCategoryClicked:()->Unit,
+                                     onCategorySelected:(SelectedItemModel)->Unit,
+                                     onCategoryLongClicked:(SelectedItemModel)->Unit){
+
+
+
+
+    BottomSheetComponent.SelectedItemListBottomSheetComponent(
+        title = R.string.sender_category,
+        list = categories,
+        description= R.string.common_long_click_to_modify,
+        trailIcon = {
+            Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
+                onAddCategoryClicked()
+            })
+        },
+        onLongPress = {
+            onCategoryLongClicked(it)
+        },
+        onSelectItem = {
+            onCategorySelected(it)
+        }
+    )
 
 }
 

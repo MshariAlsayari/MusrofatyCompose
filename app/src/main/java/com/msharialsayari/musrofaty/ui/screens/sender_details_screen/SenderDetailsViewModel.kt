@@ -61,6 +61,16 @@ class SendersDetailsViewModel @Inject constructor(
 
     }
 
+    fun getSenderContentDisplayName(context: Context):String{
+        return if (ContentModel.getDisplayName(
+                context = context,
+                _uiState.value.sender?.content
+            ).isNotEmpty()) ContentModel.getDisplayName(
+            context = context,
+            _uiState.value.sender?.content
+        ) else context.getString(androidx.compose.ui.R.string.not_selected)
+    }
+
     fun pinSender(pin: Boolean) {
         viewModelScope.launch {
             pinSenderUseCase.invoke(senderId = uiState.value.sender?.id!!, pin = pin)
