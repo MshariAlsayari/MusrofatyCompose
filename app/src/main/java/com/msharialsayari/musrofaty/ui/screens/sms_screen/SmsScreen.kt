@@ -119,7 +119,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                 model = viewModel.wrapSendersToSenderComponentModel(sms, context),
                 onCategoryClicked = {
                     coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
+                        handleVisibilityOfBottomSheet(sheetState, true)
                     }
                 },
                 onActionClicked = { model, action ->
