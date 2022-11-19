@@ -122,6 +122,16 @@ class SmsRepo @Inject constructor(
 
     }
 
+    fun getAllSms(query:String=""): Flow<PagingData<SmsEntity>> {
+        val pagingSourceFactory = { dao.getAllSms(query) }
+
+        return Pager(
+            config = PagingConfig(pageSize = ITEM_SIZE),
+            pagingSourceFactory = pagingSourceFactory,
+        ).flow
+
+    }
+
     fun getSmsBySenderId(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
         return when (filterOption) {
             DateUtils.FilterOption.ALL -> dao.getSmsBySenderId(senderId,query)

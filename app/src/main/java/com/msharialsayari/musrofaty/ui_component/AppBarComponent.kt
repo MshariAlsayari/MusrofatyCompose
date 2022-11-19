@@ -45,4 +45,34 @@ object AppBarComponent {
         }
 
     }
+
+
+    @Composable
+    fun TopBarComponent( title:String?, onArrowBackClicked:()->Unit={}, actions: @Composable RowScope.() -> Unit = {}, isParent:Boolean = false){
+        val navigationIcon: @Composable () -> Unit = {
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = null,
+                modifier= Modifier
+                    .mirror()
+                    .clickable { onArrowBackClicked() },
+            )
+        }
+
+
+
+        val appbarTitle = title ?: ""
+        AnimatedVisibility(
+            visible = title != null,
+        ) {
+
+            TopAppBar(
+                title = { Text(appbarTitle) },
+                navigationIcon = if (isParent) null else navigationIcon,
+                actions = actions,
+                contentColor = Color.White
+            )
+        }
+
+    }
 }

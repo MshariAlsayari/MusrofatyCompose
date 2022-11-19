@@ -110,4 +110,8 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
     fun getRangeDateSmsBySenderId(senderId:Int, query:String="", startDate:Long, endDate:Long): Flow<List<SmsEntity>>
 
+
+    @Query("SELECT * FROM SmsEntity WHERE body LIKE '%' || :query || '%'")
+    fun getAllSms(query:String=""): PagingSource<Int,SmsEntity>
+
 }
