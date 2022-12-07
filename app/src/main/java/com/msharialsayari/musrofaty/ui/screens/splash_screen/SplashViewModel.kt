@@ -16,6 +16,7 @@ import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.WordsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -34,14 +35,15 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-     private val _uiState = MutableStateFlow(SplashUiState())
-     val uiState  : StateFlow<SplashUiState> = _uiState
+    private val _uiState = MutableStateFlow(SplashUiState())
+    val uiState: StateFlow<SplashUiState> = _uiState
 
-init {
-    initData()
-}
+    init {
+        initData()
+    }
 
-    private fun initData(){
+    private fun initData()
+    {
         viewModelScope.launch {
             if (SharedPreferenceManager.isFirstLunch(context)) {
                 initIncomesWords()
@@ -51,22 +53,20 @@ init {
                 initSenders()
                 initFilters()
                 initCategories()
+                delay(2000)
                 insertSms()
                 SharedPreferenceManager.setFirstLunch(context)
-            }else{
+            } else {
                 insertSms()
             }
-
-
 
 
         }
 
 
-
     }
 
-    private  fun initContent(){
+    private fun initContent() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -81,7 +81,7 @@ init {
     }
 
 
-    private  fun initIncomesWords(){
+    private fun initIncomesWords() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -115,7 +115,7 @@ init {
         }
     }
 
-    private  fun initExpensesWords(){
+    private fun initExpensesWords() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -149,7 +149,7 @@ init {
 
     }
 
-    private  fun initCurrencyWords(){
+    private fun initCurrencyWords() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -184,7 +184,7 @@ init {
 
     }
 
-    private fun initSenders(){
+    private fun initSenders() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -229,7 +229,7 @@ init {
 
     }
 
-    private  fun initFilters(){
+    private fun initFilters() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -241,7 +241,7 @@ init {
         }
     }
 
-    private  fun initCategories(){
+    private fun initCategories() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -253,7 +253,7 @@ init {
         }
     }
 
-     private fun insertSms(){
+    private fun insertSms() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -267,10 +267,8 @@ init {
     }
 
 
-
-
-     data class SplashUiState(
-        var isLoading:Boolean = false
+    data class SplashUiState(
+        var isLoading: Boolean = false
     )
 
 }
