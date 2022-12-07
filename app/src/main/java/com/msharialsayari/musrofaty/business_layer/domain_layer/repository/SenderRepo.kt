@@ -51,6 +51,13 @@ class SenderRepo @Inject constructor(
         return null
     }
 
+    suspend fun getSenderBySenderName(senderName:String):SenderModel?{
+        val model = dao.getSenderBySenderName(senderName)?.toSenderModel()
+        if (model != null)
+            return fillSenderModel(model)
+        return null
+    }
+
     suspend fun getActiveSenderById(senderId:Int):SenderModel?{
         val model = dao.getActiveSenderById(senderId)?.toSenderModel()
         if (model != null)
@@ -123,16 +130,6 @@ class SenderRepo @Inject constructor(
 
 
 
-    suspend fun getAllSendersWithSms(): List<SenderWithRelationsModel>{
-        val sendersWithSms = mutableListOf<SenderWithRelationsModel>()
-          dao.getAllSendersWithSms().forEach {
-              val model = SenderWithRelationsModel(sender =  fillSenderModel( it.sender.toSenderModel()), sms = it.sms.map { it.toSmsModel() }.toList())
-              sendersWithSms.add(model)
-
-        }
-
-        return sendersWithSms
-    }
 
     private suspend fun fillSenderModel(senderModel: SenderModel): SenderModel {
         senderModel.content = contentRepo.getContentById(senderModel.contentId)
@@ -140,7 +137,7 @@ class SenderRepo @Inject constructor(
     }
 
     suspend fun insert(vararg model: SenderModel){
-        val senders = model.toList().filter { dao.getSmsBySenderName(it.senderName) == null }.map { it.toSenderEntity() }.toList()
+        val senders = model.toList().filter { dao.getSenderBySenderName(it.senderName) == null }.map { it.toSenderEntity() }.toList()
         dao.insert(*senders.toTypedArray())
     }
 

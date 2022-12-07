@@ -8,7 +8,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "SenderEntity",indices = [Index(value = ["senderName"], unique = true)])
+@Entity(tableName = "SenderEntity")
 data class SenderEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

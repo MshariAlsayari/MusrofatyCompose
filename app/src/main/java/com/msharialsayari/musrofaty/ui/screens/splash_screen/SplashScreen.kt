@@ -55,11 +55,6 @@ fun PageCompose(onLoadingDone:()->Unit){
     val light = isLightTheme(appTheme = AppTheme.getThemById(SharedPreferenceManager.getTheme(context)))
     val imageRes = if (light)  R.drawable.ic_water_marker_light_mode else R.drawable.ic_water_marker_dark_mode
 
-
-    LaunchedEffect(key1 = Unit){
-        viewModel.insertSms()
-    }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -76,8 +71,6 @@ fun PageCompose(onLoadingDone:()->Unit){
             LaunchedEffect(Unit) {
                 onLoadingDone()
             }
-
-
         }
 
     }

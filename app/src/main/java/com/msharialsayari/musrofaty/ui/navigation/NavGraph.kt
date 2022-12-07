@@ -28,6 +28,7 @@ import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
+import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
@@ -230,8 +231,19 @@ fun NavigationGraph(
         composable(Screen.StoresScreen.route) {
             StoresScreen(
                 onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
+                onNavigateToStoreSmsListScreen = {navController.navigate(Screen.StoreSmsListScreen.route + "/${it}")},
                 onBackPressed = { navController.navigateUp() }
             )
+        }
+
+        composable(Screen.StoreSmsListScreen.route + "/{storeName}",
+            arguments = listOf(navArgument("storeName") { type = NavType.StringType }
+            )) {backStackEntry->
+            val arguments = backStackEntry.arguments
+            val storeName = arguments?.getString("storeName")
+            storeName?.let {
+                StoreSmsListScreen(storeName = storeName, onBackPressed = { navController.navigateUp() })
+            }
         }
 
 

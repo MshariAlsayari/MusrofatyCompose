@@ -3,15 +3,16 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,6 @@ import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class)
-
 @Composable
 fun DashboardScreen() {
     val viewModel: DashboardViewModel = hiltViewModel()
@@ -101,6 +101,16 @@ fun DashboardScreen() {
                                         true
                                     )
                                 }
+
+                            })
+
+                    Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .mirror()
+                            .clickable {
+                                viewModel.loadSms()
 
                             })
                 },
@@ -211,7 +221,13 @@ fun ItemLoading(){
 
 @Composable
 fun EmptyCompose(){
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
     }
 

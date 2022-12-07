@@ -119,7 +119,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                 model = viewModel.wrapSendersToSenderComponentModel(sms, context),
                 onCategoryClicked = {
                     coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
+                        handleVisibilityOfBottomSheet(sheetState, true)
                     }
                 },
                 onActionClicked = { model, action ->
@@ -131,6 +131,10 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                         SmsActionType.COPY -> {
                             Utils.copyToClipboard(model.body,context)
                             Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                        }
+
+                        SmsActionType.ShARE -> {
+                            Utils.shareText(model.body, context)
                         }
                     }
                 })

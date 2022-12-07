@@ -98,11 +98,11 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewMode
 
             BottomSheetComponent.TextFieldBottomSheetComponent(model = TextFieldBottomSheetModel(
                 title = R.string.common_sender_shortcut,
+                description = R.string.add_sender_description,
                 textFieldValue =  "",
                 buttonText = R.string.common_add,
                 onActionButtonClicked = { value ->
                     viewModel.addSender(value)
-                    viewModel.loadSms()
                     coroutineScope.launch {
                       handleVisibilityOfBottomSheet(sheetState, false)
                     }

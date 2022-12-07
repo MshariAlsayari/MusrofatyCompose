@@ -75,4 +75,15 @@ class SmsSourceImpl @Inject constructor(
         val allSms = loadAllSms(context,activeSender)
         return allSms
     }
+
+    override suspend fun loadBanksSms(context: Context, senderName: String): List<SmsModel> {
+        val sender = senderRepo.getSenderBySenderName(senderName)
+        var allSms = emptyList<SmsModel>()
+        if (sender != null) {
+            val senders = mutableListOf<SenderModel>()
+             senders.add(sender)
+             allSms = loadAllSms(context, senders)
+        }
+        return allSms
+    }
 }

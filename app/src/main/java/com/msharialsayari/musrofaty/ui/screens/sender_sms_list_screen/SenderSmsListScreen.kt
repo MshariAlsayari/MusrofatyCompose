@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
@@ -34,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
@@ -56,6 +61,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+
 
 private val MinToolbarHeight = 40.dp
 private val MaxToolbarHeight = 85.dp
@@ -268,43 +274,51 @@ fun PageContainer(
 
         }){
 
-        Column(modifier = Modifier
-            .nestedScroll(nestedScrollConnection)
-            .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(uiState.isRefreshing),
+            onRefresh = { viewModel.refreshSms() },
         ) {
-            CollapsedToolbar(
-                toolbarState                   = toolbarState,
-                viewModel                      = viewModel,
-                onDetailsClicked               = onDetailsClicked,
-                onBack                         = onBack,
-                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity,
-                onExcelIconClicked = {
-                  viewModel.generateExcelFile(context, onExcelIconClicked)
-                },
-                onCreateFilterClicked    = { uiState.sender?.let {
-                    onNavigateToFilterScreen(it.id, null)
-                } },
-                onFilterIconClicked = {
-                    coroutineScope.launch {
-                        isFilterTimeOptionBottomSheet.value = false
-                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+
+            Column(modifier = Modifier
+                .nestedScroll(nestedScrollConnection)
+                .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                CollapsedToolbar(
+                    toolbarState                   = toolbarState,
+                    viewModel                      = viewModel,
+                    onDetailsClicked               = onDetailsClicked,
+                    onBack                         = onBack,
+                    onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity,
+                    onExcelIconClicked = {
+                        viewModel.generateExcelFile(context, onExcelIconClicked)
+                    },
+                    onCreateFilterClicked    = { uiState.sender?.let {
+                        onNavigateToFilterScreen(it.id, null)
+                    } },
+                    onFilterIconClicked = {
+                        coroutineScope.launch {
+                            isFilterTimeOptionBottomSheet.value = false
+                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                        }
+
+                    },
+                    onFilterTimeIconClicked = {
+                        coroutineScope.launch {
+                            isFilterTimeOptionBottomSheet.value = true
+                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                        }
+
+
                     }
 
-                },
-                onFilterTimeIconClicked = {
-                    coroutineScope.launch {
-                        isFilterTimeOptionBottomSheet.value = true
-                        handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
-                    }
-
-
-                }
-
-            )
-            Tabs(viewModel = viewModel, senderId= uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
+                )
+                Tabs(viewModel = viewModel, senderId= uiState.sender?.id?:0, onSmsClicked = onSmsClicked)
+            }
         }
+
+
 
     }
 
@@ -407,7 +421,7 @@ fun LazySenderSms(
             state = listState,
         ) {
 
-            itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item, ->
+            itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item ->
 
                 if (item != null) {
 
@@ -425,6 +439,10 @@ fun LazySenderSms(
                                 SmsActionType.COPY -> {
                                     Utils.copyToClipboard(item.body,context)
                                     Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                                }
+
+                                SmsActionType.ShARE -> {
+                                    Utils.shareText(item.body, context )
                                 }
                             }
                         })
@@ -452,8 +470,14 @@ fun LazySenderSms(
 
 @Composable
 fun EmptySmsCompose(){
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        EmptyComponent.EmptyTextComponent()
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
     }
 }
 
@@ -565,7 +589,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel,onDetailsClicked:
 }
 
 @Composable
-fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: ()->Unit,){
+fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: () -> Unit){
 
     val uiState  by viewModel.uiState.collectAsState()
     val filters = uiState.filters

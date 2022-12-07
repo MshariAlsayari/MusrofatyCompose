@@ -26,6 +26,7 @@
     <string name="common_disable">تعطيل</string>
     <string name="common_all">الكل</string>
     <string name="common_copied">تم النسخ</string>
+    <string name="share_by">مشاركة باستخدام</string>
 
 
     <plurals name="common_sms">
@@ -128,6 +129,7 @@
     <!--Senders Management-->
     <string name="tab_active_senders">المفعلين</string>
     <string name="tab_unactive_senders">الفير مفعلين</string>
+    <string name="add_sender_description">اذهب إلى تطبيق الرسائل لمعرفة اسم المرسل المختصر مثال "AlRajhiBank"</string>
 
 
     <!--Sms Analysis-->
@@ -225,7 +227,6 @@
     <string name="common_two_years">سنتين</string>
     <string name="common_years">سنوات</string>
     <string name="common_ago">منذ</string>
-
 
 
 

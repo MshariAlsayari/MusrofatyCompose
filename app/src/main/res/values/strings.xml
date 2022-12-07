@@ -25,6 +25,7 @@
     <string name="common_disable">Disable</string>
     <string name="common_all">ALL</string>
     <string name="common_copied">copied</string>
+    <string name="share_by">Share by</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
@@ -54,7 +55,7 @@
 
     <!--Sender Sms List-->
     <string name="tab_all_sms">SMSs</string>
-    <string name="tab_favorite_sms">Likes</string>
+    <string name="tab_favorite_sms">Favorite</string>
     <string name="tab_financial_statistics">Financial Statistics</string>
     <string name="tab_categories_statistics">Categories Statistics</string>
     <string name="create_filter">Create filter</string>
@@ -123,6 +124,8 @@
     <!--Senders Management-->
     <string name="tab_active_senders">Active</string>
     <string name="tab_unactive_senders">unActive</string>
+    <string name="add_sender_description">go to the SMS app to get The sender shortcut ex:"AlRajhiBank\"</string>
+
 
     <!--Sms Analysis-->
     <string name="sms_analysis_bottom_sheet_title">Adding a word</string>
@@ -214,8 +217,6 @@
     <string name="common_two_years">Years</string>
     <string name="common_years">Years</string>
     <string name="common_ago">ago</string>
-
-
 
 
 

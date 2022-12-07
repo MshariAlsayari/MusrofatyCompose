@@ -109,7 +109,9 @@ fun PageCompose(
         endActions = listOf(pinAction, modifyAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView = { EmptyCompose()},
-        onRefresh = { viewModel.getAllSenders() }
+        onRefresh = {
+            viewModel.getAllSenders()
+        }
     )
 
 }

@@ -5,4 +5,5 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 
 interface SmsDataSource {
     suspend fun loadBanksSms(context: Context): List<SmsModel>
+    suspend fun loadBanksSms(context: Context, senderName:String): List<SmsModel>
 }

@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty
 
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -19,25 +18,19 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
-import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Locale
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppJob(this)
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
@@ -62,16 +55,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-private fun initAppJob(context: Context){
-    if (SharedPreferenceManager.isFirstLunch(context)) {
-        val workManager = WorkManager.getInstance(context)
-        val initAppJob: WorkRequest =
-            OneTimeWorkRequestBuilder<InitAppJob>()
-                .build()
-        workManager.enqueue(initAppJob)
-        SharedPreferenceManager.setFirstLunch(context)
-    }
-}
 
 @Composable
 private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTheme){

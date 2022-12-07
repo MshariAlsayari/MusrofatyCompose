@@ -122,6 +122,16 @@ class SmsRepo @Inject constructor(
 
     }
 
+    fun getAllSms(query:String=""): Flow<PagingData<SmsEntity>> {
+        val pagingSourceFactory = { dao.getAllSms(query) }
+
+        return Pager(
+            config = PagingConfig(pageSize = ITEM_SIZE),
+            pagingSourceFactory = pagingSourceFactory,
+        ).flow
+
+    }
+
     fun getSmsBySenderId(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
         return when (filterOption) {
             DateUtils.FilterOption.ALL -> dao.getSmsBySenderId(senderId,query)
@@ -184,6 +194,21 @@ class SmsRepo @Inject constructor(
 
     suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
+        val smsEntityList = mutableListOf<SmsEntity>()
+        smsList.map {
+            smsEntityList.add(it.toSmsEntity())
+            if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
+                val model = StoreModel(storeName = it.storeName)
+                storeRepo.insertStore(model)
+            }
+
+        }
+        dao.insertAll(*smsEntityList.toTypedArray())
+    }
+
+
+    suspend fun insert(senderName:String) {
+        val smsList = datasource.loadBanksSms(context,senderName)
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.map {
             smsEntityList.add(it.toSmsEntity())

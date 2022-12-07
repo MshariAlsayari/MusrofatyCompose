@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsForSendersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val getAllSmsForSendersUseCase: GetAllSmsForSendersUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
-    private val loadSmsUseCase: LoadSmsUseCase
+    private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase
 ):ViewModel(){
 
 
@@ -39,7 +39,7 @@ class DashboardViewModel @Inject constructor(
     fun loadSms(){
         viewModelScope.launch {
             _uiState.update { it.copy( isRefreshing = true) }
-            loadSmsUseCase.invoke()
+            loadAllSenderSmsUseCase.invoke()
             getFinancialStatistics()
             _uiState.update { state ->
                 state.copy(

@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class LoadSmsUseCase @Inject constructor(
+class LoadAllSenderSmsUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 

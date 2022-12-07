@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -31,7 +30,9 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,onBackPressed:()->Unit) {
+fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,
+                 onNavigateToStoreSmsListScreen:(String)->Unit,
+                 onBackPressed:()->Unit) {
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -52,7 +53,13 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,onBackPressed:()->Unit) 
                 viewModel = viewModel,
                 onCategoryLongPressed = {
                 onNavigateToCategoryScreen(it)
-            })
+            },
+
+                onStoreClicked = {
+                    onNavigateToStoreSmsListScreen(it)
+                }
+
+                )
         }
     }
 
@@ -71,7 +78,7 @@ fun PageLoading(modifier: Modifier=Modifier) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCategoryLongPressed:(Int)->Unit) {
+fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCategoryLongPressed:(Int)->Unit, onStoreClicked:(String)->Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope                    = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
@@ -118,20 +125,23 @@ fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCatego
             )
 
         }) {
-        StoresList(viewModel, onItemClicked = {
+        StoresList(viewModel, onCategoryClicked = {
             viewModel.onStoreSelected(it)
             coroutineScope.launch {
                 handleVisibilityOfBottomSheet(sheetState, true)
             }
-        })
+        },
+            onStoreNameClicked = {
+                onStoreClicked(it)
+            }
+
+            )
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Unit) {
+fun StoresList(viewModel: StoresViewModel, onCategoryClicked:(StoreWithCategory)->Unit, onStoreNameClicked:(String)->Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
@@ -162,7 +172,6 @@ fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Un
 
 
                     TextComponent.BodyText(
-
                         text = stringResource(id = R.string.common_total) + ": " +  stores.size.toString(),
                         color = MaterialTheme.colors.onSecondary
                     )
@@ -173,9 +182,13 @@ fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Un
 
 
             items(stores) {  item ->
-                StoreAndCategoryCompose(viewModel,item, onItemClicked={
-                    onItemClicked(it)
-                })
+                StoreAndCategoryCompose(viewModel,item, onCategoryClicked={
+                    onCategoryClicked(it)
+                },
+                    onStoreNameClicked = {
+                        onStoreNameClicked(it)
+                    }
+                )
                 DividerComponent.HorizontalDividerComponent()
 
             }
@@ -189,7 +202,7 @@ fun StoresList(viewModel: StoresViewModel, onItemClicked:(StoreWithCategory)->Un
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory, onItemClicked:(StoreWithCategory)->Unit) {
+fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory, onCategoryClicked:(StoreWithCategory)->Unit,onStoreNameClicked:(String)->Unit) {
 
 
     val uiState by viewModel.uiState.collectAsState()
@@ -199,12 +212,13 @@ fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onItemClicked(item)
+                onStoreNameClicked(item.store.storeName)
             }
             .padding(all = dimensionResource(id = R.dimen.default_margin16)),
         text = { Text(text = item.store.storeName) },
         trailing = {
             TextComponent.ClickableText(
+                modifier = Modifier.clickable { onCategoryClicked(item) },
                 text =  viewModel.getCategoryDisplayName( item.store.categoryId, categories))
         }
     )

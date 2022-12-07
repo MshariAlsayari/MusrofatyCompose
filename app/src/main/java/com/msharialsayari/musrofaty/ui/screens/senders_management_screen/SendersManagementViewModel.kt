@@ -1,11 +1,16 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_management_screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetActiveSendersUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetUnActiveSendersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +24,7 @@ class SendersManagementViewModel @Inject constructor(
     private val getUnActiveSendersUseCase: GetUnActiveSendersUseCase,
     private val activeSendersUseCase: ActiveSenderUseCase,
     private val addSenderUseCase: AddSenderUseCase,
-    private val loadSmsUseCase: LoadSmsUseCase
+    @ApplicationContext val context: Context
 ):ViewModel() {
 
 
@@ -81,21 +86,7 @@ class SendersManagementViewModel @Inject constructor(
     fun addSender(senderName:String){
         viewModelScope.launch {
         val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
-            addSenderUseCase.invoke(model)
-        }
-    }
-
-    fun loadSms(){
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
-            loadSmsUseCase.invoke()
-
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
+        addSenderUseCase.invoke(model)
         }
     }
 

@@ -4,6 +4,7 @@ package com.msharialsayari.musrofaty
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -27,5 +28,16 @@ object Utils {
         val clipboard: ClipboardManager = context.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("", text ?: "")
         clipboard.setPrimaryClip(clip)
+    }
+
+    @JvmStatic
+    fun shareText(text: String?, context: Context) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_SUBJECT, "EXTRA_SUBJECT")
+        intent.putExtra(Intent.EXTRA_TEXT, text?:"")
+        context.startActivity(
+            Intent.createChooser(intent, context.getString(R.string.share_by))
+        )
     }
 }
