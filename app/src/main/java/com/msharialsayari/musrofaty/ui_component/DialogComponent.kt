@@ -17,8 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.msharialsayari.musrofaty.utils.notEmpty
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 object DialogComponent {
 
@@ -160,7 +161,7 @@ object DialogComponent {
                     ButtonComponent.ActionButton(
                         modifier = Modifier.weight(1f),
                         text = R.string.cancel,
-                        color = R.color.delete_action_color,
+                        color = MusrofatyTheme.colors.deleteActionColor,
                         onClick = {
                             onClickNegativeBtn()
                         }

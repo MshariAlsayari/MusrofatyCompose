@@ -13,6 +13,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
@@ -118,7 +119,7 @@ fun BtnAction(viewModel: ContentViewModel, onDone:()->Unit){
 
             ButtonComponent.ActionButton(
                 modifier = Modifier.weight(1f),
-                color= R.color.delete_action_color,
+                color= MusrofatyTheme.colors.deleteActionColor,
                 text =  R.string.common_delete,
                 onClick = {
                     viewModel.deleteContent()

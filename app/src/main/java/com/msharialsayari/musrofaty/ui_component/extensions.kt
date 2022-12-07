@@ -1,6 +1,9 @@
 package com.msharialsayari.musrofaty.ui_component
 
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+
+import androidx.compose.ui.graphics.toArgb
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -13,7 +16,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 
 
-fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
+fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<Color>){
 
     this.description.isEnabled = false
     this.dragDecelerationFrictionCoef = 0.95f
@@ -25,8 +28,8 @@ fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<
     this.setUsePercentValues(true)
     this.animateY(1400, Easing.EaseInOutQuad);
     this.setExtraOffsets(5f, 10f, 5f, 5f);
-    this.setTransparentCircleColor(Color.TRANSPARENT)
-    this.setHoleColor(Color.TRANSPARENT)
+    this.setTransparentCircleColor(Transparent.toArgb())
+    this.setHoleColor(Transparent.toArgb())
     this.setTransparentCircleAlpha(0)
     this.holeRadius = 0f
 
@@ -45,7 +48,7 @@ fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<
     dataSet.selectionShift = 5f
 
 
-    dataSet.colors = colors
+    dataSet.colors = colors.map { it.toArgb()}.toList()
 
     val data = PieData(dataSet)
     val valueFormatter = PercentFormatter()
@@ -71,15 +74,15 @@ fun PieChart.drawChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
     this.setUsePercentValues(false)
     this.animateY(1400, Easing.EaseInOutQuad);
     this.setExtraOffsets(5f, 10f, 5f, 5f);
-    this.setTransparentCircleColor(Color.TRANSPARENT)
-    this.setHoleColor(Color.TRANSPARENT)
+    this.setTransparentCircleColor(Transparent.toArgb())
+    this.setHoleColor(Transparent.toArgb())
     this.setTransparentCircleAlpha(0)
     this.holeRadius = 0f
 
 
 
 
-    this.setEntryLabelColor(Color.TRANSPARENT)
+    this.setEntryLabelColor(Transparent.toArgb())
     this.setEntryLabelTextSize(12f)
 
 
@@ -98,7 +101,7 @@ fun PieChart.drawChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
     valueFormatter.mFormat = DecimalFormat("###,###,##0.0",DecimalFormatSymbols(Locale.ENGLISH))
     data.setValueFormatter(valueFormatter)
     data.setValueTextSize(11f)
-    data.setValueTextColor(Color.TRANSPARENT)
+    data.setValueTextColor(Color.Transparent.toArgb())
     this.data = data
     this.highlightValues(null)
     this.invalidate()

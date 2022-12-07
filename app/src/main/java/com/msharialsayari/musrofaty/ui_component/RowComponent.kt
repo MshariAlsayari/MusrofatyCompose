@@ -20,16 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.DateUtils.DEFAULT_DATE_PATTERN
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import com.msharialsayari.musrofaty.utils.mirror
-import com.msharialsayari.musrofaty.R
 
 const val EXPANSTION_TRANSITION_DURATION = 450
 const val EXPAND_ANIMATION_DURATION = 450
@@ -108,7 +108,7 @@ object RowComponent {
                 iconId?.let {
                     Icon(
                         painter = painterResource(id = iconId),
-                        tint = colorResource(id = R.color.icon_background_color),
+                        tint =  MusrofatyTheme.colors.iconBackgroundColor,
                         contentDescription = ""
                     )
                 }

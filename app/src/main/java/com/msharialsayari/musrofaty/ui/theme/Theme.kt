@@ -55,7 +55,7 @@ fun ProvideMusrofatyTheme(
     )
 }
 
-object YamamahTheme {
+object MusrofatyTheme {
     val colors: MusrofatyColors
         @Composable
         get() = LocalCustomColors.current

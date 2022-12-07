@@ -8,15 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.data.PieEntry
+import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.MathUtils
 import com.msharialsayari.musrofaty.utils.StringsUtils
-import com.msharialsayari.musrofaty.R
 
 @Composable
 fun FinancialStatistics(modifier:Modifier=Modifier,
@@ -43,8 +43,8 @@ fun FinancialStatistics(modifier:Modifier=Modifier,
                     PieEntry(percentExpenses.toFloat(), "")
                 ),
                 colors = arrayListOf(
-                    context.getColor(R.color.income_color),
-                    context.getColor(R.color.expenses_color)
+                    MusrofatyTheme.colors.incomeColor,
+                    MusrofatyTheme.colors.expensesColor
                 )
             )
 
@@ -87,7 +87,7 @@ fun FinancialStatisticsInfo(modifier:Modifier=Modifier,
                 .size(20.dp)
                 .clip(RectangleShape)
                 .background(
-                    if (isIncome) colorResource(id = R.color.income_color) else colorResource(id = R.color.expenses_color)
+                    if (isIncome) MusrofatyTheme.colors.incomeColor else MusrofatyTheme.colors.expensesColor
                 )
         )
 

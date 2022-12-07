@@ -21,6 +21,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_dete
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
@@ -175,7 +176,7 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
     val deleteAction = Action<WordDetectorEntity>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
         { ActionIcon(id = R.drawable.ic_delete ) },
-        backgroundColor = colorResource(R.color.delete_action_color),
+        backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.deleteWordDetector(item.id)
 

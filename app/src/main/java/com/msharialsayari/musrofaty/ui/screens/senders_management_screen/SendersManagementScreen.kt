@@ -27,6 +27,7 @@ import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.ActiveSendersTab
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.UnActiveSendersTab
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
@@ -182,7 +183,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderC
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = if (isActiveTab) R.string.common_disable else  R.string.common_enable)) },
         { ActionIcon(id = if (isActiveTab) R.drawable.ic_visibility_off else R.drawable.ic_visibility) },
-        backgroundColor = colorResource(if (isActiveTab)  R.color.delete_action_color else R.color.pin_action_color ),
+        backgroundColor = if (isActiveTab)  MusrofatyTheme.colors.deleteActionColor else MusrofatyTheme.colors.pinActionColor ,
         onClicked = { position, item ->
             viewModel.updateSenderVisibility(item.senderId, !isActiveTab)
 
@@ -194,7 +195,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderC
     val modifyAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
         { ActionIcon(id = R.drawable.ic_modify) },
-        backgroundColor = colorResource(R.color.modify_action_color),
+        backgroundColor = MusrofatyTheme.colors.modifyActionColor,
         onClicked = { position, item ->
             onNavigateToSenderDetails(item.senderId)
 

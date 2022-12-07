@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
@@ -158,7 +158,7 @@ fun StoresList(viewModel: StoresViewModel, onCategoryClicked:(StoreWithCategory)
             stickyHeader {
 
                 Row(modifier = Modifier
-                    .background(colorResource(id = R.color.active_color))
+                    .background(MusrofatyTheme.colors.activeColor)
                     .padding(5.dp)
                     .fillMaxWidth(),
 

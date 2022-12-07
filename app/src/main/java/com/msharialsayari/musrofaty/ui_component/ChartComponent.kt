@@ -6,6 +6,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.PieChart
@@ -15,7 +16,7 @@ import com.github.mikephil.charting.data.PieEntry
 object ChartComponent {
 
     @Composable
-    fun FinancialPieChartCompose(modifier:Modifier = Modifier, entries:ArrayList<PieEntry>, colors: ArrayList<Int>){
+    fun FinancialPieChartCompose(modifier:Modifier = Modifier, entries:ArrayList<PieEntry>, colors: ArrayList<Color>){
         Crossfade(targetState = entries) { pieChartData ->
             // on below line we are creating an
             // android view for pie chart.

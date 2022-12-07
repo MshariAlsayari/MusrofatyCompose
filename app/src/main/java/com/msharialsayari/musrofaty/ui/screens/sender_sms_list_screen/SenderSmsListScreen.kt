@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -49,6 +48,7 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSm
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FinancialStatisticsTab
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
@@ -677,7 +677,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon( Icons.Default.ArrowBack,
-            tint = colorResource(id = R.color.icon_background_color),
+            tint = MusrofatyTheme.colors.iconBackgroundColor,
             contentDescription = null,
             modifier = Modifier
                 .mirror()
@@ -692,7 +692,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
             if (smsList.isNotEmpty()){
                 Icon(painter = painterResource(id = R.drawable.ic_excel),
-                    tint = colorResource(id = R.color.icon_background_color),
+                    tint = MusrofatyTheme.colors.iconBackgroundColor,
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
@@ -701,7 +701,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
                         })
 
                 Icon(painter = painterResource(id = R.drawable.ic_pdf),
-                    tint = colorResource(id = R.color.icon_background_color),
+                    tint =  MusrofatyTheme.colors.iconBackgroundColor,
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
@@ -714,7 +714,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
 
             if (filters.isNotEmpty())
             Icon(painter = painterResource(id = R.drawable.ic_filter),
-                tint = colorResource(id = R.color.icon_background_color),
+                tint = MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
@@ -724,7 +724,7 @@ fun ToolbarActionsComposable(viewModel: SenderSmsListViewModel,
                     })
 
             Icon(Icons.Default.DateRange,
-                tint = colorResource(id = R.color.icon_background_color),
+                tint =  MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()

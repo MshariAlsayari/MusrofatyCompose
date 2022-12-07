@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_dat
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
@@ -184,7 +184,7 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, on
     val deleteAction = Action<StoreEntity>(
         { TextComponent.BodyText(text = stringResource(id = com.msharialsayari.musrofaty.R.string.common_delete)) },
         { ActionIcon(id = R.drawable.ic_delete) },
-        backgroundColor = colorResource(R.color.delete_action_color),
+        backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.onDeleteStoreActionClicked(item.storeName)
 
@@ -298,7 +298,7 @@ fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewMo
 
             ButtonComponent.ActionButton(
                 modifier =Modifier.weight(1f),
-                color= R.color.delete_action_color,
+                color= MusrofatyTheme.colors.deleteActionColor,
                 text =  R.string.common_delete,
                 onClick = {
                     viewModel.onDeleteBtnClicked()

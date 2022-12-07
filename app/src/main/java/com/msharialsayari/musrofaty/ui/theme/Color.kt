@@ -5,14 +5,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
 
-val Black = Color(0xFF000000)
-val White = Color(0xFFFFFFFF)
-val Red = Color(0xFFCC0311)
-val BlackOnyx = Color(0xFF1D252D)
-val Air = Color(0xFFf3f3f1)
-val LightGray = Color(0xFF979797)
+val Black          = Color(0xFF000000)
+val White          = Color(0xFFFFFFFF)
+val Red            = Color(0xFFCC0311)
+val BlackOnyx      = Color(0xFF1D252D)
+val Air            = Color(0xFFf3f3f1)
+val LightGray      = Color(0xFF979797)
 val LightBlackOnyx = Color(0xFF333A42)
-
 
 
 
@@ -35,55 +34,99 @@ private val onError          = White
 private val primaryDark          = primary
 private val primaryVariantDark   = primary
 private val secondaryDark        = Color(0xFFA37E2C)
-private val secondaryVariantDark = Color(0xFFA37E2C)
+private val secondaryVariantDark = secondaryDark
 private val backgroundDark       = BlackOnyx
 private val surfaceDark          = backgroundDark
 private val errorDark            = error
 private val onPrimaryDark        = onPrimary
-private val onSecondaryDark      = White
 private val onBackgroundDark     = White
+private val onSecondaryDark      = onBackgroundDark
 private val onSurfaceDark        = onBackgroundDark
 private val onErrorDark          = onError
 
+//Musrofaty Light Colors
+private val incomeColor          = Color(0xFF01852D)
+private val expensesColor        = Color(0xFFCC0311)
+private val deleteActionColor    = Color(0xFFF44336)
+private val pinActionColor       = Color(0xFF4CAF50)
+private val modifyActionColor    = Color(0xFF2196F3)
+private val toolbarColor         = primary
+private val textHeaderColor      = onBackground
+private val textBodyColor        = onBackground
+private val textPlaceHolderColor = LightGray
+private val textClickableColor   = primary
+private val iconBackgroundColor  = LightGray
+private val activeColor          = primary
+private val selectedItemColor    = primary
 
 
+//Musrofaty Dark Colors
+private val toolbarDarkColor         = LightBlackOnyx
+private val textHeaderDarkColor      = Air
+private val textBodyDarkColor        = textHeaderDarkColor
+private val textClickableDarkColor   = secondaryDark
+private val selectedItemDarkColor    = onBackgroundDark
+private val iconBackgroundDarkColor  = onBackgroundDark
+private val activeDarkColor          = textClickableDarkColor
 
 val LightColors = MusrofatyColors(
-    primary = primary,
-    primaryVariant = primaryVariant,
-    secondary = secondary,
-    secondaryVariant = secondaryVariant,
-    background = background,
-    surface = surface,
-    error = error,
-    onPrimary = onPrimary,
-    onSecondary = onSecondary,
-    onBackground = onBackground,
-    onSurface = onSurface,
-    onError = onError,
-    toolbarColor = primary ,
+    primary               = primary,
+    primaryVariant        = primaryVariant,
+    secondary             = secondary,
+    secondaryVariant      = secondaryVariant,
+    background            = background,
+    surface               = surface,
+    error                 = error,
+    onPrimary             = onPrimary,
+    onSecondary           = onSecondary,
+    onBackground          = onBackground,
+    onSurface             = onSurface,
+    onError               = onError,
     onBackgroundIconColor = LightGray,
-    activeColor = primary,
-    isLight = true
+    incomeColor           = incomeColor,
+    expensesColor         = expensesColor,
+    deleteActionColor     = deleteActionColor,
+    pinActionColor        = pinActionColor,
+    modifyActionColor     = modifyActionColor,
+    toolbarColor          = toolbarColor,
+    textHeaderColor       = textHeaderColor,
+    textBodyColor         = textBodyColor,
+    textPlaceHolderColor  = textPlaceHolderColor,
+    textClickableColor    = textClickableColor,
+    iconBackgroundColor   = iconBackgroundColor,
+    activeColor           = activeColor,
+    selectedItemColor     = selectedItemColor,
+    isLight               = true
 )
 
 val DarkColors = MusrofatyColors(
-    primary = primaryDark,
-    primaryVariant = primaryVariantDark,
-    secondary = secondaryDark,
-    secondaryVariant = secondaryVariantDark,
-    background = backgroundDark,
-    surface = surfaceDark,
-    error = errorDark,
-    onPrimary = onPrimaryDark,
-    onSecondary = onSecondaryDark,
-    onBackground = onBackgroundDark,
-    onSurface = onSurfaceDark,
-    onError = onErrorDark,
-    toolbarColor = LightBlackOnyx,
+    primary               = primaryDark,
+    primaryVariant        = primaryVariantDark,
+    secondary             = secondaryDark,
+    secondaryVariant      = secondaryVariantDark,
+    background            = backgroundDark,
+    surface               = surfaceDark,
+    error                 = errorDark,
+    onPrimary             = onPrimaryDark,
+    onSecondary           = onSecondaryDark,
+    onBackground          = onBackgroundDark,
+    onSurface             = onSurfaceDark,
+    onError               = onErrorDark,
     onBackgroundIconColor = White ,
-    activeColor = secondaryDark,
-    isLight = false
+    incomeColor           = incomeColor,
+    expensesColor         = expensesColor,
+    deleteActionColor     = deleteActionColor,
+    pinActionColor        = pinActionColor,
+    modifyActionColor     = modifyActionColor,
+    toolbarColor          = toolbarDarkColor,
+    textHeaderColor       = textHeaderDarkColor,
+    textBodyColor         = textBodyDarkColor,
+    textPlaceHolderColor  = textPlaceHolderColor,
+    textClickableColor    = textClickableDarkColor,
+    iconBackgroundColor   = iconBackgroundDarkColor,
+    activeColor           = activeDarkColor,
+    selectedItemColor     = selectedItemDarkColor,
+    isLight               = false
 )
 
 
@@ -102,9 +145,20 @@ class MusrofatyColors(
     onBackground: Color = Color.Unspecified,
     onSurface: Color = Color.Unspecified,
     onError: Color = Color.Unspecified,
-    toolbarColor: Color = Color.Unspecified,
     onBackgroundIconColor: Color = Color.Unspecified,
+    incomeColor: Color = Color.Unspecified,
+    expensesColor: Color = Color.Unspecified,
+    deleteActionColor: Color = Color.Unspecified,
+    pinActionColor: Color = Color.Unspecified,
+    modifyActionColor: Color = Color.Unspecified,
+    toolbarColor: Color = Color.Unspecified,
+    textHeaderColor: Color = Color.Unspecified,
+    textBodyColor: Color = Color.Unspecified,
+    textPlaceHolderColor: Color = Color.Unspecified,
+    textClickableColor: Color = Color.Unspecified,
+    iconBackgroundColor: Color = Color.Unspecified,
     activeColor: Color = Color.Unspecified,
+    selectedItemColor: Color = Color.Unspecified,
     isLight: Boolean = true
 ) {
     var primary by mutableStateOf(primary, structuralEqualityPolicy())
@@ -132,14 +186,48 @@ class MusrofatyColors(
     var onError by mutableStateOf(onError, structuralEqualityPolicy())
         internal set
 
+    var onBackgroundIconColor by mutableStateOf(onBackgroundIconColor, structuralEqualityPolicy())
+        internal set
+
+    var incomeColor by mutableStateOf(incomeColor, structuralEqualityPolicy())
+        internal set
+
+    var expensesColor by mutableStateOf(expensesColor, structuralEqualityPolicy())
+        internal set
+
+    var deleteActionColor by mutableStateOf(deleteActionColor, structuralEqualityPolicy())
+        internal set
+
+    var pinActionColor by mutableStateOf(pinActionColor, structuralEqualityPolicy())
+        internal set
+
+    var modifyActionColor by mutableStateOf(modifyActionColor, structuralEqualityPolicy())
+        internal set
 
     var toolbarColor by mutableStateOf(toolbarColor, structuralEqualityPolicy())
         internal set
-    var onBackgroundIconColor by mutableStateOf(onBackgroundIconColor, structuralEqualityPolicy())
+
+
+    var textHeaderColor by mutableStateOf(textHeaderColor, structuralEqualityPolicy())
         internal set
+
+    var textBodyColor by mutableStateOf(textBodyColor, structuralEqualityPolicy())
+        internal set
+
+    var textPlaceHolderColor by mutableStateOf(textPlaceHolderColor, structuralEqualityPolicy())
+        internal set
+
+    var textClickableColor by mutableStateOf(textClickableColor, structuralEqualityPolicy())
+        internal set
+
+    var iconBackgroundColor by mutableStateOf(iconBackgroundColor, structuralEqualityPolicy())
+        internal set
+
     var activeColor by mutableStateOf(activeColor, structuralEqualityPolicy())
         internal set
 
+    var selectedItemColor by mutableStateOf(selectedItemColor, structuralEqualityPolicy())
+        internal set
 
     var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
         internal set
@@ -157,9 +245,20 @@ class MusrofatyColors(
         onBackground = other.onBackground
         onSurface = other.onSurface
         onError = other.onError
-        toolbarColor = other.toolbarColor
         onBackgroundIconColor = other.onBackgroundIconColor
+        toolbarColor = other.toolbarColor
         activeColor = other.activeColor
+        incomeColor= other.incomeColor
+        expensesColor= other.expensesColor
+        deleteActionColor= other.deleteActionColor
+        pinActionColor= other.pinActionColor
+        modifyActionColor= other.modifyActionColor
+        textHeaderColor= other.textHeaderColor
+        textBodyColor= other.textBodyColor
+        textPlaceHolderColor= other.textPlaceHolderColor
+        textClickableColor= other.textClickableColor
+        iconBackgroundColor= other.iconBackgroundColor
+        selectedItemColor= other.selectedItemColor
         isLight = other.isLight
 
     }
@@ -177,28 +276,50 @@ class MusrofatyColors(
         onBackground: Color = this.onBackground,
         onSurface: Color = this.onSurface,
         onError: Color = this.onError,
-        toolbarColor: Color = this.toolbarColor,
         onBackgroundIconColor: Color = this.onBackgroundIconColor,
         activeColor : Color = this.activeColor,
+        toolbarColor: Color = this.toolbarColor,
+        incomeColor: Color = this.incomeColor,
+        expensesColor: Color = this.expensesColor,
+        deleteActionColor: Color = this.deleteActionColor,
+        pinActionColor: Color = this.pinActionColor,
+        modifyActionColor: Color = this.modifyActionColor,
+        textHeaderColor: Color = this.textHeaderColor,
+        textBodyColor: Color = this.textBodyColor,
+        textPlaceHolderColor: Color = this.textPlaceHolderColor,
+        textClickableColor: Color = this.textClickableColor,
+        iconBackgroundColor: Color = this.iconBackgroundColor,
+        selectedItemColor: Color = this.selectedItemColor,
         isLight: Boolean = this.isLight,
 
     ): MusrofatyColors = MusrofatyColors(
-        primary,
-        primaryVariant,
-        secondary,
-        secondaryVariant,
-        background,
-        surface,
-        error,
-        onPrimary,
-        onSecondary,
-        onBackground,
-        onSurface,
-        onError,
-        toolbarColor,
-        onBackgroundIconColor,
-        activeColor,
-        isLight
+        primary = primary,
+        primaryVariant = primaryVariant,
+        secondary = secondary,
+        secondaryVariant = secondaryVariant,
+        background = background,
+        surface = surface,
+        error = error,
+        onPrimary = onPrimary,
+        onSecondary = onSecondary,
+        onBackground = onBackground,
+        onSurface = onSurface,
+        onError = onError,
+        onBackgroundIconColor = onBackgroundIconColor,
+        toolbarColor = toolbarColor,
+        activeColor = activeColor,
+        incomeColor = incomeColor,
+        expensesColor = expensesColor,
+        deleteActionColor = deleteActionColor,
+        pinActionColor = pinActionColor,
+        modifyActionColor = modifyActionColor,
+        textHeaderColor = textHeaderColor,
+        textBodyColor = textBodyColor,
+        textPlaceHolderColor = textPlaceHolderColor,
+        textClickableColor = textClickableColor,
+        iconBackgroundColor = iconBackgroundColor,
+        selectedItemColor = selectedItemColor,
+        isLight = isLight
     )
 }
 

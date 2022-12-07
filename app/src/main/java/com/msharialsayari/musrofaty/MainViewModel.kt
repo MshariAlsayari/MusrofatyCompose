@@ -1,9 +1,12 @@
 package com.msharialsayari.musrofaty
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,6 +37,7 @@ class MainViewModel @Inject constructor(
             _uiState.update {
                 it.copy(currentLocale = SharedPreferenceManager.getLanguage(context))
             }
+            setAppLanguage(_uiState.value.currentLocale)
         }
 
     }
@@ -47,10 +51,16 @@ class MainViewModel @Inject constructor(
 
     }
 
+    private fun setAppLanguage(locale: Locale) {
+        Locale.setDefault(locale)
+        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(locale.language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
 
 
     data class MainUiState(
-        var currentLocale:Locale=Locale("ar"),
+        var currentLocale:Locale=Locale(Constants.arabic_ar),
         var currentTheme: AppTheme = AppTheme.System
     )
 }

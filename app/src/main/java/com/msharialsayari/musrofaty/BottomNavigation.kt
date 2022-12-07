@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.mirror
 
 
@@ -41,8 +41,8 @@ fun BottomNavigation(navController: NavController, items:List<BottomNavItem>, bo
                             )
                         },
                         label = { Text(text = stringResource(item.title!!), fontSize = 9.sp) },
-                        selectedContentColor = colorResource(id = R.color.selected_item_color),
-                        unselectedContentColor = MaterialTheme.colors.onBackground.copy(0.4f),
+                        selectedContentColor = MusrofatyTheme.colors.selectedItemColor,
+                        unselectedContentColor = MusrofatyTheme.colors.onBackground.copy(0.4f),
                         alwaysShowLabel = true,
                         selected = currentRoute == item.route,
                         onClick = {

@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 
 
@@ -156,7 +157,7 @@ fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
         if (!uiState.isCreateNewFilter)
         ButtonComponent.ActionButton(
             modifier =Modifier.weight(1f),
-            color= R.color.delete_action_color,
+            color= MusrofatyTheme.colors.deleteActionColor,
             text =  R.string.common_delete,
             onClick = {
                 viewModel.onDeleteBtnClicked()

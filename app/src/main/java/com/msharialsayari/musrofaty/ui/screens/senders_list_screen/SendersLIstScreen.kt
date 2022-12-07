@@ -1,7 +1,9 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -13,7 +15,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,6 +23,7 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 
 
@@ -66,7 +68,7 @@ fun PageCompose(
     val deleteAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_disable)) },
         { ActionIcon(id = R.drawable.ic_visibility_off)},
-        backgroundColor = colorResource(R.color.delete_action_color),
+        backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.disableSender(item.senderId)
         })
@@ -74,7 +76,7 @@ fun PageCompose(
     val pinAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_pin)) },
         { ActionIcon(id = R.drawable.ic_pin) },
-        backgroundColor = colorResource(R.color.pin_action_color),
+        backgroundColor = MusrofatyTheme.colors.pinActionColor,
         onClicked = { position, item ->
             viewModel.pinSender(item.senderId)
         })
@@ -83,7 +85,7 @@ fun PageCompose(
     val modifyAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
         { ActionIcon(id = R.drawable.ic_modify) },
-        backgroundColor = colorResource(R.color.modify_action_color),
+        backgroundColor = MusrofatyTheme.colors.modifyActionColor,
         onClicked = { position, item ->
             //Navigate to senderDetailScreen
 

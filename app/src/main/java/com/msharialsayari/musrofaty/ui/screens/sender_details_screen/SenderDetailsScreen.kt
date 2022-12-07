@@ -19,6 +19,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
@@ -196,7 +197,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
                             .weight(1f)
                             .fillMaxWidth(),
                         text = R.string.common_delete,
-                        color= R.color.delete_action_color,
+                        color= MusrofatyTheme.colors.deleteActionColor,
                         onClick = {
                             viewModel.deleteSender()
                             onDone()

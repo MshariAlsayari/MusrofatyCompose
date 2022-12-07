@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -21,10 +22,11 @@ import androidx.navigation.compose.rememberNavController
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -35,7 +37,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
             SetLanguage(activity = this, locale =  uiState.currentLocale)
-            SetStatusAndNavigationBarColor(this, uiState.currentTheme)
+            //SetStatusAndNavigationBarColor(this, uiState.currentTheme)
             MusrofatyComposeTheme(appTheme = uiState.currentTheme, appLocale = uiState.currentLocale) {
                 MainScreenView(
                     this,
@@ -60,12 +62,7 @@ class MainActivity : ComponentActivity() {
 private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTheme){
 
 
-    activity.window.statusBarColor = if (isLightTheme(appTheme = theme)) {
-        ContextCompat.getColor(activity, R.color.toolbar_background_color)
-
-    } else {
-        ContextCompat.getColor(activity, R.color.black_onyx)
-    }
+    activity.window.statusBarColor = MusrofatyTheme.colors.toolbarColor.toArgb()
 
 
 

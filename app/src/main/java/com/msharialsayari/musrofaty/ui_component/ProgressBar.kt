@@ -3,8 +3,7 @@ package com.msharialsayari.musrofaty.ui_component
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 
 object ProgressBar {
 
@@ -12,7 +11,7 @@ object ProgressBar {
     fun CircleProgressBar(modifier: Modifier=Modifier){
          CircularProgressIndicator(
              modifier = modifier,
-             color = colorResource(id = R.color.active_color)
+             color = MusrofatyTheme.colors.activeColor
          )
     }
 }

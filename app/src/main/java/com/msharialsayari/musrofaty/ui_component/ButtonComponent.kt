@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,12 +18,12 @@ import com.msharialsayari.musrofaty.R
 object ButtonComponent {
 
     @Composable
-    fun ActionButton(modifier: Modifier=Modifier,@StringRes text: Int, color:Int?=null,onClick: () -> Unit = {}) {
+    fun ActionButton(modifier: Modifier=Modifier,@StringRes text: Int, color:Color?=null,onClick: () -> Unit = {}) {
         Button(
             onClick  = onClick,
             shape    = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = color?.let { colorResource(id = it) } ?:MaterialTheme.colors.primary
+                backgroundColor = color?.let { color} ?:MaterialTheme.colors.primary
 
             ),
             modifier = modifier
