@@ -58,7 +58,7 @@ private val textClickableColor   = primary
 private val iconBackgroundColor  = LightGray
 private val activeColor          = primary
 private val selectedItemColor    = primary
-
+private val navigationBarColor    = White
 
 //Musrofaty Dark Colors
 private val toolbarDarkColor         = LightBlackOnyx
@@ -68,6 +68,7 @@ private val textClickableDarkColor   = secondaryDark
 private val selectedItemDarkColor    = onBackgroundDark
 private val iconBackgroundDarkColor  = onBackgroundDark
 private val activeDarkColor          = textClickableDarkColor
+private val navigationBarDarkColor    = Black
 
 val LightColors = MusrofatyColors(
     primary               = primary,
@@ -96,6 +97,7 @@ val LightColors = MusrofatyColors(
     iconBackgroundColor   = iconBackgroundColor,
     activeColor           = activeColor,
     selectedItemColor     = selectedItemColor,
+    navigationBarColor    = navigationBarColor,
     isLight               = true
 )
 
@@ -126,6 +128,7 @@ val DarkColors = MusrofatyColors(
     iconBackgroundColor   = iconBackgroundDarkColor,
     activeColor           = activeDarkColor,
     selectedItemColor     = selectedItemDarkColor,
+    navigationBarColor    = navigationBarDarkColor,
     isLight               = false
 )
 
@@ -159,6 +162,7 @@ class MusrofatyColors(
     iconBackgroundColor: Color = Color.Unspecified,
     activeColor: Color = Color.Unspecified,
     selectedItemColor: Color = Color.Unspecified,
+    navigationBarColor: Color = Color.Unspecified,
     isLight: Boolean = true
 ) {
     var primary by mutableStateOf(primary, structuralEqualityPolicy())
@@ -229,6 +233,9 @@ class MusrofatyColors(
     var selectedItemColor by mutableStateOf(selectedItemColor, structuralEqualityPolicy())
         internal set
 
+    var navigationBarColor by mutableStateOf(navigationBarColor, structuralEqualityPolicy())
+        internal set
+
     var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
         internal set
 
@@ -259,6 +266,7 @@ class MusrofatyColors(
         textClickableColor= other.textClickableColor
         iconBackgroundColor= other.iconBackgroundColor
         selectedItemColor= other.selectedItemColor
+        navigationBarColor= other.navigationBarColor
         isLight = other.isLight
 
     }
@@ -290,6 +298,7 @@ class MusrofatyColors(
         textClickableColor: Color = this.textClickableColor,
         iconBackgroundColor: Color = this.iconBackgroundColor,
         selectedItemColor: Color = this.selectedItemColor,
+        navigationBarColor: Color = this.navigationBarColor,
         isLight: Boolean = this.isLight,
 
     ): MusrofatyColors = MusrofatyColors(
@@ -319,6 +328,7 @@ class MusrofatyColors(
         textClickableColor = textClickableColor,
         iconBackgroundColor = iconBackgroundColor,
         selectedItemColor = selectedItemColor,
+        navigationBarColor = navigationBarColor,
         isLight = isLight
     )
 }

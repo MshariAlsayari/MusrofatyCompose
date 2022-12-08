@@ -4,6 +4,7 @@ package com.msharialsayari.musrofaty
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
@@ -15,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -23,7 +23,6 @@ import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.ui.theme.isLightTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -61,27 +60,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTheme){
 
+    val window: Window = activity.window
+    val decorView: View = window.decorView
 
-    activity.window.statusBarColor = MusrofatyTheme.colors.toolbarColor.toArgb()
+    //set icon on Status bar "white"
+    decorView.systemUiVisibility = decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
 
+    //Set status bar background color
+    window.statusBarColor = MusrofatyTheme.colors.toolbarColor.toArgb()
 
-
-    if (isLightTheme(appTheme = theme)) {
-        val view: View = activity.window.decorView
-        view.systemUiVisibility = view.systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    } else {
-        val view: View = activity.window.decorView
-        view.systemUiVisibility = view.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-    }
-
-    activity.window.navigationBarColor = if (isLightTheme(appTheme = theme)) {
-        ContextCompat.getColor(activity, R.color.white)
-    } else {
-        ContextCompat.getColor(activity, R.color.black)
-    }
-
-
-
+    //Set navigation bar background color
+    window.navigationBarColor = MusrofatyTheme.colors.navigationBarColor.toArgb()
 }
 
 
