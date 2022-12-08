@@ -36,9 +36,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            SetLanguage(activity = this, locale =  uiState.currentLocale)
-            SetStatusAndNavigationBarColor(this, uiState.currentTheme)
             MusrofatyComposeTheme(appTheme = uiState.currentTheme, appLocale = uiState.currentLocale) {
+                SetLanguage(activity = this, locale =  uiState.currentLocale)
+                SetStatusAndNavigationBarColor(this, uiState.currentTheme)
                 MainScreenView(
                     this,
                     onLanguageChanged = {
