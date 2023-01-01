@@ -16,9 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -56,6 +54,7 @@ import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.enums.Sort
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
@@ -704,7 +703,7 @@ fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
         )
 
         TextComponent.BodyText(
-            text = smsCount.toString() + " " + pluralStringResource(
+            text = "$smsCount " + pluralStringResource(
                 id = R.plurals.common_sms,
                 count = smsCount
             )
@@ -724,8 +723,9 @@ fun ToolbarActionsComposable(
     onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val filters = uiState.filters
-    val smsList = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    var showMenu by remember { mutableStateOf(false) }
+    val selectedSort = uiState.sortBy
+
 
     Row(
         modifier = Modifier
@@ -745,6 +745,53 @@ fun ToolbarActionsComposable(
 
 
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+
+            Icon(Icons.Default.List,
+                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                contentDescription = null,
+                modifier = Modifier
+                    .mirror()
+                    .clickable {
+                        showMenu = !showMenu
+
+                    })
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(onClick = {
+                    showMenu = false
+                    viewModel.onSelectSortItem(Sort.MostToLeast)  }) {
+                    if (selectedSort == Sort.MostToLeast ){
+                        Icon(Icons.Default.Check,
+                            tint = MusrofatyTheme.colors.iconBackgroundColor,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+
+
+                                })
+                    }
+                    TextComponent.BodyText(text = stringResource(id = R.string.most_to_least))
+                }
+                DropdownMenuItem(onClick = {
+                    showMenu = false
+                    viewModel.onSelectSortItem(Sort.LeastToMost) }) {
+                    if (selectedSort == Sort.LeastToMost ){
+                        Icon(Icons.Default.Check,
+                            tint = MusrofatyTheme.colors.iconBackgroundColor,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+
+
+                                })
+                    }
+                    TextComponent.BodyText(text = stringResource(id = R.string.least_to_most))
+                }
+            }
 
 
             Icon(painter = painterResource(id = R.drawable.ic_excel),

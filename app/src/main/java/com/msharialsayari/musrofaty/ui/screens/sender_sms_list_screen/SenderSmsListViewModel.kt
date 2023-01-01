@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -18,6 +17,7 @@ import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.enums.Sort
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -292,6 +292,13 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
+    fun onSelectSortItem(sortBy: Sort){
+        val value = if (sortBy == _uiState.value.sortBy) null else sortBy
+        _uiState.update {
+            it.copy(sortBy = value)
+        }
+    }
+
 
     data class SenderSmsListUiState(
         var selectedTabIndex:Int = 0 ,
@@ -315,6 +322,7 @@ class SenderSmsListViewModel @Inject constructor(
         var endDate: Long = 0,
         var showStartDatePicker: Boolean = false,
         var showEndDatePicker: Boolean = false,
-        var showGeneratingExcelFileDialog:Boolean= false
+        var showGeneratingExcelFileDialog:Boolean= false,
+        var sortBy:Sort?= null
     )
 }

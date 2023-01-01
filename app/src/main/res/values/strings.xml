@@ -219,6 +219,9 @@
     <string name="common_years">Years</string>
     <string name="common_ago">ago</string>
 
+    <string name="most_to_least">Most to least</string>
+    <string name="least_to_most">Least to most</string>
+
 
 
 </resources>

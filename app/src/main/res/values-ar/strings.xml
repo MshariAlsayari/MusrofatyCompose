@@ -231,6 +231,9 @@
     <string name="common_years">سنوات</string>
     <string name="common_ago">منذ</string>
 
+    <string name="most_to_least">ترتيب من الأعلى صرف إلى الأقل</string>
+    <string name="least_to_most">ترتيب من الأقل صرف إلى الأعلى</string>
+
 
 
 </resources>
