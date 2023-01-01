@@ -181,6 +181,7 @@
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
 
+    <string name="no_sms_to_generat_file">Can\'t create a file without sms</string>
 
 
 

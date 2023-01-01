@@ -175,6 +175,9 @@
     <string name="pdf_preview_title">استعراض الرسائل</string>
     <string name="pdf_preview_pages">%2$s من %1$s</string>
 
+    <string name="no_sms_to_generat_file">لايوجد رسائل، لا يمكن إنشاء ملف</string>
+
+
 
 
 

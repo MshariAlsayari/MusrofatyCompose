@@ -1,11 +1,9 @@
 package com.msharialsayari.musrofaty.excei;
 
 
-
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
-
 
 import com.msharialsayari.musrofaty.R;
 import com.msharialsayari.musrofaty.Utils;
@@ -223,11 +221,11 @@ public class ExcelUtils {
 
             //Expenses Amount  Cell
             cell = rowData.createCell(ExcelColumns.EXPENSES_AMOUNT_COLUMN.getIndex());
-            cell.setCellValue(String.valueOf(expensesAmount));
+            cell.setCellValue(expensesAmount);
 
             //Income Amount  Cell
             cell = rowData.createCell(ExcelColumns.INCOME_AMOUNT_COLUMN.getIndex());
-            cell.setCellValue(String.valueOf(incomeAmount));
+            cell.setCellValue(incomeAmount);
 
             //Amount Currency  Cell
             cell = rowData.createCell(ExcelColumns.AMOUNT_CURRENCY_COLUMN.getIndex());

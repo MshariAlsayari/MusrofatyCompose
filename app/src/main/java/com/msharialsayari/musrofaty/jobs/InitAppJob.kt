@@ -27,7 +27,8 @@ class InitAppJob @AssistedInject constructor(
     private val senderRepo: SenderRepo,
     private val filtersRepo: FilterRepo,
     private val categoryRepo: CategoryRepo,
-): CoroutineWorker(appContext, workerParams) {
+    private val smsRepo: SmsRepo,
+) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         initIncomesWords()
         initExpensesWords()
@@ -36,77 +37,128 @@ class InitAppJob @AssistedInject constructor(
         initSenders()
         initFilters()
         initCategories()
+        insertSms()
         return Result.success()
     }
 
 
-    private suspend fun initContent(){
+    private suspend fun initContent() {
         val defaultContent = ContentModel.getDefaultContent()
         contentRepo.insert(*defaultContent.toTypedArray())
 
     }
 
 
-    private suspend fun initIncomesWords(){
-        if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.INCOME_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.INCOME_WORDS)
-            val incomes = words.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name) }.toList()
-            wordDetectorRepo.insert(incomes)
-        }else{
-            val incomes = Constants.listIncomeWords.map { WordDetectorModel(word = it, type = WordDetectorType.INCOME_WORDS.name) }.toList()
-            wordDetectorRepo.insert(incomes)
-        }
+    private suspend fun initIncomesWords() {
+        val incomes: List<WordDetectorModel> =
+            if (SharedPreferenceManager.isDefaultSmsWordsListChanged(
+                    appContext,
+                    WordsType.INCOME_WORDS
+                )
+            ) {
+                val words = SharedPreferenceManager.getWordsList(appContext, WordsType.INCOME_WORDS)
+                words.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.INCOME_WORDS.name
+                    )
+                }.toList()
+            } else {
+                Constants.listIncomeWords.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.INCOME_WORDS.name
+                    )
+                }.toList()
+
+            }
+
+        wordDetectorRepo.insert(incomes)
     }
 
-    private suspend fun initExpensesWords(){
-        if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.EXPENSES_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.EXPENSES_WORDS)
-            val expenses = words.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name) }.toList()
-            wordDetectorRepo.insert(expenses)
-        }else{
-            val expenses = Constants.listExpenseWords.map { WordDetectorModel(word = it, type = WordDetectorType.EXPENSES_WORDS.name) }.toList()
-            wordDetectorRepo.insert(expenses)
-        }
+    private suspend fun initExpensesWords() {
+        val expenses: List<WordDetectorModel> =
+            if (SharedPreferenceManager.isDefaultSmsWordsListChanged(
+                    appContext,
+                    WordsType.EXPENSES_WORDS
+                )
+            ) {
+                val words =
+                    SharedPreferenceManager.getWordsList(appContext, WordsType.EXPENSES_WORDS)
+                words.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.EXPENSES_WORDS.name
+                    )
+                }.toList()
+            } else {
+                Constants.listExpenseWords.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.EXPENSES_WORDS.name
+                    )
+                }.toList()
+            }
+        wordDetectorRepo.insert(expenses)
 
     }
 
-    private suspend fun initCurrencyWords(){
-        if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.CURRENCY_WORDS)){
-            val words = SharedPreferenceManager.getWordsList(appContext, WordsType.CURRENCY_WORDS)
-            val currency = words.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()
-            wordDetectorRepo.insert(currency)
-        }else{
-            val currency = Constants.listCurrencyWords.map { WordDetectorModel(word = it, type = WordDetectorType.CURRENCY_WORDS.name) }.toList()
-            wordDetectorRepo.insert(currency)
-        }
+    private suspend fun initCurrencyWords() {
+        val currency: List<WordDetectorModel> =
+            if (SharedPreferenceManager.isDefaultSmsWordsListChanged(
+                    appContext,
+                    WordsType.CURRENCY_WORDS
+                )
+            ) {
+                val words =
+                    SharedPreferenceManager.getWordsList(appContext, WordsType.CURRENCY_WORDS)
+                words.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.CURRENCY_WORDS.name
+                    )
+                }.toList()
+            } else {
+                Constants.listCurrencyWords.map {
+                    WordDetectorModel(
+                        word = it,
+                        type = WordDetectorType.CURRENCY_WORDS.name
+                    )
+                }.toList()
+            }
+
+        wordDetectorRepo.insert(currency)
 
 
     }
 
-    private suspend fun initSenders(){
+    private suspend fun initSenders() {
         val sendersContent = contentRepo.getContentByKey(ContentKey.SENDERS.name)
-        val banksSender =sendersContent.find{it.valueAr == SendersKey.BANKS.valueAr}
-        val servicesSender =sendersContent.find{it.valueAr == SendersKey.SERVICES.valueAr}
-        val digitalWalletSender =sendersContent.find{it.valueAr == SendersKey.DIGITALWALLET.valueAr}
+        val banksSender = sendersContent.find { it.valueAr == SendersKey.BANKS.valueAr }
+        val servicesSender = sendersContent.find { it.valueAr == SendersKey.SERVICES.valueAr }
+        val digitalWalletSender =
+            sendersContent.find { it.valueAr == SendersKey.DIGITALWALLET.valueAr }
 
-        if (SharedPreferenceManager.isDefaultSmsWordsListChanged(appContext, WordsType.BANKS_WORDS)){
+        if (SharedPreferenceManager.isDefaultSmsWordsListChanged(
+                appContext,
+                WordsType.BANKS_WORDS
+            )
+        ) {
             val words = SharedPreferenceManager.getWordsList(appContext, WordsType.BANKS_WORDS)
-            val senders = words.map {    SenderModel(
-                contentId = banksSender?.id ?:0,
-                senderName = it,
-                displayNameAr = it,
-                displayNameEn = it
-            ) }.toList()
+            val senders = words.map {
+                SenderModel(
+                    contentId = banksSender?.id ?: 0,
+                    senderName = it,
+                    displayNameAr = it,
+                    displayNameEn = it
+                )
+            }.toList()
             senderRepo.insert(*senders.toTypedArray())
-        }else{
-
-
-
-
+        } else {
             val senders = SenderModel.getDefaultSendersModel(
-                bankContentId =banksSender?.id ?:0 ,
-                servicesContentId = servicesSender?.id ?:0 ,
-                digitalWalletContentId = digitalWalletSender?.id ?:0
+                bankContentId = banksSender?.id ?: 0,
+                servicesContentId = servicesSender?.id ?: 0,
+                digitalWalletContentId = digitalWalletSender?.id ?: 0
 
             )
             senderRepo.insert(*senders.toTypedArray())
@@ -115,13 +167,19 @@ class InitAppJob @AssistedInject constructor(
 
     }
 
-    private suspend fun initFilters(){
+    private suspend fun initFilters() {
         filtersRepo.migrateForFilters()
     }
 
-    private suspend fun initCategories(){
+    private suspend fun initCategories() {
         categoryRepo.insertDefaultCategoryList()
     }
 
+    private suspend fun insertSms() {
+        smsRepo.insert()
+
+    }
 
 }
+
+
