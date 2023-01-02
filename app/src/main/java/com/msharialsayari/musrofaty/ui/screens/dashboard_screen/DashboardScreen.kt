@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.mikephil.charting.utils.ColorTemplate
@@ -116,7 +117,8 @@ fun BottomSheetHeader(viewModel: DashboardViewModel) {
             text = stringResource(id = R.string.tab_categories_statistics)
         )
         TextComponent.PlaceholderText(
-            text = stringResource(id = R.string.common_filter_options) + ": " + filterText
+            text = stringResource(id = R.string.common_filter_options) + ": " + filterText,
+            alignment = TextAlign.End
         )
     }
 
