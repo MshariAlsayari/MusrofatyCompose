@@ -41,12 +41,12 @@ class StoresViewModel @Inject constructor(
         getCategories()
     }
 
-    private fun getStores(){
+     fun getStores(storeName:String =""){
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            val result = getAllStoreWithCategoryUseCase.invoke()
+            val result = getAllStoreWithCategoryUseCase.invoke(storeName)
             _uiState.update {
                 it.copy(isLoading = false,stores = result)
             }
@@ -128,6 +128,11 @@ class StoresViewModel @Inject constructor(
                 it.copy(selectedCategory = item)
             }
         }
+    }
+
+
+    fun searchOnStoreList(value:String){
+
     }
 
     data class StoresUiState(

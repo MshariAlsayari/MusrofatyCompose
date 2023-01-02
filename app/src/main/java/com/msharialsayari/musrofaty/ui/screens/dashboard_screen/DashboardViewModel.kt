@@ -2,15 +2,15 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsForSendersUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +22,7 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val getAllSmsForSendersUseCase: GetAllSmsForSendersUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
+    private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase
 ):ViewModel(){
 
@@ -33,7 +34,7 @@ class DashboardViewModel @Inject constructor(
 
     fun getDate(){
         getFinancialStatistics()
-
+        getCategoriesStatistics()
     }
 
     fun loadSms(){
@@ -41,6 +42,7 @@ class DashboardViewModel @Inject constructor(
             _uiState.update { it.copy( isRefreshing = true) }
             loadAllSenderSmsUseCase.invoke()
             getFinancialStatistics()
+            getCategoriesStatistics()
             _uiState.update { state ->
                 state.copy(
                     isRefreshing = false
@@ -65,6 +67,26 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    private fun getCategoriesStatistics() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
+            val smsResult = getAllSmsForSendersUseCase.invoke(
+                filterOption = getFilterTimeOption(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
+            val result = getCategoriesStatisticsUseCase.invoke(smsResult)
+            _uiState.update { state ->
+                state.copy(
+                    categoriesStatistics = result,
+                    isCategoriesStatisticsSmsPageLoading = false
+                )
+            }
+
+
+        }
+    }
+
 
 
 
@@ -76,7 +98,7 @@ class DashboardViewModel @Inject constructor(
 
     fun dismissAllDatePicker(){
         _uiState.update {
-            it.copy(showStartDatePicker = false, showEndDatePicker = false)
+            it.copy(showStartDatePicker = false, showEndDatePicker = false, showFilterTimeOptionDialog = false)
         }
     }
 
@@ -99,6 +121,12 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    fun onDateRangeClicked(){
+        _uiState.update {
+            it.copy(showFilterTimeOptionDialog = !_uiState.value.showFilterTimeOptionDialog)
+        }
+    }
+
 
 
     fun getFilterTimeOption(): DateUtils.FilterOption{
@@ -117,14 +145,16 @@ class DashboardViewModel @Inject constructor(
     data class DashboardUiState(
         var isLoading: Boolean = false,
         var isRefreshing: Boolean = false,
-        var allSmsFlow: Flow<List<SmsEntity>>? =null,
+        var isCategoriesStatisticsSmsPageLoading: Boolean = false,
         var selectedFilterTimeOption: SelectedItemModel? = null,
         var startDate: Long = 0,
         var endDate: Long = 0,
         var showStartDatePicker: Boolean = false,
         var showEndDatePicker: Boolean = false,
+        var showFilterTimeOptionDialog: Boolean = false,
         var isFinancialStatisticsSmsPageLoading: Boolean = false,
-        var financialStatistics: Map<String, FinancialStatistics> = emptyMap()
+        var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
+        var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap(),
     )
 
 }

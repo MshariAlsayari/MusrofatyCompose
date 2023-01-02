@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -56,16 +57,32 @@ object TextComponent {
         modifier: Modifier = Modifier,
         alignment: TextAlign = TextAlign.Start,
         color:Color = MusrofatyTheme.colors.textPlaceHolderColor,
+        enableEllipsis:Boolean = false,
         text: String
     ) {
-        Text(
-            text = text,
-            modifier = modifier,
-            color= color,
-            textAlign = alignment,
-            fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
-            fontWeight = FontWeight.Normal
-        )
+
+        if (enableEllipsis){
+            Text(
+                text = text,
+                modifier = modifier,
+                color = color,
+                textAlign = alignment,
+                fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,)
+
+        }else {
+            Text(
+                text = text,
+                modifier = modifier,
+                color = color,
+                textAlign = alignment,
+                fontSize = dimensionResource(id = R.dimen.text_small).value.sp,
+                fontWeight = FontWeight.Normal,
+
+                )
+        }
 
     }
 

@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class GetAllStoreWithCategoryUseCase @Inject constructor(
     private val storeRepo: StoreRepo) {
 
-    suspend operator fun  invoke(): Flow<List<StoreWithCategory>> {
-        return storeRepo.getAll()
+    operator fun  invoke(query:String = ""): Flow<List<StoreWithCategory>> {
+        return storeRepo.getAll(query)
     }
 }

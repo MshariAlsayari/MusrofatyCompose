@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, canUnSelect:Boolean = false, onSelect:(Boolean)->Unit, onLongPress:(SelectedItemModel)->Unit = {} ) {
+fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, canUnSelect:Boolean = false,canDoubleSelect:Boolean = true, onSelect:(Boolean)->Unit, onLongPress:(SelectedItemModel)->Unit = {} ) {
     ListItem(
         modifier = modifier
             .fillMaxWidth()
@@ -24,9 +24,15 @@ fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedIt
                     if (canUnSelect){
                         onSelect(!model.isSelected)
                     }else{
-                        if (!model.isSelected){
-                            onSelect(!model.isSelected)
+
+                        if (canDoubleSelect){
+                            onSelect(true)
+                        }else{
+                            if (!model.isSelected){
+                                onSelect(true)
+                            }
                         }
+
                     }
                 },
                 onLongClick = {

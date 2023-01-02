@@ -11,16 +11,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
@@ -33,22 +37,110 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardScreen() {
     val viewModel: DashboardViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
+    val sheetState = rememberBottomSheetScaffoldState()
     val coroutineScope                    = rememberCoroutineScope()
 
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getDate()
+    }
+
+    BottomSheetScaffold(
+        modifier = Modifier,
+        scaffoldState = sheetState,
+        sheetPeekHeight = 150.dp,
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            ButtonComponent.FloatingButton(firstIcon = Icons.Filled.KeyboardArrowUp, secondIcon = Icons.Filled.KeyboardArrowDown, isFirstPosition = sheetState.bottomSheetState.isCollapsed , onClick = {
+                if (sheetState.bottomSheetState.isExpanded){
+                    coroutineScope.launch {
+                        sheetState.bottomSheetState.collapse()
+                    }
+                }else{
+                    coroutineScope.launch {
+                        sheetState.bottomSheetState.expand()
+                    }
+                }
+
+
+
+
+
+
+            })
+
+        },
+        sheetContent = {
+            BottomSheetContainer(viewModel)
+
+        }) {
+        DashboardContainer(viewModel)
+    }
+
+
+}
+
+@Composable
+fun BottomSheetContainer(viewModel: DashboardViewModel) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = dimensionResource(id = R.dimen.default_margin40)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
+    ) {
+        BottomSheetHeader(viewModel)
+        CategorySummaryComposable(viewModel)
+    }
+
+}
+
+@Composable
+fun BottomSheetHeader(viewModel: DashboardViewModel) {
+
+    val uiState by viewModel.uiState.collectAsState()
+    val filterTimeOption = uiState.selectedFilterTimeOption
+    val filterText = if (filterTimeOption?.id == 5) DateUtils.formattedRangeDate(uiState.startDate,uiState.endDate) else stringResource(id = DateUtils.FilterOption.getFilterOption(filterTimeOption?.id).title)
+
+
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(id = R.dimen.default_margin20)),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextComponent.HeaderText(
+            text = stringResource(id = R.string.tab_categories_statistics)
+        )
+        TextComponent.PlaceholderText(
+            text = stringResource(id = R.string.common_filter_options) + ": " + filterText
+        )
+    }
+
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DashboardContainer(viewModel: DashboardViewModel) {
+
+    val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
+        coroutineScope.launch {
+            BottomSheetComponent.handleVisibilityOfBottomSheet(
+                sheetState,
+                false
+            )
+        }
     }
-
-    LaunchedEffect(Unit){
-        viewModel.getDate()
-    }
-
 
     if (uiState.showStartDatePicker) {
         ComposeDatePicker(
@@ -67,7 +159,7 @@ fun DashboardScreen() {
             title = stringResource(id = R.string.common_end_date),
             onDone = {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
-                viewModel.onFilterTimeOptionSelected( SelectedItemModel(id = 5, value = "") )
+                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
                 viewModel.dismissAllDatePicker()
                 viewModel.getDate()
 
@@ -81,8 +173,22 @@ fun DashboardScreen() {
         )
     }
 
+    if (uiState.showFilterTimeOptionDialog){
+        DialogComponent.TimeOptionDialog(
+            selectedItem = uiState.selectedFilterTimeOption,
+            startDate = uiState.startDate,
+            endDate = uiState.endDate
+        ) {
+            if (DateUtils.FilterOption.isRangeDateSelected(it.id)) {
+                viewModel.showStartDatePicker()
+            } else {
+                uiState.selectedFilterTimeOption = it
+                viewModel.getDate()
+                viewModel.dismissAllDatePicker()
+            }
+        }
 
-
+    }
 
     Scaffold(
         topBar = {
@@ -95,13 +201,7 @@ fun DashboardScreen() {
                         modifier = Modifier
                             .mirror()
                             .clickable {
-                                coroutineScope.launch {
-                                    BottomSheetComponent.handleVisibilityOfBottomSheet(
-                                        sheetState,
-                                        true
-                                    )
-                                }
-
+                                viewModel.onDateRangeClicked()
                             })
 
                     Icon(
@@ -120,34 +220,12 @@ fun DashboardScreen() {
         }
     ) { innerPadding ->
 
-        ModalBottomSheetLayout(
-            sheetState = sheetState,
-            sheetContent = {
-                FilterTimeOptionsBottomSheet(viewModel =viewModel) {
-                    coroutineScope.launch {
-                        BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false)
-                    }
-                    if (DateUtils.FilterOption.isRangeDateSelected(it.id )) {
-                        viewModel.showStartDatePicker()
-                    } else {
-                        uiState.selectedFilterTimeOption = it
-                        viewModel.getDate()
-                        viewModel.dismissAllDatePicker()
-                    }
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(uiState.isRefreshing),
+            onRefresh = { viewModel.loadSms() },
+        ) {
 
-                }
-
-
-
-            }) {
-
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(uiState.isRefreshing),
-                onRefresh = { viewModel.loadSms() },
-            ) {
-
-                FinancialCompose(Modifier.padding(innerPadding), viewModel)
-            }
+            FinancialCompose(Modifier.padding(innerPadding), viewModel)
         }
 
     }
@@ -155,24 +233,24 @@ fun DashboardScreen() {
 }
 
 @Composable
-fun FinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewModel){
+fun FinancialCompose(modifier: Modifier = Modifier, viewModel: DashboardViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
 
 
     when {
         uiState.isFinancialStatisticsSmsPageLoading -> ItemLoading()
-        uiState.financialStatistics.isEmpty()       -> EmptyCompose()
-        else                                        -> LazyFinancialCompose(modifier, viewModel)
+        uiState.financialStatistics.isEmpty() -> EmptyCompose()
+        else -> LazyFinancialCompose(modifier, viewModel)
     }
 
 
 }
 
 @Composable
-fun LazyFinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewModel){
+fun LazyFinancialCompose(modifier: Modifier = Modifier, viewModel: DashboardViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val listState  = rememberLazyListState()
+    val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = modifier,
@@ -189,8 +267,6 @@ fun LazyFinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewMod
                     expensesTotal = it.expenses,
                 )
             )
-
-
         })
 
 
@@ -198,18 +274,50 @@ fun LazyFinancialCompose(modifier: Modifier=Modifier,viewModel: DashboardViewMod
 
 }
 
-
 @Composable
-fun FilterTimeOptionsBottomSheet(viewModel: DashboardViewModel, onFilterSelected:(SelectedItemModel)->Unit){
-    val uiState                           by viewModel.uiState.collectAsState()
-    BottomSheetComponent.TimeOptionsBottomSheet(selectedItem = uiState.selectedFilterTimeOption, startDate = uiState.startDate, endDate = uiState.endDate){
-        onFilterSelected(it)
+fun CategorySummaryComposable(viewModel: DashboardViewModel) {
+
+
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
+    val colors: ArrayList<Int> = ArrayList()
+    colors.addAll(ColorTemplate.VORDIPLOM_COLORS.toList())
+    colors.addAll(ColorTemplate.JOYFUL_COLORS.toList())
+    colors.addAll(ColorTemplate.COLORFUL_COLORS.toList())
+    colors.addAll(ColorTemplate.LIBERTY_COLORS.toList())
+    colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
+    colors.add(ColorTemplate.getHoloBlue())
+    val categories = uiState.categoriesStatistics.values.mapIndexed { index, it ->
+        it.toCategoryStatisticsModel(
+            context,
+            colors[index]
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            uiState.isCategoriesStatisticsSmsPageLoading -> ProgressBar.CircleProgressBar()
+            uiState.categoriesStatistics.isEmpty()-> EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
+            else -> {
+                CategoriesStatistics(categories = categories, onSmsClicked = {})
+
+            }
+        }
+
+
     }
 }
 
 
+
+
+
 @Composable
-fun ItemLoading(){
+fun ItemLoading() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -220,7 +328,7 @@ fun ItemLoading(){
 }
 
 @Composable
-fun EmptyCompose(){
+fun EmptyCompose() {
     Column(
         Modifier
             .fillMaxSize()

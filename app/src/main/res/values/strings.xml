@@ -26,6 +26,7 @@
     <string name="common_all">ALL</string>
     <string name="common_copied">copied</string>
     <string name="share_by">Share by</string>
+    <string name="common_search">Search</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>

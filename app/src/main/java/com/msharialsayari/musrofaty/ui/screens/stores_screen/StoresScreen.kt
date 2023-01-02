@@ -39,10 +39,18 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,
 
     Scaffold(
         topBar = {
-            AppBarComponent.TopBarComponent(
+            AppBarComponent.SearchTopAppBar(
                 title = Screen.StoresScreen.title,
-                onArrowBackClicked = onBackPressed
-            )
+                onArrowBackClicked = onBackPressed,
+                onTextChange = {
+                    viewModel.getStores(it)
+                },
+                onSearchClicked = {
+                    viewModel.getStores(it)
+                },
+
+
+                )
 
         }
     ) { innerPadding ->

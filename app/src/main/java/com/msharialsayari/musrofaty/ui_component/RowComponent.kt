@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -138,7 +139,7 @@ object RowComponent {
 
 
     @Composable
-    fun CategoryStatisticsRow(
+    fun ExpandableCategoryStatisticsRow(
         modifier: Modifier = Modifier,
         model: CategoryStatisticsModel,
         onClick: (String) -> Unit
@@ -206,6 +207,7 @@ object RowComponent {
     fun CategoryDetailsStatisticsList(list:List<CategoryDetailsStatisticsModel>, onItemClicked: (String) -> Unit){
         val listState = rememberLazyListState()
         LazyColumn(
+            modifier = Modifier.height(80.dp),
             state = listState,
         ) {
 
@@ -220,14 +222,23 @@ object RowComponent {
                 ) {
 
                     TextComponent.PlaceholderText(
+                        modifier = Modifier.weight(1f),
+                        alignment = TextAlign.Center,
+                        enableEllipsis =true,
                         text = item.storeName
                     )
 
                     TextComponent.PlaceholderText(
+                        modifier = Modifier.weight(1f),
+                        alignment = TextAlign.Center,
+                        enableEllipsis =true,
                         text = StringsUtils.formatNumberWithComma(item.amount.toString())
                     )
 
                     TextComponent.PlaceholderText(
+                        modifier = Modifier.weight(1f),
+                        alignment = TextAlign.Center,
+                        enableEllipsis =true,
                         text = DateUtils.getDateByTimestamp(
                             item.timestamp,
                             pattern = DEFAULT_DATE_PATTERN
@@ -235,6 +246,9 @@ object RowComponent {
                     )
 
                     TextComponent.PlaceholderText(
+                        modifier = Modifier.weight(1f),
+                        alignment = TextAlign.Center,
+                        enableEllipsis =true,
                         text = item.currency
                     )
                 }

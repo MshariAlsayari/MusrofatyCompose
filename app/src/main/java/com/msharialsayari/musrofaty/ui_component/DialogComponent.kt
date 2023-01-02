@@ -19,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
+import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.notEmpty
 
 object DialogComponent {
@@ -208,5 +209,40 @@ object DialogComponent {
             }
         }
         
+    }
+
+    @Composable
+    fun TimeOptionDialog(selectedItem: SelectedItemModel? = null,  startDate:Long=0,endDate:Long=0, onFilterSelected:(SelectedItemModel)->Unit ){
+        val context  = LocalContext.current
+
+        val options = DateUtils.FilterOption.values()
+        val list = mutableListOf<SelectedItemModel>()
+        options.map { item ->
+            list.add(
+                SelectedItemModel(
+                    id = item.id,
+                    value = context.getString(item.title),
+                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(startDate,endDate) else context.getString(item.subtitle),
+                    isSelected = if (selectedItem != null) selectedItem.id == item.id else item.id == 0
+                )
+            )
+        }
+
+        Dialog(onDismissRequest = {}) {
+            Card(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                BottomSheetComponent.SelectedItemListBottomSheetComponent(
+                    title = R.string.common_filter_options,
+                    list = list,
+                    onSelectItem = {
+                        onFilterSelected(it)
+                    }
+                )
+            }
+
+
+        }
     }
 }

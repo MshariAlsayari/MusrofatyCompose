@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,11 +26,11 @@ fun  CategoriesStatistics(modifier: Modifier = Modifier,
 
     Column(modifier = modifier
         .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin10))
     ) {
 
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             contentAlignment = Alignment.Center
@@ -41,11 +43,11 @@ fun  CategoriesStatistics(modifier: Modifier = Modifier,
         }
 
         Column(
-            modifier = modifier,
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
         ) {
             categories.forEach {
-                RowComponent.CategoryStatisticsRow(model = it, onClick = { smsId ->
+                RowComponent.ExpandableCategoryStatisticsRow(model = it, onClick = { smsId ->
                     onSmsClicked(smsId)
                 })
                 DividerComponent.HorizontalDividerComponent(modifier = modifier)
@@ -54,7 +56,9 @@ fun  CategoriesStatistics(modifier: Modifier = Modifier,
 
         }
 
-        DividerComponent.HorizontalDividerComponent(modifier = modifier)
+
+
+
     }
 
 }

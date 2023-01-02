@@ -17,10 +17,12 @@ class StoreRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-     fun getAll(): Flow<List<StoreWithCategory>> {
-        return dao.getAll()
+     fun getAll(storeName:String=""): Flow<List<StoreWithCategory>> {
+        return dao.getAll(storeName)
 
     }
+
+
 
 
 

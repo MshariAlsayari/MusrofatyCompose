@@ -27,6 +27,7 @@
     <string name="common_all">الكل</string>
     <string name="common_copied">تم النسخ</string>
     <string name="share_by">مشاركة باستخدام</string>
+    <string name="common_search">بحث</string>
 
 
     <plurals name="common_sms">

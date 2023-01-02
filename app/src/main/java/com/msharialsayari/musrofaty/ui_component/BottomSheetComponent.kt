@@ -66,7 +66,6 @@ object BottomSheetComponent {
     }
 
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
                                              @StringRes title:Int,
@@ -127,7 +126,7 @@ object BottomSheetComponent {
 
     }
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalMaterialApi::class)
     suspend fun handleVisibilityOfBottomSheet(sheetState: ModalBottomSheetState, show: Boolean) {
 
         if (show) {

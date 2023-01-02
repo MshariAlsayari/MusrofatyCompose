@@ -1,6 +1,9 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,14 +49,41 @@ object ButtonComponent {
     }
 
     @Composable
-    fun FloatingButton(modifier: Modifier=Modifier, onClick: () -> Unit = {}) {
+    fun FloatingButton(modifier: Modifier=Modifier, icon: ImageVector = Icons.Filled.Add,  onClick: () -> Unit = {}) {
         FloatingActionButton(
             modifier = modifier,
             onClick = onClick,
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = Color.White
         ) {
-            Icon(Icons.Filled.Add, "")
+            Icon(icon, "")
+        }
+    }
+
+    @Composable
+    fun FloatingButton(modifier: Modifier=Modifier, firstIcon: ImageVector, secondIcon: ImageVector , isFirstPosition:Boolean =  true, onClick: () -> Unit = {}) {
+        FloatingActionButton(
+            modifier = modifier,
+            onClick = onClick,
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = Color.White
+        ) {
+
+
+            AnimatedVisibility(
+                visible = isFirstPosition,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Icon(firstIcon, "")
+            }
+            AnimatedVisibility(
+                visible = !isFirstPosition,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Icon(secondIcon, "")
+            }
         }
     }
 }
