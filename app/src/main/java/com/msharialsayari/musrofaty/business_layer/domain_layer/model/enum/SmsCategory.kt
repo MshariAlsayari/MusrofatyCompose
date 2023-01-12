@@ -2,8 +2,8 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum
 
 import android.content.Context
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 
 
 enum class SmsCategory(val valueAr: String, val valueEn: String) {
@@ -30,7 +30,6 @@ enum class SmsCategory(val valueAr: String, val valueEn: String) {
                     CategoryModel(
                         valueAr = it.valueAr,
                         valueEn = it.valueEn,
-                        isDefault = true
                     )
                 )
 

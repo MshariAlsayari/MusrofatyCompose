@@ -58,8 +58,8 @@ class StoresViewModel @Inject constructor(
     fun changeStoreCategory(){
         viewModelScope.launch {
             val categoryId = _uiState.value.selectedCategory?.id ?: 0
-            val storeName  = _uiState.value.selectedStore?.store?.storeName
-            val storeModel = storeName?.let { name -> StoreModel(storeName = name, categoryId = categoryId) }
+            val storeName  = _uiState.value.selectedStore?.store?.name
+            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
             }

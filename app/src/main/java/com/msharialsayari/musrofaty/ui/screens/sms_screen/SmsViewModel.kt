@@ -100,8 +100,8 @@ class SmsViewModel @Inject constructor(
     fun onCategoryChanged(){
         viewModelScope.launch {
             val categoryId = _uiState.value.selectedCategory?.id ?: 0
-            val storeName  = _uiState.value.storeAndCategoryModel?.store?.storeName
-            val storeModel = storeName?.let { name -> StoreModel(storeName = name, categoryId = categoryId) }
+            val storeName  = _uiState.value.storeAndCategoryModel?.store?.name
+            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
             }
@@ -115,7 +115,7 @@ class SmsViewModel @Inject constructor(
         sms: SmsModel,
         context: Context
     ): SmsComponentModel {
-        val store = _uiState.value.storeAndCategoryModel?.store?.storeName ?: ""
+        val store = _uiState.value.storeAndCategoryModel?.store?.name ?: ""
         var category = ""
         if ( store.isNotEmpty()){
             category = CategoryModel.getDisplayName(context, uiState.value.storeAndCategoryModel?.category)

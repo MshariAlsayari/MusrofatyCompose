@@ -13,23 +13,26 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity")
-    suspend fun getAllCategoriesWithStores(): List<CategoryWithStore>
+    suspend fun getAllCategoriesWithStores(): List<CategoryWithStores>
 
-    @Query("SELECT * FROM CategoryEntity WHERE isDefault = :isDefault")
-    suspend fun getAllDefault(isDefault: Boolean): List<CategoryEntity>
+
+    @Transaction
+    @Query("SELECT * FROM CategoryEntity WHERE id = :categoryId")
+    suspend fun getAllCategoryWithStores(categoryId:Long): List<CategoryWithStores>
+
 
     @Query("SELECT * FROM CategoryEntity WHERE id = :id")
     suspend fun getCategory(id: Int): CategoryEntity?
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity WHERE id = :id")
-     fun getCategoryAndStores(id: Int): Flow<CategoryWithStore>?
+     fun getCategoryAndStores(id: Int): Flow<CategoryWithStores>?
 
 
-    @Query("UPDATE CategoryEntity SET value_ar = :valueAr WHERE id = :id")
+    @Query("UPDATE CategoryEntity SET valueAr = :valueAr WHERE id = :id")
     suspend fun changeArabicCategory(id: Int, valueAr: String)
 
-    @Query("UPDATE CategoryEntity SET value_en = :valueEn WHERE id = :id")
+    @Query("UPDATE CategoryEntity SET valueEn = :valueEn WHERE id = :id")
     suspend fun changeEnglishCategory(id: Int, valueEn: String)
 
 

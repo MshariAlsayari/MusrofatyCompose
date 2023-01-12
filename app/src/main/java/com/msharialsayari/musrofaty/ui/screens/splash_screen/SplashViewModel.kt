@@ -8,6 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.jobs.InitAppJob
+import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -49,9 +50,17 @@ class SplashViewModel @Inject constructor(
             }
 
 
+        initCategoriesJob()
 
 
 
+
+
+    }
+
+    private fun initCategoriesJob(){
+        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
+        WorkManager.getInstance(context).enqueue(initCategoriesWorker)
     }
 
 

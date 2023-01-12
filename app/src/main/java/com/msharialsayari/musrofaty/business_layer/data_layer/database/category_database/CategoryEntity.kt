@@ -14,15 +14,15 @@ data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int = 0,
-    @ColumnInfo(name = "value_ar")
+    @ColumnInfo(name = "valueAr")
     var valueAr: String? = null,
-    @ColumnInfo(name = "value_en")
+    @ColumnInfo(name = "valueEn")
     var valueEn: String? = null,
-    @ColumnInfo(name = "isDefault")
-    var isDefault: Boolean = false,
+    @ColumnInfo(name = "sortOrder")
+    var sortOrder: Int = 0,
 ) : Parcelable
 
-data class CategoryWithStore(
+data class CategoryWithStores(
     @Embedded val category: CategoryEntity?= null,
     @Relation(
         parentColumn = "id",
@@ -32,11 +32,13 @@ data class CategoryWithStore(
 )
 
 @Parcelize
-data class CategoryWithStoreModel(
+data class CategoryWithStoresModel(
     val category: CategoryModel? = null,
     val stores: List<StoreModel> = listOf(),
     var isSelected: Boolean = false
 ) : Parcelable
 
 
-fun CategoryEntity.toCategoryModel() = CategoryModel(id, valueAr, valueEn, isDefault)
+fun CategoryEntity.toCategoryModel() = CategoryModel(id, valueAr, valueEn)
+
+fun Map<String,Any>.toCategoryEntity() = CategoryEntity(id = (this["id"] as Long).toInt(), sortOrder = (this["sortOrder"] as Long).toInt(),valueAr = this["valueAr"] as? String,valueEn = this["valueEn"] as? String)

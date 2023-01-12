@@ -220,10 +220,10 @@ fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory,
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onStoreNameClicked(item.store.storeName)
+                onStoreNameClicked(item.store.name)
             }
             .padding(all = dimensionResource(id = R.dimen.default_margin16)),
-        text = { Text(text = item.store.storeName) },
+        text = { Text(text = item.store.name) },
         trailing = {
             TextComponent.ClickableText(
                 modifier = Modifier.clickable { onCategoryClicked(item) },
@@ -268,7 +268,6 @@ fun AddCategoryDialog(viewModel: StoresViewModel, onDismiss:()->Unit){
                 viewModel.addCategory(CategoryModel(
                     valueEn = en,
                     valueAr = ar,
-                    isDefault = false,
                 ))
 
                 onDismiss()

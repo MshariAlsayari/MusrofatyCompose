@@ -40,7 +40,7 @@ class StoreRepo @Inject constructor(
         var storeModel = getStoreByStoreName(storeName)
 
         if (storeModel == null){
-            storeModel = StoreModel(storeName = storeName , categoryId = -1)
+            storeModel = StoreModel(name = storeName , categoryId = -1)
         }
 
         val categoryModel: CategoryModel? = categoryRepo.getCategory(storeModel.categoryId)
@@ -65,7 +65,7 @@ class StoreRepo @Inject constructor(
     }
 
     suspend fun insertOrUpdateIfExisted(storeModel: StoreModel) {
-        if (dao.getStoreByName(storeModel.storeName) == null) {
+        if (dao.getStoreByName(storeModel.name) == null) {
             val list = mutableListOf<StoreModel>()
             list.add(storeModel)
             insert(list)

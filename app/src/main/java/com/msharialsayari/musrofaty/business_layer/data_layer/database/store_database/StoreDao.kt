@@ -12,12 +12,12 @@ interface StoreDao {
     suspend fun insert(vararg storeEntity: StoreEntity)
 
 
-    @Query("SELECT * FROM StoreEntity WHERE LOWER(storeName) = LOWER(:storeName)")
+    @Query("SELECT * FROM StoreEntity WHERE LOWER(name) = LOWER(:storeName)")
     suspend fun getStoreByName(storeName: String): StoreEntity?
 
 
     @Transaction
-    @Query("SELECT * FROM StoreEntity WHERE storeName LIKE '%' || :storeName || '%' ")
+    @Query("SELECT * FROM StoreEntity WHERE name LIKE '%' || :storeName || '%' ")
      fun getAll(storeName: String): Flow<List<StoreWithCategory>>
 
     @Update

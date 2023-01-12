@@ -7,9 +7,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class StoreModel(
-    var storeName: String,
+    var name: String,
     var categoryId: Int = 0,
 ) : Parcelable
 
 
-fun StoreModel.toStoreEntity() = StoreEntity(storeName, categoryId)
+fun StoreModel.toStoreEntity() = StoreEntity(name, categoryId)

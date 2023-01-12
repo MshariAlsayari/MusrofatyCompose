@@ -1,12 +1,11 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
+import android.util.Log
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SmsCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +17,8 @@ class CategoryRepo @Inject constructor(
     private val dao: CategoryDao,
     @ApplicationContext val context: Context
 ) {
+
+    private val db = Firebase.firestore
 
 
 
@@ -31,7 +32,7 @@ class CategoryRepo @Inject constructor(
         return dao.getCategory(categoryId)?.toCategoryModel()
     }
 
-     fun getCategoryAndStores(categoryId: Int): Flow<CategoryWithStore>? {
+     fun getCategoryAndStores(categoryId: Int): Flow<CategoryWithStores>? {
        return dao.getCategoryAndStores(categoryId)
     }
 
@@ -76,9 +77,20 @@ class CategoryRepo @Inject constructor(
 
     suspend fun insertDefaultCategoryList() {
         val categoryList: MutableList<CategoryEntity> = mutableListOf()
-        SmsCategory.getAll().map {
-            categoryList.add(it.toCategoryEntity())
-        }
+
+        db.collection("categories")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    Log.d("CategoryRepo", "${document.id} => ${document.data}")
+                    categoryList.add( document.data.toCategoryEntity())
+
+                }
+            }
+            .addOnFailureListener { exception ->
+
+            }
+
         dao.deleteAll()
         dao.insert(*categoryList.toTypedArray())
 

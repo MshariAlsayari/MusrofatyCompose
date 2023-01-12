@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStores
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -101,7 +101,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDo
                     coroutineScope.launch {
                        handleVisibilityOfBottomSheet(sheetState, false)
                     }
-                    selectedStore.value?.storeName?.let { viewModel.onUpdateStoreCategory(it,newCategoryId) }
+                    selectedStore.value?.name?.let { viewModel.onUpdateStoreCategory(it,newCategoryId) }
 
                 },
                 onCreateCategoryClicked = {
@@ -179,14 +179,14 @@ fun FieldCategoryDisplayNameCompose(modifier: Modifier=Modifier,viewModel:Catego
 fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, onItemClicked:(StoreEntity)->Unit){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val categoryWithStore = uiState.categoryWithStores?.collectAsState(initial = CategoryWithStore(category = null, stores = emptyList()))?.value
+    val categoryWithStores = uiState.categoryWithStores?.collectAsState(initial = CategoryWithStores(category = null, stores = emptyList()))?.value
 
     val deleteAction = Action<StoreEntity>(
         { TextComponent.BodyText(text = stringResource(id = com.msharialsayari.musrofaty.R.string.common_delete)) },
         { ActionIcon(id = R.drawable.ic_delete) },
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
-            viewModel.onDeleteStoreActionClicked(item.storeName)
+            viewModel.onDeleteStoreActionClicked(item.name)
 
         })
 
@@ -200,19 +200,19 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, on
 
         TextComponent.PlaceholderText(
             modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
-            text = stringResource(id = R.string.stores_description, CategoryModel.getDisplayName(context, categoryWithStore?.category))
+            text = stringResource(id = R.string.stores_description, CategoryModel.getDisplayName(context, categoryWithStores?.category))
         )
 
         HorizontalDividerComponent()
 
         VerticalEasyList(
-            list = categoryWithStore?.stores ?: emptyList(),
+            list = categoryWithStores?.stores ?: emptyList(),
             view = {
                 TextComponent.BodyText(
                     modifier= Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(id = R.dimen.default_margin16)),
-                    text = it.storeName
+                    text = it.name
                 )
 
             },
@@ -244,7 +244,6 @@ fun AddCategoryDialog(viewModel: CategoriesViewModel, onDismiss:()->Unit){
                 viewModel.addCategory(CategoryModel(
                     valueEn = en,
                     valueAr = ar,
-                    isDefault = false,
                 ))
 
                 onDismiss()

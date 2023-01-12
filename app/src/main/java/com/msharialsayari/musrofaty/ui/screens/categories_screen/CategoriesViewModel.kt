@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStore
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryWithStores
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
@@ -13,7 +13,10 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -107,7 +110,7 @@ class CategoriesViewModel @Inject constructor(
     fun onDeleteStoreActionClicked(storeName:String) {
         viewModelScope.launch {
             val model = StoreModel(
-                storeName = storeName,
+                name = storeName,
             )
             updateStoreUseCase.invoke(model)
         }
@@ -177,7 +180,7 @@ class CategoriesViewModel @Inject constructor(
     fun onUpdateStoreCategory(storeName:String, newCategoryId: Int) {
         viewModelScope.launch {
             val model = StoreModel(
-                storeName = storeName,
+                name = storeName,
                 categoryId = newCategoryId
             )
             updateStoreUseCase.invoke(model)
@@ -190,7 +193,7 @@ class CategoriesViewModel @Inject constructor(
         var btnClicked: Boolean = false,
         val categoryId: Int = 0,
         var categories: Flow<List<CategoryEntity>>? = null,
-        var categoryWithStores: Flow<CategoryWithStore?>? = null,
+        var categoryWithStores: Flow<CategoryWithStores?>? = null,
         var arabicCategory: String = "",
         var englishCategory: String = "",
         var arabicCategoryValidationModel: ValidationModel = ValidationModel(),

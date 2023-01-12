@@ -185,7 +185,6 @@ fun AddCategoryDialog(viewModel: SmsViewModel, onDismiss:()->Unit){
                 viewModel.addCategory(CategoryModel(
                     valueEn = en,
                     valueAr = ar,
-                    isDefault = false,
                 ))
 
                 onDismiss()

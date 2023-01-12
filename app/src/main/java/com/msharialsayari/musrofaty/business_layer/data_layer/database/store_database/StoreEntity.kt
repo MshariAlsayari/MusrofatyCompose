@@ -11,8 +11,8 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "StoreEntity")
 data class StoreEntity(
     @PrimaryKey
-    @ColumnInfo(name = "storeName")
-    var storeName: String,
+    @ColumnInfo(name = "name")
+    var name: String,
     @ColumnInfo(name = "categoryId")
     var categoryId: Int = 0,
 ) : Parcelable
@@ -22,7 +22,7 @@ data class StoreEntity(
 data class StoreWithCategory(
     @Embedded val store: StoreEntity,
     @Relation(
-        parentColumn = "storeName",
+        parentColumn = "name",
         entityColumn = "id"
     )
     val category: CategoryEntity?=null,
@@ -36,4 +36,4 @@ data class StoreAndCategoryModel(
 ) : Parcelable
 
 
-fun StoreEntity.toStoreModel() = StoreModel(storeName, categoryId)
+fun StoreEntity.toStoreModel() = StoreModel(name, categoryId)

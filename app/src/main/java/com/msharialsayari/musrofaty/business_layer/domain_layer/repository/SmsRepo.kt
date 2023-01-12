@@ -198,7 +198,7 @@ class SmsRepo @Inject constructor(
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
             if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val model = StoreModel(storeName = it.storeName)
+                val model = StoreModel(name = it.storeName)
                 storeRepo.insertStore(model)
             }
 
@@ -213,7 +213,7 @@ class SmsRepo @Inject constructor(
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
             if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val model = StoreModel(storeName = it.storeName)
+                val model = StoreModel(name = it.storeName)
                 storeRepo.insertStore(model)
             }
 

@@ -33,7 +33,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
         WordDetectorEntity::class,
         SenderEntity::class,
         ContentEntity::class, ],
-    version = 19,
+    version = 21,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -168,6 +168,24 @@ val MIGRATION_18_19= object : Migration(18,19) {
         database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT   NOT NULL,`displayNameAr` TEXT  NOT NULL  ,`displayNameEn` TEXT  NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`isActive` INTEGER DEFAULT(1) NOT NULL,`contentId` INTEGER  NOT NULL )")
 
 
+    }
+}
+
+val MIGRATION_19_20= object : Migration(19,20) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `CategoryEntity`" )
+        database.execSQL("DROP TABLE `StoreEntity`" )
+        database.execSQL("CREATE TABLE `CategoryEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`sortOrder` INTEGER NOT NULL, `valueAr` TEXT ,`valueEn` TEXT)")
+        database.execSQL("CREATE TABLE `StoreEntity`  (`name` TEXT PRIMARY KEY NOT NULL ,`categoryId` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `Entity`(`name`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+    }
+}
+
+val MIGRATION_20_21= object : Migration(20,21) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `CategoryEntity`" )
+        database.execSQL("DROP TABLE `StoreEntity`" )
+        database.execSQL("CREATE TABLE `CategoryEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`sortOrder` INTEGER NOT NULL, `valueAr` TEXT ,`valueEn` TEXT)")
+        database.execSQL("CREATE TABLE `StoreEntity`  (`name` TEXT PRIMARY KEY NOT NULL ,`categoryId` INTEGER NOT NULL )")
     }
 }
 

@@ -72,7 +72,7 @@ object SmsUtils {
                 var storeName = ""
                 val list = groupRegex.split(":")
                 if (list.size >= 2) {
-                    storeName = list[1]
+                    storeName = list[1].trim()
                     storeName = storeName.replace("\\n".toRegex(), "")
                 }
                 storeName

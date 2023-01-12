@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "313084189932",
+    "project_id": "musrofaty",
+    "storage_bucket": "musrofaty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313084189932:android:ac6f7a89b579059328d9c9",
+        "android_client_info": {
+          "package_name": "com.msharialsayari.musrofaty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313084189932-im1lm4j1utso239es74geoq39b2nsc09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB76YBsf3GtQJcVUuc8_jo15T4JSg97_9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313084189932-im1lm4j1utso239es74geoq39b2nsc09.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313084189932:android:cf2f70e5909ff47128d9c9",
+        "android_client_info": {
+          "package_name": "com.msharialsayari.musrofaty.d"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313084189932-im1lm4j1utso239es74geoq39b2nsc09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB76YBsf3GtQJcVUuc8_jo15T4JSg97_9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313084189932-im1lm4j1utso239es74geoq39b2nsc09.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
