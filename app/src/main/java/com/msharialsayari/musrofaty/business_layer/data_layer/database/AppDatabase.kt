@@ -33,7 +33,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
         WordDetectorEntity::class,
         SenderEntity::class,
         ContentEntity::class, ],
-    version = 21,
+    version = 22,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -186,6 +186,16 @@ val MIGRATION_20_21= object : Migration(20,21) {
         database.execSQL("DROP TABLE `StoreEntity`" )
         database.execSQL("CREATE TABLE `CategoryEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`sortOrder` INTEGER NOT NULL, `valueAr` TEXT ,`valueEn` TEXT)")
         database.execSQL("CREATE TABLE `StoreEntity`  (`name` TEXT PRIMARY KEY NOT NULL ,`categoryId` INTEGER NOT NULL )")
+    }
+}
+
+
+val MIGRATION_21_22= object : Migration(21,22) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `CategoryEntity`" )
+        database.execSQL("DROP TABLE `StoreEntity`" )
+        database.execSQL("CREATE TABLE `CategoryEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`sortOrder` INTEGER NOT NULL, `valueAr` TEXT ,`valueEn` TEXT)")
+        database.execSQL("CREATE TABLE `StoreEntity`  (`name` TEXT PRIMARY KEY NOT NULL ,`category_id` INTEGER NOT NULL )")
     }
 }
 

@@ -13,8 +13,8 @@ data class StoreEntity(
     @PrimaryKey
     @ColumnInfo(name = "name")
     var name: String,
-    @ColumnInfo(name = "categoryId")
-    var categoryId: Int = 0,
+    @ColumnInfo(name = "category_id")
+    var category_id: Int = 0,
 ) : Parcelable
 
 
@@ -36,4 +36,4 @@ data class StoreAndCategoryModel(
 ) : Parcelable
 
 
-fun StoreEntity.toStoreModel() = StoreModel(name, categoryId)
+fun StoreEntity.toStoreModel() = StoreModel(name, category_id)

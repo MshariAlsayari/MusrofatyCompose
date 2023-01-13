@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface StoreDao {
 
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(vararg storeEntity: StoreEntity)
 
 

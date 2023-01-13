@@ -155,7 +155,7 @@ fun StoresList(viewModel: StoresViewModel, onCategoryClicked:(StoreWithCategory)
     val listState  = rememberLazyListState()
     val stores = uiState.stores?.collectAsState(initial = emptyList())?.value ?: emptyList()
     val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
-    val groupedStores = stores.groupBy { it.store.categoryId }.toSortedMap(compareBy<Int> { it }.thenBy { it }.reversed())
+    val groupedStores = stores.groupBy { it.store.category_id }.toSortedMap(compareBy<Int> { it }.thenBy { it }.reversed())
 
     LazyColumn(
         state = listState,
@@ -227,7 +227,7 @@ fun StoreAndCategoryCompose(viewModel: StoresViewModel, item: StoreWithCategory,
         trailing = {
             TextComponent.ClickableText(
                 modifier = Modifier.clickable { onCategoryClicked(item) },
-                text =  viewModel.getCategoryDisplayName( item.store.categoryId, categories))
+                text =  viewModel.getCategoryDisplayName( item.store.category_id, categories))
         }
     )
 

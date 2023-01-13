@@ -26,7 +26,7 @@ data class CategoryWithStores(
     @Embedded val category: CategoryEntity?= null,
     @Relation(
         parentColumn = "id",
-        entityColumn = "categoryId"
+        entityColumn = "category_id"
     )
     val stores: List<StoreEntity>,
 )
@@ -40,5 +40,3 @@ data class CategoryWithStoresModel(
 
 
 fun CategoryEntity.toCategoryModel() = CategoryModel(id, valueAr, valueEn)
-
-fun Map<String,Any>.toCategoryEntity() = CategoryEntity(id = (this["id"] as Long).toInt(), sortOrder = (this["sortOrder"] as Long).toInt(),valueAr = this["valueAr"] as? String,valueEn = this["valueEn"] as? String)

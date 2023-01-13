@@ -4,11 +4,15 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +22,12 @@ class CategoryRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    private val db = Firebase.firestore
+    private val db              = Firebase.firestore
+    private val queryCategories = db.collection(categories_path)
+
+    companion object{
+        private const val categories_path =  "categories"
+    }
 
 
 
@@ -43,6 +52,7 @@ class CategoryRepo @Inject constructor(
             categoryList.add(it.toCategoryEntity())
         }
 
+        Log.d("MshariTest", categoryList.size.toString())
         dao.insert(*categoryList.toTypedArray())
     }
 
@@ -75,24 +85,20 @@ class CategoryRepo @Inject constructor(
         dao.delete(categoryModel.toCategoryEntity())
     }
 
-    suspend fun insertDefaultCategoryList() {
-        val categoryList: MutableList<CategoryEntity> = mutableListOf()
 
-        db.collection("categories")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    Log.d("CategoryRepo", "${document.id} => ${document.data}")
-                    categoryList.add( document.data.toCategoryEntity())
 
-                }
-            }
-            .addOnFailureListener { exception ->
 
-            }
-
-        dao.deleteAll()
-        dao.insert(*categoryList.toTypedArray())
-
+     fun getCategoriesFromFirestore() = flow {
+        emit(Response.Loading())
+        emit(Response.Success(queryCategories.get().await().documents.mapNotNull { doc ->
+            doc.toObject(CategoryEntity::class.java)
+        }))
+    }. catch { error ->
+        error.message?.let { errorMessage ->
+            emit(Response.Failure(errorMessage))
+        }
     }
+
+
+
 }

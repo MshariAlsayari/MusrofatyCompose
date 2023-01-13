@@ -15,6 +15,7 @@ object SharedPreferenceManager {
     private const val PREF_LANGUAGE                                        = "key_preferredLang"
     private const val PREF_THEME                                           = "PREF_THEME"
     private const val PREF_First_Lunched                                   = "PREF_First_Lunched"
+    private const val PREF_Firebase_First_Lunched                          = "PREF_Firebase_First_Lunched"
     private const val PREF_First_Lunched_Category                          = "PREF_First_Lunched_Category"
     private const val PREF_INCOME_WORDS = "PREF_INCOME_WORDS"
     
@@ -84,6 +85,18 @@ object SharedPreferenceManager {
         isChanged: Boolean = false
     ) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_First_Lunched, isChanged).apply()
+    }
+
+
+    fun isFirebaseFirstLunch(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_Firebase_First_Lunched, true)
+    }
+
+    fun setFirebaseFirstLunch(
+        context: Context,
+        isChanged: Boolean = false
+    ) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_Firebase_First_Lunched, isChanged).apply()
     }
 
 

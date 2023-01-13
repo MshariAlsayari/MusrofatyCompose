@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
+import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,33 +35,39 @@ class SplashViewModel @Inject constructor(
 
     private fun initData()
     {
-
-            if (SharedPreferenceManager.isFirstLunch(context)) {
-                _uiState.update {
-                    it.copy(isLoading = true)
-                }
-                val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
-                WorkManager.getInstance(context).enqueue(initAppWorker)
-                SharedPreferenceManager.setFirstLunch(context)
-                _uiState.update {
-                    it.copy(isLoading = false)
-                }
-            } else {
-                insertSms()
-            }
-
-
         initCategoriesJob()
+        initStoresJob()
+
+        if (SharedPreferenceManager.isFirstLunch(context)) {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            initAppJob()
+
+            SharedPreferenceManager.setFirstLunch(context)
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
+        } else {
+            insertSms()
+        }
+
+    }
 
 
-
-
-
+    private fun initAppJob(){
+        val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
+        WorkManager.getInstance(context).enqueue(initAppWorker)
     }
 
     private fun initCategoriesJob(){
         val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
         WorkManager.getInstance(context).enqueue(initCategoriesWorker)
+    }
+
+    private fun initStoresJob(){
+        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+        WorkManager.getInstance(context).enqueue(initStoresWorker)
     }
 
 

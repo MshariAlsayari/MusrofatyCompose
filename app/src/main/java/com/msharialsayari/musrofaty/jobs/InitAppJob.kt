@@ -26,7 +26,6 @@ class InitAppJob @AssistedInject constructor(
     private val contentRepo: ContentRepo,
     private val senderRepo: SenderRepo,
     private val filtersRepo: FilterRepo,
-    private val categoryRepo: CategoryRepo,
     private val smsRepo: SmsRepo,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
@@ -36,7 +35,6 @@ class InitAppJob @AssistedInject constructor(
         initContent()
         initSenders()
         initFilters()
-        initCategories()
         insertSms()
         return Result.success()
     }
@@ -171,9 +169,7 @@ class InitAppJob @AssistedInject constructor(
         filtersRepo.migrateForFilters()
     }
 
-    private suspend fun initCategories() {
-        categoryRepo.insertDefaultCategoryList()
-    }
+
 
     private suspend fun insertSms() {
         smsRepo.insert()
