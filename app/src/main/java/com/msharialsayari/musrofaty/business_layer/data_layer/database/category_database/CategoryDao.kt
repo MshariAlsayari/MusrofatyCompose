@@ -49,6 +49,6 @@ interface CategoryDao {
     @Query("DELETE FROM CategoryEntity")
     suspend fun deleteAll()
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(vararg categoryEntity: CategoryEntity)
 }
