@@ -66,9 +66,6 @@ class FilterViewModel@Inject constructor(
         if (word.isEmpty()){
             wordValidationModel.isValid = false
             wordValidationModel.errorMsg = context.getString(R.string.validation_field_mandatory)
-        }else if (StringsUtils.containSpecialCharacter(word)){
-            wordValidationModel.isValid = false
-            wordValidationModel.errorMsg = context.getString(R.string.validation_contain_special_character)
         }
 
         _uiState.update {
