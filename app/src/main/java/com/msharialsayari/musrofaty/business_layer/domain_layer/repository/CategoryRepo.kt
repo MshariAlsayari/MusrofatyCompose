@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,6 +37,13 @@ class CategoryRepo @Inject constructor(
         return dao.getAll()
     }
 
+    fun getCategoriesWithStores(categoryId: Int?): Flow<List<CategoryWithStores>> {
+        return if (categoryId != null)
+            dao.getAllCategoriesWithStores(categoryId)
+        else
+            dao.getAllCategoriesWithStores()
+    }
+
 
     suspend fun getCategory(categoryId: Int): CategoryModel? {
         return dao.getCategory(categoryId)?.toCategoryModel()
@@ -52,34 +60,17 @@ class CategoryRepo @Inject constructor(
             categoryList.add(it.toCategoryEntity())
         }
 
-        Log.d("MshariTest", categoryList.size.toString())
-        dao.insert(*categoryList.toTypedArray())
+        dao.insert(categoryList)
     }
 
-    suspend fun insert(vararg model: CategoryModel) {
-        val categoryList: MutableList<CategoryEntity> = mutableListOf()
-        model.map {
-            categoryList.add(it.toCategoryEntity())
-        }
-
-        dao.insert(*categoryList.toTypedArray())
+    suspend fun insert(model: CategoryModel) {
+        dao.insert(model.toCategoryEntity())
     }
 
     suspend fun update(categoryModel: CategoryModel) {
         dao.update(categoryModel.toCategoryEntity())
     }
 
-    suspend fun insertOrUpdateIfExisted(categoryModel: CategoryModel) {
-        if (dao.getCategory(categoryModel.id) == null) {
-            val list = mutableListOf<CategoryModel>()
-            list.add(categoryModel)
-            insert(list)
-        } else {
-            dao.update(categoryModel.toCategoryEntity())
-        }
-
-
-    }
 
     suspend fun delete(categoryModel: CategoryModel) {
         dao.delete(categoryModel.toCategoryEntity())
@@ -91,7 +82,12 @@ class CategoryRepo @Inject constructor(
      fun getCategoriesFromFirestore() = flow {
         emit(Response.Loading())
         emit(Response.Success(queryCategories.get().await().documents.mapNotNull { doc ->
-            doc.toObject(CategoryEntity::class.java)
+            return@mapNotNull CategoryEntity(
+                id        = (doc.data?.get("id") as Long).toInt(),
+                valueAr   = doc.data?.get("valueAr") as String,
+                valueEn   = doc.data?.get("valueEn") as String,
+                isDefault = (doc.data?.get("isDefault") as Boolean),
+                sortOrder = (doc.data?.get("sortOrder") as Long).toInt() )
         }))
     }. catch { error ->
         error.message?.let { errorMessage ->

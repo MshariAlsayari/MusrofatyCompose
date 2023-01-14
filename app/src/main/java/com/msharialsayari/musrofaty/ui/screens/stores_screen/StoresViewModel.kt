@@ -8,10 +8,12 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.notEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,7 @@ class StoresViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
+    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -60,6 +63,9 @@ class StoresViewModel @Inject constructor(
             val categoryId = _uiState.value.selectedCategory?.id ?: 0
             val storeName  = _uiState.value.selectedStore?.store?.name
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
+            storeModel?.let {
+                postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+            }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
             }

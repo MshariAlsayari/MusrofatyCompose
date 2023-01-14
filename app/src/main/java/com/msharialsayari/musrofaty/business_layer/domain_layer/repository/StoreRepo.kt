@@ -36,7 +36,10 @@ class StoreRepo @Inject constructor(
 
      fun getAll(storeName:String=""): Flow<List<StoreWithCategory>> {
         return dao.getAll(storeName)
+    }
 
+    fun getStoreByCategory(categoryId:Int): Flow<List<StoreEntity>> {
+        return dao.getStoreByCategoryId(categoryId)
     }
 
 
@@ -109,9 +112,21 @@ class StoreRepo @Inject constructor(
         }
     }
 
-    sealed class RepoState{
-        data class InsertStoresList(val stores: List<StoreEntity>): RepoState()
+    fun postStoreToFirestare(storeEntity: StoreEntity)  {
+        val data = hashMapOf(
+            "name" to storeEntity.name,
+            "category_id" to storeEntity.category_id
+        )
+
+
+        queryStores.document(storeEntity.name).set(data).addOnSuccessListener {
+            Log.d("MshariTest", "${storeEntity.name} addedd successfully")
+        }.addOnFailureListener {
+            Log.d("MshariTest", "${storeEntity.name} there was an error to add")
+        }
     }
+
+
 
 
 

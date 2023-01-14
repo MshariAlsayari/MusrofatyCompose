@@ -15,6 +15,9 @@ interface StoreDao {
     @Query("SELECT * FROM StoreEntity WHERE LOWER(name) = LOWER(:storeName)")
     suspend fun getStoreByName(storeName: String): StoreEntity?
 
+    @Query("SELECT * FROM StoreEntity WHERE category_id = :id")
+    fun getStoreByCategoryId(id: Int): Flow<List<StoreEntity>>
+
 
     @Transaction
     @Query("SELECT * FROM StoreEntity WHERE name LIKE '%' || :storeName || '%' ")

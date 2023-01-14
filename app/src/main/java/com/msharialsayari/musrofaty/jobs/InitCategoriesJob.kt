@@ -14,6 +14,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.Categ
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -42,12 +43,17 @@ class InitCategoriesJob @AssistedInject constructor(
             }
         }
 
+        delay(5000)
         return Result.success()
     }
 
     private fun insertList(categories: List<CategoryEntity>) {
-        Timber.tag(TAG).d("%s%s", "insertList()..." + "categories", categories.size)
-        val list = categories.map { it.toCategoryModel() }.toList()
+        Timber.tag(TAG).d( "insertList()..." + "categories:" + categories.size)
+
+        val list = categories.map {
+            Log.d(TAG, it.id.toString())
+            it.toCategoryModel()
+        }.toList()
         scope.launch {
             categoryRepo.insert(list)
         }

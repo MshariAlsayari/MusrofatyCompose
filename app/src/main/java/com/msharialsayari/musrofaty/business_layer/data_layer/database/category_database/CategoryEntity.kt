@@ -20,6 +20,8 @@ data class CategoryEntity(
     var valueEn: String? = null,
     @ColumnInfo(name = "sortOrder")
     var sortOrder: Int = 0,
+    @ColumnInfo(name = "isDefault")
+    var isDefault: Boolean = false ,
 ) : Parcelable
 
 data class CategoryWithStores(
@@ -39,4 +41,4 @@ data class CategoryWithStoresModel(
 ) : Parcelable
 
 
-fun CategoryEntity.toCategoryModel() = CategoryModel(id, valueAr, valueEn)
+fun CategoryEntity.toCategoryModel() = CategoryModel(id, valueAr, valueEn, isDefault = isDefault, sortOrder = sortOrder)

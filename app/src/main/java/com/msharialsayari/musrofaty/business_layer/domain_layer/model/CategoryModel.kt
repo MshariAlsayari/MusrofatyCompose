@@ -13,6 +13,8 @@ data class CategoryModel(
     var valueAr: String?=null,
     var valueEn: String?=null,
     var isSelected: Boolean = false,
+    var isDefault: Boolean = false,
+    var sortOrder: Int = 0,
 ) : Parcelable{
 
 
@@ -38,4 +40,4 @@ data class CategoryModel(
 
 
 
-fun CategoryModel.toCategoryEntity() = CategoryEntity(id, valueAr, valueEn)
+fun CategoryModel.toCategoryEntity() = CategoryEntity(id, valueAr, valueEn,isDefault= isDefault, sortOrder = sortOrder)

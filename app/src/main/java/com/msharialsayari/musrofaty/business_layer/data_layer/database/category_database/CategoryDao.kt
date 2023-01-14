@@ -13,12 +13,12 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity")
-    suspend fun getAllCategoriesWithStores(): List<CategoryWithStores>
+    fun getAllCategoriesWithStores(): Flow<List<CategoryWithStores>>
 
 
     @Transaction
     @Query("SELECT * FROM CategoryEntity WHERE id = :categoryId")
-    suspend fun getAllCategoryWithStores(categoryId:Long): List<CategoryWithStores>
+    fun getAllCategoriesWithStores(categoryId:Int): Flow<List<CategoryWithStores>>
 
 
     @Query("SELECT * FROM CategoryEntity WHERE id = :id")
@@ -50,5 +50,8 @@ interface CategoryDao {
     suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(vararg categoryEntity: CategoryEntity)
+    suspend fun insert(categoryEntity: CategoryEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(list: List<CategoryEntity>)
 }
