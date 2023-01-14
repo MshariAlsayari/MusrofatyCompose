@@ -27,12 +27,7 @@ class StoreRepo @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    private val db          = Firebase.firestore
-    private val queryStores = db.collection(stores_path)
 
-    companion object{
-        private const val stores_path =  "stores"
-    }
 
      fun getAll(storeName:String=""): Flow<List<StoreWithCategory>> {
         return dao.getAll(storeName)
@@ -101,30 +96,7 @@ class StoreRepo @Inject constructor(
     }
 
 
-    fun getStoresFromFirestore() = flow {
-        emit(Response.Loading())
-        emit(Response.Success(queryStores.get().await().documents.mapNotNull { doc ->
-            return@mapNotNull StoreEntity(name = doc.data?.get("name") as String, category_id =(doc.data?.get("category_id") as Long).toInt())
-        }))
-    }. catch { error ->
-        error.message?.let { errorMessage ->
-            emit(Response.Failure(errorMessage))
-        }
-    }
 
-    fun postStoreToFirestare(storeEntity: StoreEntity)  {
-        val data = hashMapOf(
-            "name" to storeEntity.name,
-            "category_id" to storeEntity.category_id
-        )
-
-
-        queryStores.document(storeEntity.name).set(data).addOnSuccessListener {
-            Log.d("MshariTest", "${storeEntity.name} addedd successfully")
-        }.addOnFailureListener {
-            Log.d("MshariTest", "${storeEntity.name} there was an error to add")
-        }
-    }
 
 
 

@@ -34,6 +34,17 @@ data class CategoryModel(
                 model?.valueEn ?: ""
             }
         }
+
+        fun getNoSelectedCategory():CategoryModel {
+            return CategoryModel(
+                id = 0,
+                valueAr = "غير محدد",
+                valueEn = "No Category",
+                isSelected = false,
+                isDefault = false,
+                sortOrder = 0
+            )
+        }
     }
 
 }

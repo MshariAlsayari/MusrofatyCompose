@@ -9,7 +9,7 @@ plugins {
 
 def versionMajor = 2
 def versionMinor = 0
-def versionPatch = 1
+def versionPatch = 2
 def versionBuild = 1// bump for dogfood builds, public betas, etc.
 
 
@@ -220,7 +220,12 @@ dependencies {
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation ('com.google.firebase:firebase-analytics-ktx'){
+        exclude module: "play-services-ads-identifier"
+        exclude module: "play-services-measurement"
+        exclude module: "play-services-measurement-sdk"
+        exclude module: "play-services-measurement-api"
+    }
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
 

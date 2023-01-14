@@ -10,7 +10,9 @@ import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.toStoreModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
 
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreRepo
 import dagger.assisted.Assisted
@@ -24,7 +26,7 @@ import timber.log.Timber
 class InitStoresJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val storeRepo: StoreRepo,
+    private val storeRepo: StoreFirebaseRepo,
 
     ) : CoroutineWorker(appContext, workerParams) {
 
@@ -44,10 +46,9 @@ class InitStoresJob @AssistedInject constructor(
         return Result.success()
     }
 
-    private fun insertList(stores: List<StoreEntity>) {
-        val list = stores.map { it.toStoreModel() }.toList()
+    private fun insertList(stores: List<StoreFirebaseEntity>) {
         scope.launch {
-            storeRepo.insert(list)
+            storeRepo.insert(stores)
         }
 
     }

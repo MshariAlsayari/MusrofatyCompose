@@ -33,6 +33,7 @@ class SmsRepo @Inject constructor(
     private val wordDetectorRepo: WordDetectorRepo,
     private val senderRepo: SenderRepo,
     private val storeRepo: StoreRepo,
+    private val storeFirebaseRepo:StoreFirebaseRepo,
     @ApplicationContext val context: Context
 ) {
 
@@ -200,7 +201,8 @@ class SmsRepo @Inject constructor(
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
             if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val model = StoreModel(name = it.storeName)
+                val storeFirebase = storeFirebaseRepo.getStoreByStoreName(it.storeName)
+                val model = if ( storeFirebase != null) StoreModel(name = it.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = it.storeName)
                 storeRepo.insertStore(model)
             }
 
@@ -215,7 +217,8 @@ class SmsRepo @Inject constructor(
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
             if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val model = StoreModel(name = it.storeName)
+                val storeFirebase = storeFirebaseRepo.getStoreByStoreName(it.storeName)
+                val model = if ( storeFirebase != null) StoreModel(name = it.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = it.storeName)
                 storeRepo.insertStore(model)
             }
 
