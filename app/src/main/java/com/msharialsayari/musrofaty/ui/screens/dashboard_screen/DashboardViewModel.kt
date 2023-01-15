@@ -1,16 +1,20 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsForSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
+import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +27,10 @@ class DashboardViewModel @Inject constructor(
     private val getAllSmsForSendersUseCase: GetAllSmsForSendersUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
-    private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase
+    private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
+    private val getSMSDashboardUseCase: GetSMSDashboardUseCase,
+    private val favoriteSmsUseCase: FavoriteSmsUseCase,
+    private val getSendersUseCase: GetSendersUseCase
 ):ViewModel(){
 
 
@@ -31,8 +38,20 @@ class DashboardViewModel @Inject constructor(
     val uiState: StateFlow<DashboardUiState> = _uiState
 
 
+    init {
+        getSenders()
+    }
 
-    fun getDate(){
+    private fun getSenders() {
+        viewModelScope.launch {
+            val result = getSendersUseCase.invoke()
+            _uiState.update { it.copy( senders = result) }
+        }
+    }
+
+
+    fun getData(){
+        getSmsDashboard()
         getFinancialStatistics()
         getCategoriesStatistics()
     }
@@ -41,6 +60,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy( isRefreshing = true) }
             loadAllSenderSmsUseCase.invoke()
+            getSmsDashboard()
             getFinancialStatistics()
             getCategoriesStatistics()
             _uiState.update { state ->
@@ -85,6 +105,27 @@ class DashboardViewModel @Inject constructor(
 
 
         }
+    }
+
+    private fun getSmsDashboard(){
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isSmsPageLoading = true)
+            }
+
+            val smsResult = getSMSDashboardUseCase.invoke(
+                filterOption = getFilterTimeOption(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+                query = _uiState.value.query
+            )
+
+            _uiState.update {
+                it.copy(isSmsPageLoading = false, smsFlow = smsResult)
+            }
+
+        }
+
     }
 
 
@@ -141,6 +182,36 @@ class DashboardViewModel @Inject constructor(
 
     }
 
+    fun wrapSendersToSenderComponentModel(
+        sms: SmsEntity,
+        context: Context
+    ): SmsComponentModel {
+
+        return SmsComponentModel(
+            id = sms.id,
+            senderId= sms.senderId,
+            timestamp = sms.timestamp,
+            isFavorite = sms.isFavorite,
+            body = sms.body,
+            senderDisplayName = SenderModel.getDisplayName(context, getSenderById(sms.senderId)),
+            senderCategory = ContentModel.getDisplayName(context, getSenderById(sms.senderId)?.content)
+
+        )
+
+    }
+
+    fun getSenderById(senderId:Int): SenderModel? {
+        return _uiState.value.senders.find { it.id == senderId }
+
+    }
+
+    fun favoriteSms(id:String , favorite:Boolean){
+        viewModelScope.launch {
+            favoriteSmsUseCase.invoke(id, favorite)
+        }
+    }
+
+
 
     data class DashboardUiState(
         var isLoading: Boolean = false,
@@ -155,6 +226,10 @@ class DashboardViewModel @Inject constructor(
         var isFinancialStatisticsSmsPageLoading: Boolean = false,
         var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
         var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap(),
+        var smsFlow: Flow<PagingData<SmsEntity>>? =null,
+        var isSmsPageLoading: Boolean = false,
+        var query:String="",
+        var senders:List<SenderModel> = listOf()
     )
 
 }

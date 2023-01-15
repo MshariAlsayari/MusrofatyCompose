@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -12,11 +13,14 @@ import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 
 @Composable
-fun AvatarComponent(icon:Int?) {
+fun AvatarComponent(icon:Int?, onClicked:()->Unit = {}) {
     Image(
         modifier = Modifier
             .width(50.dp)
             .height(50.dp)
-            .clip(CircleShape),
+            .clip(CircleShape)
+            .clickable {
+                  onClicked()
+                       },
         painter = painterResource(id = icon?: R.drawable.ic_app), contentDescription = null)
 }

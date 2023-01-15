@@ -125,6 +125,7 @@ class SmsViewModel @Inject constructor(
 
         return SmsComponentModel(
             id = sms.id,
+            senderId= sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
             body = sms.body,

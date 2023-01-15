@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PinSenderUseCase
 import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SendersListViewModel @Inject constructor(
     private val getFlowSendersUserCase: GetFlowSendersUserCase,
-    private val activeSenderUseCase: ActiveSenderUseCase,
     private val pinSenderUseCase: PinSenderUseCase,
 ) : ViewModel() {
 
@@ -46,14 +42,6 @@ class SendersListViewModel @Inject constructor(
     }
 
 
-
-
-    fun disableSender(senderId:Int){
-        viewModelScope.launch {
-             activeSenderUseCase.invoke(senderId = senderId, active = false)
-        }
-
-    }
 
 
     fun pinSender(senderId:Int){

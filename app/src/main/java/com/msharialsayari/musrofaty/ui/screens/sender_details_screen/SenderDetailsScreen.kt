@@ -173,9 +173,6 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersDetailsViewModel,s
                 })
 
 
-                SwitchListItemCompose(title = stringResource(id = R.string.sender_active), isChecked = uiState.isActive, onCheck = {
-                    viewModel.activeSender(it)
-                })
 
 
                 Spacer(modifier = Modifier.weight(1f))

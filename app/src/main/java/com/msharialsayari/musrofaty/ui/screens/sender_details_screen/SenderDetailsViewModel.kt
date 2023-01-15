@@ -19,7 +19,6 @@ import javax.inject.Inject
 class SendersDetailsViewModel @Inject constructor(
     private val getSenderUseCase: GetSenderUseCase,
     private val pinSenderUseCase: PinSenderUseCase,
-    private val activeSenderUseCase: ActiveSenderUseCase,
     private val updateSenderDisplayNameUseCase: UpdateSenderDisplayNameUseCase,
     private val getContentByKeyUseCase: GetContentByKeyUseCase,
     private val updateSenderCategoryUseCase: UpdateSenderCategoryUseCase,
@@ -76,15 +75,6 @@ class SendersDetailsViewModel @Inject constructor(
             pinSenderUseCase.invoke(senderId = uiState.value.sender?.id!!, pin = pin)
             _uiState.update { state ->
                 state.copy(isPin = pin)
-            }
-        }
-    }
-
-    fun activeSender(active: Boolean) {
-        viewModelScope.launch {
-            activeSenderUseCase.invoke(senderId = uiState.value.sender?.id!!, active = active)
-            _uiState.update { state ->
-                state.copy( isActive = active)
             }
         }
     }

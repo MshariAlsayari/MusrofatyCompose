@@ -67,7 +67,6 @@ private val MinToolbarHeight = 40.dp
 private val MaxToolbarHeight = 85.dp
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun SenderSmsListScreen(
     senderId: Int,

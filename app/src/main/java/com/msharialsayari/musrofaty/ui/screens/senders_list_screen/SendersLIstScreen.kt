@@ -65,14 +65,6 @@ fun PageCompose(
     val uiState by viewModel.uiState.collectAsState()
     val senderItems                          = uiState.senders?.collectAsState(emptyList())
 
-    val deleteAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_disable)) },
-        { ActionIcon(id = R.drawable.ic_visibility_off)},
-        backgroundColor = MusrofatyTheme.colors.deleteActionColor,
-        onClicked = { position, item ->
-            viewModel.disableSender(item.senderId)
-        })
-
     val pinAction = Action<SenderComponentModel>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_pin)) },
         { ActionIcon(id = R.drawable.ic_pin) },
@@ -107,8 +99,8 @@ fun PageCompose(
 
         },
         isLoading = uiState.isLoading,
-        startActions = listOf(deleteAction),
-        endActions = listOf(pinAction, modifyAction),
+        startActions = listOf(pinAction),
+        endActions = listOf(modifyAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView = { EmptyCompose()},
         onRefresh = {

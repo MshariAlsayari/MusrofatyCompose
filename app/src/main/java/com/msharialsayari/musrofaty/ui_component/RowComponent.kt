@@ -202,6 +202,52 @@ object RowComponent {
 
         }
     }
+
+
+    @Composable
+    fun CategoryStatisticsRow(
+        modifier: Modifier = Modifier,
+        model: CategoryStatisticsModel)  {
+
+        Column(modifier = modifier) {
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
+                ,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(RectangleShape)
+                        .background(Color(model.color))
+                )
+
+                TextComponent.PlaceholderText(
+                    text = model.category
+                )
+
+                TextComponent.PlaceholderText(
+                    text = StringsUtils.formatNumberWithComma(model.totalAmount.toString())
+                )
+
+                TextComponent.PlaceholderText(
+                    text = StringsUtils.formatDecimalNumber(model.percent) + " %"
+                )
+
+                TextComponent.PlaceholderText(
+                    text = model.currency
+                )
+
+
+            }
+
+        }
+    }
     
     @Composable
     fun CategoryDetailsStatisticsList(list:List<CategoryDetailsStatisticsModel>, onItemClicked: (String) -> Unit){

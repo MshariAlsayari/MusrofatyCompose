@@ -13,6 +13,6 @@ fun UnActiveSendersTab(viewModel: SendersManagementViewModel,onNavigateToSenderD
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val list = uiState.unActiveSenders?.collectAsState(initial = emptyList())?.value ?: emptyList()
-    SendersListCompose(viewModel = viewModel, list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(list,context), onNavigateToSenderDetails = onNavigateToSenderDetails, isActiveTab = false)
+    SendersListCompose(viewModel = viewModel, list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(list,context), onNavigateToSenderDetails = onNavigateToSenderDetails)
 
 }

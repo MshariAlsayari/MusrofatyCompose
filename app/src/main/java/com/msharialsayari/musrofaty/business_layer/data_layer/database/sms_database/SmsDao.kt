@@ -26,6 +26,27 @@ interface SmsDao {
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 
 
+    ////////Dashboard///////////
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%'")
+     fun getAllDashboard(query:String=""): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%' AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))")
+     fun getTodayDashboard(query:String=""): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%' AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime'))")
+     fun getCurrentWeekDashboard(query:String=""): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%' AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now'))")
+     fun getCurrentMonthDashboard(query:String=""): PagingSource<Int,SmsEntity>
+
+
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))")
+     fun getCurrentYearDashboard(query:String=""): PagingSource<Int,SmsEntity>
+
+    @Query("SELECT * FROM SmsEntity WHERE  body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) ")
+     fun getRangeDateDashboard(query:String="", startDate:Long, endDate:Long): PagingSource<Int,SmsEntity>
+
+
 
     ////////Generate Excel File///////////
 

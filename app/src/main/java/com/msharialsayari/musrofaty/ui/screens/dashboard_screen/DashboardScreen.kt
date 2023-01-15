@@ -1,11 +1,11 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,17 +16,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.mikephil.charting.utils.ColorTemplate
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryStatisticsModel
+import com.msharialsayari.musrofaty.Utils
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet.BottomSheetContainer
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -36,7 +38,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(senderId:Int)->Unit) {
     val viewModel: DashboardViewModel = hiltViewModel()
     val sheetState = rememberBottomSheetScaffoldState()
     val coroutineScope                    = rememberCoroutineScope()
@@ -44,13 +46,13 @@ fun DashboardScreen() {
 
 
     LaunchedEffect(Unit) {
-        viewModel.getDate()
+        viewModel.getData()
     }
 
     BottomSheetScaffold(
         modifier = Modifier,
         scaffoldState = sheetState,
-        sheetPeekHeight = 150.dp,
+        sheetPeekHeight = 80.dp,
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             ButtonComponent.FloatingButton(firstIcon = Icons.Filled.KeyboardArrowUp, secondIcon = Icons.Filled.KeyboardArrowDown, isFirstPosition = sheetState.bottomSheetState.isCollapsed , onClick = {
@@ -76,57 +78,19 @@ fun DashboardScreen() {
             BottomSheetContainer(viewModel)
 
         }) {
-        DashboardContainer(viewModel)
+        DashboardContainer(viewModel,onSmsClicked,onNavigateToSenderSmsList)
     }
 
 
 }
 
-@Composable
-fun BottomSheetContainer(viewModel: DashboardViewModel) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = dimensionResource(id = R.dimen.default_margin40)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
-    ) {
-        BottomSheetHeader(viewModel)
-        CategorySummaryComposable(viewModel)
-    }
-
-}
-
-@Composable
-fun BottomSheetHeader(viewModel: DashboardViewModel) {
-
-    val uiState by viewModel.uiState.collectAsState()
-    val filterTimeOption = uiState.selectedFilterTimeOption
-    val filterText = if (filterTimeOption?.id == 5) DateUtils.formattedRangeDate(uiState.startDate,uiState.endDate) else stringResource(id = DateUtils.FilterOption.getFilterOption(filterTimeOption?.id).title)
 
 
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dimensionResource(id = R.dimen.default_margin20)),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextComponent.HeaderText(
-            text = stringResource(id = R.string.tab_categories_statistics)
-        )
-        TextComponent.PlaceholderText(
-            text = stringResource(id = R.string.common_filter_options) + ": " + filterText,
-            alignment = TextAlign.End
-        )
-    }
-
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DashboardContainer(viewModel: DashboardViewModel) {
+fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(senderId:Int)->Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -163,7 +127,7 @@ fun DashboardContainer(viewModel: DashboardViewModel) {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
                 viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
                 viewModel.dismissAllDatePicker()
-                viewModel.getDate()
+                viewModel.getData()
 
 
             },
@@ -185,7 +149,7 @@ fun DashboardContainer(viewModel: DashboardViewModel) {
                 viewModel.showStartDatePicker()
             } else {
                 uiState.selectedFilterTimeOption = it
-                viewModel.getDate()
+                viewModel.getData()
                 viewModel.dismissAllDatePicker()
             }
         }
@@ -223,11 +187,12 @@ fun DashboardContainer(viewModel: DashboardViewModel) {
     ) { innerPadding ->
 
         SwipeRefresh(
+            modifier = Modifier.padding(innerPadding),
             state = rememberSwipeRefreshState(uiState.isRefreshing),
             onRefresh = { viewModel.loadSms() },
         ) {
+            SmsListCompose(viewModel,onSmsClicked,  onNavigateToSenderSmsList)
 
-            FinancialCompose(Modifier.padding(innerPadding), viewModel)
         }
 
     }
@@ -235,84 +200,82 @@ fun DashboardContainer(viewModel: DashboardViewModel) {
 }
 
 @Composable
-fun FinancialCompose(modifier: Modifier = Modifier, viewModel: DashboardViewModel) {
+fun SmsListCompose(viewModel: DashboardViewModel  , onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(senderId:Int)->Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val smsList = uiState.smsFlow?.collectAsLazyPagingItems()
 
-
-    when {
-        uiState.isFinancialStatisticsSmsPageLoading -> ItemLoading()
-        uiState.financialStatistics.isEmpty() -> EmptyCompose()
-        else -> LazyFinancialCompose(modifier, viewModel)
+    when{
+        uiState.isSmsPageLoading                        -> ItemLoading()
+        smsList?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = smsList, onSmsClicked = onSmsClicked , onNavigateToSenderSmsList = onNavigateToSenderSmsList)
+        else                                            -> EmptyCompose()
     }
+
+
+
 
 
 }
 
 @Composable
-fun LazyFinancialCompose(modifier: Modifier = Modifier, viewModel: DashboardViewModel) {
-    val uiState by viewModel.uiState.collectAsState()
-    val listState = rememberLazyListState()
-
-    LazyColumn(
-        modifier = modifier,
-        state = listState,
-    ) {
-
-        items(items = uiState.financialStatistics.values.toList(), itemContent = {
-            FinancialStatistics(
-                model = FinancialStatisticsModel(
-                    filterOption = viewModel.getFilterTimeOption(),
-                    currency = it.currency,
-                    total = it.expenses.plus(it.income),
-                    incomeTotal = it.income,
-                    expensesTotal = it.expenses,
-                )
-            )
-        })
-
-
-    }
-
-}
-
-@Composable
-fun CategorySummaryComposable(viewModel: DashboardViewModel) {
-
-
+fun LazySenderSms(
+    list: LazyPagingItems<SmsEntity>,
+    viewModel: DashboardViewModel,
+    onSmsClicked: (String) -> Unit,
+    onNavigateToSenderSmsList:(senderId:Int)->Unit
+) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val colors: ArrayList<Int> = ArrayList()
-    colors.addAll(ColorTemplate.VORDIPLOM_COLORS.toList())
-    colors.addAll(ColorTemplate.JOYFUL_COLORS.toList())
-    colors.addAll(ColorTemplate.COLORFUL_COLORS.toList())
-    colors.addAll(ColorTemplate.LIBERTY_COLORS.toList())
-    colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
-    colors.add(ColorTemplate.getHoloBlue())
-    val categories = uiState.categoriesStatistics.values.mapIndexed { index, it ->
-        it.toCategoryStatisticsModel(
-            context,
-            colors[index]
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
+    LazyColumn(
+        modifier = Modifier,
+        state = rememberLazyListState(),
     ) {
-        when {
-            uiState.isCategoriesStatisticsSmsPageLoading -> ProgressBar.CircleProgressBar()
-            uiState.categoriesStatistics.isEmpty()-> EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_financial_statistics))
-            else -> {
-                CategoriesStatistics(categories = categories, onSmsClicked = {})
+
+        itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item ->
+
+            if (item != null) {
+
+                SmsComponent(
+                    modifier = Modifier.clickable {
+                        onSmsClicked(item.id)
+                    },
+                    model = viewModel.wrapSendersToSenderComponentModel(item, context),
+                    onSenderIconClicked = {
+                     onNavigateToSenderSmsList(it)
+                    },
+                    onActionClicked = { model, action ->
+                        when (action) {
+                            SmsActionType.FAVORITE -> viewModel.favoriteSms(
+                                model.id,
+                                model.isFavorite
+                            )
+                            SmsActionType.COPY -> {
+                                Utils.copyToClipboard(item.body, context)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.common_copied),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            SmsActionType.ShARE -> {
+                                Utils.shareText(item.body, context)
+                            }
+                        }
+                    })
+
 
             }
+
+
         }
 
 
     }
+
+
 }
+
+
 
 
 

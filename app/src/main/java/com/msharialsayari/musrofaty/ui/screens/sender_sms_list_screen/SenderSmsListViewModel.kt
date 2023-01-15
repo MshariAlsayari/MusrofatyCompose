@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -188,6 +187,7 @@ class SenderSmsListViewModel @Inject constructor(
 
         return SmsComponentModel(
             id = sms.id,
+            senderId= sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
             body = sms.body,

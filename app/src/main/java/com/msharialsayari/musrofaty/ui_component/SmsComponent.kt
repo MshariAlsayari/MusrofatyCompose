@@ -2,14 +2,11 @@ package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Colors
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
@@ -17,14 +14,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.utils.DateUtils
 
 
 @Composable
@@ -32,13 +28,14 @@ fun SmsComponent(
     modifier: Modifier = Modifier,
     model: SmsComponentModel,
     onActionClicked: (SmsComponentModel, SmsActionType) -> Unit,
-    onCategoryClicked: (String) -> Unit = {}
+    onCategoryClicked: (String) -> Unit = {},
+    onSenderIconClicked:(Int) ->Unit = {}
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        SenderInfoComponent(model.senderDisplayName, model.senderCategory, model.senderIcon)
+        SenderInfoComponent(model.senderId, model.senderDisplayName, model.senderCategory, model.senderIcon, onSenderIconClicked)
         SmsBodyComponent(model.body)
         StoreAndCategoryComponent(model, onCategoryClicked = onCategoryClicked)
         SmsInfoRowComponent(model)
@@ -52,15 +49,19 @@ fun SmsComponent(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SenderInfoComponent(
+    senderId: Int,
     senderName: String,
     senderCategory: String,
-    senderIcon: Int? = null
+    senderIcon: Int? = null,
+    onIconClicked:(Int)->Unit
 ) {
     ListItem(
         text = { Text(text = senderName) },
         secondaryText = { Text(text = senderCategory) },
         icon = {
-            AvatarComponent(senderIcon)
+            AvatarComponent(senderIcon , onClicked = {
+                onIconClicked(senderId)
+            })
         }
     )
 
@@ -200,7 +201,8 @@ enum class SmsActionType {
 }
 
 data class SmsComponentModel(
-    var id: String,
+    var id: String, //SMS
+    var senderId: Int,
     var timestamp: Long = 0,
     var body: String = "",
     var smsType: String = "",

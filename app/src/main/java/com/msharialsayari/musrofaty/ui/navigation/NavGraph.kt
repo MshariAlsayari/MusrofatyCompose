@@ -65,7 +65,13 @@ fun NavigationGraph(
         }
 
         composable(BottomNavItem.Dashboard.route) {
-            DashboardScreen()
+            DashboardScreen(
+                onSmsClicked = {
+                    navController.navigate(Screen.SmsScreen.route + "/${it}")
+                },
+                onNavigateToSenderSmsList = {
+                    navController.navigate(Screen.SenderSmsListScreen.route + "/${it}")
+                })
         }
         composable(BottomNavItem.SendersList.route) {
             SendersListScreen(
