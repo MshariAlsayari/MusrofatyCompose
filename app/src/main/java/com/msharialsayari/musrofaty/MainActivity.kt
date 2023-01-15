@@ -69,6 +69,7 @@ fun initJobs(context: Context){
     initStoresJob(context)
     if (SharedPreferenceManager.isFirstLunch(context)) {
         initAppJob(context)
+        SharedPreferenceManager.setFirstLunch(context, false)
     }
 }
 
