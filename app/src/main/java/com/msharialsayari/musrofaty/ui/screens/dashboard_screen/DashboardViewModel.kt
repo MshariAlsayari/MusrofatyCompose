@@ -4,11 +4,16 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
+import com.msharialsayari.musrofaty.jobs.InitStoresJob
+import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -30,7 +35,7 @@ class DashboardViewModel @Inject constructor(
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
     private val getSMSDashboardUseCase: GetSMSDashboardUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
-    private val getSendersUseCase: GetSendersUseCase
+    private val getSendersUseCase: GetSendersUseCase,
 ):ViewModel(){
 
 
@@ -42,13 +47,14 @@ class DashboardViewModel @Inject constructor(
         getSenders()
     }
 
+
+
     private fun getSenders() {
         viewModelScope.launch {
             val result = getSendersUseCase.invoke()
             _uiState.update { it.copy( senders = result) }
         }
     }
-
 
     fun getData(){
         getSmsDashboard()
@@ -209,6 +215,26 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             favoriteSmsUseCase.invoke(id, favorite)
         }
+    }
+
+    fun initJobs(context: Context){
+        initInsertSmsJob(context)
+    }
+
+
+    private fun initCategoriesJob(context: Context){
+        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
+        WorkManager.getInstance(context).enqueue(initCategoriesWorker)
+    }
+
+    private fun initStoresJob(context: Context){
+        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+        WorkManager.getInstance(context).enqueue(initStoresWorker)
+    }
+
+    private fun initInsertSmsJob(context: Context){
+        val initStoresWorker = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
+        WorkManager.getInstance(context).enqueue(initStoresWorker)
     }
 
 

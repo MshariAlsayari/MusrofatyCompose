@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DashboardScreen(onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(senderId:Int)->Unit) {
+    val context = LocalContext.current
     val viewModel: DashboardViewModel = hiltViewModel()
     val sheetState = rememberBottomSheetScaffoldState()
     val coroutineScope                    = rememberCoroutineScope()
@@ -47,6 +48,7 @@ fun DashboardScreen(onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(se
 
     LaunchedEffect(Unit) {
         viewModel.getData()
+        //viewModel.initJobs(context)
     }
 
     BottomSheetScaffold(

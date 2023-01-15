@@ -35,7 +35,7 @@ class InitAppJob @AssistedInject constructor(
         initContent()
         initSenders()
         initFilters()
-        insertSms()
+      //  insertSms()
         return Result.success()
     }
 
@@ -173,7 +173,6 @@ class InitAppJob @AssistedInject constructor(
 
     private suspend fun insertSms() {
         smsRepo.insert()
-
     }
 
 }

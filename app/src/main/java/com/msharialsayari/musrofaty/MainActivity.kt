@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -19,11 +20,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.msharialsayari.musrofaty.jobs.InitAppJob
+import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
+import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -32,6 +39,7 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initJobs(this)
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
@@ -55,6 +63,31 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+fun initJobs(context: Context){
+    initCategoriesJob(context)
+    initStoresJob(context)
+    if (SharedPreferenceManager.isFirstLunch(context)) {
+        initAppJob(context)
+    }
+}
+
+private fun initAppJob(context: Context){
+    val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
+    WorkManager.getInstance(context).enqueue(initAppWorker)
+}
+
+private fun initCategoriesJob(context: Context){
+    val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
+    WorkManager.getInstance(context).enqueue(initCategoriesWorker)
+}
+
+private fun initStoresJob(context: Context){
+    val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+    WorkManager.getInstance(context).enqueue(initStoresWorker)
+}
+
+
 
 
 @Composable
