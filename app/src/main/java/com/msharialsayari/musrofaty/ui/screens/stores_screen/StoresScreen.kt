@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +37,7 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,
                  onBackPressed:()->Unit) {
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val isSearchTopBar = remember { mutableStateOf(false) }
 
 
     Scaffold(
@@ -42,6 +45,20 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,
             AppBarComponent.SearchTopAppBar(
                 title = Screen.StoresScreen.title,
                 onArrowBackClicked = onBackPressed,
+                isSearchMode = isSearchTopBar.value,
+                onCloseSearchMode = {
+                    isSearchTopBar.value = false
+                },
+                actions = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .mirror()
+                            .clickable {
+                                isSearchTopBar.value = !isSearchTopBar.value
+                            })
+                },
                 onTextChange = {
                     viewModel.getStores(it)
                 },

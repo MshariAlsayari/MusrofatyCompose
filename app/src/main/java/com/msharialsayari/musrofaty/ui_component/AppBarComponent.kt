@@ -105,12 +105,16 @@ object AppBarComponent {
         onTextChange: (String) -> Unit,
         onSearchClicked: (String) -> Unit,
         isParent: Boolean = false,
-        onArrowBackClicked: () -> Unit = {}
+        isSearchMode: Boolean = false,
+        onArrowBackClicked: () -> Unit = {},
+        onCloseSearchMode:() -> Unit,
+        actions: @Composable RowScope.() -> Unit = {}, // add all actions except search icon
     ) {
 
         val trailingIconState = remember { mutableStateOf(TrailingIconState.DELETE) }
-        val isSearchTopBar = remember { mutableStateOf(false) }
         val textFieldValue = remember { mutableStateOf("") }
+
+
 
         Box(
             modifier = Modifier
@@ -120,7 +124,7 @@ object AppBarComponent {
         ){
 
             AnimatedVisibility(
-                visible = isSearchTopBar.value,
+                visible = isSearchMode,
                 enter = fadeIn(animationSpec = tween(600)),
                 exit = fadeOut(animationSpec = tween(600))
             ) {
@@ -171,7 +175,7 @@ object AppBarComponent {
                                     trailingIconState.value == TrailingIconState.CLOSE || textFieldValue.value.isEmpty() -> {
                                         onTextChange("")
                                         textFieldValue.value = ""
-                                        isSearchTopBar.value = false
+                                        onCloseSearchMode.invoke()
                                         trailingIconState.value = TrailingIconState.DELETE
                                     }
 
@@ -211,18 +215,8 @@ object AppBarComponent {
 
             }
 
-            AnimatedVisibility(visible = !isSearchTopBar.value) {
-                TopBarComponent(title, onArrowBackClicked, actions = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .mirror()
-                            .clickable {
-                                isSearchTopBar.value = !isSearchTopBar.value
-                            })
-
-                }, isParent)
+            AnimatedVisibility(visible = !isSearchMode) {
+                TopBarComponent(title, onArrowBackClicked, actions = actions, isParent)
             }
 
         }

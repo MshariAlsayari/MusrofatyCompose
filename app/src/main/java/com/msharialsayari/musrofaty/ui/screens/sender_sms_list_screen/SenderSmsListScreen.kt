@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FloatExponentialDecaySpec
@@ -60,7 +59,6 @@ import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 
 private val MinToolbarHeight = 40.dp
@@ -355,12 +353,13 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
         R.string.tab_financial_statistics,
         R.string.tab_categories_statistics
     )
-    Column {
 
-        Log.i("Mshari", "tabIndex ${tabIndex.absoluteValue} ")
-
-        Column {
+        Column(
+            Modifier.fillMaxWidth()
+        ) {
             ScrollableTabRow(
+                modifier  =  Modifier.fillMaxWidth(),
+                backgroundColor = MaterialTheme.colors.background,
                 selectedTabIndex = tabIndex,
                 edgePadding = 0.dp,
                 indicator = {
@@ -394,7 +393,7 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
             }
         }
 
-    }
+
 }
 
 @Composable

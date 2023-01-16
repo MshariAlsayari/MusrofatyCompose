@@ -96,6 +96,7 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
 
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val isSearchTopBar = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -160,30 +161,60 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
 
     Scaffold(
         topBar = {
-            AppBarComponent.TopBarComponent(
+
+            AppBarComponent.SearchTopAppBar(
                 title = BottomNavItem.Dashboard.title,
-                actions = {
-                    Icon(
-                        Icons.Default.DateRange,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .mirror()
-                            .clickable {
-                                viewModel.onDateRangeClicked()
-                            })
-
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .mirror()
-                            .clickable {
-                                viewModel.loadSms()
-
-                            })
+                isParent = true,
+                isSearchMode = isSearchTopBar.value,
+                onCloseSearchMode = {
+                    isSearchTopBar.value = false
                 },
-                isParent = true
-            )
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+                                    isSearchTopBar.value = !isSearchTopBar.value
+                                })
+
+                        Icon(
+                            Icons.Default.DateRange,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+                                    viewModel.onDateRangeClicked()
+                                })
+
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+                                    viewModel.loadSms()
+
+                                })
+                    }
+                },
+                onTextChange = {
+                    viewModel.onQueryChanged(it)
+                    viewModel.getData()
+                },
+                onSearchClicked = {
+                    viewModel.onQueryChanged(it)
+                    viewModel.getData()
+                },
+
+
+                )
+
 
         }
     ) { innerPadding ->

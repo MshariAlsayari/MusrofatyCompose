@@ -11,8 +11,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategorySt
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
-import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
-import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
@@ -81,7 +79,7 @@ class DashboardViewModel @Inject constructor(
     private fun getFinancialStatistics(){
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getAllSmsForSendersUseCase.invoke( filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
+            val smsResult  = getAllSmsForSendersUseCase.invoke( filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -99,7 +97,8 @@ class DashboardViewModel @Inject constructor(
             val smsResult = getAllSmsForSendersUseCase.invoke(
                 filterOption = getFilterTimeOption(),
                 startDate = _uiState.value.startDate,
-                endDate = _uiState.value.endDate
+                endDate = _uiState.value.endDate,
+                query = _uiState.value.query
             )
             val result = getCategoriesStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
@@ -174,6 +173,13 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    fun onQueryChanged(value:String){
+        _uiState.update {
+            it.copy(query = value)
+        }
+
+    }
+
 
 
     fun getFilterTimeOption(): DateUtils.FilterOption{
@@ -206,7 +212,7 @@ class DashboardViewModel @Inject constructor(
 
     }
 
-    fun getSenderById(senderId:Int): SenderModel? {
+    private fun getSenderById(senderId:Int): SenderModel? {
         return _uiState.value.senders.find { it.id == senderId }
 
     }
@@ -217,20 +223,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun initJobs(context: Context){
-        initInsertSmsJob(context)
-    }
-
-
-    private fun initCategoriesJob(context: Context){
-        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
-        WorkManager.getInstance(context).enqueue(initCategoriesWorker)
-    }
-
-    private fun initStoresJob(context: Context){
-        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
-        WorkManager.getInstance(context).enqueue(initStoresWorker)
-    }
 
     private fun initInsertSmsJob(context: Context){
         val initStoresWorker = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
