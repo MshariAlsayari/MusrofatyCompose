@@ -7,11 +7,13 @@ import javax.inject.Singleton
 
 @Singleton
 class DeleteSenderUseCase  @Inject constructor(
-    private val senderRepo: SenderRepo
+    private val senderRepo: SenderRepo,
+    private val deleteSenderUseCase: DeleteSenderSmsUseCase
 ) {
 
     suspend operator fun invoke(id: Int) {
         senderRepo.delete(id)
+        deleteSenderUseCase.invoke(id)
     }
 
 

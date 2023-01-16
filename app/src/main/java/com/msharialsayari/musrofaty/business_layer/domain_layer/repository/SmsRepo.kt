@@ -247,5 +247,10 @@ class SmsRepo @Inject constructor(
         dao.insertAll(*smsEntityList.toTypedArray())
     }
 
+    suspend fun deleteSenderSms(senderId:Int){
+        dao.deleteSenderSms(senderId)
+
+    }
+
 
 }

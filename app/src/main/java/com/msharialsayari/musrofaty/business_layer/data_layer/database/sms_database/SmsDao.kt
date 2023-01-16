@@ -135,4 +135,8 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE body LIKE '%' || :query || '%'")
     fun getAllSms(query:String=""): PagingSource<Int,SmsEntity>
 
+
+    @Query("DELETE FROM SmsEntity WHERE senderId = :senderId")
+    suspend fun deleteSenderSms(senderId:Int)
+
 }

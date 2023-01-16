@@ -15,9 +15,9 @@ class AddSenderUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(senderModel: SenderModel) {
-        runBlocking {
-            senderRepo.insert(senderModel)
-            smsRepo.insert(senderModel.senderName)
-        }
+        senderModel.senderName = senderModel.senderName.trim()
+        senderRepo.insert(senderModel)
+        smsRepo.insert(senderModel.senderName)
+
     }
 }
