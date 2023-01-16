@@ -5,13 +5,9 @@ import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.msharialsayari.musrofaty.base.Response
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.toStoreModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -73,6 +69,7 @@ class StoreFirebaseRepo @Inject constructor(
             Log.d("MshariTest", "${storeEntity.name} addedd successfully")
         }.addOnFailureListener {
             Log.d("MshariTest", "${storeEntity.name} there was an error to add")
+            Log.d("MshariTest", it.message?:"error")
         }
     }
 }

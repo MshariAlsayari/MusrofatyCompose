@@ -22,6 +22,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
@@ -39,6 +42,7 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initAppCheckFirebase(this)
         initJobs(this)
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
@@ -62,6 +66,16 @@ class MainActivity : ComponentActivity() {
 
     }
 
+
+
+}
+
+private fun initAppCheckFirebase(context: Context) {
+    FirebaseApp.initializeApp(context)
+    val firebaseAppCheck = FirebaseAppCheck.getInstance()
+    firebaseAppCheck.installAppCheckProviderFactory(
+        PlayIntegrityAppCheckProviderFactory.getInstance()
+    )
 }
 
 fun initJobs(context: Context){
