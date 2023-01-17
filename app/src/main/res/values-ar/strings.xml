@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">مصروفاتي</string>
+    <string name="app_version">إصدار التطبيق</string>
 
     <!--commons-->
     <string name="common_delete">حذف</string>
@@ -77,6 +78,8 @@
     <string name="pref_managment_stores_summary">إمكانية تصنيف المتاجر</string>
     <string name="pref_managment_analysis_title">التحليل</string>
     <string name="pref_managment_analysis_summary">إمكانية زيادة كفاءة تحليل الرسائل</string>
+    <string name="pref_managment_update_title">التحديث</string>
+    <string name="pref_managment_update_summary">الذهاب إلى متجر Play Store للحصول على آخر نسخة من التطبيق</string>
 
 
     <!--filter options-->

@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.navigation
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -12,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.msharialsayari.musrofaty.BuildConfig
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
@@ -96,6 +98,28 @@ fun NavigationGraph(
                 },
                 onAnalysisClicked = {
                     navController.navigate(Screen.SmsAnalysisScreen.route)
+                },
+                onUpdateClicked = {
+                    var packageName =  activity.packageName
+                    if (BuildConfig.DEBUG) {
+                        var pk =""
+                        packageName.split(".")
+                                   .mapIndexed { index, s ->
+                                       when (index) {
+                                           0 -> pk += "$s."
+                                           1 -> pk += "$s."
+                                           2 -> pk += s
+                                       }
+                                   }
+
+                        packageName = pk
+                    }
+
+                    try {
+                        activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+                    } catch (e: ActivityNotFoundException) {
+                        activity. startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    }
                 }
             )
         }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Musrofaty</string>
-
+    <string name="app_version">App version</string>
 
     <!--commons-->
     <string name="common_delete">Delete</string>
@@ -75,6 +75,8 @@
     <string name="pref_managment_stores_summary">ability to categorize the stores</string>
     <string name="pref_managment_analysis_title">Analysis</string>
     <string name="pref_managment_analysis_summary">ability to increase sms analysis performance</string>
+    <string name="pref_managment_update_title">Update</string>
+    <string name="pref_managment_update_summary">navigate to Play Store to get last update</string>
 
     <!--filter options-->
     <string-array name="filter_options">

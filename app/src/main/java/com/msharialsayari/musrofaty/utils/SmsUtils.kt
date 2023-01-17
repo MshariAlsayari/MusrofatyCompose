@@ -11,7 +11,7 @@ object SmsUtils {
     private const val WHITESPACES_REGEX = "\\s"
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
-    private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
+    private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+"
     private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+"
 
 
