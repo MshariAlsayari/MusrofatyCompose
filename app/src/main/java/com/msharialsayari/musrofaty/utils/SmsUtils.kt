@@ -1,6 +1,6 @@
 package com.msharialsayari.musrofaty.utils
 
-import android.content.Context
+import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
@@ -12,10 +12,11 @@ object SmsUtils {
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
     private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
+    private const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
     private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+"
 
 
-    fun isValidSms(context: Context,sms:String?):Boolean{
+    fun isValidSms(sms:String?):Boolean{
         sms?.let {
             return containerNumber(it)           &&
                    clearSms(sms) != null         &&
@@ -65,10 +66,16 @@ object SmsUtils {
     }
 
 
-    fun getStoreName(sms: String?): String {
+    fun getStoreName(sms: String?, isAlinmaBank:Boolean): String {
         sms?.let {
             return try {
-                val groupRegex = STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: ""
+
+                val groupRegex = if (isAlinmaBank)
+                    ALINMA_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: ""
+                else
+                    STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: ""
+
+
                 var storeName = ""
                 val list = groupRegex.split(":")
                 if (list.size >= 2) {
@@ -127,7 +134,7 @@ object SmsUtils {
         return amount
     }
 
-    fun getAmount(sms: String?): Double {
+    private fun getAmount(sms: String?): Double {
         sms?.let {
             return try {
                 val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
@@ -145,8 +152,10 @@ object SmsUtils {
 
 
 
-    fun isSmsContainsCurrency(currency: String, sms: String?): Boolean {
+    private fun isSmsContainsCurrency(currency: String, sms: String?): Boolean {
         return sms?.contains(currency.toRegex(option = RegexOption.IGNORE_CASE)) ?: false
     }
+
+    fun isAlinmaBank(senderName:String)= ALINMA_BANK.equals(senderName,ignoreCase = true)
 
 }

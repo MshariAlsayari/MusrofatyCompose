@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
@@ -66,7 +67,7 @@ fun PageCompose(
     val senderItems                          = uiState.senders?.collectAsState(emptyList())
 
     val pinAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_pin)) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_pin),color= Color.White, alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_pin) },
         backgroundColor = MusrofatyTheme.colors.pinActionColor,
         onClicked = { position, item ->
@@ -75,7 +76,7 @@ fun PageCompose(
 
 
     val modifyAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_change),color= Color.White,alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_modify) },
         backgroundColor = MusrofatyTheme.colors.modifyActionColor,
         onClicked = { position, item ->
@@ -99,8 +100,7 @@ fun PageCompose(
 
         },
         isLoading = uiState.isLoading,
-        startActions = listOf(pinAction),
-        endActions = listOf(modifyAction),
+        endActions = listOf(modifyAction,pinAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView = { EmptyCompose()},
         onRefresh = {

@@ -43,7 +43,6 @@ class SmsSourceImpl @Inject constructor(
                 for (i in 0 until totalSMS) {
 
                     if (SmsUtils.isValidSms(
-                            context,
                             cursor.getString(cursor.getColumnIndexOrThrow("body"))
                         )
                     ) {

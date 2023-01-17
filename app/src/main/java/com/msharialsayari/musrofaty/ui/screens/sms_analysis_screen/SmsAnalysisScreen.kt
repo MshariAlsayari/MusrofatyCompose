@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
@@ -174,7 +176,7 @@ fun LoadingPageCompose(modifier: Modifier=Modifier){
 fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDetectorEntity>){
     val uiState by viewModel.uiState.collectAsState()
     val deleteAction = Action<WordDetectorEntity>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete ), color = Color.White,alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_delete ) },
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
@@ -198,7 +200,7 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
 
         },
         isLoading       = uiState.isLoading,
-        startActions    = listOf(deleteAction),
+        endActions      = listOf(deleteAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView       = { EmptyCompose() },
     )

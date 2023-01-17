@@ -10,9 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -182,7 +184,7 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, on
     val categoryWithStores = uiState.categoryWithStores?.collectAsState(initial = CategoryWithStores(category = null, stores = emptyList()))?.value
 
     val deleteAction = Action<StoreEntity>(
-        { TextComponent.BodyText(text = stringResource(id = com.msharialsayari.musrofaty.R.string.common_delete)) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete), color= Color.White,alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_delete) },
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->

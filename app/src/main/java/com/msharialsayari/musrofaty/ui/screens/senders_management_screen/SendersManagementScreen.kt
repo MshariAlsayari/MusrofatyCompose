@@ -12,9 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
@@ -148,7 +150,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderC
 
 
     val modifyAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_change)) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_change), color = Color.White,alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_modify) },
         backgroundColor = MusrofatyTheme.colors.modifyActionColor,
         onClicked = { position, item ->

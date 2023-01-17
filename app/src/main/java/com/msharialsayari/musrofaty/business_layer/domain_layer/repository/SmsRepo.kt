@@ -221,14 +221,19 @@ class SmsRepo @Inject constructor(
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
-            if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val storeFirebase = storeFirebaseRepo.getStoreByStoreName(it.storeName)
-                val model = if ( storeFirebase != null) StoreModel(name = it.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = it.storeName)
-                storeRepo.insertStore(model)
-            }
+            insertStore(it)
 
         }
         dao.insertAll(*smsEntityList.toTypedArray())
+    }
+
+    private suspend fun insertStore(sms: SmsModel) {
+        val store = storeRepo.getStoreByStoreName(sms.storeName)
+        if (sms.storeName.isNotEmpty() && (store == null || store.categoryId == 0) ) {
+            val storeFirebase = storeFirebaseRepo.getStoreByStoreName(sms.storeName)
+            val model = if (storeFirebase != null) StoreModel(name = sms.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = sms.storeName)
+            storeRepo.insertStore(model)
+        }
     }
 
 
@@ -237,12 +242,7 @@ class SmsRepo @Inject constructor(
         val smsEntityList = mutableListOf<SmsEntity>()
         smsList.map {
             smsEntityList.add(it.toSmsEntity())
-            if (it.storeName.isNotEmpty() && storeRepo.getStoreByStoreName(it.storeName) == null){
-                val storeFirebase = storeFirebaseRepo.getStoreByStoreName(it.storeName)
-                val model = if ( storeFirebase != null) StoreModel(name = it.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = it.storeName)
-                storeRepo.insertStore(model)
-            }
-
+            insertStore(it)
         }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
