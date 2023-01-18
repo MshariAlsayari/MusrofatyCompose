@@ -49,25 +49,35 @@ class SmsRepo @Inject constructor(
         return dao.favoriteSms(smsId, favorite)
     }
 
-
-    suspend fun getSms(smsId: String) :SmsModel{
-        return fillSmsModel(dao.getSms(smsId).toSmsModel())
+    suspend fun softDeleteSms(smsId: String, delete: Boolean){
+        return dao.softDelete(smsId, delete)
     }
 
-    suspend fun getAllSmsForAllSenders(filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
+
+    suspend fun getSms(smsId: String) :SmsModel?{
+        val sms = dao.getSms(smsId)
+        sms?.let {
+            return fillSmsModel(it.toSmsModel())
+        }
+        return null
+
+    }
+
+    suspend fun getAllSmsForAllSenders(isDeleted:Boolean=false,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
         val senders = senderRepo.getAllSenders().filter { it.isActive }
         val smsList  = mutableListOf<SmsEntity>()
         senders.forEach {
 
             val list = when (filterOption) {
-                DateUtils.FilterOption.ALL -> dao.getAll(it.id, query)
-                DateUtils.FilterOption.TODAY -> dao.getToday(it.id, query)
-                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(it.id, query)
-                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(it.id, query)
-                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(it.id, query)
+                DateUtils.FilterOption.ALL -> dao.getAll(it.id, query,isDeleted)
+                DateUtils.FilterOption.TODAY -> dao.getToday(it.id, query,isDeleted)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(it.id, query,isDeleted)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(it.id, query,isDeleted)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(it.id, query,isDeleted)
                 DateUtils.FilterOption.RANGE -> dao.getRangeDate(
                     it.id,
                     query,
+                    isDeleted,
                     startDate,
                     endDate
                 )
@@ -114,7 +124,7 @@ class SmsRepo @Inject constructor(
                 DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(senderId,query)
                 DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(senderId,query)
                 DateUtils.FilterOption.YEAR -> dao.getCurrentYear(senderId,query)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDate(senderId,query,startDate,endDate)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDate(senderId,query,false,startDate,endDate)
             }
 
         smsListEntity.map {
@@ -134,7 +144,7 @@ class SmsRepo @Inject constructor(
                 DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSms(senderId,query)
                 DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSms(senderId,query)
                 DateUtils.FilterOption.YEAR -> dao.getCurrentYearSms(senderId,query)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDateSms(senderId,query,startDate,endDate)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateSms(senderId,query,false,startDate,endDate)
             }
         }
 
@@ -167,6 +177,17 @@ class SmsRepo @Inject constructor(
         }
     }
 
+    fun getSmsBySenderIdWithSoftDeletedCheck(senderId: Int, isDeleted: Boolean,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0):  Flow<List<SmsEntity>> {
+        return when (filterOption) {
+            DateUtils.FilterOption.ALL -> dao.getSmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted)
+            DateUtils.FilterOption.TODAY -> dao.getTodaySmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted)
+            DateUtils.FilterOption.WEEK -> dao.getCurrentWeekSmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted)
+            DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted)
+            DateUtils.FilterOption.YEAR -> dao.getCurrentYearSmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted)
+            DateUtils.FilterOption.RANGE -> dao.getRangeDateSmsBySenderIdWithSoftDeleteCheck(senderId,query,isDeleted,startDate,endDate)
+        }
+    }
+
 
     fun getAllFavoriteSms(senderId: Int, isFavorite:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
 
@@ -178,6 +199,26 @@ class SmsRepo @Inject constructor(
                 DateUtils.FilterOption.MONTH -> dao.getCurrentMonthFavoriteSms(senderId,isFavorite,query)
                 DateUtils.FilterOption.YEAR -> dao.getCurrentYearFavoriteSms(senderId,isFavorite,query)
                 DateUtils.FilterOption.RANGE -> dao.getRangeDateFavoriteSms(senderId,isFavorite,query, startDate, endDate )
+            }
+        }
+        return Pager(
+            config = PagingConfig(pageSize = ITEM_SIZE),
+            pagingSourceFactory = pagingSourceFactory,
+        ).flow
+
+    }
+
+
+    fun getAllSoftDeletedSms(senderId: Int, isDeleted:Boolean=true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
+
+        val pagingSourceFactory = {
+            when (filterOption) {
+                DateUtils.FilterOption.ALL   -> dao.getAllSoftDeletedSms(senderId,isDeleted,query )
+                DateUtils.FilterOption.TODAY -> dao.getTodaySoftDeletedSms(senderId,isDeleted,query)
+                DateUtils.FilterOption.WEEK  -> dao.getCurrentWeekSoftDeletedSms(senderId,isDeleted,query)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonthSoftDeletedSms(senderId,isDeleted,query)
+                DateUtils.FilterOption.YEAR  -> dao.getCurrentYearSoftDeletedSms(senderId,isDeleted,query)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDateSoftDeletedSms(senderId,isDeleted,query, startDate, endDate )
             }
         }
         return Pager(
@@ -219,10 +260,20 @@ class SmsRepo @Inject constructor(
     suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.map {
+        smsList.filter { isEligibleToInsert(it.id) }.map {
             smsEntityList.add(it.toSmsEntity())
             insertStore(it)
 
+        }
+        dao.insertAll(*smsEntityList.toTypedArray())
+    }
+
+    suspend fun insert(senderName:String) {
+        val smsList = datasource.loadBanksSms(context,senderName)
+        val smsEntityList = mutableListOf<SmsEntity>()
+        smsList.filter { isEligibleToInsert(it.id) }.map {
+            smsEntityList.add(it.toSmsEntity())
+            insertStore(it)
         }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
@@ -237,20 +288,19 @@ class SmsRepo @Inject constructor(
     }
 
 
-    suspend fun insert(senderName:String) {
-        val smsList = datasource.loadBanksSms(context,senderName)
-        val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.map {
-            smsEntityList.add(it.toSmsEntity())
-            insertStore(it)
-        }
-        dao.insertAll(*smsEntityList.toTypedArray())
-    }
+
 
     suspend fun deleteSenderSms(senderId:Int){
         dao.deleteSenderSms(senderId)
+    }
+
+    private suspend fun isEligibleToInsert(smsId:String):Boolean{
+        val sms = dao.getSms(smsId)
+        return sms == null || !sms.isDeleted
 
     }
+
+
 
 
 }

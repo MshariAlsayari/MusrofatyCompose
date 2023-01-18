@@ -22,6 +22,7 @@ data class SmsModel(
     var senderId: Int = 0,
     var senderModel: SenderModel?=null,
     var isFavorite: Boolean = false,
+    var isDeleted: Boolean = false,
 ) : Parcelable{
 
     val storeName :String
@@ -30,7 +31,7 @@ data class SmsModel(
 }
 
 
-fun SmsModel.toSmsEntity()=SmsEntity(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite)
+fun SmsModel.toSmsEntity()=SmsEntity(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite,isDeleted=isDeleted)
 
 
 fun SmsModel.toCategoryDetailsStatisticsModel()= CategoryDetailsStatisticsModel(  smsId = id , storeName =storeName, amount =amount, currency=currency,timestamp=timestamp)

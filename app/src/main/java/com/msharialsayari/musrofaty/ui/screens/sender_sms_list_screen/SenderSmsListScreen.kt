@@ -43,10 +43,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.AllSmsTab
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.CategoriesStatisticsTab
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FavoriteSmsTab
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.FinancialStatisticsTab
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.*
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
@@ -351,7 +348,8 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
         R.string.tab_all_sms,
         R.string.tab_favorite_sms,
         R.string.tab_financial_statistics,
-        R.string.tab_categories_statistics
+        R.string.tab_categories_statistics,
+        R.string.tab_deleted_sms,
     )
 
         Column(
@@ -390,6 +388,7 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
                 1 -> FavoriteSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
                 2 -> FinancialStatisticsTab(senderId = senderId)
                 3 -> CategoriesStatisticsTab(senderId = senderId, onSmsClicked = onSmsClicked)
+                4 -> SoftDeletedTab(senderId = senderId, onSmsClicked = onSmsClicked)
             }
         }
 
@@ -492,6 +491,10 @@ fun LazySenderSms(
                                 SmsActionType.ShARE -> {
                                     Utils.shareText(item.body, context)
                                 }
+                                SmsActionType.DELETE -> viewModel.softDelete(
+                                    model.id,
+                                    model.isDeleted
+                                )
                             }
                         })
 

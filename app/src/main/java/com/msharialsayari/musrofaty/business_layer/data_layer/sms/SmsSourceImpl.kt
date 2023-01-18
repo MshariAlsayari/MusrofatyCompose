@@ -13,11 +13,11 @@ import javax.inject.Singleton
 
 @Singleton
 class SmsSourceImpl @Inject constructor(
-    private val senderRepo: SenderRepo
+    private val senderRepo: SenderRepo,
 ) : SmsDataSource {
 
 
-    private fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
+    private suspend fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
         val lstSms = ArrayList<SmsModel>()
         var objSmsModel: SmsModel
         val message = Uri.parse("content://sms/inbox")
@@ -41,20 +41,23 @@ class SmsSourceImpl @Inject constructor(
         c?.let { cursor ->
             if (cursor.moveToFirst() && totalSMS != null) {
                 for (i in 0 until totalSMS) {
-
-                    if (SmsUtils.isValidSms(
-                            cursor.getString(cursor.getColumnIndexOrThrow("body"))
-                        )
-                    ) {
-                        objSmsModel = SmsModel(id = cursor.getString(cursor.getColumnIndexOrThrow("_id")))
+                    val smsId      = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val senderName =
                         if (SmsUtils.isAlahliSender(cursor.getString(cursor.getColumnIndexOrThrow("address")))) {
-                            objSmsModel.senderName = Constants.ALAHLI_WITH_SAMBA_BANK
-                        }else {
-                            objSmsModel.senderName = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                            Constants.ALAHLI_WITH_SAMBA_BANK
+                        } else {
+                            cursor.getString(cursor.getColumnIndexOrThrow("address"))
                         }
-                        objSmsModel.body = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
-                        objSmsModel.timestamp = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
-                        objSmsModel.senderId = activeSenders.find { it.senderName.equals( objSmsModel.senderName , ignoreCase = true) }?.id!!
+                    val smsBody    = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
+                    val timestamp  = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+                    val senderId   = activeSenders.find { it.senderName.equals( senderName , ignoreCase = true) }?.id!!
+
+                    if (SmsUtils.isValidSms(smsBody)) {
+                        objSmsModel            = SmsModel(id = smsId)
+                        objSmsModel.senderName = senderName
+                        objSmsModel.body       = smsBody
+                        objSmsModel.timestamp  = timestamp
+                        objSmsModel.senderId   = senderId
                         lstSms.add(objSmsModel)
                     }
                     cursor.moveToNext()
@@ -64,7 +67,9 @@ class SmsSourceImpl @Inject constructor(
         }
 
 
+
         c = null
+
         return lstSms
 
     }

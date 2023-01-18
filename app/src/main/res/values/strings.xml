@@ -59,6 +59,7 @@
     <string name="tab_favorite_sms">Favorite</string>
     <string name="tab_financial_statistics">Financial Statistics</string>
     <string name="tab_categories_statistics">Categories Statistics</string>
+    <string name="tab_deleted_sms">Deleted</string>
     <string name="create_filter">Create filter</string>
     <string name="common_long_click_to_modify">long click to modify</string>
 

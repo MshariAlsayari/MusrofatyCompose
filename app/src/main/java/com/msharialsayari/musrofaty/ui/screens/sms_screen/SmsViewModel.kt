@@ -28,6 +28,7 @@ class SmsViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
+    private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     @ApplicationContext val context: Context
 ):ViewModel() {
 
@@ -39,7 +40,7 @@ class SmsViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isLoading = false)
             }
-            val smsResult = getSmsUseCase.invoke(id)
+            val smsResult = getSmsUseCase.invoke(id)!!
             val senderResult = getSenderUseCase.invoke(smsResult.senderId)
             val storeAndCategoryResult = getStoreAndCategoryUseCase.invoke(smsResult.storeName)
             val categoriesResult = getCategoriesUseCase.invoke()
@@ -97,6 +98,12 @@ class SmsViewModel @Inject constructor(
         }
     }
 
+    fun softDelete(id:String , delete:Boolean){
+        viewModelScope.launch {
+            softDeleteSMsUseCase.invoke(id, delete)
+        }
+    }
+
     fun onCategoryChanged(){
         viewModelScope.launch {
             val categoryId = _uiState.value.selectedCategory?.id ?: 0
@@ -128,6 +135,7 @@ class SmsViewModel @Inject constructor(
             senderId= sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
+            isDeleted = sms.isDeleted,
             body = sms.body,
             storeName=store,
             storeCategory= category,

@@ -19,7 +19,7 @@ object SmsUtils {
     fun isValidSms(sms:String?):Boolean{
         sms?.let {
             return containerNumber(it)           &&
-                   clearSms(sms) != null         &&
+                   it.isNotEmpty()               &&
                    !isOTPSms(it)
         }?: run { return false }
 

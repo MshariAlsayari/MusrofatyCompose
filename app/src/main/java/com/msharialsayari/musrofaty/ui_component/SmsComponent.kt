@@ -7,6 +7,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
@@ -142,6 +143,7 @@ private fun SmsActionRowComponent(
     onActionClicked: (SmsComponentModel, SmsActionType) -> Unit
 ) {
     val isFavoriteState = remember { mutableStateOf(model.isFavorite) }
+    val isDeletedState = remember { mutableStateOf(model.isDeleted) }
 
     Column(
         modifier = Modifier
@@ -187,6 +189,18 @@ private fun SmsActionRowComponent(
                 contentDescription = null
             )
 
+
+            Icon(
+                modifier = Modifier.clickable {
+                    isDeletedState.value = !isDeletedState.value
+                    model.isDeleted = isDeletedState.value
+                    onActionClicked(model, SmsActionType.DELETE)
+                },
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = null,
+                tint = if (isDeletedState.value) colorResource(id = R.color.expenses_color) else colorResource(id = R.color.light_gray)
+            )
+
         }
         DividerComponent.HorizontalDividerComponent()
 
@@ -196,7 +210,7 @@ private fun SmsActionRowComponent(
 }
 
 enum class SmsActionType {
-    FAVORITE, COPY,ShARE
+    FAVORITE, COPY,ShARE,DELETE
 
 }
 
@@ -211,6 +225,7 @@ data class SmsComponentModel(
     var senderCategory: String = "",
     var senderIcon: Int? = null,
     var isFavorite: Boolean = false,
+    var isDeleted: Boolean = false,
     var storeName: String = "",
     var storeCategory: String = "",
 )

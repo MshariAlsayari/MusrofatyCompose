@@ -12,8 +12,8 @@ class GetAllSmsForSendersUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-     suspend operator fun invoke(filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
-         return smsRepo.getAllSmsForAllSenders(filterOption, query, startDate, endDate)
+     suspend operator fun invoke(isDeleted:Boolean=false, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
+         return smsRepo.getAllSmsForAllSenders(isDeleted,filterOption, query, startDate, endDate)
 
     }
 }

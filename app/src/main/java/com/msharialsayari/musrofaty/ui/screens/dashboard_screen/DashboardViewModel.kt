@@ -4,14 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
-import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -33,6 +30,7 @@ class DashboardViewModel @Inject constructor(
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
     private val getSMSDashboardUseCase: GetSMSDashboardUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
+    private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val getSendersUseCase: GetSendersUseCase,
 ):ViewModel(){
 
@@ -79,7 +77,7 @@ class DashboardViewModel @Inject constructor(
     private fun getFinancialStatistics(){
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getAllSmsForSendersUseCase.invoke( filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
+            val smsResult  = getAllSmsForSendersUseCase.invoke(isDeleted = false, filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -95,6 +93,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
             val smsResult = getAllSmsForSendersUseCase.invoke(
+                isDeleted = false,
                 filterOption = getFilterTimeOption(),
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
@@ -204,6 +203,7 @@ class DashboardViewModel @Inject constructor(
             senderId= sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
+            isDeleted = sms.isDeleted,
             body = sms.body,
             senderDisplayName = SenderModel.getDisplayName(context, getSenderById(sms.senderId)),
             senderCategory = ContentModel.getDisplayName(context, getSenderById(sms.senderId)?.content)
@@ -224,11 +224,13 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    private fun initInsertSmsJob(context: Context){
-        val initStoresWorker = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
-        WorkManager.getInstance(context).enqueue(initStoresWorker)
+    fun softDelete(id:String , delete:Boolean){
+        viewModelScope.launch {
+            softDeleteSMsUseCase.invoke(id, delete)
+            getFinancialStatistics()
+            getCategoriesStatistics()
+        }
     }
-
 
 
     data class DashboardUiState(

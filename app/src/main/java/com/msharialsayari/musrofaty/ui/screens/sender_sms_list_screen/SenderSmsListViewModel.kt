@@ -30,20 +30,22 @@ class SenderSmsListViewModel @Inject constructor(
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val getAllSms: GetAllSmsUseCase,
     private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
+    private val getSoftDeletedSmsUseCase: GetSoftDeletedSmsUseCase,
     private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
+    private val getSmsBySenderIdWithDeleteCheckUseCase: GetSmsBySenderIdWithDeleteCheckUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
     private val getAllSmsUseCase: GetSmsListUseCase,
     private val loadSenderSmsUseCase: LoadSenderSmsUseCase,
+    private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
 
-
-    fun getDate(){
+    fun getDate() {
         val senderId = _uiState.value.sender?.id!!
         getAllSms(senderId)
         getFavoriteSms(senderId)
@@ -52,7 +54,7 @@ class SenderSmsListViewModel @Inject constructor(
         getAllSmsBySenderId(senderId)
     }
 
-    fun refreshSms(){
+    fun refreshSms() {
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             val senderName = _uiState.value.sender?.senderName
@@ -62,15 +64,14 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
 
-    fun onTabSelected(tabIndex:Int){
+    fun onTabSelected(tabIndex: Int) {
         _uiState.update {
             it.copy(selectedTabIndex = tabIndex)
         }
     }
 
 
-
-    fun getSender(senderId: Int){
+    fun getSender(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val senderResult = getSenderUseCase.invoke(senderId)
@@ -78,14 +79,15 @@ class SenderSmsListViewModel @Inject constructor(
                 getFilters(senderResult.id)
             _uiState.update {
                 it.copy(
-                    sender          = senderResult,
-                    navigateBack    = senderResult == null,
-                    isLoading       = false )
+                    sender = senderResult,
+                    navigateBack = senderResult == null,
+                    isLoading = false
+                )
             }
         }
     }
 
-    private fun getFilters(senderId:Int){
+    private fun getFilters(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val filtersResult = getFiltersUseCase.invoke(senderId)
@@ -99,55 +101,111 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
 
-    fun getAllSms(senderId: Int){
+    fun getAllSms(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isAllSmsPageLoading = false) }
-            val smsResult            = getAllSms.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate,)
+            val smsResult = getAllSms.invoke(
+                senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
             _uiState.update {
                 it.copy(
-                    smsFlow         = smsResult,
-                    isAllSmsPageLoading       = false )
+                    smsFlow = smsResult,
+                    isAllSmsPageLoading = false
+                )
             }
         }
 
     }
 
-     fun getAllSmsBySenderId(senderId: Int){
+    fun getAllSmsBySenderId(senderId: Int) {
         viewModelScope.launch {
-            val smsResult            = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
+            val smsResult = getSmsBySenderIdWithDeleteCheckUseCase.invoke(
+                senderId,
+                isDeleted =false,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
             _uiState.update {
                 it.copy(
-                    allSmsFlow         = smsResult)
+                    allSmsFlow = smsResult
+                )
             }
         }
 
     }
 
-    fun getFavoriteSms(senderId: Int){
+    fun getFavoriteSms(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isFavoriteSmsPageLoading = false) }
-            val smsResult            = getFavoriteSmsUseCase.invoke(senderId, filterOption = getFilterTimeOption(),query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
+            val smsResult = getFavoriteSmsUseCase.invoke(
+                senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
             _uiState.update {
                 it.copy(
                     favoriteSmsFlow = smsResult,
-                    isFavoriteSmsPageLoading       = false )
+                    isFavoriteSmsPageLoading = false
+                )
             }
         }
 
     }
 
 
-    fun favoriteSms(id:String , favorite:Boolean){
+    fun getSoftDeletedSms(senderId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSoftDeletedSmsPageLoading = false) }
+            val smsResult = getSoftDeletedSmsUseCase.invoke(
+                senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
+            _uiState.update {
+                it.copy(
+                    softDeletedSmsFlow = smsResult,
+                    isSoftDeletedSmsPageLoading = false
+                )
+            }
+        }
+
+    }
+
+
+    fun favoriteSms(id: String, favorite: Boolean) {
         viewModelScope.launch {
             favoriteSmsUseCase.invoke(id, favorite)
         }
     }
 
-    fun getFinancialStatistics(senderId: Int){
+    fun softDelete(id: String, delete: Boolean) {
+        viewModelScope.launch {
+            softDeleteSMsUseCase.invoke(id, delete)
+        }
+    }
+
+    fun getFinancialStatistics(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
-            smsResult.collectLatest { list->
+            val smsResult = getSmsBySenderIdWithDeleteCheckUseCase.invoke(
+                senderId,
+                isDeleted = false,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
+            smsResult.collectLatest { list ->
                 val result = getFinancialStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
                     state.copy(
@@ -160,11 +218,18 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun getCategoriesStatistics(senderId: Int){
+    fun getCategoriesStatistics(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
-            val smsResult  = getSmsBySenderIdUseCase.invoke(senderId, filterOption = getFilterTimeOption(), query = getFilterWord(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate)
-            smsResult.collectLatest { list->
+            val smsResult = getSmsBySenderIdWithDeleteCheckUseCase.invoke(
+                senderId,
+                isDeleted = false,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
+            smsResult.collectLatest { list ->
                 val result = getCategoriesStatisticsUseCase.invoke(list)
                 _uiState.update { state ->
                     state.copy(
@@ -178,8 +243,6 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
 
-
-
     fun wrapSendersToSenderComponentModel(
         sms: SmsEntity,
         context: Context
@@ -187,9 +250,10 @@ class SenderSmsListViewModel @Inject constructor(
 
         return SmsComponentModel(
             id = sms.id,
-            senderId= sms.senderId,
+            senderId = sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
+            isDeleted = sms.isDeleted,
             body = sms.body,
             senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
             senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
@@ -199,16 +263,15 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
 
-
-    fun getFilterOptions(selectedItem: SelectedItemModel? = null ): List<SelectedItemModel> {
+    fun getFilterOptions(selectedItem: SelectedItemModel? = null): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
         _uiState.value.filters.mapIndexed { index, value ->
             list.add(
                 SelectedItemModel(
-                id = value.id,
-                value = value.title,
-                isSelected = selectedItem?.id == value.id
-            )
+                    id = value.id,
+                    value = value.title,
+                    isSelected = selectedItem?.id == value.id
+                )
             )
         }
 
@@ -216,61 +279,68 @@ class SenderSmsListViewModel @Inject constructor(
 
     }
 
-     fun getFilterTimeOption(): DateUtils.FilterOption{
+    fun getFilterTimeOption(): DateUtils.FilterOption {
         return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
     }
 
     private fun getFilterWord(): String {
-        return _uiState.value.filters.find { it.id ==  _uiState.value.selectedFilter?.id }?.words ?:""
+        return _uiState.value.filters.find { it.id == _uiState.value.selectedFilter?.id }?.words
+            ?: ""
     }
 
-    fun showStartDatePicker(){
+    fun showStartDatePicker() {
         _uiState.update {
-            it.copy(startDate = 0, endDate = 0, showStartDatePicker = true, showEndDatePicker = false)
+            it.copy(
+                startDate = 0,
+                endDate = 0,
+                showStartDatePicker = true,
+                showEndDatePicker = false
+            )
         }
     }
 
-    fun dismissAllDatePicker(){
+    fun dismissAllDatePicker() {
         _uiState.update {
             it.copy(showStartDatePicker = false, showEndDatePicker = false)
         }
     }
 
-    fun onStartDateSelected(value:Long){
+    fun onStartDateSelected(value: Long) {
         _uiState.update {
             it.copy(startDate = value, showStartDatePicker = false, showEndDatePicker = true)
         }
     }
 
-    fun onEndDateSelected(value:Long){
+    fun onEndDateSelected(value: Long) {
         _uiState.update {
             it.copy(endDate = value, showStartDatePicker = false, showEndDatePicker = false)
         }
 
     }
 
-    fun  getPdfBundle():PdfCreatorViewModel.PdfBundle{
+    fun getPdfBundle(): PdfCreatorViewModel.PdfBundle {
         return PdfCreatorViewModel.PdfBundle(
-            senderId = _uiState.value.sender?.id?:0,
-            filterTimeId = uiState.value.selectedFilterTimeOption?.id?:0,
-            filterWord = uiState.value.selectedFilter?.value?:"",
+            senderId = _uiState.value.sender?.id ?: 0,
+            filterTimeId = uiState.value.selectedFilterTimeOption?.id ?: 0,
+            filterWord = uiState.value.selectedFilter?.value ?: "",
             startDate = uiState.value.startDate,
             endDate = uiState.value.endDate
         )
     }
 
-    fun generateExcelFile(context: Context, onFileGenerated:()->Unit) {
+    fun generateExcelFile(context: Context, onFileGenerated: () -> Unit) {
 
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update {
                 it.copy(showGeneratingExcelFileDialog = true)
             }
             val result = getAllSmsUseCase.invoke(
-                                        senderId     = _uiState.value.sender?.id?:0,
-                                        filterOption = getFilterTimeOption(),
-                                        query        = getFilterWord(),
-                                        startDate    = _uiState.value.startDate,
-                                        endDate      = _uiState.value.endDate)
+                senderId = _uiState.value.sender?.id ?: 0,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate
+            )
             val excelModel = ExcelModel(smsList = result)
             val isGenerated = ExcelUtils(
                 context,
@@ -286,7 +356,7 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun onFilterTimeOptionSelected(item: SelectedItemModel){
+    fun onFilterTimeOptionSelected(item: SelectedItemModel) {
         _uiState.update {
             it.copy(selectedFilterTimeOption = item)
         }
@@ -294,18 +364,20 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     data class SenderSmsListUiState(
-        var selectedTabIndex:Int = 0 ,
+        var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
         var navigateBack: Boolean = false,
         var isAllSmsPageLoading: Boolean = false,
         var isFavoriteSmsPageLoading: Boolean = false,
+        var isSoftDeletedSmsPageLoading: Boolean = false,
         var isFinancialStatisticsSmsPageLoading: Boolean = false,
         var isCategoriesStatisticsSmsPageLoading: Boolean = false,
         var isRefreshing: Boolean = false,
         val sender: SenderModel? = null,
-        var smsFlow: Flow<PagingData<SmsEntity>>? =null,
-        var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? =null,
-        var allSmsFlow: Flow<List<SmsEntity>>? =null,
+        var smsFlow: Flow<PagingData<SmsEntity>>? = null,
+        var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? = null,
+        var softDeletedSmsFlow: Flow<PagingData<SmsEntity>>? = null,
+        var allSmsFlow: Flow<List<SmsEntity>>? = null,
         var selectedFilterTimeOption: SelectedItemModel? = null,
         var selectedFilter: SelectedItemModel? = null,
         var filters: List<FilterAdvancedModel> = emptyList(),
@@ -315,6 +387,6 @@ class SenderSmsListViewModel @Inject constructor(
         var endDate: Long = 0,
         var showStartDatePicker: Boolean = false,
         var showEndDatePicker: Boolean = false,
-        var showGeneratingExcelFileDialog:Boolean= false
+        var showGeneratingExcelFileDialog: Boolean = false
     )
 }

@@ -136,6 +136,10 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                         SmsActionType.ShARE -> {
                             Utils.shareText(model.body, context)
                         }
+                        SmsActionType.DELETE -> viewModel.softDelete(
+                            model.id,
+                            model.isDeleted
+                        )
                     }
                 })
 
