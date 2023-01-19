@@ -5,21 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import com.msharialsayari.musrofaty.utils.notEmpty
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.utils.notEmpty
 
 
 @Composable
-fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel){
+fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel, onAvatarClicked:(SenderComponentModel)->Unit = {}){
 
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
 
-        AvatarComponent(model.senderIcon )
+        AvatarComponent(icon = model.senderIcon, onClicked = {onAvatarClicked(model)} )
 
         Column(modifier = Modifier
             .weight(1f)

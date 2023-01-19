@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.EmptySmsCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.LazySenderSms
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoading
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
@@ -18,8 +19,9 @@ fun AllSmsTab(senderId:Int, onSmsClicked:(String)->Unit){
     LaunchedEffect(Unit){ viewModel.getAllSms(senderId) }
 
     when{
-        uiState.isAllSmsPageLoading -> PageLoading()
-        uiState.smsFlow != null     -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems(), onSmsClicked = onSmsClicked )
+        uiState.isAllSmsPageLoading                                                         -> PageLoading()
+        uiState.smsFlow?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = uiState.smsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked )
+        else                                                                                -> EmptySmsCompose()
     }
 
 

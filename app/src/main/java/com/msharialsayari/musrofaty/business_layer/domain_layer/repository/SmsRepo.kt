@@ -260,10 +260,9 @@ class SmsRepo @Inject constructor(
     suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
         val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.filter { isEligibleToInsert(it.id) }.map {
+        smsList.map {
             smsEntityList.add(it.toSmsEntity())
             insertStore(it)
-
         }
         dao.insertAll(*smsEntityList.toTypedArray())
     }
@@ -271,7 +270,7 @@ class SmsRepo @Inject constructor(
     suspend fun insert(senderName:String) {
         val smsList = datasource.loadBanksSms(context,senderName)
         val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.filter { isEligibleToInsert(it.id) }.map {
+        smsList.map {
             smsEntityList.add(it.toSmsEntity())
             insertStore(it)
         }
@@ -292,12 +291,6 @@ class SmsRepo @Inject constructor(
 
     suspend fun deleteSenderSms(senderId:Int){
         dao.deleteSenderSms(senderId)
-    }
-
-    private suspend fun isEligibleToInsert(smsId:String):Boolean{
-        val sms = dao.getSms(smsId)
-        return sms == null || !sms.isDeleted
-
     }
 
 

@@ -25,7 +25,7 @@ interface SmsDao {
     @Query("UPDATE SmsEntity SET isDeleted =:delete WHERE id=:id")
     suspend fun softDelete(id:String, delete:Boolean)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(vararg smsEntity: SmsEntity)
 
 

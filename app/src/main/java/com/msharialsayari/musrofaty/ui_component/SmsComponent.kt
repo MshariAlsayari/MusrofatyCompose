@@ -182,7 +182,7 @@ private fun SmsActionRowComponent(
 
             Icon(
                 modifier = Modifier.clickable {
-                    onActionClicked(model, SmsActionType.ShARE)
+                    onActionClicked(model, SmsActionType.SHARE)
                 },
                 tint = colorResource(id = R.color.light_gray),
                 imageVector = Icons.Outlined.Share,
@@ -210,7 +210,7 @@ private fun SmsActionRowComponent(
 }
 
 enum class SmsActionType {
-    FAVORITE, COPY,ShARE,DELETE
+    FAVORITE, COPY,SHARE,DELETE
 
 }
 

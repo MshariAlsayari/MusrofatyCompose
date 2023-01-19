@@ -290,7 +290,7 @@ fun LazySenderSms(
                                 ).show()
                             }
 
-                            SmsActionType.ShARE -> {
+                            SmsActionType.SHARE -> {
                                 Utils.shareText(item.body, context)
                             }
                             SmsActionType.DELETE -> viewModel.softDelete(

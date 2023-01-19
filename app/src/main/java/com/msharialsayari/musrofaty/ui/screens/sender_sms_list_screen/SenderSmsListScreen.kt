@@ -352,9 +352,7 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
         R.string.tab_deleted_sms,
     )
 
-        Column(
-            Modifier.fillMaxWidth()
-        ) {
+        Column(Modifier.fillMaxWidth()) {
             ScrollableTabRow(
                 modifier  =  Modifier.fillMaxWidth(),
                 backgroundColor = MaterialTheme.colors.background,
@@ -449,66 +447,54 @@ fun PageLoading() {
 
 @Composable
 fun LazySenderSms(
-    list: LazyPagingItems<SmsEntity>?,
+    list: LazyPagingItems<SmsEntity>,
     viewModel: SenderSmsListViewModel,
     onSmsClicked: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val listState = rememberLazyListState()
 
+    LazyColumn(
+        modifier = Modifier,
+        state = rememberLazyListState(),
+    ) {
 
-    if (list?.itemSnapshotList?.isNotEmpty() == true) {
+        itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item ->
 
-        LazyColumn(
-            modifier = Modifier,
-            state = listState,
-        ) {
-
-            itemsIndexed(key = { _, sms -> sms.id }, items = list) { index, item ->
-
-                if (item != null) {
-
-                    SmsComponent(
-                        modifier = Modifier.clickable {
-                            onSmsClicked(item.id)
-                        },
-                        model = viewModel.wrapSendersToSenderComponentModel(item, context),
-                        onActionClicked = { model, action ->
-                            when (action) {
-                                SmsActionType.FAVORITE -> viewModel.favoriteSms(
-                                    model.id,
-                                    model.isFavorite
-                                )
-                                SmsActionType.COPY -> {
-                                    Utils.copyToClipboard(item.body, context)
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.common_copied),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                SmsActionType.ShARE -> {
-                                    Utils.shareText(item.body, context)
-                                }
-                                SmsActionType.DELETE -> viewModel.softDelete(
-                                    model.id,
-                                    model.isDeleted
-                                )
+            if (item != null) {
+                SmsComponent(
+                    modifier = Modifier.clickable { onSmsClicked(item.id) },
+                    model = viewModel.wrapSendersToSenderComponentModel(item, context),
+                    onActionClicked = { model, action ->
+                        when (action) {
+                            SmsActionType.FAVORITE -> viewModel.favoriteSms(
+                                model.id,
+                                model.isFavorite
+                            )
+                            SmsActionType.COPY -> {
+                                Utils.copyToClipboard(item.body, context)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.common_copied),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                        })
 
-
-                }
-
+                            SmsActionType.SHARE -> {
+                                Utils.shareText(item.body, context)
+                            }
+                            SmsActionType.DELETE -> viewModel.softDelete(
+                                model.id,
+                                model.isDeleted
+                            )
+                        }
+                    })
 
             }
 
 
         }
-    } else {
 
-        EmptySmsCompose()
+
     }
 
 

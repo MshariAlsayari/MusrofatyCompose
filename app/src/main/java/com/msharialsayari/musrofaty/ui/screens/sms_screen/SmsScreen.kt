@@ -133,7 +133,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                             Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
                         }
 
-                        SmsActionType.ShARE -> {
+                        SmsActionType.SHARE -> {
                             Utils.shareText(model.body, context)
                         }
                         SmsActionType.DELETE -> viewModel.softDelete(

@@ -89,15 +89,10 @@ fun PageCompose(
     VerticalEasyList(
         modifier = modifier,
         list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
-        view = { SenderComponent( modifier = Modifier.padding(
-            dimensionResource(id = R.dimen.default_margin16)
-        ), model = it) },
+        view = { sender -> SenderComponent( modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)), model = sender, onAvatarClicked = { onNavigateToSenderSmsList(sender.senderId)}) },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-
             onNavigateToSenderSmsList(item.senderId)
-
-
         },
         isLoading = uiState.isLoading,
         endActions = listOf(modifyAction,pinAction),

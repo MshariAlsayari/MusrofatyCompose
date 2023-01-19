@@ -161,7 +161,7 @@ fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderC
 
     VerticalEasyList(
         list            = list,
-        view            = { SenderComponent( modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)), model = it) },
+        view            = { sender -> SenderComponent( modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)), model = sender, onAvatarClicked = {  onNavigateToSenderDetails(sender.senderId)}) },
         dividerView     = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked   = { item, position ->
             onNavigateToSenderDetails(item.senderId)
