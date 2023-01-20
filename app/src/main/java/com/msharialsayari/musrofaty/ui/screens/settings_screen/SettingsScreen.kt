@@ -47,14 +47,6 @@ fun SettingsScreen(onAppearanceClicked:()->Unit,onSendersClicked:()->Unit, onSto
                 )
 
                 RowComponent.PreferenceRow(
-                    iconId = R.drawable.ic_senders,
-                    header = stringResource(id = R.string.pref_managment_sender_title),
-                    body = stringResource(id = R.string.pref_managment_sender_summary),
-                    onClick = onSendersClicked
-                )
-
-
-                RowComponent.PreferenceRow(
                     iconId = R.drawable.ic_stores,
                     header = stringResource(id = R.string.pref_managment_stores_title),
                     body = stringResource(id = R.string.pref_managment_stores_summary),

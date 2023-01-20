@@ -45,6 +45,7 @@ object BottomSheetComponent {
                     .padding(start =dimensionResource(id = R.dimen.default_margin16), end =dimensionResource(id = R.dimen.default_margin16) , bottom =dimensionResource(id = R.dimen.default_margin16)),
                 textValue = text.value,
                 errorMsg = error.value,
+                isSingleLine = model.isSingleLine,
                 onValueChanged = {
                     text.value = it
                 }
@@ -186,5 +187,6 @@ data class TextFieldBottomSheetModel(
     var textFieldValue:String="",
     @StringRes var buttonText:Int,
     var onActionButtonClicked:(String)->Unit,
+    var isSingleLine:Boolean=false,
 
 )

@@ -59,7 +59,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBac
 @Composable
 fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewModel, onNavigateToSenderDetails:(senderId:Int)->Unit){
 
-    var tabIndex by remember { mutableStateOf(0) }
+    val tabIndex by remember { mutableStateOf(0) }
 
     val coroutineScope                    = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current

@@ -30,6 +30,7 @@ object TextFieldComponent {
          errorMsg:String ="",
         @StringRes  placeholder:Int?=null,
         @StringRes  label:Int?=null,
+        isSingleLine: Boolean = false,
     ) {
 
 
@@ -64,6 +65,7 @@ object TextFieldComponent {
                 isError = errorMsg.isNotEmpty(),
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
+                singleLine = isSingleLine,
                 onValueChange = {
                     onValueChanged(it)
                 }

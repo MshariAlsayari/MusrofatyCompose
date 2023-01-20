@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PinSenderUseCase
 import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
@@ -20,6 +22,8 @@ import javax.inject.Inject
 class SendersListViewModel @Inject constructor(
     private val getFlowSendersUserCase: GetFlowSendersUserCase,
     private val pinSenderUseCase: PinSenderUseCase,
+    private val addSenderUseCase: AddSenderUseCase,
+    private val deleteSenderUseCase: DeleteSenderUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersUiState())
@@ -50,6 +54,19 @@ class SendersListViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun deleteSender(senderId: Int) {
+        viewModelScope.launch {
+            deleteSenderUseCase.invoke(id = senderId)
+        }
+    }
+
+    fun addSender(senderName:String){
+        viewModelScope.launch {
+            val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
+            addSenderUseCase.invoke(model)
+        }
     }
 
 
