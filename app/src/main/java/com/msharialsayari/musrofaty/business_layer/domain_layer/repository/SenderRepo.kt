@@ -22,22 +22,15 @@ class SenderRepo @Inject constructor(
     private val contentRepo: ContentRepo
 ) {
 
-    suspend fun getAllActive():List<SenderModel>{
+    suspend fun getSendersModel():List<SenderModel>{
         val senders = mutableListOf<SenderModel>()
         dao.getAllActive().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
         return senders
     }
 
-     fun getActiveSenders():Flow<List<SenderEntity>>{
-        return dao.getActive()
-    }
-
-    fun getUnActiveSenders():Flow<List<SenderEntity>>{
-        return dao.getUnActive()
-    }
 
      fun getSenders(): Flow<List<SenderEntity>> {
-        return dao.getActive()
+        return dao.getSenders()
     }
 
     suspend fun getAllSenders(): List<SenderEntity> {
@@ -53,13 +46,6 @@ class SenderRepo @Inject constructor(
 
     suspend fun getSenderBySenderName(senderName:String):SenderModel?{
         val model = dao.getSenderBySenderName(senderName)?.toSenderModel()
-        if (model != null)
-            return fillSenderModel(model)
-        return null
-    }
-
-    suspend fun getActiveSenderById(senderId:Int):SenderModel?{
-        val model = dao.getActiveSenderById(senderId)?.toSenderModel()
         if (model != null)
             return fillSenderModel(model)
         return null
@@ -81,7 +67,7 @@ class SenderRepo @Inject constructor(
 
 
 
-     suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
+     private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
         smsModel.smsType  = getSmsType(smsModel.body)
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.amount   = getAmount(smsModel.body)
@@ -107,9 +93,7 @@ class SenderRepo @Inject constructor(
 
 
 
-    suspend fun activeSender(senderId:Int, active:Boolean){
-        dao.activeSender(senderId,active)
-    }
+
 
     suspend fun pinSender(senderId:Int, pin:Boolean){
         dao.removePinFromAll()

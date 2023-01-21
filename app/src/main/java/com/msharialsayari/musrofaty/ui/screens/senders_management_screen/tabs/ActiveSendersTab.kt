@@ -12,7 +12,7 @@ import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.Senders
 fun ActiveSendersTab(viewModel:SendersManagementViewModel,onNavigateToSenderDetails:(senderId:Int)->Unit){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val list = uiState.activeSenders?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    val list = uiState.senders?.collectAsState(initial = emptyList())?.value ?: emptyList()
     SendersListCompose(viewModel = viewModel, list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(list,context), onNavigateToSenderDetails = onNavigateToSenderDetails)
 
 

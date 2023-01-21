@@ -1,16 +1,13 @@
 package com.msharialsayari.musrofaty.ui.screens.senders_management_screen
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ActiveSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetActiveSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetUnActiveSendersUseCase
+
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SendersManagementViewModel @Inject constructor(
-    private val getActiveSendersUseCase: GetActiveSendersUseCase,
-    private val getUnActiveSendersUseCase: GetUnActiveSendersUseCase,
-    private val activeSendersUseCase: ActiveSenderUseCase,
+    private val getSendersUseCase: GetFlowSendersUserCase,
     private val addSenderUseCase: AddSenderUseCase,
-    @ApplicationContext val context: Context
 ):ViewModel() {
 
 
@@ -33,55 +27,28 @@ class SendersManagementViewModel @Inject constructor(
     val uiState: StateFlow<SendersManagementUiState> = _uiState
 
     init {
-        getActiveSenders()
-        getUnActiveSenders()
+        getSenders()
+
     }
 
-    fun getActiveSenders(){
+    private fun getSenders(){
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
 
-            val result = getActiveSendersUseCase.invoke()
+            val result = getSendersUseCase.invoke()
 
 
             _uiState.update {
-                it.copy(isLoading = false, activeSenders = result)
+                it.copy(isLoading = false, senders = result)
             }
 
         }
     }
 
-    fun getUnActiveSenders(){
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
-            val result = getUnActiveSendersUseCase.invoke()
 
 
-            _uiState.update {
-                it.copy(isLoading = false, unActiveSenders = result)
-            }
-        }
-    }
-
-    fun updateSenderVisibility(senderId:Int , visibility:Boolean){
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
-            activeSendersUseCase.invoke(senderId,visibility)
-
-
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
-        }
-    }
 
     fun addSender(senderName:String){
         viewModelScope.launch {
@@ -93,7 +60,6 @@ class SendersManagementViewModel @Inject constructor(
 
     data class SendersManagementUiState(
         var isLoading:Boolean = false,
-        var activeSenders:Flow<List<SenderEntity>>? = null,
-        var unActiveSenders:Flow<List<SenderEntity>>? = null
+        var senders:Flow<List<SenderEntity>>? = null,
     )
 }

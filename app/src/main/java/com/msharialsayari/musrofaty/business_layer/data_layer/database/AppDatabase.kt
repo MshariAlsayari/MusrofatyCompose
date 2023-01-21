@@ -36,7 +36,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
                 SenderEntity::class,
                 ContentEntity::class,
                 StoreFirebaseEntity::class,],
-    version = 25,
+    version = 26,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -223,6 +223,21 @@ val MIGRATION_23_24= object : Migration(23,24) {
 val MIGRATION_24_25= object : Migration(24,25) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE `SmsEntity` ADD `isDeleted` INTEGER NOT NULL DEFAULT(0)")
+    }
+}
+
+
+val MIGRATION_25_26= object : Migration(25,26) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("DROP TABLE `SenderEntity`" )
+        database.execSQL("DROP TABLE `SmsEntity`" )
+        database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT   NOT NULL,`displayNameAr` TEXT  NOT NULL  ,`displayNameEn` TEXT  NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`contentId` INTEGER  NOT NULL )")
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`isDeleted` INTEGER NOT NULL DEFAULT(0),`isFavorite` INTEGER NOT NULL DEFAULT(0),FOREIGN KEY (id) REFERENCES SenderEntity(id) ON UPDATE CASCADE ON DELETE CASCADE)")
+        database.execSQL("CREATE INDEX IF NOT EXISTS index_Sender_id ON SmsEntity(senderId)")
+
+
+
+
     }
 }
 

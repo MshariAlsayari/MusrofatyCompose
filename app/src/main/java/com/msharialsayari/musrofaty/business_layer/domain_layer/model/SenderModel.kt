@@ -15,7 +15,6 @@ data class SenderModel(
     var displayNameEn: String = "",
     var contentId: Int = 0,
     var isPined: Boolean = false,
-    var isActive: Boolean = true,
     var content: ContentModel? = null,
 ) : Parcelable {
 
@@ -147,7 +146,7 @@ data class SenderModel(
 }
 
 fun SenderModel.toSenderEntity() =
-    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined, isActive)
+    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined)
 
 
 

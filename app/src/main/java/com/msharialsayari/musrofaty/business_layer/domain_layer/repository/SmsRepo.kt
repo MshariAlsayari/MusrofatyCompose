@@ -64,7 +64,7 @@ class SmsRepo @Inject constructor(
     }
 
     suspend fun getAllSmsForAllSenders(isDeleted:Boolean=false,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
-        val senders = senderRepo.getAllSenders().filter { it.isActive }
+        val senders = senderRepo.getAllSenders()
         val smsList  = mutableListOf<SmsEntity>()
         senders.forEach {
 

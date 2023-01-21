@@ -36,8 +36,6 @@ fun SettingsScreen(onAppearanceClicked:()->Unit,onSendersClicked:()->Unit, onSto
             .padding(innerPadding)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())) {
-
-
             Column {
                 RowComponent.PreferenceRow(
                     iconId = R.drawable.ic_settings,

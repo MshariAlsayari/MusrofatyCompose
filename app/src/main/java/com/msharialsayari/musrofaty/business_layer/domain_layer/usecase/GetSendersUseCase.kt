@@ -11,7 +11,7 @@ class GetSendersUseCase @Inject constructor(
     private val senderRepo: SenderRepo) {
 
     suspend operator fun invoke(): List<SenderModel> {
-        val result = senderRepo.getAllActive()
+        val result = senderRepo.getSendersModel()
         result.sortedBy { !it.isPined }
         return result
 

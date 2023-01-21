@@ -26,12 +26,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SenderSmsListViewModel @Inject constructor(
-    private val getSenderUseCase: GetActiveSenderUseCase,
+    private val getSenderUseCase: GetSenderUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val getAllSms: GetAllSmsUseCase,
     private val getFavoriteSmsUseCase: GetFavoriteSmsUseCase,
     private val getSoftDeletedSmsUseCase: GetSoftDeletedSmsUseCase,
-    private val getSmsBySenderIdUseCase: GetSmsBySenderIdUseCase,
     private val getSmsBySenderIdWithDeleteCheckUseCase: GetSmsBySenderIdWithDeleteCheckUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,

@@ -52,7 +52,6 @@ class SendersDetailsViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     sender = result,
-                    isActive = result.isActive,
                     isPin = result.isPined
                 )
             }
@@ -128,7 +127,6 @@ class SendersDetailsViewModel @Inject constructor(
 
     data class SendersDetailsUiState(
         val sender: SenderModel? = null,
-        val isActive: Boolean = false,
         val isPin: Boolean = false,
         var contents: List<ContentModel> = emptyList()
     ) {

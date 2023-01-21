@@ -23,8 +23,6 @@ data class SenderEntity(
     var contentId: Int ,
     @ColumnInfo(name = "isPined" , defaultValue = "0")
     var isPined: Boolean = false,
-    @ColumnInfo(name = "isActive" , defaultValue = "1")
-    var isActive: Boolean = true,
 ) : Parcelable
 
 
@@ -46,4 +44,4 @@ data class SenderWithRelationsModel(
 ) : Parcelable
 
 
-fun SenderEntity.toSenderModel() = SenderModel(id, senderName, displayNameAr, displayNameEn,contentId, isPined, isActive)
+fun SenderEntity.toSenderModel() = SenderModel(id, senderName, displayNameAr, displayNameEn,contentId, isPined)
