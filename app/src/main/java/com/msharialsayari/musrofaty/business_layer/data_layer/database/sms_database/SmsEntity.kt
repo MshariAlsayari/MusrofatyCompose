@@ -3,21 +3,13 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_data
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 
-@Entity(
-    tableName = "SmsEntity",
-    foreignKeys = [ForeignKey(entity = SenderEntity::class, parentColumns = ["id"],childColumns = ["id"],onDelete = CASCADE)],
-    indices = [Index(value = ["senderId"])]
-)
+@Entity(tableName = "SmsEntity")
 data class SmsEntity(
     @PrimaryKey
     @ColumnInfo(name = "id")

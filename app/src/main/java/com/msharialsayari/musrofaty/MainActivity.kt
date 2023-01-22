@@ -79,12 +79,12 @@ private fun initAppCheckFirebase(context: Context) {
 }
 
 fun initJobs(context: Context){
-    initCategoriesJob(context)
-    initStoresJob(context)
     if (SharedPreferenceManager.isFirstLunch(context)) {
         initAppJob(context)
         SharedPreferenceManager.setFirstLunch(context, false)
     }
+    initCategoriesJob(context)
+    initStoresJob(context)
 }
 
 private fun initAppJob(context: Context){

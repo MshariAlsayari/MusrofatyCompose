@@ -29,13 +29,12 @@ class InitAppJob @AssistedInject constructor(
     private val smsRepo: SmsRepo,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
+        initContent()
+        initSenders()
         initIncomesWords()
         initExpensesWords()
         initCurrencyWords()
-        initContent()
-        initSenders()
         initFilters()
-      //  insertSms()
         return Result.success()
     }
 

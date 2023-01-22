@@ -232,12 +232,7 @@ val MIGRATION_25_26= object : Migration(25,26) {
         database.execSQL("DROP TABLE `SenderEntity`" )
         database.execSQL("DROP TABLE `SmsEntity`" )
         database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT   NOT NULL,`displayNameAr` TEXT  NOT NULL  ,`displayNameEn` TEXT  NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`contentId` INTEGER  NOT NULL )")
-        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`isDeleted` INTEGER NOT NULL DEFAULT(0),`isFavorite` INTEGER NOT NULL DEFAULT(0),FOREIGN KEY (id) REFERENCES SenderEntity(id) ON UPDATE CASCADE ON DELETE CASCADE)")
-        database.execSQL("CREATE INDEX IF NOT EXISTS index_Sender_id ON SmsEntity(senderId)")
-
-
-
-
+        database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`isDeleted` INTEGER NOT NULL DEFAULT(0),`isFavorite` INTEGER NOT NULL DEFAULT(0))")
     }
 }
 

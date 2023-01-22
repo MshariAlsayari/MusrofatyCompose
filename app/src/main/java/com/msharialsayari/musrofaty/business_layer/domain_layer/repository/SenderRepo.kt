@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
+import android.util.Log
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderWithRelationsModel
@@ -24,7 +25,11 @@ class SenderRepo @Inject constructor(
 
     suspend fun getSendersModel():List<SenderModel>{
         val senders = mutableListOf<SenderModel>()
-        dao.getAllActive().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
+        getAllSenders().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
+        Log.d("MshariTest",senders.size.toString())
+        senders.map {
+            Log.d("MshariTest",it.senderName)
+        }
         return senders
     }
 

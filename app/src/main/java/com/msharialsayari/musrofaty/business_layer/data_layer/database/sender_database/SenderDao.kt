@@ -23,9 +23,6 @@ interface SenderDao {
 
 
     @Query("SELECT * FROM SenderEntity")
-    suspend fun getAllActive():List<SenderEntity>
-
-    @Query("SELECT * FROM SenderEntity")
     fun getSenders(): Flow<List<SenderEntity>>
 
 
