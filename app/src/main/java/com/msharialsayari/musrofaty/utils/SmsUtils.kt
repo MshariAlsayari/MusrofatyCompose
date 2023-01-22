@@ -62,7 +62,7 @@ object SmsUtils {
                 }
             }
         }
-        return ""
+        return Constants.CURRENCY_1
     }
 
 
@@ -126,6 +126,9 @@ object SmsUtils {
         sms?.let {
             for (currency in currencyList) {
                 if (isSmsContainsCurrency(currency, sms)) {
+                    amount = getAmount(sms)
+                    return amount
+                }else if (getAmount(sms) > 0){
                     amount = getAmount(sms)
                     return amount
                 }
