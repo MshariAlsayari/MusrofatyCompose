@@ -27,6 +27,7 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
+import com.msharialsayari.musrofaty.jobs.InitSendersJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
@@ -99,6 +100,11 @@ private fun initCategoriesJob(context: Context){
 
 private fun initStoresJob(context: Context){
     val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+    WorkManager.getInstance(context).enqueue(initStoresWorker)
+}
+
+private fun initSendersJob(context: Context){
+    val initStoresWorker = OneTimeWorkRequestBuilder<InitSendersJob>().build()
     WorkManager.getInstance(context).enqueue(initStoresWorker)
 }
 

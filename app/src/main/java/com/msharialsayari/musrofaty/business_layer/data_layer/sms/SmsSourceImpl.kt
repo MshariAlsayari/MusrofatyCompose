@@ -17,7 +17,7 @@ class SmsSourceImpl @Inject constructor(
 ) : SmsDataSource {
 
 
-    private suspend fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
+    private fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
         val lstSms = ArrayList<SmsModel>()
         var objSmsModel: SmsModel
         val message = Uri.parse("content://sms/inbox")

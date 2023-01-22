@@ -37,6 +37,8 @@ data class ContentModel (
             list.add(ContentModel(contentKey = ContentKey.SENDERS.name, valueAr = SendersKey.BANKS.valueAr, valueEn = SendersKey.BANKS.valueEn))
             list.add(ContentModel(contentKey = ContentKey.SENDERS.name, valueAr = SendersKey.SERVICES.valueAr, valueEn = SendersKey.SERVICES.valueEn))
             list.add(ContentModel(contentKey = ContentKey.SENDERS.name, valueAr = SendersKey.DIGITALWALLET.valueAr, valueEn = SendersKey.DIGITALWALLET.valueEn))
+            list.add(ContentModel(contentKey = ContentKey.SENDERS.name, valueAr = SendersKey.TDAWEL.valueAr, valueEn = SendersKey.TDAWEL.valueEn))
+
             return list
 
         }

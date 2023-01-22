@@ -26,7 +26,7 @@ object Constants {
     const val ALARABI_BANK           = "ANB"
     const val ALAHLI_BANK            = "SNBAlAhli"
     const val ALAHLI_WITH_SAMBA_BANK = "SNB-AlAhli"
-
+    const val DERAYAH_SMS            = "DerayahSMS"
 
     //Wallets
     const val STC_PAY_WALLET = "STCPAY"
@@ -82,7 +82,8 @@ object Constants {
                                   WATER_COMPANY,
                                   UR_PAY_BANK,
                                   ALAHLI_WITH_SAMBA_BANK,
-                                  MOI_MOROOR
+                                  MOI_MOROOR,
+                                  DERAYAH_SMS
     )
 
 

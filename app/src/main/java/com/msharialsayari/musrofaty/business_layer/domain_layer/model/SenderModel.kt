@@ -23,6 +23,7 @@ data class SenderModel(
             bankContentId: Int,
             servicesContentId: Int,
             digitalWalletContentId: Int,
+            tdawelSenderId: Int,
         ): List<SenderModel> {
             val list = mutableListOf<SenderModel>()
             list.add(
@@ -121,6 +122,16 @@ data class SenderModel(
                     senderName = Constants.MOI_MOROOR,
                     displayNameAr = "الأمن العام",
                     displayNameEn = "Police Security"
+                )
+            )
+
+
+            list.add(
+                SenderModel(
+                    contentId = tdawelSenderId,
+                    senderName = Constants.DERAYAH_SMS,
+                    displayNameAr = "منصة دراية",
+                    displayNameEn = "Derayah"
                 )
             )
             return list

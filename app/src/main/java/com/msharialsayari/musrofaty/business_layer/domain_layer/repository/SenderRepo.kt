@@ -26,10 +26,6 @@ class SenderRepo @Inject constructor(
     suspend fun getSendersModel():List<SenderModel>{
         val senders = mutableListOf<SenderModel>()
         getAllSenders().forEach { senders.add(fillSenderModel( it.toSenderModel())) }
-        Log.d("MshariTest",senders.size.toString())
-        senders.map {
-            Log.d("MshariTest",it.senderName)
-        }
         return senders
     }
 
