@@ -14,11 +14,8 @@ object SharedPreferenceManager {
 
     private const val PREF_LANGUAGE                                        = "key_preferredLang"
     private const val PREF_THEME                                           = "PREF_THEME"
-    private const val PREF_First_Lunched                                   = "PREF_First_Lunched"
-    private const val PREF_Firebase_First_Lunched                          = "PREF_Firebase_First_Lunched"
-    private const val PREF_First_Lunched_Category                          = "PREF_First_Lunched_Category"
     private const val PREF_INCOME_WORDS                                    = "PREF_INCOME_WORDS"
-    private const val PREF_INIT_SENDERS                                    = "PREF_INIT_SENDERS"
+    private const val PREF_INIT_APP                                        = "PREF_INIT_APP"
     
     
     private const val PREF_BANKS = "PREF_BANKS"
@@ -77,55 +74,19 @@ object SharedPreferenceManager {
     }
 
 
-    fun isFirstLunch(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_First_Lunched, true)
-    }
-
-     fun setFirstLunch(
-        context: Context,
-        isChanged: Boolean = false
-    ) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_First_Lunched, isChanged).apply()
-    }
-
     fun sendersInitiated(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_INIT_SENDERS, false)
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_INIT_APP, false)
     }
 
-     fun setSendersInitiated(
-        context: Context, ) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_SENDERS, true).apply()
-    }
-
-
-    fun isFirebaseFirstLunch(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_Firebase_First_Lunched, true)
-    }
-
-    fun setFirebaseFirstLunch(
-        context: Context,
-        isChanged: Boolean = false
-    ) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_Firebase_First_Lunched, isChanged).apply()
-    }
-
-
-
-
-     fun setFirstLunchCategory(
-        context: Context,
-        isChanged: Boolean = false
-    ) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(
-            PREF_First_Lunched_Category, isChanged).apply()
+     fun setSendersInitiated(context: Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_APP, true).apply()
     }
 
 
 
 
 
-
-    fun getWordsList(context: Context, wordsType: WordsType): MutableList<String> {
+    private fun getWordsList(context: Context, wordsType: WordsType): MutableList<String> {
         val wType = when (wordsType) {
             WordsType.INCOME_WORDS -> PREF_INCOME_WORDS
             WordsType.EXPENSES_WORDS -> PREF_EXPENSES_WORDS

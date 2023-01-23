@@ -80,14 +80,8 @@ private fun initAppCheckFirebase(context: Context) {
 }
 
 fun initJobs(context: Context){
-    if (SharedPreferenceManager.isFirstLunch(context)) {
-        initAppJob(context)
-        SharedPreferenceManager.setFirstLunch(context, false)
-    }
-
-
     if (!SharedPreferenceManager.sendersInitiated(context)) {
-        initSendersJob(context)
+        initAppJob(context)
         SharedPreferenceManager.setSendersInitiated(context)
     }
     initCategoriesJob(context)

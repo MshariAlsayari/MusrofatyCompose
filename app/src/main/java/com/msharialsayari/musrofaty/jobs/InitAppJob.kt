@@ -30,7 +30,7 @@ class InitAppJob @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         initContent()
-        //initSenders()
+        initSenders()
         initIncomesWords()
         initExpensesWords()
         initCurrencyWords()
