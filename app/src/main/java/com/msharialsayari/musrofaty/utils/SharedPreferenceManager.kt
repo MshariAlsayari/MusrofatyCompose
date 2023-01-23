@@ -17,7 +17,8 @@ object SharedPreferenceManager {
     private const val PREF_First_Lunched                                   = "PREF_First_Lunched"
     private const val PREF_Firebase_First_Lunched                          = "PREF_Firebase_First_Lunched"
     private const val PREF_First_Lunched_Category                          = "PREF_First_Lunched_Category"
-    private const val PREF_INCOME_WORDS = "PREF_INCOME_WORDS"
+    private const val PREF_INCOME_WORDS                                    = "PREF_INCOME_WORDS"
+    private const val PREF_INIT_SENDERS                                    = "PREF_INIT_SENDERS"
     
     
     private const val PREF_BANKS = "PREF_BANKS"
@@ -85,6 +86,15 @@ object SharedPreferenceManager {
         isChanged: Boolean = false
     ) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_First_Lunched, isChanged).apply()
+    }
+
+    fun sendersInitiated(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_INIT_SENDERS, false)
+    }
+
+     fun setSendersInitiated(
+        context: Context, ) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_SENDERS, true).apply()
     }
 
 

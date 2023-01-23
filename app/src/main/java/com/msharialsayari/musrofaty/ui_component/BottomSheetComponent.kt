@@ -10,11 +10,13 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.notEmpty
@@ -42,7 +44,11 @@ object BottomSheetComponent {
             TextFieldComponent.BoarderTextFieldComponent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start =dimensionResource(id = R.dimen.default_margin16), end =dimensionResource(id = R.dimen.default_margin16) , bottom =dimensionResource(id = R.dimen.default_margin16)),
+                    .padding(
+                        start = dimensionResource(id = R.dimen.default_margin16),
+                        end = dimensionResource(id = R.dimen.default_margin16),
+                        bottom = dimensionResource(id = R.dimen.default_margin16)
+                    ),
                 textValue = text.value,
                 errorMsg = error.value,
                 isSingleLine = model.isSingleLine,
@@ -71,6 +77,7 @@ object BottomSheetComponent {
     fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
                                              @StringRes title:Int,
                                              @StringRes description:Int?=null,
+                                             emptyListText:String= stringResource(id = R.string.no_result),
                                              list: List<SelectedItemModel>,
                                              trailIcon : (@Composable ()->Unit)? = null,
                                              canUnSelect:Boolean = false,
@@ -109,17 +116,27 @@ object BottomSheetComponent {
                 }
             }
             DividerComponent.HorizontalDividerComponent()
-            list.forEach {item->
-                StringSelectedItemComponent(model = item,
-                    canUnSelect = canUnSelect,
-                    onSelect = {
-                    item.isSelected = it
-                    onSelectItem(item)
-                },
-                    onLongPress = {
-                        onLongPress(it)
-                    }
-                )
+
+            if (list.isNotEmpty()) {
+                list.forEach { item ->
+                    StringSelectedItemComponent(model = item,
+                        canUnSelect = canUnSelect,
+                        onSelect = {
+                            item.isSelected = it
+                            onSelectItem(item)
+                        },
+                        onLongPress = {
+                            onLongPress(it)
+                        }
+                    )
+                }
+            }else{
+                Box(modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center) {
+                EmptyComponent.EmptyTextComponent(text = emptyListText)
+                }
             }
 
 

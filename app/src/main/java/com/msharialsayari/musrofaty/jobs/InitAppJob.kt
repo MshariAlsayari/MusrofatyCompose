@@ -10,7 +10,10 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetect
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.FilterRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -27,7 +30,7 @@ class InitAppJob @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         initContent()
-        initSenders()
+        //initSenders()
         initIncomesWords()
         initExpensesWords()
         initCurrencyWords()

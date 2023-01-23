@@ -84,6 +84,12 @@ fun initJobs(context: Context){
         initAppJob(context)
         SharedPreferenceManager.setFirstLunch(context, false)
     }
+
+
+    if (!SharedPreferenceManager.sendersInitiated(context)) {
+        initSendersJob(context)
+        SharedPreferenceManager.setSendersInitiated(context)
+    }
     initCategoriesJob(context)
     initStoresJob(context)
 }
