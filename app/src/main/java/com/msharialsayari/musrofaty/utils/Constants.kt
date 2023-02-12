@@ -135,6 +135,7 @@ object Constants {
     const val code_detect_ar = "رمز التحقق"
     const val code_detect_en = "detect code"
     const val credit_limit = "رصيد غير كافي"
+    const val credit_limit_en = "Declined due to Insufficient balance"
     var eliminatorList = listOf(
         OTP_ar, OTP2_ar,
         OTP_en,
@@ -148,7 +149,8 @@ object Constants {
         code_activate_en,
         code_detect_ar,
         code_detect_en,
-        credit_limit
+        credit_limit,
+        credit_limit_en
     )
 
     // mada

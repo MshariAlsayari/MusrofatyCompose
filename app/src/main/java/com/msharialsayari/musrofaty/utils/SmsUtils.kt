@@ -13,7 +13,7 @@ object SmsUtils {
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
     private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
     private const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
-    private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+"
+    private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+"
 
 
     fun isValidSms(sms:String?):Boolean{
