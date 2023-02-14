@@ -27,7 +27,7 @@ data class SmsModel(
 
     val storeName :String
         get() =
-            SmsUtils.getStoreName(body, SmsUtils.isAlinmaBank(senderName))
+            SmsUtils.getStoreName(body, senderName)
 }
 
 
