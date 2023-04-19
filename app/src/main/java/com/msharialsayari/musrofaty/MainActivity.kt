@@ -66,9 +66,6 @@ class MainActivity : ComponentActivity() {
 
 
     }
-
-
-
 }
 
 private fun initAppCheckFirebase(context: Context) {

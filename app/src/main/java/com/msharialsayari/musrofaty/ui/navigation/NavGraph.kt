@@ -51,13 +51,7 @@ fun NavigationGraph(
         Modifier.padding(innerPadding)
     ) {
         composable(Screen.Splash.route) {
-            SplashScreen(settingPermission = {
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                val uri: Uri = Uri.fromParts("package", navController.context.packageName, null)
-                intent.data = uri
-                activity.startActivityForResult(intent, 123)
-            }, onLoadingDone = {
+            SplashScreen( onLoadingDone = {
                 navController.navigate(BottomNavItem.Dashboard.route) {
                     popUpTo(Screen.Splash.route) {
                         inclusive = true

@@ -27,6 +27,7 @@
     <string name="common_copied">copied</string>
     <string name="share_by">Share by</string>
     <string name="common_search">Search</string>
+    <string name="common_ok">Ok</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
@@ -35,7 +36,13 @@
     </plurals>
 
     <!--permissions-->
-    <string name="permission_dialog_message">You should allow the Read SMS permission</string>
+    <string name="ask_sms_permission">Click to ask permission</string>
+    <string name="sms_permission_rational_dialog_title">Sms Permission</string>
+    <string name="sms_permission_rational_dialog_message">The app needs your permission to read sms</string>
+
+
+    <string name="sms_permission_denied_dialog_title">Sms Permission</string>
+    <string name="sms_permission_denied_dialog_message">The app needs to allow sms permission through app\'s settings</string>
     <string name="permission_dialog_positive_button">Go to settings</string>
 
 

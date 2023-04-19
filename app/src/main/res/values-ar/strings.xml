@@ -29,6 +29,7 @@
     <string name="common_copied">تم النسخ</string>
     <string name="share_by">مشاركة باستخدام</string>
     <string name="common_search">بحث</string>
+    <string name="common_ok">موافق</string>
 
 
     <plurals name="common_sms">
@@ -41,7 +42,12 @@
     </plurals>
 
     <!--permissions-->
-    <string name="permission_dialog_message">يجب السماح لإذن قراءة الرسائل</string>
+    <string name="ask_sms_permission">انقر لطلب الأذونات</string>
+    <string name="sms_permission_rational_dialog_title">قراءة الرسائل</string>
+    <string name="sms_permission_rational_dialog_message">التطبيق يحتاج لقراءة الرسائل</string>
+
+    <string name="sms_permission_denied_dialog_title">الأذونات</string>
+    <string name="sms_permission_denied_dialog_message">التطبيق يحتاج إلى السماح له بقراءة الرسائل من خلال إعدادات التطبيق</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
 
     <!--Dashboard-->
