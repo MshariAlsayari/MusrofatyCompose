@@ -14,7 +14,12 @@ data class FilterAdvancedModel(
 ) : Parcelable {
     companion object {
         fun getFilterWordsAsList(searchWord: String?): List<String> {
-            return searchWord?.split(",") ?: emptyList()
+            return if(searchWord == null || searchWord.trim().isEmpty()){
+                emptyList()
+            }else{
+                searchWord.split(",")
+            }
+
         }
 
         fun getFilterWordsAsString(list: List<String>): String {

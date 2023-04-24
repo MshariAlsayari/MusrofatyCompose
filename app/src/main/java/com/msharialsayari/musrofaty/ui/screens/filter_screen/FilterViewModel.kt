@@ -106,6 +106,25 @@ class FilterViewModel@Inject constructor(
 
     }
 
+    fun addFilter(word: String) {
+        val validateWord = word.replace(",","")
+        if(validateWord.isNotEmpty()){
+            val wordLIst = FilterAdvancedModel.getFilterWordsAsList(_uiState.value.words).toMutableSet()
+            wordLIst.add(validateWord)
+            _uiState.update {
+                it.copy( words = FilterAdvancedModel.getFilterWordsAsString(wordLIst.toList()))
+            }
+        }
+    }
+
+    fun deleteFilter(word: String) {
+            val wordLIst = FilterAdvancedModel.getFilterWordsAsList(_uiState.value.words).toMutableList()
+            wordLIst.remove(word)
+            _uiState.update {
+                it.copy( words = FilterAdvancedModel.getFilterWordsAsString(wordLIst.toList()))
+            }
+
+    }
 
 
     data class FilterUiState(
