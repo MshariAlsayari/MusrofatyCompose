@@ -77,7 +77,7 @@ class DashboardViewModel @Inject constructor(
     private fun getFinancialStatistics(){
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getAllSmsForSendersUseCase.invoke(isDeleted = false, filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
+            val smsResult  = getAllSmsForSendersUseCase.invoke(filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -93,7 +93,6 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
             val smsResult = getAllSmsForSendersUseCase.invoke(
-                isDeleted = false,
                 filterOption = getFilterTimeOption(),
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,

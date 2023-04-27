@@ -62,31 +62,13 @@ class SmsRepo @Inject constructor(
 
     }
 
-    suspend fun getAllSmsForAllSenders(isDeleted:Boolean=false,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
+    suspend fun getAllSmsForAllSenders(filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsEntity> {
         val senders = senderRepo.getAllSenders()
         val smsList  = mutableListOf<SmsEntity>()
         senders.forEach {
-
-            val list = when (filterOption) {
-                DateUtils.FilterOption.ALL -> dao.getAll(it.id, query,isDeleted)
-                DateUtils.FilterOption.TODAY -> dao.getToday(it.id, query,isDeleted)
-                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(it.id, query,isDeleted)
-                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(it.id, query,isDeleted)
-                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(it.id, query,isDeleted)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDate(
-                    it.id,
-                    query,
-                    isDeleted,
-                    startDate,
-                    endDate
-                )
-            }
-
-
+           val list = getAll(senderId = it.id,filterOption =filterOption, query=query, startDate=startDate, endDate=endDate).map { it.toSmsEntity() }.toList()
             smsList.addAll(list)
-
         }
-
         return smsList
 
     }
@@ -115,15 +97,73 @@ class SmsRepo @Inject constructor(
     }
 
     suspend fun getAll(senderId: Int, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0 ): List<SmsModel> {
+
+        // List of bind parameters
+        val args: MutableList<Any> = mutableListOf();
+
+        // Beginning of query
+        var queryString = "SELECT * FROM SmsEntity WHERE senderId =? AND isDeleted=false AND"
+        args.add(senderId)
+
+
+
+
+
+
+        // Build filter body query
+        var filterBodyQuery = ""
+        val filtersList = FilterAdvancedModel.getFilterWordsAsList(query)
+        if (filtersList.isEmpty()){
+            filterBodyQuery = " body LIKE '%' || ? || '%'"
+            args.add(query)
+        }else{
+            filtersList.forEachIndexed { index, filter ->
+                if (index == 0){
+                    filterBodyQuery  = " body LIKE '%' || ? || '%'"
+                }else{
+                    filterBodyQuery  += " AND body LIKE '%' || ? || '%'"
+                }
+                args.add(filter)
+
+            }
+
+
+        }
+        queryString += filterBodyQuery
+
+
+        // Build filter date query
+        when (filterOption) {
+            DateUtils.FilterOption.ALL -> queryString += ""
+            DateUtils.FilterOption.TODAY -> queryString += " AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))"
+            DateUtils.FilterOption.WEEK -> queryString += " AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime'))"
+            DateUtils.FilterOption.MONTH -> queryString += " AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now'))"
+            DateUtils.FilterOption.YEAR -> queryString += " AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))"
+            DateUtils.FilterOption.RANGE -> {
+                queryString += " AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(?/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(?/1000,'unixepoch', 'localtime'))"
+                args.add(startDate)
+                args.add(endDate)
+
+
+            }
+        }
+
+
+        // End of query string
+        queryString += " order by timestamp DESC"
+
+
+        val finalQuery = SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
+
         val returnedList = mutableListOf<SmsModel>()
         val smsListEntity =
             when (filterOption) {
-                DateUtils.FilterOption.ALL -> dao.getAll(senderId,query)
-                DateUtils.FilterOption.TODAY -> dao.getToday(senderId,query)
-                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(senderId,query)
-                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(senderId,query)
-                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(senderId,query)
-                DateUtils.FilterOption.RANGE -> dao.getRangeDate(senderId,query,false,startDate,endDate)
+                DateUtils.FilterOption.ALL -> dao.getAll(finalQuery)
+                DateUtils.FilterOption.TODAY -> dao.getToday(finalQuery)
+                DateUtils.FilterOption.WEEK -> dao.getCurrentWeek(finalQuery)
+                DateUtils.FilterOption.MONTH -> dao.getCurrentMonth(finalQuery)
+                DateUtils.FilterOption.YEAR -> dao.getCurrentYear(finalQuery)
+                DateUtils.FilterOption.RANGE -> dao.getRangeDate(finalQuery)
             }
 
         smsListEntity.map {

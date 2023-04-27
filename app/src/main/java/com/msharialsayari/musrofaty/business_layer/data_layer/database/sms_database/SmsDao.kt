@@ -51,24 +51,24 @@ interface SmsDao {
 
     ////////Statistics///////////
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' order by timestamp DESC ")
-    suspend fun getAll(senderId:Int, query:String="", isDeleted: Boolean=false): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getAll(query: SupportSQLiteQuery): List<SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime')) order by timestamp DESC ")
-    suspend fun getToday(senderId:Int, query:String="", isDeleted: Boolean=false): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getToday(query: SupportSQLiteQuery): List<SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime')) order by timestamp DESC ")
-    suspend fun getCurrentWeek(senderId:Int, query:String="", isDeleted: Boolean=false): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getCurrentWeek(query: SupportSQLiteQuery): List<SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now')) order by timestamp DESC ")
-    suspend fun getCurrentMonth(senderId:Int, query:String="", isDeleted: Boolean=false): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getCurrentMonth(query: SupportSQLiteQuery): List<SmsEntity>
 
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now')) order by timestamp DESC ")
-    suspend fun getCurrentYear(senderId:Int, query:String="", isDeleted: Boolean=false): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getCurrentYear(query: SupportSQLiteQuery): List<SmsEntity>
 
-    @Query("SELECT * FROM SmsEntity WHERE senderId =:senderId AND isDeleted=:isDeleted AND body LIKE '%' || :query || '%' AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) BETWEEN   strftime('%Y-%m-%d', date(:startDate/1000,'unixepoch', 'localtime')) AND strftime('%Y-%m-%d', date(:endDate/1000,'unixepoch', 'localtime')) order by timestamp DESC  ")
-    suspend fun getRangeDate(senderId:Int, query:String="", isDeleted: Boolean=false, startDate:Long, endDate:Long): List<SmsEntity>
+    @RawQuery(observedEntities = [SmsEntity::class])
+    suspend fun getRangeDate(query: SupportSQLiteQuery): List<SmsEntity>
 
     ////////Generating file and for sender sms list screen///////////
 
