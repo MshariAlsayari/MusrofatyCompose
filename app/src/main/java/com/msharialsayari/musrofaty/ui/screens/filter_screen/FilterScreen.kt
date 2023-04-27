@@ -34,6 +34,7 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
     val viewModel:FilterViewModel = hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scaffoldState = rememberScaffoldState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -70,6 +71,23 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
     uiState.filterId = filterId ?: 0
     uiState.senderId = senderId
 
+
+    if (uiState.wordValidationModel != null && !uiState.wordValidationModel!!.isValid) {
+        coroutineScope.launch {
+            val snackbarResult= scaffoldState.snackbarHostState.showSnackbar(
+                uiState.wordValidationModel!!.errorMsg,
+                duration = SnackbarDuration.Short
+            )
+
+            if(snackbarResult == SnackbarResult.Dismissed){
+                viewModel.dismissSnackbar()
+            }
+        }
+    }else {
+        viewModel.dismissSnackbar()
+        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+    }
+
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
@@ -95,7 +113,8 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
                     onArrowBackClicked = onBackPressed
                 )
 
-            }
+            },
+            scaffoldState = scaffoldState
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -157,26 +176,7 @@ fun FilterTitle(viewModel: FilterViewModel){
 }
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-@Composable
-fun FilterWord(viewModel: FilterViewModel){
 
-    val uiState                           by viewModel.uiState.collectAsState()
-    TextFieldComponent.BoarderTextFieldComponent(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.default_margin16)),
-        textValue = uiState.words,
-        label = R.string.filter_add_word,
-        errorMsg = uiState.wordValidationModel.errorMsg,
-        onValueChanged = {
-            viewModel.onFilterWordChanged( it)
-
-
-        }
-    )
-
-}
 
 @ExperimentalComposeUiApi
 @Composable

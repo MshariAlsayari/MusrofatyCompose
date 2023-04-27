@@ -65,7 +65,7 @@ class FilterViewModel@Inject constructor(
 
         if (word.isEmpty()){
             wordValidationModel.isValid = false
-            wordValidationModel.errorMsg = context.getString(R.string.validation_field_mandatory)
+            wordValidationModel.errorMsg = context.getString(R.string.validation_filter_list_empty)
         }
 
         _uiState.update {
@@ -99,12 +99,7 @@ class FilterViewModel@Inject constructor(
         }
     }
 
-    fun onFilterWordChanged( value: String) {
-        _uiState.update {
-            it.copy( words = value)
-        }
 
-    }
 
     fun addFilter(word: String) {
         val validateWord = word.replace(",","")
@@ -126,6 +121,13 @@ class FilterViewModel@Inject constructor(
 
     }
 
+    fun dismissSnackbar() {
+        _uiState.update {
+            it.copy( wordValidationModel = null)
+        }
+
+    }
+
 
     data class FilterUiState(
         var isLoading: Boolean = false,
@@ -135,6 +137,6 @@ class FilterViewModel@Inject constructor(
         var words: String = "",
         var isCreateNewFilter:Boolean = false,
         var titleValidationModel:ValidationModel = ValidationModel(),
-        var wordValidationModel:ValidationModel = ValidationModel(),
+        var wordValidationModel:ValidationModel? = null,
         )
 }
