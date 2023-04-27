@@ -14,8 +14,8 @@ class GetSoftDeletedSmsUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-    operator fun invoke(senderId: Int, isDeleted:Boolean = true, filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
-        return smsRepo.getAllSoftDeletedSms(senderId,isDeleted,filterOption,query,startDate, endDate)
+    operator fun invoke(senderId: Int,filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL, query:String="", startDate:Long = 0, endDate:Long= 0): Flow<PagingData<SmsEntity>> {
+        return smsRepo.getAllSoftDeletedSms(senderId,filterOption,query,startDate, endDate)
 
     }
 }

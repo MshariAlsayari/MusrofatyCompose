@@ -711,8 +711,8 @@ fun ToolbarActionsComposable(
     onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val filters = uiState.filters
-    val smsList = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    val isFilterSelected = uiState.selectedFilter != null
+    val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
 
     Row(
         modifier = Modifier
@@ -757,7 +757,7 @@ fun ToolbarActionsComposable(
 
 
             Icon(painter = painterResource(id = R.drawable.ic_filter),
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                tint = if(isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
@@ -767,7 +767,7 @@ fun ToolbarActionsComposable(
                     })
 
             Icon(Icons.Default.DateRange,
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                tint =if(isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
