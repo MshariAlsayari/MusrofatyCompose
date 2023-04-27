@@ -9,8 +9,8 @@ plugins {
 
 def versionMajor = 3
 def versionMinor = 0
-def versionPatch = 0
-def versionBuild = 10// bump for dogfood builds, public betas, etc.
+def versionPatch = 1
+def versionBuild = 0// bump for dogfood builds, public betas, etc.
 
 
 def keystoreProperties = rootProject.file('keystore.properties')
