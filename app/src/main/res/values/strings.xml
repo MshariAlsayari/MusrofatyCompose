@@ -122,7 +122,7 @@
     <!--Filter-->
     <string name="filter_title">Name</string>
     <string name="filter_add_word">Add a filter word</string>
-
+    <string name="validation_filter_list_empty">The list of filters can\'t be empty</string>
 
     <!--validation-->
     <string name="validation_field_mandatory">The field is mandatory</string>

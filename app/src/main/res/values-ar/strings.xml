@@ -125,6 +125,7 @@
     <!--Filter-->
     <string name="filter_title">اسم الفلتر</string>
     <string name="filter_add_word">إضافة كلمة بحث</string>
+    <string name="validation_filter_list_empty">يجب تعبئة قائمة كلمات البحث</string>
 
 
     <!--validation-->

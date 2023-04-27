@@ -321,7 +321,7 @@ class SenderSmsListViewModel @Inject constructor(
         return PdfCreatorViewModel.PdfBundle(
             senderId = _uiState.value.sender?.id ?: 0,
             filterTimeId = uiState.value.selectedFilterTimeOption?.id ?: 0,
-            filterWord = uiState.value.selectedFilter?.value ?: "",
+            filterWord = getFilterWord(),
             startDate = uiState.value.startDate,
             endDate = uiState.value.endDate
         )
