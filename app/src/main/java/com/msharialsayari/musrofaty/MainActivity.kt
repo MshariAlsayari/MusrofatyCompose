@@ -1,25 +1,27 @@
 package com.msharialsayari.musrofaty
 
 
-import android.content.Context
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.Scaffold
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.firebase.FirebaseApp
@@ -27,13 +29,12 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
-import com.msharialsayari.musrofaty.jobs.InitSendersJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
-import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
-import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
+import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
+import com.msharialsayari.musrofaty.utils.DialogsUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -41,15 +42,117 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+    private val openSettingRequest =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (isPermissionGranted()) {
+                runApp()
+            }else{
+                navigationToAppSetting(getSettingIntent())
+            }
+        }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppCheckFirebase(this)
-        initJobs(this)
+        initAppCheckFirebase()
+        initJobs()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        when {
+            isPermissionGranted() -> runApp()
+            shouldShowRequestPermissionRationale() -> {
+                DialogsUtils.showDialog(
+                    this, DialogsUtils.Params(
+                        title = R.string.sms_permission_rational_dialog_title,
+                        message = R.string.sms_permission_rational_dialog_message,
+                        positiveBtnText = android.R.string.ok,
+                        positiveBtnListener = {
+                            askPermission()
+                        }
+                    )
+                )
+
+            }
+
+            else -> {
+                DialogsUtils.showDialog(this, DialogsUtils.Params(
+                    title = R.string.sms_permission_denied_dialog_title,
+                    message = R.string.sms_permission_denied_dialog_message,
+                    positiveBtnText = R.string.permission_dialog_positive_button,
+                    positiveBtnListener = {
+                        navigationToAppSetting(getSettingIntent())
+                    }
+                ))
+
+            }
+        }
+
+
+    }
+
+
+    private fun navigationToAppSetting(intent: Intent) {
+        openSettingRequest.launch(intent)
+    }
+
+    private fun getSettingIntent(): Intent {
+        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        return intent
+    }
+
+    private fun initAppCheckFirebase() {
+        FirebaseApp.initializeApp(this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
+    }
+
+    private fun initJobs() {
+        if (!SharedPreferenceManager.sendersInitiated(this)) {
+            initAppJob()
+            SharedPreferenceManager.setSendersInitiated(this)
+        }
+        initCategoriesJob()
+        initStoresJob()
+    }
+
+    private fun initAppJob() {
+        val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
+        WorkManager.getInstance(this).enqueue(initAppWorker)
+    }
+
+    private fun initCategoriesJob() {
+        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
+        WorkManager.getInstance(this).enqueue(initCategoriesWorker)
+    }
+
+    private fun initStoresJob() {
+        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+        WorkManager.getInstance(this).enqueue(initStoresWorker)
+    }
+
+
+
+
+    private fun runApp() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            MusrofatyComposeTheme(appTheme = uiState.currentTheme, appLocale = uiState.currentLocale) {
-                SetLanguage(activity = this, locale =  uiState.currentLocale)
+            MusrofatyComposeTheme(
+                appTheme = uiState.currentTheme,
+                appLocale = uiState.currentLocale
+            ) {
+                SetLanguage(activity = this, locale = uiState.currentLocale)
                 SetStatusAndNavigationBarColor(this, uiState.currentTheme)
                 MainScreenView(
                     this,
@@ -63,53 +166,40 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-
-
     }
-}
 
-private fun initAppCheckFirebase(context: Context) {
-    FirebaseApp.initializeApp(context)
-    val firebaseAppCheck = FirebaseAppCheck.getInstance()
-    firebaseAppCheck.installAppCheckProviderFactory(
-        PlayIntegrityAppCheckProviderFactory.getInstance()
-    )
-}
 
-fun initJobs(context: Context){
-    if (!SharedPreferenceManager.sendersInitiated(context)) {
-        initAppJob(context)
-        SharedPreferenceManager.setSendersInitiated(context)
+    private fun isPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_SMS
+        ) == PackageManager.PERMISSION_GRANTED
     }
-    initCategoriesJob(context)
-    initStoresJob(context)
+
+    private fun shouldShowRequestPermissionRationale(): Boolean {
+        return shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)
+    }
+
+    private fun askPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            listOf(Manifest.permission.READ_SMS).toTypedArray(),
+            123
+        )
+    }
+
 }
 
-private fun initAppJob(context: Context){
-    val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
-    WorkManager.getInstance(context).enqueue(initAppWorker)
-}
 
-private fun initCategoriesJob(context: Context){
-    val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesJob>().build()
-    WorkManager.getInstance(context).enqueue(initCategoriesWorker)
-}
 
-private fun initStoresJob(context: Context){
-    val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
-    WorkManager.getInstance(context).enqueue(initStoresWorker)
-}
 
-private fun initSendersJob(context: Context){
-    val initStoresWorker = OneTimeWorkRequestBuilder<InitSendersJob>().build()
-    WorkManager.getInstance(context).enqueue(initStoresWorker)
-}
+
 
 
 
 
 @Composable
-private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTheme){
+private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme: AppTheme) {
 
     val window: Window = activity.window
     val decorView: View = window.decorView
@@ -125,7 +215,6 @@ private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme : AppTh
 }
 
 
-
 @Composable
 private fun SetLanguage(activity: MainActivity, locale: Locale) {
     val configuration = LocalConfiguration.current
@@ -138,60 +227,6 @@ private fun SetLanguage(activity: MainActivity, locale: Locale) {
 }
 
 
-@Composable
-fun MainScreenView(
-    activity: MainActivity,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit
-) {
-    val context = LocalContext.current
-    val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
-    val navController = rememberNavController()
-    val bottomNavigationItems =     listOf(
-        BottomNavItem.Dashboard,
-        BottomNavItem.SendersList,
-        BottomNavItem.Setting
-    )
 
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    when (navBackStackEntry?.destination?.route) {
-        BottomNavItem.Dashboard.route -> {
-            bottomBarState.value   = true
-        }
-        BottomNavItem.SendersList.route -> {
-            bottomBarState.value   = true
-        }
-        BottomNavItem.Setting.route -> {
-            bottomBarState.value = true
-        }
-
-        else -> {
-            bottomBarState.value = false
-
-        }
-
-    }
-
-
-    Scaffold(
-        bottomBar = {
-            BottomNavigation(
-                navController = navController,
-                items = bottomNavigationItems,
-                bottomBarState = bottomBarState
-            )
-        },
-
-    ) { innerPadding ->
-        NavigationGraph(
-            activity = activity,
-            navController = navController,
-            innerPadding = innerPadding,
-            onLanguageChanged = onLanguageChanged,
-            onThemeChanged = onThemeChanged
-        )
-    }
-}
 
 

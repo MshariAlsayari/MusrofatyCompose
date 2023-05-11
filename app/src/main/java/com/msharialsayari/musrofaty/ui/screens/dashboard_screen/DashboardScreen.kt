@@ -32,6 +32,7 @@ import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet.Bott
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
@@ -47,7 +48,7 @@ fun DashboardScreen(onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(se
 
 
     LaunchedEffect(Unit) {
-        viewModel.getData()
+        viewModel.getData(context)
         //viewModel.initJobs(context)
     }
 
@@ -94,6 +95,7 @@ fun DashboardScreen(onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(se
 @Composable
 fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> Unit,onNavigateToSenderSmsList:(senderId:Int)->Unit) {
 
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val isSearchTopBar = remember { mutableStateOf(false) }
@@ -128,9 +130,10 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
             title = stringResource(id = R.string.common_end_date),
             onDone = {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
+                SharedPreferenceManager.setFilterTimePeriod(context,5)
                 viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
                 viewModel.dismissAllDatePicker()
-                viewModel.getData()
+                viewModel.getData(context)
 
 
             },
@@ -152,7 +155,8 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
                 viewModel.showStartDatePicker()
             } else {
                 uiState.selectedFilterTimeOption = it
-                viewModel.getData()
+                SharedPreferenceManager.setFilterTimePeriod(context,it.id)
+                viewModel.getData(context)
                 viewModel.dismissAllDatePicker()
             }
         }
@@ -198,18 +202,18 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
                             modifier = Modifier
                                 .mirror()
                                 .clickable {
-                                    viewModel.loadSms()
+                                    viewModel.loadSms(context)
 
                                 })
                     }
                 },
                 onTextChange = {
                     viewModel.onQueryChanged(it)
-                    viewModel.getData()
+                    viewModel.getData(context)
                 },
                 onSearchClicked = {
                     viewModel.onQueryChanged(it)
-                    viewModel.getData()
+                    viewModel.getData(context)
                 },
 
 
@@ -222,7 +226,7 @@ fun DashboardContainer(viewModel: DashboardViewModel,onSmsClicked: (String) -> U
         SwipeRefresh(
             modifier = Modifier.padding(innerPadding),
             state = rememberSwipeRefreshState(uiState.isRefreshing),
-            onRefresh = { viewModel.loadSms() },
+            onRefresh = { viewModel.loadSms(context) },
         ) {
             SmsListCompose(viewModel,onSmsClicked,  onNavigateToSenderSmsList)
 
@@ -294,6 +298,7 @@ fun LazySenderSms(
                                 Utils.shareText(item.body, context)
                             }
                             SmsActionType.DELETE -> viewModel.softDelete(
+                                context,
                                 model.id,
                                 model.isDeleted
                             )

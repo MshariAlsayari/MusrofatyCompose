@@ -12,6 +12,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -52,19 +53,19 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun getData(){
-        getSmsDashboard()
-        getFinancialStatistics()
-        getCategoriesStatistics()
+    fun getData(context: Context) {
+        getSmsDashboard(context)
+        getFinancialStatistics(context)
+        getCategoriesStatistics(context)
     }
 
-    fun loadSms(){
+    fun loadSms(context: Context){
         viewModelScope.launch {
             _uiState.update { it.copy( isRefreshing = true) }
             loadAllSenderSmsUseCase.invoke()
-            getSmsDashboard()
-            getFinancialStatistics()
-            getCategoriesStatistics()
+            getSmsDashboard(context)
+            getFinancialStatistics(context)
+            getCategoriesStatistics(context)
             _uiState.update { state ->
                 state.copy(
                     isRefreshing = false
@@ -74,10 +75,10 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun getFinancialStatistics(){
+    private fun getFinancialStatistics(context: Context){
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult  = getAllSmsForSendersUseCase.invoke(filterOption = getFilterTimeOption(), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
+            val smsResult  = getAllSmsForSendersUseCase.invoke(filterOption = getFilterTimeOption(context), startDate = _uiState.value.startDate, endDate = _uiState.value.endDate, query = _uiState.value.query)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -89,11 +90,11 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun getCategoriesStatistics() {
+    private fun getCategoriesStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
             val smsResult = getAllSmsForSendersUseCase.invoke(
-                filterOption = getFilterTimeOption(),
+                filterOption = getFilterTimeOption(context),
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
                 query = _uiState.value.query
@@ -110,14 +111,14 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun getSmsDashboard(){
+    private fun getSmsDashboard(context: Context){
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isSmsPageLoading = true)
             }
 
             val smsResult = getSMSDashboardUseCase.invoke(
-                filterOption = getFilterTimeOption(),
+                filterOption = getFilterTimeOption(context),
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
                 query = _uiState.value.query
@@ -180,14 +181,15 @@ class DashboardViewModel @Inject constructor(
 
 
 
-    fun getFilterTimeOption(): DateUtils.FilterOption{
+    fun getFilterTimeOption(context: Context): DateUtils.FilterOption{
          return if (_uiState.value.selectedFilterTimeOption != null) {
              DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
          }else{
              _uiState.value.startDate= DateUtils.getSalaryDate()
              _uiState.value.endDate= DateUtils.getCurrentDate()
-             _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = 5, value = "", isSelected = true)
-             DateUtils.FilterOption.RANGE
+             val timeFilterOptionId = SharedPreferenceManager.getFilterTimePeriod(context)
+             _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
+              DateUtils.FilterOption.getFilterOption(timeFilterOptionId)
          }
 
     }
@@ -223,11 +225,11 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    fun softDelete(id:String , delete:Boolean){
+    fun softDelete(context: Context,id:String , delete:Boolean){
         viewModelScope.launch {
             softDeleteSMsUseCase.invoke(id, delete)
-            getFinancialStatistics()
-            getCategoriesStatistics()
+            getFinancialStatistics(context)
+            getCategoriesStatistics(context)
         }
     }
 

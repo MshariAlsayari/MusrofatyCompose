@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
@@ -45,11 +46,12 @@ fun BottomSheetFinancialCompose(viewModel: DashboardViewModel){
 
 @Composable
 private fun FinancialCompose(viewModel: DashboardViewModel, financialList: List<FinancialStatistics>) {
+    val context = LocalContext.current
     Column {
         financialList.forEach {
             FinancialStatistics(
                 model = FinancialStatisticsModel(
-                    filterOption = viewModel.getFilterTimeOption(),
+                    filterOption = viewModel.getFilterTimeOption(context),
                     currency = it.currency,
                     total = it.expenses.plus(it.income),
                     incomeTotal = it.income,
