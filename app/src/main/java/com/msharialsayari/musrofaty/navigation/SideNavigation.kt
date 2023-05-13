@@ -1,0 +1,63 @@
+package com.msharialsayari.musrofaty.navigation
+
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.NavigationRailItem
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
+import com.msharialsayari.musrofaty.utils.mirror
+
+@Composable
+fun SideNavigation(
+    navController: NavController,
+    items: List<BottomNavItem>,
+    bottomBarState: MutableState<Boolean>
+) {
+
+    androidx.compose.material.NavigationRail(
+        backgroundColor = MaterialTheme.colors.background,
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        items.forEach { item ->
+            NavigationRailItem(
+                icon = {
+                    Icon(
+                        painterResource(id = item.icon),
+                        contentDescription = stringResource(item.title!!),
+                        modifier = Modifier.mirror()
+                    )
+                },
+                label = { Text(text = stringResource(item.title!!), fontSize = 9.sp) },
+                selectedContentColor = MusrofatyTheme.colors.selectedItemColor,
+                unselectedContentColor = MusrofatyTheme.colors.onBackground.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == item.route,
+                onClick = {
+                    navController.navigate(item.route) {
+
+                        navController.graph.startDestinationRoute?.let { screen_route ->
+                            popUpTo(screen_route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
+
+
+}

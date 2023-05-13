@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty
+package com.msharialsayari.musrofaty.navigation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically

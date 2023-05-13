@@ -12,6 +12,8 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -144,10 +146,12 @@ class MainActivity : ComponentActivity() {
 
 
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     private fun runApp() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
+            val windowSizeClass = calculateWindowSizeClass(this)
             MusrofatyComposeTheme(
                 appTheme = uiState.currentTheme,
                 appLocale = uiState.currentLocale
@@ -155,7 +159,8 @@ class MainActivity : ComponentActivity() {
                 SetLanguage(activity = this, locale = uiState.currentLocale)
                 SetStatusAndNavigationBarColor(this, uiState.currentTheme)
                 MainScreenView(
-                    this,
+                    activity = this,
+                    windowSizeClass = windowSizeClass,
                     onLanguageChanged = {
                         viewModel.updateLanguage()
                     },
