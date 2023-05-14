@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -55,17 +54,12 @@ fun DashboardCompact(
 
         }) {
 
-        Scaffold(
-            topBar = { DashboardTopBar(viewModel) }
-        ) { innerPadding ->
-            SmsContent(
-                modifier = Modifier.padding(innerPadding),
-                viewModel = viewModel,
-                onSmsClicked = onSmsClicked,
-                onNavigateToSenderSmsList = onNavigateToSenderSmsList
-            )
-
-        }
+        SmsContent(
+            modifier = Modifier,
+            viewModel = viewModel,
+            onSmsClicked = onSmsClicked,
+            onNavigateToSenderSmsList = onNavigateToSenderSmsList
+        )
 
     }
 

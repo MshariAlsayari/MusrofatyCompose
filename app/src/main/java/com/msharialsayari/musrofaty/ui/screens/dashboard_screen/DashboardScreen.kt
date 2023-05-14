@@ -2,7 +2,8 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui_component.DialogComponent
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
@@ -88,11 +87,11 @@ fun DashboardScreen(
 
     }
 
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(uiState.isRefreshing),
-            onRefresh = { viewModel.loadSms(context) },
+    Scaffold(
+        topBar = { DashboardTopBar(viewModel) }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier.padding(innerPadding),
         ) {
             if(screenType == ScreenType.Compact ){
                 DashboardCompact(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
@@ -101,8 +100,9 @@ fun DashboardScreen(
             }
 
         }
-
     }
+
+
 
 
 }

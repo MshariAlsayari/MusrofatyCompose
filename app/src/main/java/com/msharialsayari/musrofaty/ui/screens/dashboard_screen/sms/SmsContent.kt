@@ -2,12 +2,14 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.sms
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,10 +23,12 @@ import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.*
-import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
+import com.msharialsayari.musrofaty.ui_component.EmptyComponent
+import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.ui_component.SmsActionType
+import com.msharialsayari.musrofaty.ui_component.SmsComponent
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmsContent(
     modifier: Modifier = Modifier,
