@@ -3,7 +3,6 @@ package com.msharialsayari.musrofaty.ui.navigation
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsLis
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 
 @Composable
@@ -41,6 +41,7 @@ fun NavigationGraph(
     activity: MainActivity,
     navController: NavHostController,
     innerPadding: PaddingValues,
+    screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit,
 
@@ -62,6 +63,7 @@ fun NavigationGraph(
 
         composable(BottomNavItem.Dashboard.route) {
             DashboardScreen(
+                screenType=screenType,
                 onSmsClicked = {
                     navController.navigate(Screen.SmsScreen.route + "/${it}")
                 },

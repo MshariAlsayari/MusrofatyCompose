@@ -1,13 +1,16 @@
 package com.msharialsayari.musrofaty
 
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.utils.DateUtils
+
 
 object Utils {
 
@@ -40,4 +43,18 @@ object Utils {
             Intent.createChooser(intent, context.getString(R.string.share_by))
         )
     }
+
+    @JvmStatic
+    fun getScreenSize(activity: Activity): DisplayMetrics {
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+        return displayMetrics
+    }
+
+
+
+
+
 }

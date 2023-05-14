@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 
 @Composable
@@ -18,6 +19,7 @@ fun NavigationRailLayout(
     navController: NavHostController,
     items:List<BottomNavItem>,
     bottomBarState: MutableState<Boolean>,
+    screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ){
@@ -27,6 +29,7 @@ fun NavigationRailLayout(
             activity = activity,
             navController = navController,
             innerPadding = PaddingValues(),
+            screenType=screenType,
             onLanguageChanged = onLanguageChanged,
             onThemeChanged=onThemeChanged
         )

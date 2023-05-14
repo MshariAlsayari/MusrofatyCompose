@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet
+package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.statistics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 
 
 @Composable
-fun BottomSheetFinancialCompose(viewModel: DashboardViewModel){
+fun FinancialContent(viewModel: DashboardViewModel){
 
     val uiState by viewModel.uiState.collectAsState()
     val financialList = uiState.financialStatistics.values.toList()

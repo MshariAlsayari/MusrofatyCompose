@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet
+package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.statistics
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import com.msharialsayari.musrofaty.ui_component.categoriesStatistics.Categories
 
 
 @Composable
-fun BottomSheetCategoriesCompose(viewModel: DashboardViewModel){
+fun CategoriesContent(viewModel: DashboardViewModel){
 
     val uiState by viewModel.uiState.collectAsState()
     val categoriesList = uiState.categoriesStatistics.values.toList()

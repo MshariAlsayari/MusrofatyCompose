@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet
+package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.statistics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
@@ -10,24 +10,23 @@ import androidx.compose.ui.res.dimensionResource
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
 
-@Composable
-fun BottomSheetLazyColumn(viewModel: DashboardViewModel){
 
+@Composable
+fun StatisticsContent(modifier: Modifier=Modifier, viewModel: DashboardViewModel) {
     LazyColumn(
-        modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.default_margin40)),
+        modifier = modifier.padding(vertical = dimensionResource(id = R.dimen.default_margin40)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16)),
         state = rememberLazyListState(),
     ) {
 
         item {
-            BottomSheetFinancialCompose(viewModel)
+            FinancialContent(viewModel)
         }
 
         item{
-            BottomSheetCategoriesCompose(viewModel)
+            CategoriesContent(viewModel)
         }
 
 
     }
-
 }

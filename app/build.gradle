@@ -222,9 +222,9 @@ dependencies {
     implementation 'com.github.MshariAlsayari:Request-Permission-Compose:1.1.1'
 
 
-    //Material 3
-    implementation "androidx.compose.material3:material3:1.1.0"
-    implementation "androidx.compose.material3:material3-window-size-class:1.1.0"
+//    //Material 3
+//    implementation "androidx.compose.material3:material3:1.1.0"
+//    implementation "androidx.compose.material3:material3-window-size-class:1.1.0"
 
 
     //Firebase

@@ -12,8 +12,6 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +27,7 @@ import androidx.work.WorkManager
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.msharialsayari.musrofaty.Utils.getScreenSize
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
@@ -146,12 +145,12 @@ class MainActivity : ComponentActivity() {
 
 
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+
     private fun runApp() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            val windowSizeClass = calculateWindowSizeClass(this)
+            val windowSizeClass = getScreenSize(this)
             MusrofatyComposeTheme(
                 appTheme = uiState.currentTheme,
                 appLocale = uiState.currentLocale
@@ -163,12 +162,11 @@ class MainActivity : ComponentActivity() {
                     windowSizeClass = windowSizeClass,
                     onLanguageChanged = {
                         viewModel.updateLanguage()
-                    },
-                    onThemeChanged = {
-                        viewModel.updateTheme()
-
                     }
-                )
+                ) {
+                    viewModel.updateTheme()
+
+                }
             }
         }
     }

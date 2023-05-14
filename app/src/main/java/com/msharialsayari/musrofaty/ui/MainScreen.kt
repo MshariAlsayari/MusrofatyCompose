@@ -1,49 +1,31 @@
 package com.msharialsayari.musrofaty.ui
 
-import android.icu.text.ListFormatter.Width
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.Scaffold
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import android.util.DisplayMetrics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.msharialsayari.musrofaty.navigation.BottomNavigation
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.navigation.BottomBarLayout
 import com.msharialsayari.musrofaty.navigation.NavigationRailLayout
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
-import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
+import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 
 @Composable
 fun MainScreenView(
     activity: MainActivity,
-    windowSizeClass: WindowSizeClass,
+    windowSizeClass: DisplayMetrics,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ) {
     val context = LocalContext.current
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val navController = rememberNavController()
-    val navHost = remember {
-        movableContentOf<PaddingValues>{innerPadding->
-            NavigationGraph(
-                activity = activity,
-                navController = navController,
-                innerPadding = innerPadding,
-                onLanguageChanged = onLanguageChanged,
-                onThemeChanged = onThemeChanged
-            )
-
-
-        }
-    }
     val bottomNavigationItems = listOf(
         BottomNavItem.Dashboard,
         BottomNavItem.SendersList,
@@ -70,13 +52,15 @@ fun MainScreenView(
 
     }
 
-    when(windowSizeClass.widthSizeClass){
-        WindowWidthSizeClass.Compact->
+    val screenType = remember { mutableStateOf(windowSizeClass.getScreenTypeByWidth())  }
+    when(windowSizeClass.getScreenTypeByWidth()){
+        ScreenType.Compact->
             BottomBarLayout(
                 activity = activity,
                 navController = navController,
                 items=bottomNavigationItems,
                 bottomBarState= bottomBarState,
+                screenType = screenType.value,
                 onLanguageChanged = onLanguageChanged,
                 onThemeChanged = onThemeChanged)
         else->{
@@ -85,6 +69,7 @@ fun MainScreenView(
                 navController = navController,
                 items=bottomNavigationItems,
                 bottomBarState= bottomBarState,
+                screenType = screenType.value,
                 onLanguageChanged = onLanguageChanged,
                 onThemeChanged = onThemeChanged)
         }

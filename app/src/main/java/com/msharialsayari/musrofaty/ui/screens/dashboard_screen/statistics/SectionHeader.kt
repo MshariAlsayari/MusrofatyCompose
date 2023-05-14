@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.bottomSheet
+package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.statistics
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
