@@ -22,7 +22,8 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch

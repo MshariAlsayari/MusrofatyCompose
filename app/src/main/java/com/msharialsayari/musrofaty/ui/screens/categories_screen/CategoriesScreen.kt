@@ -25,7 +25,8 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet

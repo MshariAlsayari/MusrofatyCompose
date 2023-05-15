@@ -73,12 +73,32 @@ fun NavigationGraph(
         }
         composable(BottomNavItem.SendersList.route) {
             SendersListScreen(
+                screenType=screenType,
                 onNavigateToSenderDetails = {
                     navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
                 },
                 onNavigateToSenderSmsList = {
                     navController.navigate(Screen.SenderSmsListScreen.route + "/${it}")
-                }
+                },
+                onDetailsClicked = { navController.navigate(Screen.SenderDetailsScreen.route + "/${it}") },
+                onNavigateToFilterScreen = { senderId, filterId ->
+                    if (filterId == null)
+                        navController.navigate(Screen.FilterScreen.route + "/${senderId}")
+                    else
+                        navController.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
+
+                },
+                onSmsClicked = {
+                    navController.navigate(Screen.SmsScreen.route + "/${it}")
+                },
+                onExcelFileGenerated = {
+                    val fileURI = SharingFileUtils.accessFile(activity, Constants.EXCEL_FILE_NAME)
+                    val intent = SharingFileUtils.createSharingIntent(activity, fileURI)
+                    activity.startActivity(intent)
+                },
+                onNavigateToPDFCreatorActivity = {
+                    PdfCreatorActivity.startPdfCreatorActivity(activity,it)
+                },
             )
         }
         composable(BottomNavItem.Setting.route) {
@@ -139,9 +159,9 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
             SenderSmsListScreen(
+                screenType=screenType,
                 senderId = senderId,
                 onDetailsClicked = { navController.navigate(Screen.SenderDetailsScreen.route + "/${it}") },
-                onBack = { navController.navigateUp() },
                 onNavigateToFilterScreen = { senderId, filterId ->
                     if (filterId == null)
                         navController.navigate(Screen.FilterScreen.route + "/${senderId}")
@@ -149,6 +169,7 @@ fun NavigationGraph(
                         navController.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
 
                 },
+                onBack = { navController.navigateUp() },
                 onSmsClicked = {
                     navController.navigate(Screen.SmsScreen.route + "/${it}")
                 },
@@ -159,7 +180,7 @@ fun NavigationGraph(
                 },
                 onNavigateToPDFCreatorActivity = {
                     PdfCreatorActivity.startPdfCreatorActivity(activity,it)
-                }
+                },
             )
         }
 

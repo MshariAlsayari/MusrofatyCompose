@@ -17,6 +17,7 @@ import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +82,17 @@ class SenderSmsListViewModel @Inject constructor(
                     sender = senderResult,
                     navigateBack = senderResult == null,
                     isLoading = false
+                )
+            }
+        }
+    }
+
+    fun setScreenType(screenType: ScreenType) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    screenType = screenType,
+
                 )
             }
         }
@@ -363,6 +375,7 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     data class SenderSmsListUiState(
+        val screenType: ScreenType? = null,
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
         var navigateBack: Boolean = false,

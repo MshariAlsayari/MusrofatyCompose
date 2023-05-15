@@ -22,7 +22,8 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.ActiveSendersTab
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*

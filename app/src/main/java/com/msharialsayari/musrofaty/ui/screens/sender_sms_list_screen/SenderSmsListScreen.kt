@@ -52,6 +52,7 @@ import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
@@ -64,17 +65,21 @@ private val MaxToolbarHeight = 85.dp
 
 @Composable
 fun SenderSmsListScreen(
+    screenType: ScreenType,
     senderId: Int,
     onDetailsClicked: (Int) -> Unit,
     onNavigateToFilterScreen: (Int, Int?) -> Unit,
     onBack: () -> Unit,
     onSmsClicked: (String) -> Unit,
     onExcelFileGenerated: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
+    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit,
 ) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit) { viewModel.getSender(senderId) }
+    LaunchedEffect(Unit) {
+        viewModel.setScreenType(screenType)
+        viewModel.getSender(senderId)
+    }
 
     if (uiState.navigateBack) {
         onBack()
@@ -720,6 +725,8 @@ fun ToolbarActionsComposable(
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+
+        if(uiState.screenType?.showToolbar == true)
         Icon(Icons.Default.ArrowBack,
             tint = MusrofatyTheme.colors.iconBackgroundColor,
             contentDescription = null,
@@ -727,7 +734,6 @@ fun ToolbarActionsComposable(
                 .mirror()
                 .clickable {
                     onBack()
-
                 })
 
 
