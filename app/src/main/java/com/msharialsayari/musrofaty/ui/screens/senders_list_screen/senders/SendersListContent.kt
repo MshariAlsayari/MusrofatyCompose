@@ -63,7 +63,6 @@ fun SendersListContent(
 
 
     ModalBottomSheetLayout(
-        modifier = modifier,
         sheetState = sheetState,
         sheetContent = {
             BottomSheetComponent.TextFieldBottomSheetComponent(
@@ -86,7 +85,6 @@ fun SendersListContent(
     ) {
 
         Scaffold(
-            modifier = modifier,
             topBar = {
                 SenderListTopBar(screenType = screenType) {
                     coroutineScope.launch {
@@ -115,7 +113,7 @@ fun SendersListContent(
             }
         ) { innerPadding ->
             SendersList(
-                modifier.padding(innerPadding),
+                Modifier.padding(innerPadding),
                 viewModel,
                 onNavigateToSenderDetails,
                 onNavigateToSenderSmsList

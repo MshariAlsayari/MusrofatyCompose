@@ -2,19 +2,18 @@ package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.SendersListContent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui_component.ListDetails
 import com.msharialsayari.musrofaty.ui_component.PlaceHolder
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import kotlinx.coroutines.launch
@@ -61,37 +60,40 @@ fun SendersListExpanded(
 
     }
 
-    Row {
-        SendersListContent(
-            modifier= Modifier.weight(1f),
-            screenType =  ScreenType.Expanded,
-            viewModel = viewModel,
-            onNavigateToSenderDetails = {id ->
 
-            },
-            onNavigateToSenderSmsList = {id ->
-            senderId.value      = id
-            currentScreen.value = SendersListExpandedScreen.SenderSmsList
-            }
-        )
+    ListDetails(
+        primaryRatio = 1f,
+        secondaryRatio = 1f,
+        primaryContent = {
+            SendersListContent(
+                screenType =  ScreenType.Expanded,
+                viewModel = viewModel,
+                onNavigateToSenderDetails = {id ->
 
-        LargeSideScreen(
-            modifier= Modifier.weight(1f),
-            currentScreen = currentScreen.value,
-            senderId = senderId.value,
-            onDetailsClicked = onDetailsClicked ,
-            onNavigateToFilterScreen = onNavigateToFilterScreen,
-            onSmsClicked = onSmsClicked,
-            onExcelFileGenerated = onExcelFileGenerated,
-            onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
-        )
-    }
+                },
+                onNavigateToSenderSmsList = {id ->
+                    senderId.value      = id
+                    currentScreen.value = SendersListExpandedScreen.SenderSmsList
+                }
+            )
+        },
+        secondaryContent ={
+            LargeSideScreen(
+                currentScreen = currentScreen.value,
+                senderId = senderId.value,
+                onDetailsClicked = onDetailsClicked ,
+                onNavigateToFilterScreen = onNavigateToFilterScreen,
+                onSmsClicked = onSmsClicked,
+                onExcelFileGenerated = onExcelFileGenerated,
+                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
+            )
+        }
+    )
 
 }
 
 @Composable
-fun LargeSideScreen(modifier: Modifier,
-                    currentScreen: SendersListExpandedScreen,
+fun LargeSideScreen(currentScreen: SendersListExpandedScreen,
                     senderId: Int?=null,
                     onDetailsClicked: (Int) -> Unit,
                     onNavigateToFilterScreen: (Int, Int?) -> Unit,
@@ -100,7 +102,7 @@ fun LargeSideScreen(modifier: Modifier,
                     onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit,
 ){
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(contentAlignment = Alignment.Center) {
         when(currentScreen){
             SendersListExpandedScreen.PlaceHolder    -> PlaceHolder.ScreenPlaceHolder()
             SendersListExpandedScreen.SenderSmsList  -> {
