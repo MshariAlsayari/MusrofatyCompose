@@ -51,6 +51,8 @@ interface SenderDao {
     @Update
     suspend fun update(senderEntity: SenderEntity)
 
+    @Query("UPDATE SenderEntity SET senderIconUri =:iconPath WHERE id=:senderId")
+    suspend fun updateIcon(senderId:Int, iconPath:String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg senderEntity: SenderEntity)

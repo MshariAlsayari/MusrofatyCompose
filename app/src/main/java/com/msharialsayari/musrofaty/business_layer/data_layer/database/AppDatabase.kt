@@ -36,7 +36,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
                 SenderEntity::class,
                 ContentEntity::class,
                 StoreFirebaseEntity::class,],
-    version = 26,
+    version = 27,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -233,6 +233,12 @@ val MIGRATION_25_26= object : Migration(25,26) {
         database.execSQL("DROP TABLE `SmsEntity`" )
         database.execSQL("CREATE TABLE `SenderEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `senderName` TEXT   NOT NULL,`displayNameAr` TEXT  NOT NULL  ,`displayNameEn` TEXT  NOT NULL,`isPined` INTEGER DEFAULT(0) NOT NULL,`contentId` INTEGER  NOT NULL )")
         database.execSQL("CREATE TABLE `SmsEntity`  (`id` TEXT PRIMARY KEY NOT NULL ,`senderName` TEXT NOT NULL DEFAULT('') ,`timestamp` INTEGER NOT NULL DEFAULT(0), `body` TEXT NOT NULL DEFAULT(''),`senderId` INTEGER NOT NULL DEFAULT(0),`isDeleted` INTEGER NOT NULL DEFAULT(0),`isFavorite` INTEGER NOT NULL DEFAULT(0))")
+    }
+}
+
+val MIGRATION_26_27= object : Migration(26,27) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE `SenderEntity` ADD `senderIconUri` TEXT   NOT NULL DEFAULT('')")
     }
 }
 

@@ -199,6 +199,8 @@ class DashboardViewModel @Inject constructor(
         context: Context
     ): SmsComponentModel {
 
+        val sender =  getSenderById(sms.senderId)
+
         return SmsComponentModel(
             id = sms.id,
             senderId= sms.senderId,
@@ -206,8 +208,9 @@ class DashboardViewModel @Inject constructor(
             isFavorite = sms.isFavorite,
             isDeleted = sms.isDeleted,
             body = sms.body,
-            senderDisplayName = SenderModel.getDisplayName(context, getSenderById(sms.senderId)),
-            senderCategory = ContentModel.getDisplayName(context, getSenderById(sms.senderId)?.content)
+            senderIcon = sender?.senderIconUri ?:"",
+            senderDisplayName = SenderModel.getDisplayName(context, sender),
+            senderCategory = ContentModel.getDisplayName(context, sender?.content)
 
         )
 

@@ -1,7 +1,11 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.background
@@ -35,6 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
@@ -588,13 +596,37 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel, onDetailsClicked
     val model = SenderComponentModel(
         senderId = sender?.id ?: 0,
         senderName = sender?.senderName ?: "",
+        senderIconPath = sender?.senderIconUri ?: "",
         displayName = SenderModel.getDisplayName(context, sender),
         senderType = ContentModel.getDisplayName(context, sender?.content),
     )
+
+    val corpOption = CropImageOptions()
+    corpOption.cropShape = CropImageView.CropShape.OVAL
+    corpOption.allowFlipping = false
+    corpOption.allowRotation = false
+    corpOption.scaleType = CropImageView.ScaleType.CENTER_CROP
+
+
+    val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            viewModel.updateSenderIcon(result.uriContent.toString())
+        }
+    }
+
+    val galleryLauncher = singleMediaPicker(onSelectMedia = {
+        val cropOptions = CropImageContractOptions(it, corpOption)
+        imageCropLauncher.launch(cropOptions)
+    })
+
+
+
     SenderComponent(
         modifier = Modifier.padding(horizontal = 16.dp),
         model = model
-    )
+    ){
+        galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
 
     Row(
         modifier = Modifier

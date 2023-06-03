@@ -18,7 +18,7 @@ fun SenderComponent(modifier: Modifier = Modifier, model: SenderComponentModel, 
     ) {
 
 
-        AvatarComponent(icon = model.senderIcon, onClicked = {onAvatarClicked(model)} )
+        AvatarComponent(icon = model.senderIconPath, onClicked = {onAvatarClicked(model)} )
 
         Column(modifier = Modifier
             .weight(1f)
@@ -44,7 +44,7 @@ data class SenderComponentModel(
     var senderName:String="",
     var displayName:String="",
     var senderType:String="",
-    var senderIcon:Int?=null,
+    var senderIconPath:String="",
 )
 
 

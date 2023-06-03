@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MusrofatyCompose" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.MusrofatyCompose" parent="@style/Base.Theme.AppCompat">
         <item name="android:windowBackground">@color/white</item>
         <item name="colorBackground">@color/white</item>
         <item name="colorBottomNavigationBackground">@color/white</item>

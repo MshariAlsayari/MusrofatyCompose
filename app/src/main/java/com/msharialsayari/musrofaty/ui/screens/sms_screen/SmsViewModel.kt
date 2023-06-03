@@ -139,6 +139,7 @@ class SmsViewModel @Inject constructor(
             body = sms.body,
             storeName=store,
             storeCategory= category,
+            senderIcon = _uiState.value.sender?.senderIconUri ?: "",
             senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
             senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
 

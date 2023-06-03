@@ -53,7 +53,7 @@ private fun SenderInfoComponent(
     senderId: Int,
     senderName: String,
     senderCategory: String,
-    senderIcon: Int? = null,
+    senderIcon: String = "",
     onIconClicked:(Int)->Unit
 ) {
     ListItem(
@@ -223,7 +223,7 @@ data class SmsComponentModel(
     var currency: String = "",
     var senderDisplayName: String = "",
     var senderCategory: String = "",
-    var senderIcon: Int? = null,
+    var senderIcon: String = "",
     var isFavorite: Boolean = false,
     var isDeleted: Boolean = false,
     var storeName: String = "",

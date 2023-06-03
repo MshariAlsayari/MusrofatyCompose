@@ -38,6 +38,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val getAllSmsUseCase: GetSmsListUseCase,
     private val loadSenderSmsUseCase: LoadSenderSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
+    private val updateSenderIconUseCase: UpdateSenderIconUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
@@ -254,6 +255,7 @@ class SenderSmsListViewModel @Inject constructor(
             isFavorite = sms.isFavorite,
             isDeleted = sms.isDeleted,
             body = sms.body,
+            senderIcon = _uiState.value.sender?.senderIconUri ?:"",
             senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
             senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
 
@@ -358,6 +360,18 @@ class SenderSmsListViewModel @Inject constructor(
     fun onFilterTimeOptionSelected(item: SelectedItemModel) {
         _uiState.update {
             it.copy(selectedFilterTimeOption = item)
+        }
+    }
+
+
+    fun updateSenderIcon(iconPath: String) {
+        viewModelScope.launch {
+            val senderId = _uiState.value.sender?.id
+            senderId?.let {
+                updateSenderIconUseCase.invoke(it, iconPath)
+            }
+
+
         }
     }
 
