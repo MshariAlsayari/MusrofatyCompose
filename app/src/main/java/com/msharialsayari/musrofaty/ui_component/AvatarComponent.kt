@@ -21,9 +21,10 @@ import com.msharialsayari.musrofaty.R
 fun AvatarComponent(icon:String, onClicked:()->Unit = {}) {
 
     val defaultIcon = R.drawable.ic_app
+    val iconSize= 50
     val modifier = Modifier
-        .width(50.dp)
-        .height(50.dp)
+        .width(iconSize.dp)
+        .height(iconSize.dp)
         .clip(CircleShape)
         .clickable {
             onClicked()
@@ -36,6 +37,7 @@ fun AvatarComponent(icon:String, onClicked:()->Unit = {}) {
     }else{
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
+                .size(iconSize)
                 .data(Uri.parse(icon))
                 .error(defaultIcon)
                 .crossfade(true)
