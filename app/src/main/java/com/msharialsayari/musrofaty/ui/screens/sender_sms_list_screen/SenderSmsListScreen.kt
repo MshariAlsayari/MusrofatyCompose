@@ -84,7 +84,7 @@ fun SenderSmsListScreen(
 ) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit) {
+    LaunchedEffect(senderId) {
         viewModel.setScreenType(screenType)
         viewModel.getSender(senderId)
     }

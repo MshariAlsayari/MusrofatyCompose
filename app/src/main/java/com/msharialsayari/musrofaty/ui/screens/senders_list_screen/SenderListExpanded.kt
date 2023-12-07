@@ -32,7 +32,6 @@ fun SendersListExpanded(
 
     val coroutineScope                    = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val currentScreen = remember { mutableStateOf(SendersListExpandedScreen.PlaceHolder) }
     val senderId = remember { mutableStateOf<Int?>(null) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -73,13 +72,11 @@ fun SendersListExpanded(
                 },
                 onNavigateToSenderSmsList = {id ->
                     senderId.value      = id
-                    currentScreen.value = SendersListExpandedScreen.SenderSmsList
                 }
             )
         },
         secondaryContent ={
             LargeSideScreen(
-                currentScreen = currentScreen.value,
                 senderId = senderId.value,
                 onDetailsClicked = onDetailsClicked ,
                 onNavigateToFilterScreen = onNavigateToFilterScreen,
@@ -93,8 +90,7 @@ fun SendersListExpanded(
 }
 
 @Composable
-fun LargeSideScreen(currentScreen: SendersListExpandedScreen,
-                    senderId: Int?=null,
+fun LargeSideScreen(senderId: Int?=null,
                     onDetailsClicked: (Int) -> Unit,
                     onNavigateToFilterScreen: (Int, Int?) -> Unit,
                     onSmsClicked: (String) -> Unit,
@@ -103,29 +99,23 @@ fun LargeSideScreen(currentScreen: SendersListExpandedScreen,
 ){
 
     Box(contentAlignment = Alignment.Center) {
-        when(currentScreen){
-            SendersListExpandedScreen.PlaceHolder    -> PlaceHolder.ScreenPlaceHolder()
-            SendersListExpandedScreen.SenderSmsList  -> {
-                SenderSmsListScreen(
-                    screenType=ScreenType.Expanded,
-                    senderId = senderId!!,
-                    onDetailsClicked = onDetailsClicked ,
-                    onNavigateToFilterScreen = onNavigateToFilterScreen,
-                    onBack = {  },
-                    onSmsClicked = onSmsClicked,
-                    onExcelFileGenerated = onExcelFileGenerated,
-                    onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
-                )
-            }
 
-
-            else -> {}
+        if(senderId != null){
+            SenderSmsListScreen(
+                screenType=ScreenType.Expanded,
+                senderId = senderId,
+                onDetailsClicked = onDetailsClicked ,
+                onNavigateToFilterScreen = onNavigateToFilterScreen,
+                onBack = {  },
+                onSmsClicked = onSmsClicked,
+                onExcelFileGenerated = onExcelFileGenerated,
+                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
+            )
+        }else{
+            PlaceHolder.ScreenPlaceHolder()
         }
     }
 
 }
 
 
-enum class SendersListExpandedScreen{
-    PlaceHolder, SenderSmsList, SenderDetails
-}
