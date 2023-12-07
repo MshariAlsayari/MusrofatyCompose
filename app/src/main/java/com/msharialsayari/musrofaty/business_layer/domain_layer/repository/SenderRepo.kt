@@ -114,6 +114,11 @@ class SenderRepo @Inject constructor(
     }
 
 
+    suspend fun changeSenderIcon(senderId:Int, iconPath:String){
+        dao.updateIcon(senderId, iconPath)
+    }
+
+
 
 
     private suspend fun fillSenderModel(senderModel: SenderModel): SenderModel {

@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_d
 import android.os.Parcelable
 import androidx.room.*
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.parcelize.Parcelize
@@ -23,6 +24,8 @@ data class SenderEntity(
     var contentId: Int ,
     @ColumnInfo(name = "isPined" , defaultValue = "0")
     var isPined: Boolean = false,
+    @ColumnInfo(name = "senderIconUri")
+    var senderIconUri: String,
 ) : Parcelable
 
 
@@ -44,4 +47,4 @@ data class SenderWithRelationsModel(
 ) : Parcelable
 
 
-fun SenderEntity.toSenderModel() = SenderModel(id, senderName, displayNameAr, displayNameEn,contentId, isPined)
+fun SenderEntity.toSenderModel(contentModel:ContentModel?=null) = SenderModel(id, senderName, displayNameAr, displayNameEn,contentId, isPined, contentModel,senderIconUri)

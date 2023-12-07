@@ -16,6 +16,7 @@ data class SenderModel(
     var contentId: Int = 0,
     var isPined: Boolean = false,
     var content: ContentModel? = null,
+    var senderIconUri: String ="",
 ) : Parcelable {
 
     companion object {
@@ -157,7 +158,7 @@ data class SenderModel(
 }
 
 fun SenderModel.toSenderEntity() =
-    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined)
+    SenderEntity(id, senderName, displayNameAr, displayNameEn, contentId, isPined, senderIconUri)
 
 
 
