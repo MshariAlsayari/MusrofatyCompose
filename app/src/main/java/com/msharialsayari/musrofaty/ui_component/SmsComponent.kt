@@ -28,12 +28,15 @@ import com.msharialsayari.musrofaty.utils.DateUtils
 fun SmsComponent(
     modifier: Modifier = Modifier,
     model: SmsComponentModel,
+    onSmsClicked:(String)->Unit = {},
     onActionClicked: (SmsComponentModel, SmsActionType) -> Unit,
     onCategoryClicked: (String) -> Unit = {},
     onSenderIconClicked:(Int) ->Unit = {}
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            onSmsClicked(model.id)
+        },
         verticalArrangement = Arrangement.SpaceAround
     ) {
         SenderInfoComponent(model.senderId, model.senderDisplayName, model.senderCategory, model.senderIcon, onSenderIconClicked)

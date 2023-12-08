@@ -6,22 +6,14 @@ import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.statistics.Stati
 import com.msharialsayari.musrofaty.ui_component.ListDetails
 
 @Composable
-fun DashboardExpanded(
-    viewModel: DashboardViewModel,
-    onSmsClicked: (String) -> Unit,
-    onNavigateToSenderSmsList: (senderId: Int) -> Unit
-) {
+fun DashboardExpanded(viewModel: DashboardViewModel) {
 
 
     ListDetails(
         primaryRatio = 1f,
         secondaryRatio = 2f,
         primaryContent = {
-            SmsContent(
-                viewModel = viewModel,
-                onSmsClicked = onSmsClicked,
-                onNavigateToSenderSmsList = onNavigateToSenderSmsList
-            )
+            SmsContent(viewModel = viewModel)
         },
         secondaryContent ={
             StatisticsContent(viewModel = viewModel)

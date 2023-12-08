@@ -23,9 +23,7 @@ import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 
 @Composable
-fun DashboardScreen(
-    onSmsClicked: (String) -> Unit,
-    onNavigateToSenderSmsList:(senderId:Int)->Unit) {
+fun DashboardScreen() {
 
     val context = LocalContext.current
     val viewModel: DashboardViewModel = hiltViewModel()
@@ -95,9 +93,9 @@ fun DashboardScreen(
             modifier = Modifier.padding(innerPadding),
         ) {
             if(screenType.isScreenWithDetails){
-                DashboardExpanded(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
+                DashboardExpanded(viewModel = viewModel)
             }else{
-                DashboardCompact(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
+                DashboardCompact(viewModel = viewModel)
             }
 
         }

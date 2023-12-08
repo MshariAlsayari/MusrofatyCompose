@@ -9,6 +9,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategorySt
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -33,6 +35,7 @@ class DashboardViewModel @Inject constructor(
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val getSendersUseCase: GetSendersUseCase,
+    private val navigator: AppNavigator
 ):ViewModel(){
 
 
@@ -232,6 +235,14 @@ class DashboardViewModel @Inject constructor(
             getFinancialStatistics(context)
             getCategoriesStatistics(context)
         }
+    }
+
+    fun navigateToSmsDetails(smsId:String){
+        navigator.navigate(Screen.SmsScreen.route + "/${smsId}")
+    }
+
+    fun navigateToSenderSmsList(senderId:Int){
+        navigator.navigate(Screen.SenderSmsListScreen.route + "/${senderId}")
     }
 
 

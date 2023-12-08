@@ -32,19 +32,15 @@ import com.msharialsayari.musrofaty.ui_component.SmsComponent
 @Composable
 fun SmsContent(
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel,
-    onSmsClicked: (String) -> Unit,
-    onNavigateToSenderSmsList:(senderId:Int)->Unit
-) {
+    viewModel: DashboardViewModel) {
 
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val smsList = uiState.smsFlow?.collectAsLazyPagingItems()
 
     Box(modifier.fillMaxSize()) {
         when{
             uiState.isSmsPageLoading                        -> ItemLoading()
-            smsList?.itemSnapshotList?.isNotEmpty() == true -> SmsList(viewModel = viewModel, list = smsList, onSmsClicked = onSmsClicked , onNavigateToSenderSmsList = onNavigateToSenderSmsList)
+            smsList?.itemSnapshotList?.isNotEmpty() == true -> SmsList(viewModel = viewModel, list = smsList)
             else                                            -> EmptyCompose()
         }
     }
@@ -58,9 +54,7 @@ fun SmsContent(
 @Composable
 fun SmsList(
     list: LazyPagingItems<SmsEntity>,
-    viewModel: DashboardViewModel,
-    onSmsClicked: (String) -> Unit,
-    onNavigateToSenderSmsList:(senderId:Int)->Unit
+    viewModel: DashboardViewModel
 ) {
     val context = LocalContext.current
     LazyColumn(
@@ -73,12 +67,12 @@ fun SmsList(
             if (item != null) {
 
                 SmsComponent(
-                    modifier = Modifier.clickable {
-                        onSmsClicked(item.id)
-                    },
                     model = viewModel.wrapSendersToSenderComponentModel(item, context),
+                    onSmsClicked = {
+                      viewModel.navigateToSmsDetails(it)
+                    },
                     onSenderIconClicked = {
-                        onNavigateToSenderSmsList(it)
+                        viewModel.navigateToSenderSmsList(it)
                     },
                     onActionClicked = { model, action ->
                         when (action) {

@@ -15,11 +15,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DashboardCompact(
-    viewModel: DashboardViewModel,
-    onSmsClicked: (String) -> Unit,
-    onNavigateToSenderSmsList: (senderId: Int) -> Unit
-) {
+fun DashboardCompact(viewModel: DashboardViewModel) {
 
     val sheetState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -53,14 +49,7 @@ fun DashboardCompact(
             StatisticsContent(viewModel = viewModel)
 
         }) {
-
-        SmsContent(
-            modifier = Modifier,
-            viewModel = viewModel,
-            onSmsClicked = onSmsClicked,
-            onNavigateToSenderSmsList = onNavigateToSenderSmsList
-        )
-
+        SmsContent(viewModel = viewModel)
     }
 
 }

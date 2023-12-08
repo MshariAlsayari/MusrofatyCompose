@@ -458,7 +458,9 @@ fun LazySenderSms(
 
             if (item != null) {
                 SmsComponent(
-                    modifier = Modifier.clickable { onSmsClicked(item.id) },
+                    onSmsClicked ={
+                        viewModel.navigateToSmsDetails(item.id)
+                    },
                     model = viewModel.wrapSendersToSenderComponentModel(item, context),
                     onActionClicked = { model, action ->
                         when (action) {
