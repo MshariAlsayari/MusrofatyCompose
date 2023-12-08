@@ -46,9 +46,7 @@ class SendersListViewModel @Inject constructor(
     }
 
 
-
-
-    fun pinSender(senderId:Int){
+    fun pinSender(senderId: Int) {
         viewModelScope.launch {
             pinSenderUseCase.invoke(senderId = senderId, pin = true)
 
@@ -62,63 +60,14 @@ class SendersListViewModel @Inject constructor(
         }
     }
 
-    fun addSender(senderName:String){
+    fun addSender(senderName: String) {
         viewModelScope.launch {
-            val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
+            val model = SenderModel(
+                senderName = senderName,
+                displayNameAr = senderName,
+                displayNameEn = senderName
+            )
             addSenderUseCase.invoke(model)
         }
     }
-
-
-    data class SendersUiState(
-        var isLoading: Boolean = false,
-        var senders: Flow<List<SenderEntity>>? = null,
-    ){
-
-        companion object {
-            fun wrapSendersToSenderComponentModelList(
-                senders: List<SenderEntity>,
-                context: Context
-            ): List<SenderComponentModel> {
-                val list = mutableListOf<SenderComponentModel>()
-                senders.map {
-                    if (it.isPined) {
-                        list.add(
-                            0,
-                            SenderComponentModel(
-                                senderId=it.id,
-                                senderName = it.senderName,
-                                displayName = SenderModel.getDisplayName(context, it),
-                                senderType = "",
-                                senderIconPath = it.senderIconUri
-                            )
-                        )
-                    } else {
-                        list.add(
-                            SenderComponentModel(
-                                senderId=it.id,
-                                senderName = it.senderName,
-                                displayName = SenderModel.getDisplayName(context, it),
-                                senderType = "",
-                                senderIconPath = it.senderIconUri
-                            )
-                        )
-                    }
-                }
-                return list
-
-            }
-
-
-        }
-
-
-
-
-
-    }
-
-
-
-
 }

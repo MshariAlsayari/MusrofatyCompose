@@ -44,8 +44,6 @@ class DashboardViewModel @Inject constructor(
         getSenders()
     }
 
-
-
     private fun getSenders() {
         viewModelScope.launch {
             val result = getSendersUseCase.invoke()
@@ -237,23 +235,6 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    data class DashboardUiState(
-        var isLoading: Boolean = false,
-        var isRefreshing: Boolean = false,
-        var isCategoriesStatisticsSmsPageLoading: Boolean = false,
-        var selectedFilterTimeOption: SelectedItemModel? = null,
-        var startDate: Long = 0,
-        var endDate: Long = 0,
-        var showStartDatePicker: Boolean = false,
-        var showEndDatePicker: Boolean = false,
-        var showFilterTimeOptionDialog: Boolean = false,
-        var isFinancialStatisticsSmsPageLoading: Boolean = false,
-        var financialStatistics: Map<String, FinancialStatistics> = emptyMap(),
-        var categoriesStatistics: Map<Int, CategoryStatistics> = emptyMap(),
-        var smsFlow: Flow<PagingData<SmsEntity>>? =null,
-        var isSmsPageLoading: Boolean = false,
-        var query:String="",
-        var senders:List<SenderModel> = listOf()
-    )
+
 
 }

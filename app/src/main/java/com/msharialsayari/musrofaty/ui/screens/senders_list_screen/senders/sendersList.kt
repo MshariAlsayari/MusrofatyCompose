@@ -22,6 +22,7 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersUiState.Companion.wrapSendersToSenderComponentModelList
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 
@@ -68,7 +69,7 @@ fun SendersList(
 
     VerticalEasyList(
         modifier = modifier,
-        list = SendersListViewModel.SendersUiState.wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
+        list = wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
         view = { sender -> SenderComponent( modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)), model = sender, onAvatarClicked = { onNavigateToSenderSmsList(sender.senderId)}) },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->

@@ -174,7 +174,6 @@ fun LoadingPageCompose(modifier: Modifier=Modifier){
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDetectorEntity>){
-    val uiState by viewModel.uiState.collectAsState()
     val deleteAction = Action<WordDetectorEntity>(
         { TextComponent.BodyText(text = stringResource(id = R.string.common_delete ), color = Color.White,alignment = TextAlign.Center) },
         { ActionIcon(id = R.drawable.ic_delete ) },
@@ -184,22 +183,13 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
 
         })
 
-
-
-
-
-
-
     VerticalEasyList(
         list            = list,
-        view            = { TextComponent.BodyText(modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.default_margin16)), text = it.word) },
+        view            = { TextComponent.BodyText(modifier = Modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.default_margin16)), text = it.word) },
         dividerView     = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked   = { item, position ->
 
         },
-        isLoading       = uiState.isLoading,
         endActions      = listOf(deleteAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView       = { EmptyCompose() },

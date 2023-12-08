@@ -137,15 +137,5 @@ class StoresViewModel @Inject constructor(
     }
 
 
-    fun searchOnStoreList(value:String){
 
-    }
-
-    data class StoresUiState(
-        var isLoading: Boolean = false,
-        var stores: Flow<List<StoreWithCategory>>? = null,
-        var categories: Flow<List<CategoryEntity>>? = null,
-        var selectedStore: StoreWithCategory? = null,
-        var selectedCategory: SelectedItemModel? = null,
-    )
 }

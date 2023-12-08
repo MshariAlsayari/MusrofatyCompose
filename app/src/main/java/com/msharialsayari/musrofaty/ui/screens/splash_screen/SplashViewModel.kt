@@ -29,8 +29,6 @@ class SplashViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    data class SplashUiState(
-        var isLoading: Boolean = false
-    )
+
 
 }

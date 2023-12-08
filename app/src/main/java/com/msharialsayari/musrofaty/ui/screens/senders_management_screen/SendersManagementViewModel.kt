@@ -28,7 +28,6 @@ class SendersManagementViewModel @Inject constructor(
 
     init {
         getSenders()
-
     }
 
     private fun getSenders(){
@@ -36,30 +35,16 @@ class SendersManagementViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-
             val result = getSendersUseCase.invoke()
-
-
             _uiState.update {
                 it.copy(isLoading = false, senders = result)
             }
-
         }
     }
-
-
-
-
     fun addSender(senderName:String){
         viewModelScope.launch {
         val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
         addSenderUseCase.invoke(model)
         }
     }
-
-
-    data class SendersManagementUiState(
-        var isLoading:Boolean = false,
-        var senders:Flow<List<SenderEntity>>? = null,
-    )
 }

@@ -128,13 +128,4 @@ class AppearanceViewModel @Inject constructor(
         }
 
     }
-
-    data class AppearanceUIState(
-        var isLoading:Boolean = false,
-        var currentLanguageOption:String= "",
-        var selectedCurrentLanguage: SelectedItemModel? = null,
-
-        var currentThemeOption:String= "",
-        var selectedCurrentTheme: SelectedItemModel? = null,
-    )
 }

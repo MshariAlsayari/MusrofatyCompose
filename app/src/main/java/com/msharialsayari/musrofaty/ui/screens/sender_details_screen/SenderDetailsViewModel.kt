@@ -35,7 +35,7 @@ class SendersDetailsViewModel @Inject constructor(
     }
 
 
-    private fun getSendersContent(){
+    private fun getSendersContent() {
         viewModelScope.launch {
             val result = getContentByKeyUseCase.invoke(ContentKey.SENDERS)
             _uiState.update {
@@ -45,25 +45,27 @@ class SendersDetailsViewModel @Inject constructor(
             }
         }
     }
+
     fun getSenderModel(senderId: Int) {
         viewModelScope.launch {
             val result = getSenderUseCase.invoke(senderId)
             if (result != null)
-            _uiState.update {
-                it.copy(
-                    sender = result,
-                    isPin = result.isPined
-                )
-            }
+                _uiState.update {
+                    it.copy(
+                        sender = result,
+                        isPin = result.isPined
+                    )
+                }
         }
 
     }
 
-    fun getSenderContentDisplayName(context: Context):String{
+    fun getSenderContentDisplayName(context: Context): String {
         return if (ContentModel.getDisplayName(
                 context = context,
                 _uiState.value.sender?.content
-            ).isNotEmpty()) ContentModel.getDisplayName(
+            ).isNotEmpty()
+        ) ContentModel.getDisplayName(
             context = context,
             _uiState.value.sender?.content
         ) else context.getString(androidx.compose.ui.R.string.not_selected)
@@ -85,7 +87,7 @@ class SendersDetailsViewModel @Inject constructor(
         }
     }
 
-    fun addContent(model: ContentModel){
+    fun addContent(model: ContentModel) {
         viewModelScope.launch {
             addContentUseCase.invoke(model)
         }
@@ -111,13 +113,13 @@ class SendersDetailsViewModel @Inject constructor(
 
     fun updateSenderCategory(category: SelectedItemModel) {
         viewModelScope.launch {
-            _uiState.value.sender?.let {sender->
+            _uiState.value.sender?.let { sender ->
                 updateSenderCategoryUseCase.invoke(
                     senderId = sender.id,
-                    contentCategoryId =category.id
+                    contentCategoryId = category.id
                 )
 
-                _uiState.update { state->
+                _uiState.update { state ->
                     state.copy(sender = state.updateSenderCategory(category.id))
                 }
             }
@@ -125,45 +127,5 @@ class SendersDetailsViewModel @Inject constructor(
 
     }
 
-    data class SendersDetailsUiState(
-        val sender: SenderModel? = null,
-        val isPin: Boolean = false,
-        var contents: List<ContentModel> = emptyList()
-    ) {
-
-
-        fun changeArabicDisplayName(name: String): SenderModel? {
-            val model = sender
-            model?.displayNameAr = name
-            return model
-
-        }
-
-        fun changeEnglishDisplayName(name: String): SenderModel? {
-            val model = sender
-            model?.displayNameEn = name
-            return model
-
-        }
-
-        fun wrapContentModel(context: Context):List<SelectedItemModel>{
-            val list = mutableListOf<SelectedItemModel>()
-            this.contents.forEach {
-                val model = SelectedItemModel(id = it.id, value = ContentModel.getDisplayName(context, it), isSelected = sender?.content?.id == it.id)
-                list.add(model)
-            }
-            return list.toList()
-
-        }
-
-        fun updateSenderCategory(contentId:Int):SenderModel?{
-            val model = sender
-            model?.content =  contents.find { it.id == contentId }
-            model?.contentId = contentId
-            return model
-
-        }
-
-    }
 
 }

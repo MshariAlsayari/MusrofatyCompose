@@ -187,16 +187,4 @@ class CategoriesViewModel @Inject constructor(
         }
 
     }
-
-    data class CategoriesUiState(
-        var isLoading: Boolean = false,
-        var btnClicked: Boolean = false,
-        val categoryId: Int = 0,
-        var categories: Flow<List<CategoryEntity>>? = null,
-        var categoryWithStores: Flow<CategoryWithStores?>? = null,
-        var arabicCategory: String = "",
-        var englishCategory: String = "",
-        var arabicCategoryValidationModel: ValidationModel = ValidationModel(),
-        var englishCategoryValidationModel: ValidationModel = ValidationModel(),
-    )
 }

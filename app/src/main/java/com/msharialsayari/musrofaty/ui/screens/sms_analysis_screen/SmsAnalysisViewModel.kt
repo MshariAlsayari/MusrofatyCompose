@@ -34,15 +34,11 @@ class SmsAnalysisViewModel @Inject constructor(
 
     private fun getWordDetectors(){
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
             val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
             val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_WORDS)
             val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
-
             _uiState.update {
-                it.copy(isLoading = false, currencyList = currencyResult, expensesList = expensesResult, incomesList = incomesResult)
+                it.copy(currencyList = currencyResult, expensesList = expensesResult, incomesList = incomesResult)
             }
         }
 
@@ -62,10 +58,5 @@ class SmsAnalysisViewModel @Inject constructor(
     }
 
 
-    data class SmsAnalysisUIState(
-        var isLoading: Boolean = false,
-        var currencyList: Flow<List<WordDetectorEntity>>? = null,
-        var expensesList: Flow<List<WordDetectorEntity>>? = null,
-        var incomesList: Flow<List<WordDetectorEntity>>? = null,
-    )
+
 }

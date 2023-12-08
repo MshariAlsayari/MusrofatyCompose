@@ -33,12 +33,9 @@ class ContentViewModel @Inject constructor(
 
     fun getContent(id: Int) {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
             val result = getContentUseCase.invoke(id)
             _uiState.update {
-                it.copy(isLoading = false, content = result, valueAr =result?.valueAr?:"" , valueEn = result?.valueEn?:"")
+                it.copy(content = result, valueAr =result?.valueAr?:"" , valueEn = result?.valueEn?:"")
             }
 
         }
@@ -46,31 +43,15 @@ class ContentViewModel @Inject constructor(
 
     fun deleteContent(){
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
             _uiState.value.content?.id?.let { deleteContentUseCase.invoke(it) }
-            _uiState.update {
-                it.copy(isLoading = false, )
-            }
-
         }
-
     }
 
     fun updateContent(){
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
-
             _uiState.value.content?.valueAr =  _uiState.value.valueAr
             _uiState.value.content?.valueEn =  _uiState.value.valueEn
             _uiState.value.content?.let { updateContentUseCase.invoke(it) }
-            _uiState.update {
-                it.copy(isLoading = false, )
-            }
-
         }
     }
 
@@ -110,12 +91,5 @@ class ContentViewModel @Inject constructor(
         return valueArValidationModel.isValid && valueEnValidationModel.isValid
     }
 
-    data class ContentUIState(
-        val isLoading: Boolean = false,
-        val content: ContentModel? = null,
-        var valueAr: String = "",
-        var valueEn: String = "",
-        var valueArValidationModel:ValidationModel = ValidationModel(),
-        var valueEnValidationModel:ValidationModel = ValidationModel(),
-    )
+
 }

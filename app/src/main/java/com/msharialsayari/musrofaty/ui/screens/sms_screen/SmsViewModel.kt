@@ -30,39 +30,44 @@ class SmsViewModel @Inject constructor(
     private val addCategoryUseCase: AddCategoryUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     @ApplicationContext val context: Context
-):ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SmsUiState())
     val uiState: StateFlow<SmsUiState> = _uiState
 
-    fun getData(id:String){
+    fun getData(id: String) {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = false)
+            val smsResult = getSmsUseCase.invoke(id)
+            smsResult?.let {
+                val senderResult = getSenderUseCase.invoke(smsResult.senderId)
+                val storeAndCategoryResult = getStoreAndCategoryUseCase.invoke(smsResult.storeName)
+                val categoriesResult = getCategoriesUseCase.invoke()
+                initSelectedItem(storeAndCategoryResult)
+                _uiState.update {
+                    it.copy(
+                        sms = smsResult,
+                        sender = senderResult,
+                        storeAndCategoryModel = storeAndCategoryResult,
+                        categories = categoriesResult
+                    )
+                }
             }
-            val smsResult = getSmsUseCase.invoke(id)!!
-            val senderResult = getSenderUseCase.invoke(smsResult.senderId)
-            val storeAndCategoryResult = getStoreAndCategoryUseCase.invoke(smsResult.storeName)
-            val categoriesResult = getCategoriesUseCase.invoke()
-            initSelectedItem(storeAndCategoryResult)
-            _uiState.update {
-                it.copy(isLoading = false,
-                    sms = smsResult,
-                    sender = senderResult,
-                    storeAndCategoryModel = storeAndCategoryResult,
-                    categories = categoriesResult )
-            }
+
         }
 
     }
 
     private fun initSelectedItem(storeAndCategoryResult: StoreAndCategoryModel) {
-        if (storeAndCategoryResult.category != null){
+        if (storeAndCategoryResult.category != null) {
             val category = storeAndCategoryResult.category
             if (category != null) {
                 _uiState.update {
                     it.copy(
-                        selectedCategory = SelectedItemModel(id=category.id, value =CategoryModel.getDisplayName(context = context, category) ,isSelected = true),
+                        selectedCategory = SelectedItemModel(
+                            id = category.id,
+                            value = CategoryModel.getDisplayName(context = context, category),
+                            isSelected = true
+                        ),
                     )
                 }
             }
@@ -70,45 +75,49 @@ class SmsViewModel @Inject constructor(
     }
 
 
-    fun getCategoryItems(context: Context, categories: List<CategoryEntity> ): List<SelectedItemModel> {
-         val list = mutableListOf<SelectedItemModel>()
-             categories.map { value ->
-                 list.add(
-                     SelectedItemModel(
-                         id = value.id,
-                         value = CategoryModel.getDisplayName(context,value),
-                         isSelected = _uiState.value.selectedCategory?.id == value.id
-                     )
-                 )
-             }
+    fun getCategoryItems(
+        context: Context,
+        categories: List<CategoryEntity>
+    ): List<SelectedItemModel> {
+        val list = mutableListOf<SelectedItemModel>()
+        categories.map { value ->
+            list.add(
+                SelectedItemModel(
+                    id = value.id,
+                    value = CategoryModel.getDisplayName(context, value),
+                    isSelected = _uiState.value.selectedCategory?.id == value.id
+                )
+            )
+        }
 
-         return list
+        return list
 
     }
 
-    fun addCategory(model: CategoryModel){
+    fun addCategory(model: CategoryModel) {
         viewModelScope.launch {
             addCategoryUseCase.invoke(model)
         }
     }
 
-    fun favoriteSms(id:String , favorite:Boolean){
+    fun favoriteSms(id: String, favorite: Boolean) {
         viewModelScope.launch {
             favoriteSmsUseCase.invoke(id, favorite)
         }
     }
 
-    fun softDelete(id:String , delete:Boolean){
+    fun softDelete(id: String, delete: Boolean) {
         viewModelScope.launch {
             softDeleteSMsUseCase.invoke(id, delete)
         }
     }
 
-    fun onCategoryChanged(){
+    fun onCategoryChanged() {
         viewModelScope.launch {
             val categoryId = _uiState.value.selectedCategory?.id ?: 0
-            val storeName  = _uiState.value.storeAndCategoryModel?.store?.name
-            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
+            val storeName = _uiState.value.storeAndCategoryModel?.store?.name
+            val storeModel =
+                storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
             }
@@ -124,21 +133,22 @@ class SmsViewModel @Inject constructor(
     ): SmsComponentModel {
         val store = _uiState.value.storeAndCategoryModel?.store?.name ?: ""
         var category = ""
-        if ( store.isNotEmpty()){
-            category = CategoryModel.getDisplayName(context, uiState.value.storeAndCategoryModel?.category)
+        if (store.isNotEmpty()) {
+            category =
+                CategoryModel.getDisplayName(context, uiState.value.storeAndCategoryModel?.category)
             if (category.isEmpty())
-            category = context.getString(R.string.common_no_category)
+                category = context.getString(R.string.common_no_category)
         }
 
         return SmsComponentModel(
             id = sms.id,
-            senderId= sms.senderId,
+            senderId = sms.senderId,
             timestamp = sms.timestamp,
             isFavorite = sms.isFavorite,
             isDeleted = sms.isDeleted,
             body = sms.body,
-            storeName=store,
-            storeCategory= category,
+            storeName = store,
+            storeCategory = category,
             senderIcon = _uiState.value.sender?.senderIconUri ?: "",
             senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
             senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
@@ -146,13 +156,4 @@ class SmsViewModel @Inject constructor(
         )
 
     }
-
-    data class SmsUiState (
-        var isLoading: Boolean = false,
-        var sms :SmsModel? = null,
-        var sender :SenderModel? = null,
-        var storeAndCategoryModel: StoreAndCategoryModel? = null,
-        var selectedCategory: SelectedItemModel? = null,
-        var categories: Flow<List<CategoryEntity>>? = null,
-    )
 }

@@ -36,8 +36,5 @@ class StoreSmsListViewModel  @Inject constructor(
 
     }
 
-    data class StoreSmsListUiState(
-        var isLoading:Boolean = false,
-        var smsFlow: Flow<PagingData<SmsEntity>>? =null,
-    )
+
 }

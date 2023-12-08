@@ -25,10 +25,10 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit,onBackPressed:()->Unit){
-    val viewModel:SmsViewModel = hiltViewModel()
+fun SmsScreen(smsId: String, onNavigateToCategoryScreen: (Int) -> Unit, onBackPressed: () -> Unit) {
+    val viewModel: SmsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit ){
+    LaunchedEffect(Unit) {
         viewModel.getData(smsId)
     }
 
@@ -42,37 +42,30 @@ fun SmsScreen(smsId:String, onNavigateToCategoryScreen:(Int)->Unit,onBackPressed
 
         }
     ) { innerPadding ->
-        when{
-            uiState.isLoading -> ProgressCompose(modifier = Modifier.padding(innerPadding))
-            uiState.sms != null -> PageCompose(
+        uiState.sms?.let {
+            PageCompose(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                onCategoryLongPressed ={
+                onCategoryLongPressed = {
                     onNavigateToCategoryScreen(it)
                 })
         }
     }
 
 
-
-}
-
-@Composable
-fun ProgressCompose(modifier: Modifier=Modifier){
-    Box(modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center) {
-        ProgressBar.CircleProgressBar()
-
-    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryLongPressed:(Int)->Unit){
+fun PageCompose(
+    modifier: Modifier = Modifier,
+    viewModel: SmsViewModel,
+    onCategoryLongPressed: (Int) -> Unit
+) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val sms     = uiState.sms!!
-    val coroutineScope                    = rememberCoroutineScope()
+    val sms = uiState.sms!!
+    val coroutineScope = rememberCoroutineScope()
     val openDialog = remember { mutableStateOf(false) }
     val sheetState = rememberBottomSheetScaffoldState()
 
@@ -81,7 +74,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
-    if (openDialog.value){
+    if (openDialog.value) {
         AddCategoryDialog(viewModel, onDismiss = {
             openDialog.value = false
         })
@@ -92,24 +85,24 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
         scaffoldState = sheetState,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-                CategoryBottomSheet(
-                    viewModel =viewModel,
-                    onCategorySelected = {
-                        coroutineScope.launch {
-                            handleVisibilityOfBottomSheet(sheetState, false)
-                        }
-                        viewModel.onCategoryChanged()
-
-                    },
-                    onCreateCategoryClicked = {
-                        openDialog.value = true
-                        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-                    },
-                    onCategoryLongPressed = {filterId->
-                        onCategoryLongPressed(filterId)
-                        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+            CategoryBottomSheet(
+                viewModel = viewModel,
+                onCategorySelected = {
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, false)
                     }
-                )
+                    viewModel.onCategoryChanged()
+
+                },
+                onCreateCategoryClicked = {
+                    openDialog.value = true
+                    coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+                },
+                onCategoryLongPressed = { filterId ->
+                    onCategoryLongPressed(filterId)
+                    coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+                }
+            )
 
         }) {
 
@@ -128,14 +121,20 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
                             model.id,
                             model.isFavorite
                         )
+
                         SmsActionType.COPY -> {
-                            Utils.copyToClipboard(model.body,context)
-                            Toast.makeText(context, context.getString(R.string.common_copied), Toast.LENGTH_SHORT).show()
+                            Utils.copyToClipboard(model.body, context)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.common_copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         SmsActionType.SHARE -> {
                             Utils.shareText(model.body, context)
                         }
+
                         SmsActionType.DELETE -> viewModel.softDelete(
                             model.id,
                             model.isDeleted
@@ -149,24 +148,29 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsViewModel, onCategoryL
 }
 
 @Composable
-fun CategoryBottomSheet(viewModel: SmsViewModel, onCategorySelected:()->Unit, onCreateCategoryClicked: ()->Unit, onCategoryLongPressed:(Int)->Unit ){
-    val context                           = LocalContext.current
-    val uiState                           by viewModel.uiState.collectAsState()
+fun CategoryBottomSheet(
+    viewModel: SmsViewModel,
+    onCategorySelected: () -> Unit,
+    onCreateCategoryClicked: () -> Unit,
+    onCategoryLongPressed: (Int) -> Unit
+) {
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
     val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.store_category,
-        description= R.string.common_long_click_to_modify,
+        description = R.string.common_long_click_to_modify,
         list = viewModel.getCategoryItems(context, categories),
         trailIcon = {
-            Icon( Icons.Default.Add, contentDescription =null, modifier = Modifier.clickable {
+            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
                 onCreateCategoryClicked()
-            } )
+            })
         },
         canUnSelect = true,
         onSelectItem = {
             if (it.isSelected) {
                 uiState.selectedCategory = it
-            }else{
+            } else {
                 uiState.selectedCategory = null
             }
             onCategorySelected()
@@ -180,16 +184,18 @@ fun CategoryBottomSheet(viewModel: SmsViewModel, onCategorySelected:()->Unit, on
 }
 
 @Composable
-fun AddCategoryDialog(viewModel: SmsViewModel, onDismiss:()->Unit){
+fun AddCategoryDialog(viewModel: SmsViewModel, onDismiss: () -> Unit) {
 
     Dialog(onDismissRequest = onDismiss) {
 
         DialogComponent.AddCategoryDialog(
-            onClickPositiveBtn = {ar,en->
-                viewModel.addCategory(CategoryModel(
-                    valueEn = en,
-                    valueAr = ar,
-                ))
+            onClickPositiveBtn = { ar, en ->
+                viewModel.addCategory(
+                    CategoryModel(
+                        valueEn = en,
+                        valueAr = ar,
+                    )
+                )
 
                 onDismiss()
 

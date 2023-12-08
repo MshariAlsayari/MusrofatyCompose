@@ -33,12 +33,9 @@ class FilterViewModel@Inject constructor(
 
     fun getFilter(filterId:Int){
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
-            }
             val result = getFilterUseCase(filterId)
             _uiState.update {
-                it.copy(isLoading = false, words = result.words, title =result.title)
+                it.copy(words = result.words, title =result.title)
             }
         }
 
@@ -129,14 +126,5 @@ class FilterViewModel@Inject constructor(
     }
 
 
-    data class FilterUiState(
-        var isLoading: Boolean = false,
-        var senderId: Int = 0,
-        var filterId: Int = 0,
-        var title: String = "",
-        var words: String = "",
-        var isCreateNewFilter:Boolean = false,
-        var titleValidationModel:ValidationModel = ValidationModel(),
-        var wordValidationModel:ValidationModel? = null,
-        )
+
 }
