@@ -30,11 +30,14 @@ import com.msharialsayari.musrofaty.ui_component.*
 @Composable
 fun SendersList(
     modifier: Modifier = Modifier,
-    viewModel: SendersListViewModel) {
+    onSenderClicked: (Int) -> Unit,
+    viewModel: SendersListViewModel
+) {
 
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val senderItems = uiState.senders?.collectAsState(emptyList())
+    val screenType = MusrofatyTheme.screenType
 
     val pinAction = Action<SenderComponentModel>(
         {
@@ -83,12 +86,23 @@ fun SendersList(
             SenderComponent(
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
                 model = sender,
-                onAvatarClicked = { viewModel.navigateToSenderSmsList(senderId = sender.senderId) }
+                onAvatarClicked = {
+                    if (screenType.isScreenWithDetails) {
+                        onSenderClicked(it.senderId)
+                    } else {
+                        viewModel.navigateToSenderSmsList(senderId = it.senderId)
+                    }
+                }
             )
         },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-            viewModel.navigateToSenderSmsList(senderId = item.senderId)
+            if (screenType.isScreenWithDetails) {
+                onSenderClicked(item.senderId)
+            } else {
+                viewModel.navigateToSenderSmsList(senderId = item.senderId)
+            }
+
         },
         isLoading = uiState.isLoading,
         endActions = listOf(modifyAction, pinAction),

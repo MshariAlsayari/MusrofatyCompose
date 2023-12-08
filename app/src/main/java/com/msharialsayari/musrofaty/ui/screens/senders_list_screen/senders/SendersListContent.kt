@@ -13,6 +13,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SenderListTopBar
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
@@ -23,11 +24,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun SendersListContent(
     modifier: Modifier = Modifier,
-    screenType: ScreenType,
-    viewModel: SendersListViewModel) {
+    onSenderClicked: (Int) -> Unit ={},
+    viewModel: SendersListViewModel
+) {
 
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val screenType = MusrofatyTheme.screenType
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -61,6 +64,7 @@ fun SendersListContent(
 
 
     ModalBottomSheetLayout(
+        modifier = modifier,
         sheetState = sheetState,
         sheetContent = {
             BottomSheetComponent.TextFieldBottomSheetComponent(
@@ -84,7 +88,7 @@ fun SendersListContent(
 
         Scaffold(
             topBar = {
-                SenderListTopBar(screenType = screenType) {
+                SenderListTopBar {
                     coroutineScope.launch {
                         BottomSheetComponent.handleVisibilityOfBottomSheet(
                             sheetState,
@@ -95,24 +99,26 @@ fun SendersListContent(
 
             },
             floatingActionButton = {
-                if(screenType == ScreenType.Compact)
-                ButtonComponent.FloatingButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            BottomSheetComponent.handleVisibilityOfBottomSheet(
-                                sheetState,
-                                true
-                            )
+                if (!screenType.isScreenWithDetails)
+                    ButtonComponent.FloatingButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                BottomSheetComponent.handleVisibilityOfBottomSheet(
+                                    sheetState,
+                                    true
+                                )
+                            }
+
+
                         }
-
-
-                    }
-                )
+                    )
             }
         ) { innerPadding ->
             SendersList(
                 Modifier.padding(innerPadding),
-                viewModel)
+                onSenderClicked,
+                viewModel
+            )
         }
     }
 }

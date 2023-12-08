@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +13,15 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.excei.ExcelModel
 import com.msharialsayari.musrofaty.excei.ExcelUtils
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SharingFileUtils
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +45,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val loadSenderSmsUseCase: LoadSenderSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val updateSenderIconUseCase: UpdateSenderIconUseCase,
+    private val navigator: AppNavigator,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState())
@@ -330,7 +336,7 @@ class SenderSmsListViewModel @Inject constructor(
         )
     }
 
-    fun generateExcelFile(context: Context, onFileGenerated: () -> Unit) {
+    fun generateExcelFile(activity: Activity) {
 
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update {
@@ -345,16 +351,20 @@ class SenderSmsListViewModel @Inject constructor(
             )
             val excelModel = ExcelModel(smsList = result)
             val isGenerated = ExcelUtils(
-                context,
+                activity,
                 Constants.EXCEL_FILE_NAME
             ).exportDataIntoWorkbook(excelModel)
-            if (isGenerated) {
-                onFileGenerated()
-            }
 
             _uiState.update {
                 it.copy(showGeneratingExcelFileDialog = false)
             }
+
+            if (isGenerated) {
+                val fileURI = SharingFileUtils.accessFile(activity, Constants.EXCEL_FILE_NAME)
+                val intent = SharingFileUtils.createSharingIntent(activity, fileURI)
+                activity.startActivity(intent)
+            }
+
         }
     }
 
@@ -371,11 +381,31 @@ class SenderSmsListViewModel @Inject constructor(
             senderId?.let {
                 updateSenderIconUseCase.invoke(it, iconPath)
             }
-
-
         }
     }
 
+    fun navigateToSenderDetails(senderId: Int){
+        navigator.navigate(Screen.SenderDetailsScreen.route + "/${senderId}")
+    }
+
+    fun navigateToFilterScreen(senderId: Int, filterId: Int?) {
+        if (filterId == null)
+            navigator.navigate(Screen.FilterScreen.route + "/${senderId}")
+        else
+            navigator.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
+    }
+
+    fun navigateToSmsDetails(smsID: String) {
+        navigator.navigate(Screen.SmsScreen.route + "/${smsID}")
+    }
+
+    fun navigateBack(){
+        navigator.navigateUp()
+    }
+
+    fun navigateToPDFActivity(activity: Activity,pdfBundle: PdfCreatorViewModel.PdfBundle) {
+        PdfCreatorActivity.startPdfCreatorActivity(activity,pdfBundle)
+    }
 
 
 }

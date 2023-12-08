@@ -10,35 +10,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.mirror
 
 @Composable
-fun SenderListTopBar(
-    screenType: ScreenType,
-    onAddSenderClicked: ()->Unit
-){
+fun SenderListTopBar(onAddSenderClicked: ()->Unit){
+
+    val screenType = MusrofatyTheme.screenType
 
     AppBarComponent.TopBarComponent(
         title = BottomNavItem.SendersList.title,
         isParent = true,
         actions = {
 
-            if(screenType != ScreenType.Compact)
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .mirror()
-                        .clickable {
-                            onAddSenderClicked()
-                        })
+            if (screenType.isScreenWithDetails)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .mirror()
+                            .clickable {
+                                onAddSenderClicked()
+                            })
 
-            }
+                }
 
         }
     )

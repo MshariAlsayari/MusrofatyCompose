@@ -5,30 +5,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.SendersListContent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.ListDetails
 import com.msharialsayari.musrofaty.ui_component.PlaceHolder
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SendersListExpanded(
-    viewModel: SendersListViewModel,
-    onDetailsClicked: (Int) -> Unit,
-    onNavigateToFilterScreen: (Int, Int?) -> Unit,
-    onSmsClicked: (String) -> Unit,
-    onExcelFileGenerated: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit,
-){
+fun SendersListExpanded(viewModel: SendersListViewModel){
 
     val coroutineScope                    = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -64,52 +59,25 @@ fun SendersListExpanded(
         primaryRatio = 1f,
         secondaryRatio = 2f,
         primaryContent = {
-            SendersListContent(
-                screenType =  ScreenType.Expanded,
-                viewModel = viewModel,
-                onNavigateToSenderDetails = {id ->
+            SendersListContent(viewModel = viewModel, onSenderClicked = {
+                senderId.value = it
+            })
 
-                },
-                onNavigateToSenderSmsList = {id ->
-                    senderId.value      = id
-                }
-            )
         },
         secondaryContent ={
-            LargeSideScreen(
-                senderId = senderId.value,
-                onDetailsClicked = onDetailsClicked ,
-                onNavigateToFilterScreen = onNavigateToFilterScreen,
-                onSmsClicked = onSmsClicked,
-                onExcelFileGenerated = onExcelFileGenerated,
-                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
-            )
+            LargeSideScreen(senderId = senderId.value)
         }
     )
 
 }
 
 @Composable
-fun LargeSideScreen(senderId: Int?=null,
-                    onDetailsClicked: (Int) -> Unit,
-                    onNavigateToFilterScreen: (Int, Int?) -> Unit,
-                    onSmsClicked: (String) -> Unit,
-                    onExcelFileGenerated: () -> Unit,
-                    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit,
-){
+fun LargeSideScreen(senderId: Int?=null){
 
     Box(contentAlignment = Alignment.Center) {
 
         if(senderId != null){
-            SenderSmsListScreen(
-                senderId = senderId,
-                onDetailsClicked = onDetailsClicked ,
-                onNavigateToFilterScreen = onNavigateToFilterScreen,
-                onBack = {  },
-                onSmsClicked = onSmsClicked,
-                onExcelFileGenerated = onExcelFileGenerated,
-                onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
-            )
+            SenderSmsListScreen(senderId = senderId)
         }else{
             PlaceHolder.ScreenPlaceHolder()
         }

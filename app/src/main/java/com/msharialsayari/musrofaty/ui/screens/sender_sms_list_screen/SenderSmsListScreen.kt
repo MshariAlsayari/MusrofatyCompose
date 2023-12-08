@@ -61,6 +61,7 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
+import com.msharialsayari.musrofaty.utils.findActivity
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
@@ -72,15 +73,7 @@ private val MaxToolbarHeight = 85.dp
 
 
 @Composable
-fun SenderSmsListScreen(
-    senderId: Int,
-    onDetailsClicked: (Int) -> Unit,
-    onNavigateToFilterScreen: (Int, Int?) -> Unit,
-    onBack: () -> Unit,
-    onSmsClicked: (String) -> Unit,
-    onExcelFileGenerated: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit,
-) {
+fun SenderSmsListScreen(senderId: Int) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(senderId) {
@@ -88,22 +81,14 @@ fun SenderSmsListScreen(
     }
 
     if (uiState.navigateBack) {
-        onBack()
+        viewModel.navigateBack()
     }
 
 
     when {
         uiState.isLoading -> PageLoading()
         uiState.sender != null ->
-            PageContainer(
-                viewModel,
-                onDetailsClicked,
-                onNavigateToFilterScreen,
-                onBack,
-                onSmsClicked,
-                onExcelFileGenerated,
-                onNavigateToPDFCreatorActivity
-            )
+            PageContainer(viewModel)
     }
 
 
@@ -131,7 +116,7 @@ fun FilterBottomSheet(
     onCreateFilterClicked: () -> Unit,
     onFilterLongPressed: (Int) -> Unit
 ) {
-    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsState()
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.common_filter,
@@ -162,19 +147,11 @@ fun FilterBottomSheet(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageContainer(
-    viewModel: SenderSmsListViewModel,
-    onDetailsClicked: (Int) -> Unit,
-    onNavigateToFilterScreen: (Int, Int?) -> Unit,
-    onBack: () -> Unit,
-    onSmsClicked: (String) -> Unit,
-    onExcelIconClicked: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
-) {
+fun PageContainer(viewModel: SenderSmsListViewModel) {
 
     val context = LocalContext.current
-    val toolbarHeightRange =
-        with(LocalDensity.current) { MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
+    val activity = context.findActivity()
+    val toolbarHeightRange = with(LocalDensity.current) { MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState by viewModel.uiState.collectAsState()
@@ -270,12 +247,12 @@ fun PageContainer(
                     },
                     onCreateFilterClicked = {
                         uiState.sender?.let {
-                            onNavigateToFilterScreen(it.id, null)
+                            viewModel.navigateToFilterScreen(it.id,null)
                         }
                     },
                     onFilterLongPressed = { filterId ->
-                        uiState.sender?.let { senderModel ->
-                            onNavigateToFilterScreen(senderModel.id, filterId)
+                        uiState.sender?.let { sender ->
+                            viewModel.navigateToFilterScreen(sender.id,filterId)
                         }
                     }
                 )
@@ -298,8 +275,8 @@ fun PageContainer(
                 CollapsedToolbar(
                     toolbarState = toolbarState,
                     viewModel = viewModel,
-                    onDetailsClicked = onDetailsClicked,
-                    onBack = onBack,
+                    onDetailsClicked = { viewModel.navigateToSenderDetails(it) },
+                    onBack = {viewModel.navigateBack()},
                     onNavigateToPDFCreatorActivity = {
                         if (smsList.isEmpty()) {
                             Toast.makeText(
@@ -309,7 +286,7 @@ fun PageContainer(
                             ).show()
 
                         } else {
-                            onNavigateToPDFCreatorActivity(it)
+                            viewModel.navigateToPDFActivity(activity,it)
                         }
                     },
                     onExcelIconClicked = {
@@ -320,12 +297,12 @@ fun PageContainer(
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            viewModel.generateExcelFile(context, onExcelIconClicked)
+                            viewModel.generateExcelFile(activity)
                         }
                     },
                     onCreateFilterClicked = {
                         uiState.sender?.let {
-                            onNavigateToFilterScreen(it.id, null)
+                            viewModel.navigateToFilterScreen(it.id, null)
                         }
                     },
                     onFilterIconClicked = {
@@ -348,7 +325,7 @@ fun PageContainer(
                 Tabs(
                     viewModel = viewModel,
                     senderId = uiState.sender?.id ?: 0,
-                    onSmsClicked = onSmsClicked
+                    onSmsClicked = { viewModel.navigateToSmsDetails(it)}
                 )
             }
         }
