@@ -9,6 +9,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSende
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PinSenderUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +25,8 @@ class SendersListViewModel @Inject constructor(
     private val getFlowSendersUserCase: GetFlowSendersUserCase,
     private val pinSenderUseCase: PinSenderUseCase,
     private val addSenderUseCase: AddSenderUseCase,
-    private val deleteSenderUseCase: DeleteSenderUseCase
+    private val deleteSenderUseCase: DeleteSenderUseCase,
+    private val navigator: AppNavigator,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SendersUiState())
@@ -69,5 +72,13 @@ class SendersListViewModel @Inject constructor(
             )
             addSenderUseCase.invoke(model)
         }
+    }
+
+    fun navigateToSenderDetails(senderId: Int){
+        navigator.navigate(Screen.SenderDetailsScreen.route + "/${senderId}")
+    }
+
+    fun navigateToSenderSmsList(senderId: Int){
+        navigator.navigate(Screen.SenderSmsListScreen.route + "/${senderId}")
     }
 }

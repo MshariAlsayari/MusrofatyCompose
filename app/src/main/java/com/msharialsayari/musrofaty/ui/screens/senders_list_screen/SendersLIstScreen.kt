@@ -9,8 +9,6 @@ import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 @Composable
 fun SendersListScreen(
-    onNavigateToSenderDetails: (senderId: Int) -> Unit,
-    onNavigateToSenderSmsList: (senderId: Int) -> Unit,
     onDetailsClicked: (Int) -> Unit,
     onNavigateToFilterScreen: (Int, Int?) -> Unit,
     onSmsClicked: (String) -> Unit,
@@ -31,13 +29,7 @@ fun SendersListScreen(
             onNavigateToPDFCreatorActivity = onNavigateToPDFCreatorActivity
         )
     } else {
-        SendersListCompact(
-            viewModel = viewModel,
-            onNavigateToSenderDetails = onNavigateToSenderDetails,
-            onNavigateToSenderSmsList = onNavigateToSenderSmsList
-        )
-
-
+        SendersListCompact(viewModel = viewModel,)
     }
 
 

@@ -1,5 +1,8 @@
 package com.msharialsayari.musrofaty.utils
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.util.LayoutDirection
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
@@ -14,4 +17,13 @@ fun Modifier.mirror(): Modifier {
         this.scale(scaleX = -1f, scaleY = 1f)
     else
         this
+}
+
+fun Context.findActivity(): Activity {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    throw IllegalStateException("Permissions should be called in the context of an Activity")
 }

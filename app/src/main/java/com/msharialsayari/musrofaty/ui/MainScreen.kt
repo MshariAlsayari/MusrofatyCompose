@@ -12,19 +12,20 @@ import androidx.navigation.compose.rememberNavController
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.navigation.BottomBarLayout
 import com.msharialsayari.musrofaty.navigation.NavigationRailLayout
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.navigation.LaunchNavigatorObserver
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 
 @Composable
 fun MainScreenView(
-    activity: MainActivity,
+    navigatorViewModel: AppNavigatorViewModel,
     screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ) {
-    val context = LocalContext.current
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val navController = rememberNavController()
     val bottomNavigationItems = listOf(
@@ -55,9 +56,13 @@ fun MainScreenView(
 
     }
 
+    LaunchNavigatorObserver(
+        navigatorState = navigatorViewModel.destinations,
+        navController = navController
+    )
+
     if(screenType.isBottomNavigation){
         BottomBarLayout(
-            activity = activity,
             navController = navController,
             items = bottomNavigationItems,
             bottomBarState = bottomBarState,
@@ -66,7 +71,6 @@ fun MainScreenView(
         )
     }else{
         NavigationRailLayout(
-            activity = activity,
             navController = navController,
             items = bottomNavigationItems,
             bottomBarState = bottomBarState,

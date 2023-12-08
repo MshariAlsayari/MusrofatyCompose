@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,17 +35,21 @@ import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
+import com.msharialsayari.musrofaty.utils.findActivity
 
 
 @Composable
 fun NavigationGraph(
-    activity: MainActivity,
     navController: NavHostController,
     innerPadding: PaddingValues,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit,
 
 ) {
+
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,

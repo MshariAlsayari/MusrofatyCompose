@@ -11,7 +11,6 @@ import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 @Composable
 fun BottomBarLayout(
-    activity:MainActivity,
     navController: NavHostController,
     items:List<BottomNavItem>,
     bottomBarState: MutableState<Boolean>,
@@ -27,7 +26,6 @@ fun BottomBarLayout(
             )
         },) { innerPadding ->
         NavigationGraph(
-            activity = activity,
             navController = navController,
             innerPadding = innerPadding,
             onLanguageChanged = onLanguageChanged,

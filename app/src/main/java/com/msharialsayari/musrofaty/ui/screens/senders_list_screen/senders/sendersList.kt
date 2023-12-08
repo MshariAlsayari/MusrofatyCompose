@@ -30,17 +30,20 @@ import com.msharialsayari.musrofaty.ui_component.*
 @Composable
 fun SendersList(
     modifier: Modifier = Modifier,
-    viewModel: SendersListViewModel,
-    onNavigateToSenderDetails:(senderId:Int)->Unit,
-    onNavigateToSenderSmsList:(senderId:Int)->Unit
-){
+    viewModel: SendersListViewModel) {
 
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val senderItems                          = uiState.senders?.collectAsState(emptyList())
+    val senderItems = uiState.senders?.collectAsState(emptyList())
 
     val pinAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_pin),color= Color.White, alignment = TextAlign.Center) },
+        {
+            TextComponent.BodyText(
+                text = stringResource(id = R.string.common_pin),
+                color = Color.White,
+                alignment = TextAlign.Center
+            )
+        },
         { ActionIcon(id = R.drawable.ic_pin) },
         backgroundColor = MusrofatyTheme.colors.pinActionColor,
         onClicked = { position, item ->
@@ -49,17 +52,23 @@ fun SendersList(
 
 
     val modifyAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_change),color= Color.White,alignment = TextAlign.Center) },
+        {
+            TextComponent.BodyText(
+                text = stringResource(id = R.string.common_change),
+                color = Color.White,
+                alignment = TextAlign.Center
+            )
+        },
         { ActionIcon(id = R.drawable.ic_modify) },
         backgroundColor = MusrofatyTheme.colors.modifyActionColor,
         onClicked = { position, item ->
-            onNavigateToSenderDetails(item.senderId)
+            viewModel.navigateToSenderDetails(item.senderId)
         })
 
 
     val deleteAction = Action<SenderComponentModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
-        { ActionIcon(id = R.drawable.ic_delete ) },
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
+        { ActionIcon(id = R.drawable.ic_delete) },
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.deleteSender(item.senderId)
@@ -69,17 +78,23 @@ fun SendersList(
 
     VerticalEasyList(
         modifier = modifier,
-        list = wrapSendersToSenderComponentModelList(senderItems?.value?: emptyList(), context),
-        view = { sender -> SenderComponent( modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)), model = sender, onAvatarClicked = { onNavigateToSenderSmsList(sender.senderId)}) },
+        list = wrapSendersToSenderComponentModelList(senderItems?.value ?: emptyList(), context),
+        view = { sender ->
+            SenderComponent(
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
+                model = sender,
+                onAvatarClicked = { viewModel.navigateToSenderSmsList(senderId = sender.senderId) }
+            )
+        },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-            onNavigateToSenderSmsList(item.senderId)
+            viewModel.navigateToSenderSmsList(senderId = item.senderId)
         },
         isLoading = uiState.isLoading,
-        endActions = listOf(modifyAction,pinAction),
+        endActions = listOf(modifyAction, pinAction),
         startActions = listOf(deleteAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
-        emptyView = { EmptyCompose()},
+        emptyView = { EmptyCompose() },
         onRefresh = {
             viewModel.getAllSenders()
         }
@@ -89,7 +104,7 @@ fun SendersList(
 }
 
 @Composable
-fun EmptyCompose(){
+fun EmptyCompose() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         EmptyComponent.EmptyTextComponent(text = stringResource(id = R.string.empty_senders))
     }
@@ -97,10 +112,11 @@ fun EmptyCompose(){
 }
 
 @Composable
-fun ActionIcon(@DrawableRes id:Int){
-    Icon(painter           = painterResource(id = id),
+fun ActionIcon(@DrawableRes id: Int) {
+    Icon(
+        painter = painterResource(id = id),
         contentDescription = null,
-        tint               = Color.White
+        tint = Color.White
     )
 
 }

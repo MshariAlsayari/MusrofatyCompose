@@ -10,6 +10,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SenderListTopBar
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
@@ -23,10 +24,7 @@ import kotlinx.coroutines.launch
 fun SendersListContent(
     modifier: Modifier = Modifier,
     screenType: ScreenType,
-    viewModel: SendersListViewModel,
-    onNavigateToSenderDetails: (senderId: Int) -> Unit,
-    onNavigateToSenderSmsList: (senderId: Int) -> Unit,
-) {
+    viewModel: SendersListViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -114,10 +112,7 @@ fun SendersListContent(
         ) { innerPadding ->
             SendersList(
                 Modifier.padding(innerPadding),
-                viewModel,
-                onNavigateToSenderDetails,
-                onNavigateToSenderSmsList
-            )
+                viewModel)
         }
     }
 }

@@ -13,6 +13,7 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +35,7 @@ import com.msharialsayari.musrofaty.Utils.getScreenSize
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -153,6 +155,7 @@ class MainActivity : ComponentActivity() {
     private fun runApp() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
+            val navigatorViewModel: AppNavigatorViewModel by viewModels()
             val uiState by viewModel.uiState.collectAsState()
             val windowSizeClass = getScreenSize(this)
             val screenType = windowSizeClass.getScreenTypeByWidth()
@@ -164,7 +167,7 @@ class MainActivity : ComponentActivity() {
                 SetLanguage(activity = this, locale = uiState.currentLocale)
                 SetStatusAndNavigationBarColor(this, uiState.currentTheme)
                 MainScreenView(
-                    activity = this,
+                    navigatorViewModel =navigatorViewModel,
                     screenType = screenType,
                     onLanguageChanged = {
                         viewModel.updateLanguage()

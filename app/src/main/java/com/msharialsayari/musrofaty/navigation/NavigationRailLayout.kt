@@ -10,12 +10,10 @@ import androidx.navigation.NavHostController
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 
 @Composable
 fun NavigationRailLayout(
-    activity: MainActivity,
     navController: NavHostController,
     items:List<BottomNavItem>,
     bottomBarState: MutableState<Boolean>,
@@ -25,7 +23,6 @@ fun NavigationRailLayout(
     Row(modifier = Modifier.fillMaxSize()) {
         SideNavigation(navController = navController, items = items, bottomBarState = bottomBarState)
         NavigationGraph(
-            activity = activity,
             navController = navController,
             innerPadding = PaddingValues(),
             onLanguageChanged = onLanguageChanged,
