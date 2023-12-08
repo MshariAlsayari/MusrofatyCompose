@@ -13,13 +13,14 @@ import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.navigation.BottomBarLayout
 import com.msharialsayari.musrofaty.navigation.NavigationRailLayout
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 
 @Composable
 fun MainScreenView(
     activity: MainActivity,
-    windowSizeClass: DisplayMetrics,
+    screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ) {
@@ -38,9 +39,11 @@ fun MainScreenView(
         BottomNavItem.Dashboard.route -> {
             bottomBarState.value = true
         }
+
         BottomNavItem.SendersList.route -> {
             bottomBarState.value = true
         }
+
         BottomNavItem.Setting.route -> {
             bottomBarState.value = true
         }
@@ -52,28 +55,24 @@ fun MainScreenView(
 
     }
 
-    val screenType = remember { mutableStateOf(windowSizeClass.getScreenTypeByWidth())  }
-    when(windowSizeClass.getScreenTypeByWidth()){
-        ScreenType.Compact->
-            BottomBarLayout(
-                activity = activity,
-                navController = navController,
-                items=bottomNavigationItems,
-                bottomBarState= bottomBarState,
-                screenType = screenType.value,
-                onLanguageChanged = onLanguageChanged,
-                onThemeChanged = onThemeChanged)
-        else->{
-            NavigationRailLayout(
-                activity = activity,
-                navController = navController,
-                items=bottomNavigationItems,
-                bottomBarState= bottomBarState,
-                screenType = screenType.value,
-                onLanguageChanged = onLanguageChanged,
-                onThemeChanged = onThemeChanged)
-        }
+    if(screenType.isBottomNavigation){
+        BottomBarLayout(
+            activity = activity,
+            navController = navController,
+            items = bottomNavigationItems,
+            bottomBarState = bottomBarState,
+            onLanguageChanged = onLanguageChanged,
+            onThemeChanged = onThemeChanged
+        )
+    }else{
+        NavigationRailLayout(
+            activity = activity,
+            navController = navController,
+            items = bottomNavigationItems,
+            bottomBarState = bottomBarState,
+            onLanguageChanged = onLanguageChanged,
+            onThemeChanged = onThemeChanged
+        )
+
     }
-
-
 }

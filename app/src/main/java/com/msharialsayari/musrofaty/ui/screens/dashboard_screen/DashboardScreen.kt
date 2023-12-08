@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.DialogComponent
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
@@ -23,13 +24,13 @@ import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 @Composable
 fun DashboardScreen(
-    screenType: ScreenType,
     onSmsClicked: (String) -> Unit,
     onNavigateToSenderSmsList:(senderId:Int)->Unit) {
 
     val context = LocalContext.current
     val viewModel: DashboardViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val screenType = MusrofatyTheme.screenType
 
     LaunchedEffect(Unit) {
         viewModel.getData(context)
@@ -93,10 +94,10 @@ fun DashboardScreen(
         Box(
             modifier = Modifier.padding(innerPadding),
         ) {
-            if(screenType == ScreenType.Compact ){
-                DashboardCompact(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
-            }else{
+            if(screenType.isScreenWithDetails){
                 DashboardExpanded(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
+            }else{
+                DashboardCompact(viewModel = viewModel, onSmsClicked = onSmsClicked, onNavigateToSenderSmsList = onNavigateToSenderSmsList)
             }
 
         }

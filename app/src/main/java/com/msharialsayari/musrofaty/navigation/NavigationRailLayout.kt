@@ -19,7 +19,6 @@ fun NavigationRailLayout(
     navController: NavHostController,
     items:List<BottomNavItem>,
     bottomBarState: MutableState<Boolean>,
-    screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit
 ){
@@ -29,7 +28,6 @@ fun NavigationRailLayout(
             activity = activity,
             navController = navController,
             innerPadding = PaddingValues(),
-            screenType=screenType,
             onLanguageChanged = onLanguageChanged,
             onThemeChanged=onThemeChanged
         )

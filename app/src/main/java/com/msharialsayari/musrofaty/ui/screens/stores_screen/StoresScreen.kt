@@ -38,13 +38,14 @@ fun StoresScreen(onNavigateToCategoryScreen:(Int)->Unit,
     val viewModel: StoresViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val isSearchTopBar = remember { mutableStateOf(false) }
-
+    val screenType = MusrofatyTheme.screenType
 
     Scaffold(
         topBar = {
             AppBarComponent.SearchTopAppBar(
                 title = Screen.StoresScreen.title,
                 onArrowBackClicked = onBackPressed,
+                isParent = screenType.isScreenWithDetails,
                 isSearchMode = isSearchTopBar.value,
                 onCloseSearchMode = {
                     isSearchTopBar.value = false
@@ -126,8 +127,6 @@ fun PageCompose(modifier: Modifier=Modifier, viewModel: StoresViewModel,onCatego
         scaffoldState = sheetState,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-
-
             CategoryBottomSheet(
                 viewModel =viewModel,
                 onCategorySelected = {

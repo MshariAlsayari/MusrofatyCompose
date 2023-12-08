@@ -15,7 +15,7 @@ fun DashboardExpanded(
 
     ListDetails(
         primaryRatio = 1f,
-        secondaryRatio = 1f,
+        secondaryRatio = 2f,
         primaryContent = {
             SmsContent(
                 viewModel = viewModel,

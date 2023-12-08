@@ -15,7 +15,6 @@ fun BottomBarLayout(
     navController: NavHostController,
     items:List<BottomNavItem>,
     bottomBarState: MutableState<Boolean>,
-    screenType:ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit){
 
@@ -31,7 +30,6 @@ fun BottomBarLayout(
             activity = activity,
             navController = navController,
             innerPadding = innerPadding,
-            screenType=screenType,
             onLanguageChanged = onLanguageChanged,
             onThemeChanged = onThemeChanged
         )

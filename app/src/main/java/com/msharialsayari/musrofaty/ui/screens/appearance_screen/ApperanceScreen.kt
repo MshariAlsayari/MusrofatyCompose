@@ -16,8 +16,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit, onBackPressed:()->Unit){
-    val viewModel:AppearanceViewModel = hiltViewModel()
+fun AppearanceScreen(onLanguageChanged:()->Unit,
+                     onThemeChanged:()->Unit,
+                     onBackPressed:()->Unit){
+
 
     Scaffold(
         topBar = {
@@ -29,8 +31,7 @@ fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit, onBackP
         }
     ) { innerPadding ->
 
-        PageCompose(
-            viewModel = viewModel,
+        AppearanceContent(
             modifier = Modifier.padding(innerPadding),
             onLanguageChanged=onLanguageChanged,
             onThemeChanged=onThemeChanged
@@ -44,10 +45,11 @@ fun AppearanceScreen(onLanguageChanged:()->Unit,onThemeChanged:()->Unit, onBackP
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(viewModel: AppearanceViewModel,
-                modifier: Modifier=Modifier,
-                onLanguageChanged:()->Unit,
-                onThemeChanged:()->Unit){
+fun AppearanceContent(modifier: Modifier=Modifier,
+                      onLanguageChanged:()->Unit,
+                      onThemeChanged:()->Unit){
+
+    val viewModel:AppearanceViewModel = hiltViewModel()
     val isThemeBottomSheet = remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

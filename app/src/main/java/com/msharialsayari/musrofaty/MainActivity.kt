@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.Window
@@ -15,6 +16,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +40,7 @@ import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.DialogsUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
+import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -151,15 +155,17 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
             val windowSizeClass = getScreenSize(this)
+            val screenType = windowSizeClass.getScreenTypeByWidth()
             MusrofatyComposeTheme(
                 appTheme = uiState.currentTheme,
-                appLocale = uiState.currentLocale
+                appLocale = uiState.currentLocale,
+                screenType =screenType
             ) {
                 SetLanguage(activity = this, locale = uiState.currentLocale)
                 SetStatusAndNavigationBarColor(this, uiState.currentTheme)
                 MainScreenView(
                     activity = this,
-                    windowSizeClass = windowSizeClass,
+                    screenType = screenType,
                     onLanguageChanged = {
                         viewModel.updateLanguage()
                     }

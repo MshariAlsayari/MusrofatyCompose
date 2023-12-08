@@ -62,7 +62,7 @@ fun SendersListExpanded(
 
     ListDetails(
         primaryRatio = 1f,
-        secondaryRatio = 1f,
+        secondaryRatio = 2f,
         primaryContent = {
             SendersListContent(
                 screenType =  ScreenType.Expanded,
@@ -102,7 +102,6 @@ fun LargeSideScreen(senderId: Int?=null,
 
         if(senderId != null){
             SenderSmsListScreen(
-                screenType=ScreenType.Expanded,
                 senderId = senderId,
                 onDetailsClicked = onDetailsClicked ,
                 onNavigateToFilterScreen = onNavigateToFilterScreen,

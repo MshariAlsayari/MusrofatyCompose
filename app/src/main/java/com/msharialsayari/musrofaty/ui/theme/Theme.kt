@@ -10,14 +10,16 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.Constants
+import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import java.util.*
 
 
 @Composable
 fun MusrofatyComposeTheme(
     appTheme: AppTheme = AppTheme.System,
-    appLocale:Locale,
-    content: @Composable () -> Unit
+    appLocale: Locale,
+    screenType: ScreenType,
+    content: @Composable () -> Unit,
 ) {
     val colors = if (isLightTheme(appTheme)){
         LightColors
@@ -26,7 +28,7 @@ fun MusrofatyComposeTheme(
 
     val direction = if (appLocale.language.lowercase() == Constants.arabic_ar.lowercase()) LayoutDirection.Rtl else LayoutDirection.Ltr
 
-    ProvideMusrofatyTheme(colors) {
+    ProvideMusrofatyTheme(colors,screenType) {
         CompositionLocalProvider(LocalLayoutDirection provides direction) {
             MaterialTheme(
                 colors = mapBasicColors(colors= colors, darkTheme = !colors.isLight),
@@ -42,6 +44,7 @@ fun MusrofatyComposeTheme(
 @Composable
 fun ProvideMusrofatyTheme(
     colors: MusrofatyColors,
+    screenType: ScreenType,
     content: @Composable () -> Unit
 ) {
     val rememberedColors = remember {
@@ -51,6 +54,7 @@ fun ProvideMusrofatyTheme(
 
     CompositionLocalProvider(
         LocalCustomColors provides rememberedColors,
+        LocalCustomScreenType provides  screenType,
         content = content
     )
 }
@@ -60,11 +64,19 @@ object MusrofatyTheme {
         @Composable
         get() = LocalCustomColors.current
 
+    val screenType: ScreenType
+        @Composable
+        get() = LocalCustomScreenType.current
+
 
 }
 
 private val LocalCustomColors = staticCompositionLocalOf {
     MusrofatyColors()
+}
+
+private val LocalCustomScreenType = staticCompositionLocalOf {
+    ScreenType.Compact
 }
 
 

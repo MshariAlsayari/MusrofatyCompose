@@ -41,7 +41,6 @@ fun NavigationGraph(
     activity: MainActivity,
     navController: NavHostController,
     innerPadding: PaddingValues,
-    screenType: ScreenType,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit,
 
@@ -63,7 +62,6 @@ fun NavigationGraph(
 
         composable(BottomNavItem.Dashboard.route) {
             DashboardScreen(
-                screenType=screenType,
                 onSmsClicked = {
                     navController.navigate(Screen.SmsScreen.route + "/${it}")
                 },
@@ -73,7 +71,6 @@ fun NavigationGraph(
         }
         composable(BottomNavItem.SendersList.route) {
             SendersListScreen(
-                screenType=screenType,
                 onNavigateToSenderDetails = {
                     navController.navigate(Screen.SenderDetailsScreen.route + "/${it}")
                 },
@@ -106,9 +103,6 @@ fun NavigationGraph(
                 onAppearanceClicked = {
                     navController.navigate(Screen.AppearanceScreen.route)
                 },
-                onSendersClicked = {
-                    navController.navigate(Screen.SendersManagementScreen.route)
-                },
                 onStoresClicked = {
                     navController.navigate(Screen.StoresScreen.route)
                 },
@@ -136,8 +130,12 @@ fun NavigationGraph(
                     } catch (e: ActivityNotFoundException) {
                         activity. startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                     }
-                }
-            )
+                },
+                onLanguageChanged = { onLanguageChanged() },
+                onThemeChanged = { onThemeChanged() },
+                onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
+                onNavigateToStoreSmsListScreen = {navController.navigate(Screen.StoreSmsListScreen.route + "/${it}")},
+                )
         }
 
         composable(Screen.SenderDetailsScreen.route + "/{senderId}",
@@ -159,7 +157,6 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
             SenderSmsListScreen(
-                screenType=screenType,
                 senderId = senderId,
                 onDetailsClicked = { navController.navigate(Screen.SenderDetailsScreen.route + "/${it}") },
                 onNavigateToFilterScreen = { senderId, filterId ->

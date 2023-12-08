@@ -88,17 +88,6 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun setScreenType(screenType: ScreenType) {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    screenType = screenType,
-
-                )
-            }
-        }
-    }
-
     private fun getFilters(senderId: Int) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -389,7 +378,6 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     data class SenderSmsListUiState(
-        val screenType: ScreenType? = null,
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
         var navigateBack: Boolean = false,

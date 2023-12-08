@@ -30,8 +30,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SmsAnalysisScreen(onBackPressed:()->Unit){
-    val viewModel:SmsAnalysisViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
+
+
 
 
     Scaffold(
@@ -43,10 +43,7 @@ fun SmsAnalysisScreen(onBackPressed:()->Unit){
 
         }
     ) { innerPadding ->
-        when{
-            uiState.isLoading -> LoadingPageCompose(modifier = Modifier.padding(innerPadding))
-            else -> PageCompose(modifier = Modifier.padding(innerPadding),viewModel = viewModel)
-        }
+        SmsAnalysisContent(modifier = Modifier.padding(innerPadding))
     }
 
 
@@ -55,9 +52,10 @@ fun SmsAnalysisScreen(onBackPressed:()->Unit){
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsAnalysisViewModel){
+fun SmsAnalysisContent(modifier: Modifier=Modifier){
 
     var tabIndex by remember { mutableStateOf(0) }
+    val viewModel:SmsAnalysisViewModel = hiltViewModel()
 
     val coroutineScope                    = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -88,6 +86,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SmsAnalysisViewModel){
     }
 
     ModalBottomSheetLayout(
+        modifier=modifier,
         sheetState = sheetState,
         sheetContent = { BottomSheetComponent.TextFieldBottomSheetComponent(model = TextFieldBottomSheetModel(
             title = R.string.sms_analysis_bottom_sheet_title,

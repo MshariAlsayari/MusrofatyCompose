@@ -73,7 +73,6 @@ private val MaxToolbarHeight = 85.dp
 
 @Composable
 fun SenderSmsListScreen(
-    screenType: ScreenType,
     senderId: Int,
     onDetailsClicked: (Int) -> Unit,
     onNavigateToFilterScreen: (Int, Int?) -> Unit,
@@ -85,7 +84,6 @@ fun SenderSmsListScreen(
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(senderId) {
-        viewModel.setScreenType(screenType)
         viewModel.getSender(senderId)
     }
 
@@ -303,17 +301,25 @@ fun PageContainer(
                     onDetailsClicked = onDetailsClicked,
                     onBack = onBack,
                     onNavigateToPDFCreatorActivity = {
-                        if (smsList.isEmpty()){
-                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
+                        if (smsList.isEmpty()) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.no_sms_to_generat_file),
+                                Toast.LENGTH_SHORT
+                            ).show()
 
-                        }else {
+                        } else {
                             onNavigateToPDFCreatorActivity(it)
                         }
                     },
                     onExcelIconClicked = {
-                        if (smsList.isEmpty()){
-                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
-                        }else {
+                        if (smsList.isEmpty()) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.no_sms_to_generat_file),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
                             viewModel.generateExcelFile(context, onExcelIconClicked)
                         }
                     },
@@ -365,43 +371,43 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
         R.string.tab_deleted_sms,
     )
 
-        Column(Modifier.fillMaxWidth()) {
-            ScrollableTabRow(
-                modifier  =  Modifier.fillMaxWidth(),
-                backgroundColor = MaterialTheme.colors.background,
-                selectedTabIndex = tabIndex,
-                edgePadding = 0.dp,
-                indicator = {
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
-                        color = MaterialTheme.colors.secondary,
-                        height = TabRowDefaults.IndicatorHeight
-                    )
-                }
-            ) {
-                tabTitles.forEachIndexed { index, stringResId ->
-                    Tab(
-                        modifier = Modifier.background(MaterialTheme.colors.background),
-                        selected = tabIndex == index,
-                        onClick = { viewModel.onTabSelected(index) },
-                        text = {
-                            TextComponent.ClickableText(
-                                text = stringResource(id = stringResId),
-                                color = if (tabIndex == index) MaterialTheme.colors.secondary else colorResource(
-                                    id = R.color.light_gray
-                                )
-                            )
-                        })
-                }
+    Column(Modifier.fillMaxWidth()) {
+        ScrollableTabRow(
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = MaterialTheme.colors.background,
+            selectedTabIndex = tabIndex,
+            edgePadding = 0.dp,
+            indicator = {
+                TabRowDefaults.Indicator(
+                    modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
+                    color = MaterialTheme.colors.secondary,
+                    height = TabRowDefaults.IndicatorHeight
+                )
             }
-            when (tabIndex) {
-                0 -> AllSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-                1 -> FavoriteSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-                2 -> FinancialStatisticsTab(senderId = senderId)
-                3 -> CategoriesStatisticsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-                4 -> SoftDeletedTab(senderId = senderId, onSmsClicked = onSmsClicked)
+        ) {
+            tabTitles.forEachIndexed { index, stringResId ->
+                Tab(
+                    modifier = Modifier.background(MaterialTheme.colors.background),
+                    selected = tabIndex == index,
+                    onClick = { viewModel.onTabSelected(index) },
+                    text = {
+                        TextComponent.ClickableText(
+                            text = stringResource(id = stringResId),
+                            color = if (tabIndex == index) MaterialTheme.colors.secondary else colorResource(
+                                id = R.color.light_gray
+                            )
+                        )
+                    })
             }
         }
+        when (tabIndex) {
+            0 -> AllSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
+            1 -> FavoriteSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
+            2 -> FinancialStatisticsTab(senderId = senderId)
+            3 -> CategoriesStatisticsTab(senderId = senderId, onSmsClicked = onSmsClicked)
+            4 -> SoftDeletedTab(senderId = senderId, onSmsClicked = onSmsClicked)
+        }
+    }
 
 
 }
@@ -483,6 +489,7 @@ fun LazySenderSms(
                                 model.id,
                                 model.isFavorite
                             )
+
                             SmsActionType.COPY -> {
                                 Utils.copyToClipboard(item.body, context)
                                 Toast.makeText(
@@ -495,6 +502,7 @@ fun LazySenderSms(
                             SmsActionType.SHARE -> {
                                 Utils.shareText(item.body, context)
                             }
+
                             SmsActionType.DELETE -> viewModel.softDelete(
                                 model.id,
                                 model.isDeleted
@@ -629,7 +637,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel, onDetailsClicked
     SenderComponent(
         modifier = Modifier.padding(horizontal = 16.dp),
         model = model
-    ){
+    ) {
         galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
@@ -715,7 +723,6 @@ fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterCl
 
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
@@ -728,7 +735,7 @@ fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
         )
 
         TextComponent.BodyText(
-            text = smsCount.toString() + " " + pluralStringResource(
+            text = "$smsCount " + pluralStringResource(
                 id = R.plurals.common_sms,
                 count = smsCount
             )
@@ -749,7 +756,9 @@ fun ToolbarActionsComposable(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isFilterSelected = uiState.selectedFilter != null
-    val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
+    val isFilterDateSelected =
+        uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
+    val screenType = MusrofatyTheme.screenType
 
     Row(
         modifier = Modifier
@@ -758,15 +767,17 @@ fun ToolbarActionsComposable(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        if(uiState.screenType?.showToolbar == true)
-        Icon(Icons.Default.ArrowBack,
-            tint = MusrofatyTheme.colors.iconBackgroundColor,
-            contentDescription = null,
-            modifier = Modifier
-                .mirror()
-                .clickable {
-                    onBack()
-                })
+        if (!screenType.isScreenWithDetails) {
+            Icon(Icons.Default.ArrowBack,
+                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                contentDescription = null,
+                modifier = Modifier
+                    .mirror()
+                    .clickable {
+                        onBack()
+                    })
+        }
+
 
 
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -795,7 +806,7 @@ fun ToolbarActionsComposable(
 
 
             Icon(painter = painterResource(id = R.drawable.ic_filter),
-                tint = if(isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
+                tint = if (isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
@@ -805,7 +816,7 @@ fun ToolbarActionsComposable(
                     })
 
             Icon(Icons.Default.DateRange,
-                tint =if(isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
+                tint = if (isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
