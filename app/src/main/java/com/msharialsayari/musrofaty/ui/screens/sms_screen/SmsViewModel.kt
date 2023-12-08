@@ -8,6 +8,8 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +31,7 @@ class SmsViewModel @Inject constructor(
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
+    private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 ) : ViewModel() {
 
@@ -155,5 +158,15 @@ class SmsViewModel @Inject constructor(
 
         )
 
+    }
+
+    fun navigateToCategoryScreen(id:Int){
+        navigator.navigate(Screen.CategoryScreen.route + "/${id}")
+
+    }
+
+
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 }

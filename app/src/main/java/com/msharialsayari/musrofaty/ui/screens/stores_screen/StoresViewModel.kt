@@ -14,6 +14,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpd
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.notEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +35,7 @@ class StoresViewModel @Inject constructor(
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val navigator: AppNavigator,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -134,6 +137,18 @@ class StoresViewModel @Inject constructor(
                 it.copy(selectedCategory = item)
             }
         }
+    }
+    fun navigateToCategoryScreen(id:Int){
+        navigator.navigate(Screen.CategoryScreen.route + "/${id}")
+
+    }
+
+    fun navigateToStoreSmsListScreen(id:String){
+        navigator.navigate(Screen.StoreSmsListScreen.route + "/${id}")
+    }
+
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 
 

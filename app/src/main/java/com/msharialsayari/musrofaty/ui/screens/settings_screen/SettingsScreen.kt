@@ -9,9 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.BuildConfig
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
@@ -23,35 +25,31 @@ import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.ListDetails
 import com.msharialsayari.musrofaty.ui_component.PlaceHolder
 import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.utils.findActivity
 
 @Composable
 fun SettingsScreen(
-    onAppearanceClicked: () -> Unit,
-    onStoresClicked: () -> Unit,
-    onAnalysisClicked: () -> Unit,
-    onUpdateClicked: () -> Unit,
     onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit,
-    onNavigateToCategoryScreen: (Int) -> Unit,
-    onNavigateToStoreSmsListScreen: (String) -> Unit,
+    onThemeChanged: () -> Unit
 ) {
 
     val screenType = MusrofatyTheme.screenType
+    val viewModel: SettingsViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     if (screenType.isScreenWithDetails) {
         SettingScreeLandscape(
-            onUpdateClicked,
+            viewModel,
             onLanguageChanged,
-            onThemeChanged,
-            onNavigateToCategoryScreen,
-            onNavigateToStoreSmsListScreen
+            onThemeChanged
         )
     } else {
         SettingScreePortrait(
-            onAppearanceClicked = onAppearanceClicked,
-            onStoresClicked = onStoresClicked,
-            onAnalysisClicked = onAnalysisClicked,
-            onUpdateClicked = onUpdateClicked
+            onAppearanceClicked = { viewModel.navigateToAppearance() },
+            onStoresClicked = { viewModel.navigateToStores() },
+            onAnalysisClicked = { viewModel.navigateToAnalysis() },
+            onUpdateClicked = { viewModel.onClickOnUpdatePreference(activity) }
         )
     }
 
@@ -95,12 +93,13 @@ private fun SettingScreePortrait(
 
 @Composable
 private fun SettingScreeLandscape(
-    onUpdateClicked: () -> Unit,
+    viewModel: SettingsViewModel,
     onLanguageChanged: () -> Unit,
     onThemeChanged: () -> Unit,
-    onNavigateToCategoryScreen: (Int) -> Unit,
-    onNavigateToStoreSmsListScreen: (String) -> Unit,
 ) {
+
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     val selectedPreference: MutableState<PreferenceListEnum?> =
         rememberSaveable { mutableStateOf(null) }
@@ -117,13 +116,12 @@ private fun SettingScreeLandscape(
                 onThemeChanged = onThemeChanged
             )
 
-            PreferenceListEnum.Stores -> StoresScreen(
-                onNavigateToCategoryScreen = onNavigateToCategoryScreen,
-                onNavigateToStoreSmsListScreen = onNavigateToStoreSmsListScreen
-            ) {}
-
+            PreferenceListEnum.Stores -> StoresScreen()
             PreferenceListEnum.Analysis -> SmsAnalysisContent()
-            PreferenceListEnum.Update -> onUpdateClicked()
+            PreferenceListEnum.Update -> {
+                viewModel.onClickOnUpdatePreference(activity)
+            }
+
             else -> PlaceHolder.ScreenPlaceHolder()
         }
     })

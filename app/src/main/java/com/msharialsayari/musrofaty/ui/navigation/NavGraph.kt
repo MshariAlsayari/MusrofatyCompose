@@ -73,42 +73,9 @@ fun NavigationGraph(
         }
         composable(BottomNavItem.Setting.route) {
             SettingsScreen(
-                onAppearanceClicked = {
-                    navController.navigate(Screen.AppearanceScreen.route)
-                },
-                onStoresClicked = {
-                    navController.navigate(Screen.StoresScreen.route)
-                },
-                onAnalysisClicked = {
-                    navController.navigate(Screen.SmsAnalysisScreen.route)
-                },
-                onUpdateClicked = {
-                    var packageName =  activity.packageName
-                    if (BuildConfig.DEBUG) {
-                        var pk =""
-                        packageName.split(".")
-                                   .mapIndexed { index, s ->
-                                       when (index) {
-                                           0 -> pk += "$s."
-                                           1 -> pk += "$s."
-                                           2 -> pk += s
-                                       }
-                                   }
-
-                        packageName = pk
-                    }
-
-                    try {
-                        activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
-                    } catch (e: ActivityNotFoundException) {
-                        activity. startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
-                    }
-                },
                 onLanguageChanged = { onLanguageChanged() },
                 onThemeChanged = { onThemeChanged() },
-                onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
-                onNavigateToStoreSmsListScreen = {navController.navigate(Screen.StoreSmsListScreen.route + "/${it}")},
-                )
+            )
         }
 
         composable(Screen.SenderDetailsScreen.route + "/{senderId}",
@@ -167,11 +134,7 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val smsId = arguments?.getString("smsId")
             smsId?.let {
-                SmsScreen(
-                    smsId=it,
-                    onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
-                    onBackPressed = { navController.navigateUp() }
-                )
+                SmsScreen(smsId=it,)
             }
         }
 
@@ -224,11 +187,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.StoresScreen.route) {
-            StoresScreen(
-                onNavigateToCategoryScreen = { navController.navigate(Screen.CategoryScreen.route + "/${it}") },
-                onNavigateToStoreSmsListScreen = {navController.navigate(Screen.StoreSmsListScreen.route + "/${it}")},
-                onBackPressed = { navController.navigateUp() }
-            )
+            StoresScreen()
         }
 
         composable(Screen.StoreSmsListScreen.route + "/{storeName}",
