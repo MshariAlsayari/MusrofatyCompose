@@ -22,7 +22,7 @@ import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()->Unit){
+fun FilterScreen(senderId:Int , filterId:Int?){
     val viewModel:FilterViewModel = hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -74,16 +74,16 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
 
     if (uiState.wordValidationModel != null && !uiState.wordValidationModel!!.isValid) {
         coroutineScope.launch {
-            val snackbarResult= scaffoldState.snackbarHostState.showSnackbar(
+            val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
                 uiState.wordValidationModel!!.errorMsg,
                 duration = SnackbarDuration.Short
             )
 
-            if(snackbarResult == SnackbarResult.Dismissed){
+            if (snackbarResult == SnackbarResult.Dismissed) {
                 viewModel.dismissSnackbar()
             }
         }
-    }else {
+    } else {
         viewModel.dismissSnackbar()
         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
     }
@@ -110,7 +110,7 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
             topBar = {
                 AppBarComponent.TopBarComponent(
                     title = Screen.FilterScreen.title,
-                    onArrowBackClicked = onBackPressed
+                    onArrowBackClicked = { viewModel.navigateUp() }
                 )
 
             },
@@ -131,7 +131,7 @@ fun FilterScreen(senderId:Int , filterId:Int?, onDone:()->Unit,onBackPressed:()-
                 })
                 FiltersList(viewModel)
                 Spacer(modifier = Modifier.weight(1f))
-                BtnAction(viewModel, onDone)
+                BtnAction(viewModel)
 
             }
         }
@@ -269,7 +269,7 @@ fun AddFilter(onAddFilterClicked:(String)->Unit){
 }
 
 @Composable
-fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
+fun BtnAction(viewModel: FilterViewModel){
     val uiState                           by viewModel.uiState.collectAsState()
 
     Row {
@@ -281,10 +281,10 @@ fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
                 if (viewModel.validate()) {
                     if (uiState.isCreateNewFilter) {
                         viewModel.onCreateBtnClicked()
-                        onDone()
+                        viewModel.navigateUp()
                     } else {
                         viewModel.onSaveBtnClicked()
-                        onDone()
+                        viewModel.navigateUp()
                     }
                 }
             }
@@ -298,7 +298,7 @@ fun BtnAction(viewModel: FilterViewModel, onDone:()->Unit){
             text =  R.string.common_delete,
             onClick = {
                 viewModel.onDeleteBtnClicked()
-                onDone()
+                viewModel.navigateUp()
             }
 
         )

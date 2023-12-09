@@ -12,14 +12,14 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoadin
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
 
 @Composable
-fun FavoriteSmsTab( senderId:Int, onSmsClicked:(String)->Unit){
+fun FavoriteSmsTab(){
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit){ viewModel.getFavoriteSms(senderId) }
+    LaunchedEffect(Unit){ viewModel.getFavoriteSms(uiState.sender.id) }
 
     when{
         uiState.isFavoriteSmsPageLoading                                                            -> PageLoading()
-        uiState.favoriteSmsFlow?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked )
+        uiState.favoriteSmsFlow?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = uiState.favoriteSmsFlow?.collectAsLazyPagingItems()!! )
         else                                                                                        -> EmptySmsCompose()
     }
 

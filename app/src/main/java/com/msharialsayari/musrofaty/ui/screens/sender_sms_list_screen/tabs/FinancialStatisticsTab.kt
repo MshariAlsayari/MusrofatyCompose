@@ -16,18 +16,18 @@ import com.msharialsayari.musrofaty.ui_component.FinancialStatistics
 import com.msharialsayari.musrofaty.ui_component.FinancialStatisticsModel
 
 @Composable
-fun FinancialStatisticsTab(senderId:Int){
+fun FinancialStatisticsTab(){
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit){
-        viewModel.getFinancialStatistics(senderId)
+        viewModel.getFinancialStatistics(uiState.sender.id)
     }
 
     when{
         uiState.isFinancialStatisticsSmsPageLoading -> PageLoading()
         uiState.financialStatistics.isNotEmpty()    -> BuildChartCompose(viewModel = viewModel)
-        uiState.financialStatistics.isEmpty()       -> EmptySmsCompose()
+        else       -> EmptySmsCompose()
 
 
     }

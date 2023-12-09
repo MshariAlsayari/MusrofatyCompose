@@ -30,7 +30,7 @@ import com.msharialsayari.musrofaty.ui_component.TextComponent
 
 
 @Composable
-fun StoreSmsListScreen(storeName:String, onBackPressed:()->Unit){
+fun StoreSmsListScreen(storeName:String){
 
     val viewModel: StoreSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -44,7 +44,7 @@ fun StoreSmsListScreen(storeName:String, onBackPressed:()->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = storeName,
-                onArrowBackClicked = onBackPressed
+                onArrowBackClicked = {viewModel.navigateUp()}
             )
 
         }

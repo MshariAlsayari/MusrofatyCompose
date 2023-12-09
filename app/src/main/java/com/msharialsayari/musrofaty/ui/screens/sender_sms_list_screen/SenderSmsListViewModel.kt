@@ -4,11 +4,8 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.excei.ExcelModel
@@ -22,8 +19,6 @@ import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
-import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -48,8 +43,29 @@ class SenderSmsListViewModel @Inject constructor(
     private val navigator: AppNavigator,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SenderSmsListUiState())
+    private val _uiState = MutableStateFlow(SenderSmsListUiState(sender = SenderModel(senderName = "")))
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
+
+    fun initSender(senderId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val senderResult = getSenderUseCase.invoke(senderId)
+            if (senderResult != null){
+                 getFilters(senderResult.id)
+                _uiState.update {
+                    it.copy(
+                        sender = senderResult,
+                    )
+                }
+            }
+
+            _uiState.update {
+                it.copy(
+                    isLoading = false
+                )
+            }
+        }
+    }
 
 
     fun getDate() {
@@ -77,22 +93,6 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-
-    fun getSender(senderId: Int) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val senderResult = getSenderUseCase.invoke(senderId)
-            if (senderResult != null)
-                getFilters(senderResult.id)
-            _uiState.update {
-                it.copy(
-                    sender = senderResult,
-                    navigateBack = senderResult == null,
-                    isLoading = false
-                )
-            }
-        }
-    }
 
     private fun getFilters(senderId: Int) {
         viewModelScope.launch {

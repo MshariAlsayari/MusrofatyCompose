@@ -12,15 +12,15 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoadin
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
 
 @Composable
-fun SoftDeletedTab(senderId:Int, onSmsClicked:(String)->Unit){
+fun SoftDeletedTab(){
 
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit){ viewModel.getSoftDeletedSms(senderId) }
+    LaunchedEffect(Unit){ viewModel.getSoftDeletedSms(uiState.sender.id) }
 
     when{
         uiState.isSoftDeletedSmsPageLoading                                                            -> PageLoading()
-        uiState.softDeletedSmsFlow?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = uiState.softDeletedSmsFlow?.collectAsLazyPagingItems()!!, onSmsClicked = onSmsClicked )
+        uiState.softDeletedSmsFlow?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true -> LazySenderSms(viewModel = viewModel, list = uiState.softDeletedSmsFlow?.collectAsLazyPagingItems()!!)
         else                                                                                           -> EmptySmsCompose()
     }
 

@@ -9,23 +9,24 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun AppearanceScreen(onLanguageChanged:()->Unit,
-                     onThemeChanged:()->Unit,
-                     onBackPressed:()->Unit){
 
+@Composable
+fun AppearanceScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel(),
+                     onLanguageChanged:()->Unit,
+                     onThemeChanged:()->Unit){
 
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.AppearanceScreen.title,
-                onArrowBackClicked = onBackPressed
+                onArrowBackClicked = {navigatorViewModel.navigateUp()}
             )
 
         }

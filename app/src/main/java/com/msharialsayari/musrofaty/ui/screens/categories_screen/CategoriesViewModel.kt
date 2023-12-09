@@ -10,6 +10,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryMo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,6 +30,7 @@ class CategoriesViewModel @Inject constructor(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val updateStoreUseCase: UpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
+    private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 
 
@@ -185,6 +187,9 @@ class CategoriesViewModel @Inject constructor(
             )
             updateStoreUseCase.invoke(model)
         }
+    }
 
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 }

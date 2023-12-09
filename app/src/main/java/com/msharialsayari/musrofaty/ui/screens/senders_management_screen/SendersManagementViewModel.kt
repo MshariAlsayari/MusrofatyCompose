@@ -7,6 +7,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
 
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +21,7 @@ import javax.inject.Inject
 class SendersManagementViewModel @Inject constructor(
     private val getSendersUseCase: GetFlowSendersUserCase,
     private val addSenderUseCase: AddSenderUseCase,
+    private val navigator: AppNavigator
 ):ViewModel() {
 
 
@@ -46,5 +49,13 @@ class SendersManagementViewModel @Inject constructor(
         val model = SenderModel(senderName = senderName, displayNameAr = senderName, displayNameEn = senderName)
         addSenderUseCase.invoke(model)
         }
+    }
+
+    fun navigateToSenderDetails(id:Int){
+        navigator.navigate(Screen.SenderDetailsScreen.route + "/${id}")
+    }
+
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 }

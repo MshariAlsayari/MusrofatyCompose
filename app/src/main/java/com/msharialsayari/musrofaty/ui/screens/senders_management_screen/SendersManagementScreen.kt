@@ -22,7 +22,7 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.tabs.ActiveSendersTab
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -31,7 +31,7 @@ import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisi
 import kotlinx.coroutines.launch
 
 @Composable
-fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBackPressed:()->Unit){
+fun SendersManagementScreen(){
     val viewModel:SendersManagementViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -39,7 +39,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBac
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SendersManagementScreen.title,
-                onArrowBackClicked = onBackPressed
+                onArrowBackClicked = {viewModel.navigateUp()}
             )
 
         }
@@ -48,8 +48,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBac
             uiState.isLoading -> LoadingPageCompose(modifier = Modifier.padding(innerPadding))
             else -> PageCompose(
                 modifier = Modifier.padding(innerPadding),
-                viewModel = viewModel,
-                onNavigateToSenderDetails=onNavigateToSenderDetails)
+                viewModel = viewModel)
         }
     }
 
@@ -58,7 +57,7 @@ fun SendersManagementScreen(onNavigateToSenderDetails:(senderId:Int)->Unit,onBac
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewModel, onNavigateToSenderDetails:(senderId:Int)->Unit){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewModel){
 
     val tabIndex by remember { mutableStateOf(0) }
 
@@ -117,7 +116,9 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: SendersManagementViewMode
 
             ActiveSendersTab(
                 viewModel = viewModel,
-                onNavigateToSenderDetails = onNavigateToSenderDetails
+                onNavigateToSenderDetails = {
+                    viewModel.navigateToSenderDetails(it)
+                }
             )
 
 

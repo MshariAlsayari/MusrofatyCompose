@@ -25,7 +25,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.ActionIcon
+import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
@@ -34,7 +34,7 @@ import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDivi
 import kotlinx.coroutines.launch
 
 @Composable
-fun CategoriesScreen(categoryId:Int, onDone:()->Unit,onBackPressed:()->Unit){
+fun CategoriesScreen(categoryId:Int){
     val viewModel :CategoriesViewModel= hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit ){
@@ -46,14 +46,14 @@ fun CategoriesScreen(categoryId:Int, onDone:()->Unit,onBackPressed:()->Unit){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.CategoryScreen.title,
-                onArrowBackClicked = onBackPressed
+                onArrowBackClicked = { viewModel.navigateUp() }
             )
 
         }
     ) { innerPadding ->
         when{
             uiState.isLoading -> ProgressCompose(modifier = Modifier.padding(innerPadding))
-            uiState.categoryWithStores != null -> PageCompose(Modifier.padding(innerPadding),viewModel,onDone)
+            uiState.categoryWithStores != null -> PageCompose(Modifier.padding(innerPadding),viewModel)
         }
     }
 
@@ -74,7 +74,7 @@ fun ProgressCompose(modifier: Modifier=Modifier,){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDone: () -> Unit){
+fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
 
     val coroutineScope                    = rememberCoroutineScope()
     val selectedStore = remember { mutableStateOf<StoreEntity?>(null) }
@@ -128,7 +128,7 @@ fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDo
 
             })
 
-            ActionButtonsCompose(modifier = Modifier, viewModel, onDone)
+            ActionButtonsCompose(modifier = Modifier, viewModel)
         }
     }
 
@@ -281,7 +281,7 @@ fun CategoryBottomSheet(viewModel: CategoriesViewModel, onCategorySelected:(Int)
 }
 
 @Composable
-fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel, onDone: () -> Unit){
+fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
     val uiState                           by viewModel.uiState.collectAsState()
 
     Row (modifier = modifier){
@@ -292,7 +292,7 @@ fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewMo
 
                 if (viewModel.validate()) {
                     viewModel.onSaveBtnClicked()
-                    onDone()
+                    viewModel.navigateUp()
                 }
             }
 
@@ -304,7 +304,7 @@ fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewMo
                 text =  R.string.common_delete,
                 onClick = {
                     viewModel.onDeleteBtnClicked()
-                    onDone()
+                    viewModel.navigateUp()
 
                 }
 

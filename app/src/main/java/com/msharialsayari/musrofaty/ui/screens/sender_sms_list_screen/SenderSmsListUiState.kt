@@ -10,16 +10,15 @@ import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import kotlinx.coroutines.flow.Flow
 
 data class SenderSmsListUiState(
+        val sender: SenderModel,
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
-        var navigateBack: Boolean = false,
         var isAllSmsPageLoading: Boolean = false,
         var isFavoriteSmsPageLoading: Boolean = false,
         var isSoftDeletedSmsPageLoading: Boolean = false,
         var isFinancialStatisticsSmsPageLoading: Boolean = false,
         var isCategoriesStatisticsSmsPageLoading: Boolean = false,
         var isRefreshing: Boolean = false,
-        val sender: SenderModel? = null,
         var smsFlow: Flow<PagingData<SmsEntity>>? = null,
         var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? = null,
         var softDeletedSmsFlow: Flow<PagingData<SmsEntity>>? = null,

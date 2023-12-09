@@ -19,43 +19,44 @@ import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
 
 @Composable
-fun ContentScreen(contentId:Int, onDone:()->Unit,onBackPressed:()->Unit){
+fun ContentScreen(contentId: Int) {
     val viewModel: ContentViewModel = hiltViewModel()
-    val uiState                           by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(key1 = Unit){
-       viewModel.getContent(contentId)
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getContent(contentId)
     }
 
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.ContentScreen.title,
-                onArrowBackClicked = onBackPressed
+                onArrowBackClicked = { viewModel.navigateUp() }
             )
 
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             ValueArTextField(viewModel)
             ValueEnTextField(viewModel)
             Spacer(modifier = Modifier.weight(1f))
-            BtnAction(viewModel, onDone)
+            BtnAction(viewModel)
 
         }
     }
-
-
 
 
 }
 
 
 @Composable
-fun ValueArTextField(viewModel: ContentViewModel){
+fun ValueArTextField(viewModel: ContentViewModel) {
 
-    val uiState                           by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     TextFieldComponent.BoarderTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,9 +74,9 @@ fun ValueArTextField(viewModel: ContentViewModel){
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ValueEnTextField(viewModel: ContentViewModel){
+fun ValueEnTextField(viewModel: ContentViewModel) {
 
-    val uiState                           by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     TextFieldComponent.BoarderTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +85,7 @@ fun ValueEnTextField(viewModel: ContentViewModel){
         label = R.string.common_english,
         errorMsg = uiState.valueEnValidationModel.errorMsg,
         onValueChanged = {
-            viewModel.onEnglishValueChanged( it)
+            viewModel.onEnglishValueChanged(it)
 
 
         }
@@ -93,40 +94,35 @@ fun ValueEnTextField(viewModel: ContentViewModel){
 }
 
 
-
-
-
-
 @Composable
-fun BtnAction(viewModel: ContentViewModel, onDone:()->Unit){
-    val uiState                           by viewModel.uiState.collectAsState()
+fun BtnAction(viewModel: ContentViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Row {
         ButtonComponent.ActionButton(
             modifier = Modifier.weight(1f),
-            text =  R.string.common_save,
+            text = R.string.common_save,
             onClick = {
 
                 if (viewModel.validate()) {
-                        viewModel.updateContent()
-                        onDone()
-
+                    viewModel.updateContent()
+                    viewModel.navigateUp()
                 }
             }
 
         )
 
 
-            ButtonComponent.ActionButton(
-                modifier = Modifier.weight(1f),
-                color= MusrofatyTheme.colors.deleteActionColor,
-                text =  R.string.common_delete,
-                onClick = {
-                    viewModel.deleteContent()
-                    onDone()
-                }
+        ButtonComponent.ActionButton(
+            modifier = Modifier.weight(1f),
+            color = MusrofatyTheme.colors.deleteActionColor,
+            text = R.string.common_delete,
+            onClick = {
+                viewModel.deleteContent()
+                viewModel.navigateUp()
+            }
 
-            )
+        )
 
     }
 

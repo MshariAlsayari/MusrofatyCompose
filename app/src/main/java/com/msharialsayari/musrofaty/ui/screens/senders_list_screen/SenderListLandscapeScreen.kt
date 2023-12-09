@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders.SendersListContent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.ListDetails
 import com.msharialsayari.musrofaty.ui_component.PlaceHolder
@@ -23,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SendersListExpanded(viewModel: SendersListViewModel){
+fun SendersListLandscapeScreen(viewModel: SendersListViewModel){
 
     val coroutineScope                    = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -65,17 +64,16 @@ fun SendersListExpanded(viewModel: SendersListViewModel){
 
         },
         secondaryContent ={
-            LargeSideScreen(senderId = senderId.value)
+            SenderSmsListContent(senderId = senderId.value)
         }
     )
 
 }
 
 @Composable
-fun LargeSideScreen(senderId: Int?=null){
+fun SenderSmsListContent(senderId: Int?=null){
 
     Box(contentAlignment = Alignment.Center) {
-
         if(senderId != null){
             SenderSmsListScreen(senderId = senderId)
         }else{

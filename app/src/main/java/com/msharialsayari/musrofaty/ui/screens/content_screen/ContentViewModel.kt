@@ -9,6 +9,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.Validation
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteContentUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetContentUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateContentUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.utils.notEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,6 +25,7 @@ class ContentViewModel @Inject constructor(
     private val getContentUseCase: GetContentUseCase,
     private val updateContentUseCase: UpdateContentUseCase,
     private val deleteContentUseCase: DeleteContentUseCase,
+    private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 
 ) : ViewModel() {
@@ -89,6 +91,10 @@ class ContentViewModel @Inject constructor(
         }
 
         return valueArValidationModel.isValid && valueEnValidationModel.isValid
+    }
+
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 
 

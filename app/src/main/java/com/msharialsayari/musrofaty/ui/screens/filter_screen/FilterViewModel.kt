@@ -10,6 +10,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.CreateNe
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateFilterUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,6 +26,7 @@ class FilterViewModel@Inject constructor(
     private val createNewFilterUseCase: CreateNewFilterUseCase,
     private val updateFilterUseCase: UpdateFilterUseCase,
     private val deleteFilterUseCase: DeleteFilterUseCase,
+    private val navigator: AppNavigator,
     @ApplicationContext val context: Context
     ) : ViewModel() {
 
@@ -122,7 +124,10 @@ class FilterViewModel@Inject constructor(
         _uiState.update {
             it.copy( wordValidationModel = null)
         }
+    }
 
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 
 

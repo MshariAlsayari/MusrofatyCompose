@@ -15,20 +15,18 @@ import com.msharialsayari.musrofaty.ui_component.CategoriesStatistics
 
 
 @Composable
-fun CategoriesStatisticsTab(senderId:Int, onSmsClicked: (String) -> Unit){
+fun CategoriesStatisticsTab(){
     val viewModel: SenderSmsListViewModel =  hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit){
-        viewModel.getCategoriesStatistics(senderId)
+        viewModel.getCategoriesStatistics(uiState.sender.id)
     }
 
     when{
         uiState.isCategoriesStatisticsSmsPageLoading  -> PageLoading()
-        uiState.categoriesStatistics.isNotEmpty()     -> BuildCategoriesChartCompose(viewModel = viewModel, onSmsClicked = {
-            onSmsClicked(it)
-        })
-        uiState.categoriesStatistics.isEmpty()        -> EmptySmsCompose()
+        uiState.categoriesStatistics.isNotEmpty()     -> BuildCategoriesChartCompose(viewModel = viewModel)
+        else      -> EmptySmsCompose()
 
     }
 
@@ -36,10 +34,7 @@ fun CategoriesStatisticsTab(senderId:Int, onSmsClicked: (String) -> Unit){
 }
 
 @Composable
-fun BuildCategoriesChartCompose(
-    viewModel: SenderSmsListViewModel,
-    onSmsClicked:(String)->Unit
-){
+fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
 
     val uiState  by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -53,7 +48,7 @@ fun BuildCategoriesChartCompose(
 
 
     CategoriesStatistics(categories = uiState.categoriesStatistics.values.mapIndexed { index, it ->  it.toCategoryStatisticsModel(context, colors[index]) }, onSmsClicked = {
-        onSmsClicked(it)
+        viewModel.navigateToSmsDetails(it)
     })
 
 }

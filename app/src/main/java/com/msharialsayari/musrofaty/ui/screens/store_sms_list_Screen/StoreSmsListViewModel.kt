@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListByQueryUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreSmsListViewModel  @Inject constructor(
-    private val getAllSmsUseCase: GetSmsListByQueryUseCase
+    private val getAllSmsUseCase: GetSmsListByQueryUseCase,
+    private val navigator: AppNavigator
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(StoreSmsListUiState())
@@ -34,6 +36,10 @@ class StoreSmsListViewModel  @Inject constructor(
             }
         }
 
+    }
+
+    fun navigateUp(){
+        navigator.navigateUp()
     }
 
 

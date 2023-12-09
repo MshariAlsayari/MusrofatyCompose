@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders
+package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
@@ -21,14 +21,13 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersUiState.Companion.wrapSendersToSenderComponentModelList
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun SendersList(
+fun SendersListCompose(
     modifier: Modifier = Modifier,
     onSenderClicked: (Int) -> Unit,
     viewModel: SendersListViewModel

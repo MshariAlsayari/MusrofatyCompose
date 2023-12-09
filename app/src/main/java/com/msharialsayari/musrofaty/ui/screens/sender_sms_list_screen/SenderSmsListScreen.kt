@@ -1,15 +1,10 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -18,14 +13,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -39,30 +29,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterTimePeriodsBottomSheet
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.*
-import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
-import com.msharialsayari.musrofaty.utils.findActivity
-import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -77,105 +58,39 @@ fun SenderSmsListScreen(senderId: Int) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(senderId) {
-        viewModel.getSender(senderId)
+        viewModel.initSender(senderId)
     }
-
-    if (uiState.navigateBack) {
-        viewModel.navigateBack()
-    }
-
 
     when {
         uiState.isLoading -> PageLoading()
-        uiState.sender != null ->
-            PageContainer(viewModel)
+        else -> SenderSmsListContent(viewModel)
     }
 
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterTimeOptionsBottomSheet(
-    viewModel: SenderSmsListViewModel,
-    onFilterSelected: (SelectedItemModel) -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    BottomSheetComponent.TimeOptionsBottomSheet(
-        selectedItem = uiState.selectedFilterTimeOption,
-        startDate = uiState.startDate,
-        endDate = uiState.endDate
-    ) {
-        onFilterSelected(it)
-    }
-}
+fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 
-@Composable
-fun FilterBottomSheet(
-    viewModel: SenderSmsListViewModel,
-    onFilterSelected: () -> Unit,
-    onCreateFilterClicked: () -> Unit,
-    onFilterLongPressed: (Int) -> Unit
-) {
-
-    val uiState by viewModel.uiState.collectAsState()
-    BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.common_filter,
-        description = R.string.common_long_click_to_modify,
-        list = viewModel.getFilterOptions(uiState.selectedFilter),
-        trailIcon = {
-            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
-                onCreateFilterClicked()
-            })
-        },
-        canUnSelect = true,
-        onSelectItem = {
-            if (it.isSelected) {
-                uiState.selectedFilter = it
-            } else {
-                uiState.selectedFilter = null
-            }
-            onFilterSelected()
-        },
-        onLongPress = {
-            onFilterLongPressed(it.id)
-        }
-
-
-    )
-}
-
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
-@Composable
-fun PageContainer(viewModel: SenderSmsListViewModel) {
-
-    val context = LocalContext.current
-    val activity = context.findActivity()
     val toolbarHeightRange = with(LocalDensity.current) { MinToolbarHeight.roundToPx()..MaxToolbarHeight.roundToPx() }
     val toolbarState = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState by viewModel.uiState.collectAsState()
     val isFilterTimeOptionBottomSheet = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val smsList = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value ?: emptyList()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-
-
-
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAllSmsBySenderId(uiState.sender?.id ?: 0)
+        viewModel.getAllSmsBySenderId(uiState.sender.id)
     }
-
-
-
 
     if (uiState.showStartDatePicker) {
         ComposeDatePicker(
@@ -197,8 +112,6 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
                 viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
                 viewModel.dismissAllDatePicker()
                 viewModel.getDate()
-
-
             },
             onDismiss = {
                 uiState.startDate = 0
@@ -209,9 +122,7 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
     }
 
     if (uiState.showGeneratingExcelFileDialog) {
-        DialogComponent.LoadingDialog(
-            message = R.string.notification_generate_excel_file_starting_message,
-        )
+        DialogComponent.LoadingDialog(message = R.string.notification_generate_excel_file_starting_message,)
     }
 
 
@@ -220,44 +131,35 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-
             if (isFilterTimeOptionBottomSheet.value)
-                FilterTimeOptionsBottomSheet(viewModel = viewModel) {
+                FilterTimePeriodsBottomSheet(viewModel = viewModel) {
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }
                     if (DateUtils.FilterOption.isRangeDateSelected(it.id)) {
                         viewModel.showStartDatePicker()
                     } else {
-                        uiState.selectedFilterTimeOption = it
+                        if( uiState.selectedFilterTimeOption?.id == it.id){
+                            uiState.selectedFilterTimeOption = null
+                        }else{
+                            uiState.selectedFilterTimeOption = it
+                        }
                         viewModel.getDate()
                         viewModel.dismissAllDatePicker()
                     }
 
                 }
-            else
-                FilterBottomSheet(
+            else{
+                FilterWordsBottomSheet(
                     viewModel = viewModel,
-                    onFilterSelected = {
+                    onDismiss = {
                         coroutineScope.launch {
                             handleVisibilityOfBottomSheet(sheetState, false)
-                        }
-                        viewModel.getDate()
-
-                    },
-                    onCreateFilterClicked = {
-                        uiState.sender?.let {
-                            viewModel.navigateToFilterScreen(it.id,null)
-                        }
-                    },
-                    onFilterLongPressed = { filterId ->
-                        uiState.sender?.let { sender ->
-                            viewModel.navigateToFilterScreen(sender.id,filterId)
                         }
                     }
                 )
 
-
+            }
         }) {
 
         SwipeRefresh(
@@ -272,39 +174,9 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                CollapsedToolbar(
+                SenderSmsListCollapsedBar(
                     toolbarState = toolbarState,
                     viewModel = viewModel,
-                    onDetailsClicked = { viewModel.navigateToSenderDetails(it) },
-                    onBack = {viewModel.navigateBack()},
-                    onNavigateToPDFCreatorActivity = {
-                        if (smsList.isEmpty()) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.no_sms_to_generat_file),
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        } else {
-                            viewModel.navigateToPDFActivity(activity,it)
-                        }
-                    },
-                    onExcelIconClicked = {
-                        if (smsList.isEmpty()) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.no_sms_to_generat_file),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            viewModel.generateExcelFile(activity)
-                        }
-                    },
-                    onCreateFilterClicked = {
-                        uiState.sender?.let {
-                            viewModel.navigateToFilterScreen(it.id, null)
-                        }
-                    },
                     onFilterIconClicked = {
                         coroutineScope.launch {
                             isFilterTimeOptionBottomSheet.value = false
@@ -322,11 +194,7 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
                     }
 
                 )
-                Tabs(
-                    viewModel = viewModel,
-                    senderId = uiState.sender?.id ?: 0,
-                    onSmsClicked = { viewModel.navigateToSmsDetails(it)}
-                )
+                Tabs(viewModel = viewModel)
             }
         }
 
@@ -337,7 +205,7 @@ fun PageContainer(viewModel: SenderSmsListViewModel) {
 }
 
 @Composable
-fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String) -> Unit) {
+fun Tabs(viewModel: SenderSmsListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
     val tabTitles = listOf(
@@ -378,54 +246,15 @@ fun Tabs(viewModel: SenderSmsListViewModel, senderId: Int, onSmsClicked: (String
             }
         }
         when (tabIndex) {
-            0 -> AllSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-            1 -> FavoriteSmsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-            2 -> FinancialStatisticsTab(senderId = senderId)
-            3 -> CategoriesStatisticsTab(senderId = senderId, onSmsClicked = onSmsClicked)
-            4 -> SoftDeletedTab(senderId = senderId, onSmsClicked = onSmsClicked)
+            0 -> AllSmsTab()
+            1 -> FavoriteSmsTab()
+            2 -> FinancialStatisticsTab()
+            3 -> CategoriesStatisticsTab()
+            4 -> SoftDeletedTab()
         }
     }
 
 
-}
-
-@Composable
-fun CollapsedToolbar(
-    toolbarState: ToolbarState,
-    viewModel: SenderSmsListViewModel,
-    onDetailsClicked: (Int) -> Unit,
-    onCreateFilterClicked: () -> Unit,
-    onBack: () -> Unit,
-    onFilterTimeIconClicked: () -> Unit,
-    onFilterIconClicked: () -> Unit,
-    onExcelIconClicked: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
-) {
-    CollapsingToolbar(
-        progress = toolbarState.progress,
-        actions = {
-            ToolbarActionsComposable(
-                viewModel,
-                onBack,
-                onFilterTimeIconClicked,
-                onFilterIconClicked,
-                onExcelIconClicked,
-                onNavigateToPDFCreatorActivity
-            )
-        },
-        collapsedComposable = { CollapsedToolbarComposable(viewModel) },
-        expandedComposable = {
-            ExpandedToolbarComposable(
-                viewModel,
-                onDetailsClicked,
-                onCreateFilterClicked
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(toolbarState.height.dp + 5.dp)
-
-    )
 }
 
 
@@ -444,8 +273,7 @@ fun PageLoading() {
 @Composable
 fun LazySenderSms(
     list: LazyPagingItems<SmsEntity>,
-    viewModel: SenderSmsListViewModel,
-    onSmsClicked: (String) -> Unit
+    viewModel: SenderSmsListViewModel
 ) {
     val context = LocalContext.current
 
@@ -557,256 +385,3 @@ fun getNestedScrollConnection(
         }
     }
 }
-
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun ExpandedToolbarComposable(
-    viewModel: SenderSmsListViewModel,
-    onDetailsClicked: (Int) -> Unit,
-    onCreateFilterClicked: () -> Unit,
-) {
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        UpperPartExpandedToolbar(viewModel, onDetailsClicked)
-        DividerComponent.HorizontalDividerComponent()
-        LowerPartExpandedToolbar(viewModel, onCreateFilterClicked)
-    }
-
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel, onDetailsClicked: (Int) -> Unit) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val sender = uiState.sender
-    val smsCount = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0
-    val model = SenderComponentModel(
-        senderId = sender?.id ?: 0,
-        senderName = sender?.senderName ?: "",
-        senderIconPath = sender?.senderIconUri ?: "",
-        displayName = SenderModel.getDisplayName(context, sender),
-        senderType = ContentModel.getDisplayName(context, sender?.content),
-    )
-
-    val corpOption = CropImageOptions()
-    corpOption.cropShape = CropImageView.CropShape.OVAL
-    corpOption.allowFlipping = false
-    corpOption.allowRotation = false
-    corpOption.scaleType = CropImageView.ScaleType.CENTER_CROP
-
-
-    val imageCropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            viewModel.updateSenderIcon(result.uriContent.toString())
-        }
-    }
-
-    val galleryLauncher = singleMediaPicker(onSelectMedia = {
-        val cropOptions = CropImageContractOptions(it, corpOption)
-        imageCropLauncher.launch(cropOptions)
-    })
-
-
-
-    SenderComponent(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        model = model
-    ) {
-        galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
-
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-
-    ) {
-        Column {
-            TextComponent.PlaceholderText(
-                text = stringResource(id = R.string.common_sender_shortcut) + ": " + sender?.senderName
-            )
-
-            TextComponent.PlaceholderText(
-                text = stringResource(id = R.string.common_sms_total) + ": " + smsCount.toString() + " " + pluralStringResource(
-                    id = R.plurals.common_sms,
-                    count = smsCount
-                )
-            )
-
-        }
-
-        ButtonComponent.OutlineButton(
-            text = R.string.common_details,
-            onClick = {
-                onDetailsClicked(sender?.id ?: 0)
-            }
-        )
-
-    }
-
-}
-
-@Composable
-fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel, onCreateFilterClicked: () -> Unit) {
-
-    val uiState by viewModel.uiState.collectAsState()
-    val filters = uiState.filters
-    val selectedTimeFilter = uiState.selectedFilterTimeOption
-    val selectedFilter = uiState.selectedFilter
-
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-
-    ) {
-
-
-        TextComponent.PlaceholderText(
-            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value
-                ?: stringResource(id = DateUtils.FilterOption.ALL.title))
-        )
-
-
-        if (filters.isEmpty()) {
-
-            Row(horizontalArrangement = Arrangement.SpaceAround) {
-                TextComponent.PlaceholderText(
-                    text = stringResource(id = R.string.common_filter) + ": "
-                )
-
-                TextComponent.ClickableText(
-                    modifier = Modifier.clickable {
-                        onCreateFilterClicked()
-                    },
-                    text = stringResource(id = R.string.create_filter)
-                )
-            }
-
-        } else {
-            TextComponent.PlaceholderText(
-                text = stringResource(id = R.string.common_filter) + ": " + (selectedFilter?.value
-                    ?: stringResource(id = R.string.common_no_selected))
-            )
-        }
-
-
-    }
-
-}
-
-@Composable
-fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val smsCount = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        TextComponent.HeaderText(
-            text = SenderModel.getDisplayName(context, uiState.sender)
-        )
-
-        TextComponent.BodyText(
-            text = "$smsCount " + pluralStringResource(
-                id = R.plurals.common_sms,
-                count = smsCount
-            )
-        )
-
-    }
-
-}
-
-
-@Composable
-fun ToolbarActionsComposable(
-    viewModel: SenderSmsListViewModel,
-    onBack: () -> Unit, onFilterTimeIconClicked: () -> Unit,
-    onFilterIconClicked: () -> Unit,
-    onExcelIconClicked: () -> Unit,
-    onNavigateToPDFCreatorActivity: (PdfCreatorViewModel.PdfBundle) -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    val isFilterSelected = uiState.selectedFilter != null
-    val isFilterDateSelected =
-        uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
-    val screenType = MusrofatyTheme.screenType
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        if (!screenType.isScreenWithDetails) {
-            Icon(Icons.Default.ArrowBack,
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .mirror()
-                    .clickable {
-                        onBack()
-                    })
-        }
-
-
-
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-
-
-            Icon(painter = painterResource(id = R.drawable.ic_excel),
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable {
-                        onExcelIconClicked()
-
-                    })
-
-            Icon(painter = painterResource(id = R.drawable.ic_pdf),
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable {
-                        onNavigateToPDFCreatorActivity(viewModel.getPdfBundle())
-
-                    })
-
-
-
-
-
-            Icon(painter = painterResource(id = R.drawable.ic_filter),
-                tint = if (isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .mirror()
-                    .clickable {
-                        onFilterIconClicked()
-
-                    })
-
-            Icon(Icons.Default.DateRange,
-                tint = if (isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .mirror()
-                    .clickable {
-                        onFilterTimeIconClicked()
-
-                    })
-        }
-
-
-    }
-
-}
-

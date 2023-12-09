@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -90,7 +91,7 @@ fun DashboardScreen() {
         topBar = { DashboardTopBar(viewModel) }
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
             if(screenType.isScreenWithDetails){
                 DashboardExpanded(viewModel = viewModel)

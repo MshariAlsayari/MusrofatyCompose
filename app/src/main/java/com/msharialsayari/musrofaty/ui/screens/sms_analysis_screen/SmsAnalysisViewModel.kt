@@ -8,6 +8,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordD
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddWordDetectorUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteWordDetectorUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetWordDetectorUseCase
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ class SmsAnalysisViewModel @Inject constructor(
     private val getWordDetectorUseCase: GetWordDetectorUseCase,
     private val addWordDetectorUseCase: AddWordDetectorUseCase ,
     private val deleteWordDetectorUseCase: DeleteWordDetectorUseCase
-):ViewModel() {
+    ):ViewModel() {
 
     private val _uiState = MutableStateFlow(SmsAnalysisUIState())
     val uiState: StateFlow<SmsAnalysisUIState> = _uiState

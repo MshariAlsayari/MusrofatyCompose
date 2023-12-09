@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.senders_list_screen.senders
+package com.msharialsayari.musrofaty.ui.screens.senders_list_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
@@ -10,14 +10,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SenderListTopBar
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListViewModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -114,7 +110,7 @@ fun SendersListContent(
                     )
             }
         ) { innerPadding ->
-            SendersList(
+            SendersListCompose(
                 Modifier.padding(innerPadding),
                 onSenderClicked,
                 viewModel

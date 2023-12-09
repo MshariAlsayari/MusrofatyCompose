@@ -7,6 +7,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentMod
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,8 @@ class SendersDetailsViewModel @Inject constructor(
     private val getContentByKeyUseCase: GetContentByKeyUseCase,
     private val updateSenderCategoryUseCase: UpdateSenderCategoryUseCase,
     private val deleteSenderUseCase: DeleteSenderUseCase,
-    private val addContentUseCase: AddContentUseCase
+    private val addContentUseCase: AddContentUseCase,
+    private val navigator: AppNavigator
 
 ) : ViewModel() {
 
@@ -124,6 +127,15 @@ class SendersDetailsViewModel @Inject constructor(
                 }
             }
         }
+
+    }
+
+    fun navigateUp(){
+        navigator.navigateUp()
+    }
+
+    fun navigateToContent(id:Int){
+        navigator.navigate(Screen.ContentScreen.route + "/${id}")
 
     }
 
