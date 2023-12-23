@@ -1,13 +1,11 @@
 package com.msharialsayari.musrofaty.utils
 
+import android.util.Log
 import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
 import com.msharialsayari.musrofaty.utils.Constants.STC_PAY_WALLET
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
-
-
-
 
     private const val WHITESPACES_REGEX = "\\s"
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
@@ -18,13 +16,10 @@ object SmsUtils {
     private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+"
 
 
-    fun isValidSms(sms:String?):Boolean{
+    fun isValidSms(sms: String?): Boolean {
         sms?.let {
-            return containerNumber(it)           &&
-                   it.isNotEmpty()               &&
-                   !isOTPSms(it)
-        }?: run { return false }
-
+            return containsNumber(it) && it.isNotEmpty() && !isIgnoredSms(it)
+        } ?: run { return false }
     }
 
     fun clearSms(sms:String?):String?{
@@ -43,11 +38,11 @@ object SmsUtils {
 
 
 
-    private fun containerNumber(sms:String?):Boolean{
+    private fun containsNumber(sms:String?):Boolean{
         return sms?.contains(".*\\d+.*".toRegex())?:false
     }
 
-    private fun isOTPSms(sms:String?):Boolean{
+    private fun isIgnoredSms(sms:String?):Boolean{
         Constants.eliminatorList.forEach {
             if (sms?.contains(it, ignoreCase = true) == true)
                 return true
@@ -64,7 +59,7 @@ object SmsUtils {
                 }
             }
         }
-        return Constants.CURRENCY_1
+        return ""
     }
 
 
@@ -81,8 +76,6 @@ object SmsUtils {
                     STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
                         .find(sms)?.groupValues?.get(0) ?: ""
                 }
-
-
 
                 var storeName = ""
                 val list = groupRegex.split(":")
@@ -148,10 +141,8 @@ object SmsUtils {
     private fun getAmount(sms: String?): Double {
         sms?.let {
             return try {
-                val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(sms)?.groupValues?.get(0) ?: "0"
-                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(amountLine)?.groupValues?.get(0) ?: "0"
+                val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
+                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(amountLine)?.groupValues?.get(0) ?: "0"
                 amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
                 amount.toDouble()
             } catch (e: Exception) {
@@ -164,6 +155,9 @@ object SmsUtils {
 
 
     private fun isSmsContainsCurrency(currency: String, sms: String?): Boolean {
-        return sms?.contains(currency.toRegex(option = RegexOption.IGNORE_CASE)) ?: false
+        sms?.let {
+            val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
+            return amountLine.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
+        }?: run { return false }
     }
 }

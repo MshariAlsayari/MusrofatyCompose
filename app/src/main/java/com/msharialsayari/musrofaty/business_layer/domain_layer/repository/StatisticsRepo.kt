@@ -20,33 +20,22 @@ class StatisticsRepo @Inject constructor(
     private val smsRepo: SmsRepo,
     @ApplicationContext val context: Context
 ){
-
-
-
      suspend fun getFinancialStatistics(list: List<SmsEntity>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
         list.forEach {
             var smsModel = it.toSmsModel()
             smsModel = smsRepo.fillSmsModel(smsModel)
             if (smsModel.smsType != SmsType.NOTHING) {
-
-
                 if (SmsUtils.isSACurrency(smsModel.currency) || smsModel.currency.isEmpty() ) {
                     smsModel.currency = Constants.CURRENCY_1
                 }
-
-
                 if (smsModel.amount > 0) {
                     val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency) )
                     map[smsModel.currency] = calculateFinancialSummary(financialSummary, smsModel.amount, smsModel.smsType)
                 }
-
-
             }
         }
-
          return map
-
     }
 
     suspend fun getCategorySummaryOfSmsList(list: List<SmsEntity>): Map<Int, CategoryStatistics> {
@@ -74,9 +63,6 @@ class StatisticsRepo @Inject constructor(
 
 
         }
-
-
-
         map.forEach {
             it.value.visitingPercent = MathUtils.calculatePercentage(it.value.occurrence.toDouble(), visitTotal.toDouble())
             it.value.payPercent = MathUtils.calculatePercentage(it.value.total, amountTotal)

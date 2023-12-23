@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.EmptySmsCompose
@@ -15,16 +14,15 @@ import com.msharialsayari.musrofaty.ui_component.CategoriesStatistics
 
 
 @Composable
-fun CategoriesStatisticsTab(){
-    val viewModel: SenderSmsListViewModel =  hiltViewModel()
-    val uiState                           by viewModel.uiState.collectAsState()
+fun CategoriesStatisticsTab(viewModel: SenderSmsListViewModel){
+    val uiState  by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit){
-        viewModel.getCategoriesStatistics(uiState.sender.id)
+    LaunchedEffect(uiState.selectedFilter, uiState.selectedFilterTimeOption){
+       viewModel.getCategoriesStatistics()
     }
 
     when{
-        uiState.isCategoriesStatisticsSmsPageLoading  -> PageLoading()
+        uiState.categoriesTabLoading  -> PageLoading()
         uiState.categoriesStatistics.isNotEmpty()     -> BuildCategoriesChartCompose(viewModel = viewModel)
         else      -> EmptySmsCompose()
 

@@ -37,12 +37,6 @@ class StoreRepo @Inject constructor(
         return dao.getStoreByCategoryId(categoryId)
     }
 
-
-
-
-
-
-
     suspend fun getStoreByStoreName(storeName: String): StoreModel? {
         val storeEntity = dao.getStoreByName(storeName)
         storeEntity?.let {
@@ -94,12 +88,5 @@ class StoreRepo @Inject constructor(
     suspend fun update(storeModel: StoreModel) {
        dao.update(storeModel.toStoreEntity())
     }
-
-
-
-
-
-
-
 
 }

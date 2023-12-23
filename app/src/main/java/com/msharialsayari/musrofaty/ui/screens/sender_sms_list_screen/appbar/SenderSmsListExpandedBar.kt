@@ -26,6 +26,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberAllSmsState
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.SenderComponent
@@ -54,13 +55,13 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val sender = uiState.sender
-    val smsCount = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value?.size ?: 0
+    val smsCount = rememberAllSmsState(viewModel).value.size
     val model = SenderComponentModel(
-        senderId = sender?.id ?: 0,
-        senderName = sender?.senderName ?: "",
-        senderIconPath = sender?.senderIconUri ?: "",
+        senderId = sender.id,
+        senderName = sender.senderName,
+        senderIconPath = sender.senderIconUri,
         displayName = SenderModel.getDisplayName(context, sender),
-        senderType = ContentModel.getDisplayName(context, sender?.content),
+        senderType = ContentModel.getDisplayName(context, sender.content),
     )
 
     val corpOption = CropImageOptions()

@@ -13,15 +13,9 @@ data class SenderSmsListUiState(
         val sender: SenderModel,
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
-        var isAllSmsPageLoading: Boolean = false,
-        var isFavoriteSmsPageLoading: Boolean = false,
-        var isSoftDeletedSmsPageLoading: Boolean = false,
-        var isFinancialStatisticsSmsPageLoading: Boolean = false,
-        var isCategoriesStatisticsSmsPageLoading: Boolean = false,
+        var financialLoading: Boolean = false,
+        var categoriesTabLoading: Boolean = false,
         var isRefreshing: Boolean = false,
-        var smsFlow: Flow<PagingData<SmsEntity>>? = null,
-        var favoriteSmsFlow: Flow<PagingData<SmsEntity>>? = null,
-        var softDeletedSmsFlow: Flow<PagingData<SmsEntity>>? = null,
         var allSmsFlow: Flow<List<SmsEntity>>? = null,
         var selectedFilterTimeOption: SelectedItemModel? = null,
         var selectedFilter: SelectedItemModel? = null,
@@ -33,4 +27,4 @@ data class SenderSmsListUiState(
         var showStartDatePicker: Boolean = false,
         var showEndDatePicker: Boolean = false,
         var showGeneratingExcelFileDialog: Boolean = false
-    )
+)

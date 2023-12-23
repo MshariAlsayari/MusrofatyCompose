@@ -24,26 +24,21 @@ fun FilterWordsBottomSheet(viewModel:SenderSmsListViewModel, onDismiss:()->Unit)
         trailIcon = {
             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
                 onDismiss()
-                uiState.sender?.let {
-                    viewModel.navigateToFilterScreen(it.id,null)
-                }
+                viewModel.navigateToFilterScreen(uiState.sender.id,null)
             })
         },
         canUnSelect = true,
         onSelectItem = {
             onDismiss()
             if (it.isSelected) {
-                uiState.selectedFilter = it
+                viewModel.updateSelectedFilterWord(it)
             } else {
-                uiState.selectedFilter = null
+                viewModel.updateSelectedFilterWord(null)
             }
-            viewModel.getDate()
         },
         onLongPress = {
             onDismiss()
-            uiState.sender?.let { sender ->
-                viewModel.navigateToFilterScreen(sender.id,it.id)
-            }
+            viewModel.navigateToFilterScreen(uiState.sender.id,it.id)
         }
 
 

@@ -9,6 +9,7 @@ import com.msharialsayari.musrofaty.R;
 import com.msharialsayari.musrofaty.Utils;
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel;
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel;
+import com.msharialsayari.musrofaty.utils.Constants;
 import com.msharialsayari.musrofaty.utils.DateUtils;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -229,7 +230,7 @@ public class ExcelUtils {
 
             //Amount Currency  Cell
             cell = rowData.createCell(ExcelColumns.AMOUNT_CURRENCY_COLUMN.getIndex());
-            cell.setCellValue(smsModel.getCurrency());
+            cell.setCellValue(smsModel.getCurrency().isEmpty() ? Constants.CURRENCY_1 : smsModel.getCurrency());
 
             //Sms type  Cell
             cell = rowData.createCell(ExcelColumns.SMS_TYPE_COLUMN.getIndex());

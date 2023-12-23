@@ -57,8 +57,19 @@ private val MaxToolbarHeight = 85.dp
 fun SenderSmsListScreen(senderId: Int) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(senderId) {
-        viewModel.initSender(senderId)
+
+    LaunchedEffect(
+        key1 = uiState.selectedFilter,
+        key2 = uiState.selectedFilterTimeOption
+    ) {
+        viewModel.getDate()
+    }
+
+    LaunchedEffect(
+        key1 = uiState.isRefreshing,
+    ) {
+        if(uiState.isRefreshing)
+        viewModel.getDate()
     }
 
     when {
@@ -88,9 +99,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
         coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getAllSmsBySenderId(uiState.sender.id)
-    }
+
 
     if (uiState.showStartDatePicker) {
         ComposeDatePicker(
@@ -111,7 +120,6 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
                 viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
                 viewModel.dismissAllDatePicker()
-                viewModel.getDate()
             },
             onDismiss = {
                 uiState.startDate = 0
@@ -140,11 +148,10 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                         viewModel.showStartDatePicker()
                     } else {
                         if( uiState.selectedFilterTimeOption?.id == it.id){
-                            uiState.selectedFilterTimeOption = null
+                           viewModel.updateSelectedFilterTimePeriods(null)
                         }else{
-                            uiState.selectedFilterTimeOption = it
+                            viewModel.updateSelectedFilterTimePeriods(it)
                         }
-                        viewModel.getDate()
                         viewModel.dismissAllDatePicker()
                     }
 
@@ -246,11 +253,11 @@ fun Tabs(viewModel: SenderSmsListViewModel) {
             }
         }
         when (tabIndex) {
-            0 -> AllSmsTab()
-            1 -> FavoriteSmsTab()
-            2 -> FinancialStatisticsTab()
-            3 -> CategoriesStatisticsTab()
-            4 -> SoftDeletedTab()
+            0 -> AllSmsTab(viewModel)
+            1 -> FavoriteSmsTab(viewModel)
+            2 -> FinancialStatisticsTab(viewModel)
+            3 -> CategoriesStatisticsTab(viewModel)
+            4 -> SoftDeletedTab(viewModel)
         }
     }
 
