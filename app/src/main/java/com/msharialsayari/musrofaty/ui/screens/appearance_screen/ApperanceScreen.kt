@@ -5,22 +5,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun AppearanceScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel(),
-                     onLanguageChanged:()->Unit,
-                     onThemeChanged:()->Unit){
+fun AppearanceScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel()){
 
     Scaffold(
         topBar = {
@@ -31,13 +32,7 @@ fun AppearanceScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel()
 
         }
     ) { innerPadding ->
-
-        AppearanceContent(
-            modifier = Modifier.padding(innerPadding),
-            onLanguageChanged=onLanguageChanged,
-            onThemeChanged=onThemeChanged
-        )
-
+        AppearanceContent(modifier = Modifier.padding(innerPadding))
     }
 
 }
@@ -46,9 +41,7 @@ fun AppearanceScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel()
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AppearanceContent(modifier: Modifier=Modifier,
-                      onLanguageChanged:()->Unit,
-                      onThemeChanged:()->Unit){
+fun AppearanceContent(modifier: Modifier=Modifier){
 
     val viewModel:AppearanceViewModel = hiltViewModel()
     val isThemeBottomSheet = remember { mutableStateOf(true) }
@@ -69,19 +62,13 @@ fun AppearanceContent(modifier: Modifier=Modifier,
 
             if (isThemeBottomSheet.value) {
                 ThemeBottomSheet(viewModel = viewModel, onSelect = {
-
-                    viewModel.onThemeSelected(it)
-                    onThemeChanged()
+                    viewModel.updateAppAppearance(Theme.getThemeById(it.id))
                     coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-
                 })
             } else {
                 LanguageBottomSheet(viewModel = viewModel, onSelect = {
-
-                    viewModel.onLanguageSelected(it)
-                    onLanguageChanged()
+                    viewModel.updateAppLanguage(Language.getLanguageById(it.id))
                     coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-
                 })
             }
         },
@@ -110,9 +97,11 @@ fun AppearanceContent(modifier: Modifier=Modifier,
 fun ThemeCompose(viewModel: AppearanceViewModel, onClick:()->Unit){
     val uiState by viewModel.uiState.collectAsState()
 
+    val body = stringArrayResource(id = R.array.theme_options )[uiState.appAppearance.id]
+
     RowComponent.PreferenceRow(
         header = stringResource(id = R.string.theme),
-        body = uiState.currentThemeOption,
+        body = body,
         onClick = onClick
     )
 
@@ -121,10 +110,11 @@ fun ThemeCompose(viewModel: AppearanceViewModel, onClick:()->Unit){
 @Composable
 fun ThemeBottomSheet(viewModel: AppearanceViewModel, onSelect:(SelectedItemModel)->Unit){
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.theme,
-        list = viewModel.getThemeOptions(uiState.selectedCurrentTheme),
+        list = viewModel.getThemeOptions(context),
         onSelectItem = {
             onSelect(it)
         },
@@ -140,9 +130,11 @@ fun ThemeBottomSheet(viewModel: AppearanceViewModel, onSelect:(SelectedItemModel
 fun LanguageCompose(viewModel: AppearanceViewModel,onClick:()->Unit){
     val uiState by viewModel.uiState.collectAsState()
 
+    val body = stringArrayResource(id = R.array.language_options )[uiState.appLanguage.id]
+
     RowComponent.PreferenceRow(
         header = stringResource(id = R.string.language),
-        body = uiState.currentLanguageOption,
+        body = body,
         onClick = onClick
     )
 
@@ -151,10 +143,11 @@ fun LanguageCompose(viewModel: AppearanceViewModel,onClick:()->Unit){
 @Composable
 fun LanguageBottomSheet(viewModel: AppearanceViewModel, onSelect:(SelectedItemModel)->Unit){
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     BottomSheetComponent.SelectedItemListBottomSheetComponent(
         title = R.string.language,
-        list = viewModel.getLanguageOptions(uiState.selectedCurrentLanguage),
+        list = viewModel.getLanguageOptions(context),
         onSelectItem = {
             onSelect(it)
         },

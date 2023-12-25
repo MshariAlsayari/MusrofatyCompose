@@ -33,9 +33,6 @@ import com.msharialsayari.musrofaty.utils.findActivity
 fun NavigationGraph(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit,
-
 ) {
 
     val context = LocalContext.current
@@ -63,10 +60,7 @@ fun NavigationGraph(
             SendersListScreen()
         }
         composable(BottomNavItem.Setting.route) {
-            SettingsScreen(
-                onLanguageChanged = { onLanguageChanged() },
-                onThemeChanged = { onThemeChanged() },
-            )
+            SettingsScreen()
         }
 
         composable(Screen.SenderDetailsScreen.route + "/{senderId}",
@@ -145,10 +139,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.AppearanceScreen.route) {
-            AppearanceScreen(
-                onLanguageChanged = { onLanguageChanged() },
-                onThemeChanged = { onThemeChanged() }
-            )
+            AppearanceScreen()
         }
 
         composable(Screen.StoresScreen.route) {

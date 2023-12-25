@@ -23,8 +23,6 @@ import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 fun MainScreenView(
     navigatorViewModel: AppNavigatorViewModel,
     screenType: ScreenType,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit
 ) {
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
     val navController = rememberNavController()
@@ -65,17 +63,13 @@ fun MainScreenView(
         BottomBarLayout(
             navController = navController,
             items = bottomNavigationItems,
-            bottomBarState = bottomBarState,
-            onLanguageChanged = onLanguageChanged,
-            onThemeChanged = onThemeChanged
+            bottomBarState = bottomBarState
         )
     }else{
         NavigationRailLayout(
             navController = navController,
             items = bottomNavigationItems,
-            bottomBarState = bottomBarState,
-            onLanguageChanged = onLanguageChanged,
-            onThemeChanged = onThemeChanged
+            bottomBarState = bottomBarState
         )
 
     }

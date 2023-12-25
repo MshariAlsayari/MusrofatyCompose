@@ -41,6 +41,7 @@ import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.DialogsUtils
+import com.msharialsayari.musrofaty.utils.SetStatusBarColor
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
@@ -160,22 +161,16 @@ class MainActivity : ComponentActivity() {
             val windowSizeClass = getScreenSize(this)
             val screenType = windowSizeClass.getScreenTypeByWidth()
             MusrofatyComposeTheme(
-                appTheme = uiState.currentTheme,
-                appLocale = uiState.currentLocale,
+                appTheme = uiState.appAppearance,
+                appLanguage = uiState.appLanguage,
                 screenType =screenType
             ) {
-                SetLanguage(activity = this, locale = uiState.currentLocale)
-                SetStatusAndNavigationBarColor(this, uiState.currentTheme)
+
+                SetStatusBarColor()
                 MainScreenView(
                     navigatorViewModel =navigatorViewModel,
-                    screenType = screenType,
-                    onLanguageChanged = {
-                        viewModel.updateLanguage()
-                    }
-                ) {
-                    viewModel.updateTheme()
-
-                }
+                    screenType = screenType
+                )
             }
         }
     }
@@ -200,42 +195,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-}
-
-
-
-
-
-
-
-
-
-@Composable
-private fun SetStatusAndNavigationBarColor(activity: MainActivity, theme: AppTheme) {
-
-    val window: Window = activity.window
-    val decorView: View = window.decorView
-
-    //set icon on Status bar "white"
-    decorView.systemUiVisibility = decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-
-    //Set status bar background color
-    window.statusBarColor = MusrofatyTheme.colors.toolbarColor.toArgb()
-
-    //Set navigation bar background color
-    window.navigationBarColor = MusrofatyTheme.colors.navigationBarColor.toArgb()
-}
-
-
-@Composable
-private fun SetLanguage(activity: MainActivity, locale: Locale) {
-    val configuration = LocalConfiguration.current
-    Locale.setDefault(locale)
-    configuration.setLocale(locale)
-    val resources = LocalContext.current.resources
-    resources.configuration.setLayoutDirection(locale)
-    activity.window.decorView.layoutDirection = resources.configuration.layoutDirection
-    resources.updateConfiguration(configuration, resources.displayMetrics)
 }
 
 

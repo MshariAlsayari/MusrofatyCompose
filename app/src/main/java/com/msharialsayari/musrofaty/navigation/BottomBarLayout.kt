@@ -13,9 +13,7 @@ import com.msharialsayari.musrofaty.utils.enums.ScreenType
 fun BottomBarLayout(
     navController: NavHostController,
     items:List<BottomNavItem>,
-    bottomBarState: MutableState<Boolean>,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit){
+    bottomBarState: MutableState<Boolean>) {
 
     Scaffold(
         bottomBar = {
@@ -27,9 +25,7 @@ fun BottomBarLayout(
         },) { innerPadding ->
         NavigationGraph(
             navController = navController,
-            innerPadding = innerPadding,
-            onLanguageChanged = onLanguageChanged,
-            onThemeChanged = onThemeChanged
+            innerPadding = innerPadding
         )
     }
 

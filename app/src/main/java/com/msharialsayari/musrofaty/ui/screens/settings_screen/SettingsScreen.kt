@@ -28,10 +28,7 @@ import com.msharialsayari.musrofaty.ui_component.TextComponent
 import com.msharialsayari.musrofaty.utils.findActivity
 
 @Composable
-fun SettingsScreen(
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit
-) {
+fun SettingsScreen() {
 
     val screenType = MusrofatyTheme.screenType
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -39,11 +36,7 @@ fun SettingsScreen(
     val activity = context.findActivity()
 
     if (screenType.isScreenWithDetails) {
-        SettingScreeLandscape(
-            viewModel,
-            onLanguageChanged,
-            onThemeChanged
-        )
+        SettingScreeLandscape(viewModel)
     } else {
         SettingScreePortrait(
             onAppearanceClicked = { viewModel.navigateToAppearance() },
@@ -92,11 +85,7 @@ private fun SettingScreePortrait(
 }
 
 @Composable
-private fun SettingScreeLandscape(
-    viewModel: SettingsViewModel,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit,
-) {
+private fun SettingScreeLandscape(viewModel: SettingsViewModel) {
 
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -111,10 +100,7 @@ private fun SettingScreeLandscape(
         })
     }, secondaryContent = {
         when (selectedPreference.value) {
-            PreferenceListEnum.Appearance -> AppearanceContent(
-                onLanguageChanged = onLanguageChanged,
-                onThemeChanged = onThemeChanged
-            )
+            PreferenceListEnum.Appearance -> AppearanceContent()
 
             PreferenceListEnum.Stores -> StoresScreen()
             PreferenceListEnum.Analysis -> SmsAnalysisContent()

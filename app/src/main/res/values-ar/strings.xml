@@ -118,6 +118,7 @@
 
     <!--Language-->
     <string-array name="language_options">
+        <item>افتراضات النظام</item>
         <item>عربي</item>
         <item>إنجليزي</item>
     </string-array>

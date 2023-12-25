@@ -14,10 +14,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.ui.theme.isLightTheme
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
-import com.msharialsayari.musrofaty.utils.AppTheme
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
+
 
 
 @Composable
@@ -26,13 +25,11 @@ fun SplashScreen(onLoadingDone:()->Unit) {
     val context = LocalContext.current
     val viewModel: SplashViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val light = isLightTheme(appTheme = AppTheme.getThemById(SharedPreferenceManager.getTheme(context)))
-    val imageRes = if (light)  R.drawable.ic_water_marker_light_mode else R.drawable.ic_water_marker_dark_mode
+    val imageRes = if (MusrofatyTheme.isDarkMode)  R.drawable.ic_water_marker_dark_mode else R.drawable.ic_water_marker_light_mode
 
     LaunchedEffect(Unit) {
         viewModel.initInsertSmsJob(context)
     }
-
 
     Column(
         modifier = Modifier.fillMaxSize(),

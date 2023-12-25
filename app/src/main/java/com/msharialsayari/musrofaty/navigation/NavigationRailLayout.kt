@@ -16,17 +16,13 @@ import com.msharialsayari.musrofaty.ui.navigation.NavigationGraph
 fun NavigationRailLayout(
     navController: NavHostController,
     items:List<BottomNavItem>,
-    bottomBarState: MutableState<Boolean>,
-    onLanguageChanged: () -> Unit,
-    onThemeChanged: () -> Unit
+    bottomBarState: MutableState<Boolean>
 ){
     Row(modifier = Modifier.fillMaxSize()) {
         SideNavigation(navController = navController, items = items, bottomBarState = bottomBarState)
         NavigationGraph(
             navController = navController,
-            innerPadding = PaddingValues(),
-            onLanguageChanged = onLanguageChanged,
-            onThemeChanged=onThemeChanged
+            innerPadding = PaddingValues()
         )
 
 
