@@ -12,6 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,10 +67,10 @@ class StoreFirebaseRepo @Inject constructor(
 
 
         queryStores.document(storeEntity.name).set(data).addOnSuccessListener {
-            Log.d("MshariTest", "${storeEntity.name} addedd successfully")
+            Log.d("StoreFirebaseRepo", "${storeEntity.name} addedd successfully")
         }.addOnFailureListener {
-            Log.d("MshariTest", "${storeEntity.name} there was an error to add")
-            Log.d("MshariTest", it.message?:"error")
+            Log.d("StoreFirebaseRepo", "${storeEntity.name} there was an error to add")
+            Log.d("StoreFirebaseRepo", it.message?:"error")
         }
     }
 }

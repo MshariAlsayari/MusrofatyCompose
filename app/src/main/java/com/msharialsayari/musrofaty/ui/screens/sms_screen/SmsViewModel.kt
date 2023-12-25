@@ -31,6 +31,7 @@ class SmsViewModel @Inject constructor(
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
+    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 ) : ViewModel() {
@@ -123,6 +124,7 @@ class SmsViewModel @Inject constructor(
                 storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
+                postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
             }
 
             getData(_uiState.value.sms?.id!!)
