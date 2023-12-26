@@ -166,7 +166,7 @@ class MainActivity : ComponentActivity() {
                 screenType =screenType
             ) {
 
-                SetStatusBarColor()
+                //SetStatusBarColor()
                 MainScreenView(
                     navigatorViewModel =navigatorViewModel,
                     screenType = screenType

@@ -29,6 +29,7 @@ import com.tejpratapsingh.pdfcreator.views.PDFHeaderView
 import com.tejpratapsingh.pdfcreator.views.basic.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.util.Locale
 
 @AndroidEntryPoint
 class PdfCreatorActivity : BasePDFCreator() {
@@ -210,12 +211,13 @@ class PdfCreatorActivity : BasePDFCreator() {
         val headerView = PDFHeaderView(applicationContext)
         val verticalView = PDFVerticalView(applicationContext)
         verticalView.view.layoutDirection = getLayoutDirection()
+        val locale = Locale(SharedPreferenceManager.getLanguage(this).shortcut)
 
 
         val pdfBankNameTextView = PDFTextView(applicationContext, PDFTextView.PDF_TEXT_SIZE.H1)
         val bankNameWord = SpannableString(
             String.format(
-                SharedPreferenceManager.getLanguage(this),
+                locale,
                 SenderModel.getDisplayName(this, smsList[0].senderModel)
             )
         )
@@ -253,6 +255,8 @@ class PdfCreatorActivity : BasePDFCreator() {
 
     private fun createBodyItemView(sms: SmsModel): PDFVerticalView {
 
+        val locale = Locale(SharedPreferenceManager.getLanguage(this).shortcut)
+
         val verticalView = PDFVerticalView(applicationContext)
         val horizontalView = PDFHorizontalView(applicationContext)
         verticalView.view.layoutDirection = getLayoutDirection()
@@ -271,7 +275,7 @@ class PdfCreatorActivity : BasePDFCreator() {
         val pdfSmsDateLabelTextView = PDFTextView(applicationContext, PDFTextView.PDF_TEXT_SIZE.H2)
         val smsDateLabelWord = SpannableString(
             String.format(
-                SharedPreferenceManager.getLanguage(this),
+                locale,
                 getString(R.string.excel_sms_date_header)
             )
         )

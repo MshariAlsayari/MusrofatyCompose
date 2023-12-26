@@ -4,28 +4,20 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
 import java.util.*
 
 
 object SharedPreferenceManager {
 
 
-    private const val PREF_LANGUAGE                                        = "key_preferredLang"
+    private const val PREF_LANGUAGE                                        = "key_preferredLang_ned"
     private const val PREF_THEME                                           = "PREF_THEME"
-    private const val PREF_INCOME_WORDS                                    = "PREF_INCOME_WORDS"
     private const val PREF_INIT_APP                                        = "PREF_INIT_APP"
-    
-    
-    private const val PREF_BANKS = "PREF_BANKS"
-    private const val PREF_CURRENCY = "PREF_CURRENCY"
-    private const val PREF_EXPENSES_WORDS = "PREF_EXPENSES_WORDS"
-    private const val PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED = "PREF_IS_DEFAULT_LIST_INCOME_WORDS_CHANGED"
-    private const val PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED = "PREF_IS_DEFAULT_LIST_EXPENSES_WORDS_CHANGED"
-    private const val PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED = "PREF_IS_DEFAULT_LIST_BANKS_WORDS_CHANGED"
-    private const val PREF_IS_DEFAULT_LIST_CURRENCY_WORDS_CHANGED = "PREF_IS_DEFAULT_LIST_CURRENCY_WORDS_CHANGED"
     private const val PREF_FILTER_PERIOD = "PREF_FILTER_PERIOD"
 
-    fun storeTheme(context: Context, theme: AppTheme) {
+    fun storeTheme(context: Context, theme: Theme) {
         PreferenceManager.getDefaultSharedPreferences(context)
             .edit()
             .putInt(PREF_THEME,theme.id)
@@ -34,42 +26,36 @@ object SharedPreferenceManager {
     }
 
     fun getTheme(context: Context):Int {
-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_THEME, AppTheme.System.id)
-
-
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_THEME, Theme.DEFAULT.id)
     }
 
 
 
-    fun storeLanguage(context: Context, locale: Locale) {
+    fun storeLanguage(context: Context, language: Language) {
         PreferenceManager.getDefaultSharedPreferences(context)
                          .edit()
-                         .putString(PREF_LANGUAGE, Gson().toJson(locale))
+                         .putInt(PREF_LANGUAGE, language.id)
                          .apply()
 
     }
 
 
-    fun getLanguage(context: Context): Locale {
-        val defaultLocale = Locale(Constants.arabic_ar)
+    fun getLanguage(context: Context): Language {
         val language = PreferenceManager.getDefaultSharedPreferences(context)
-                                        .getString(PREF_LANGUAGE, Gson().toJson(defaultLocale))
-        return Gson().fromJson(language, Locale::class.java)
+                                        .getInt(PREF_LANGUAGE, Language.DEFAULT.id)
+        return Language.getLanguageById(language)
     }
 
 
-    fun applyLanguage(context: Context, locale: Locale): Context {
-        val newContext: Context
-        val res = context.resources
-        val config = Configuration(res.configuration)
-        Locale.setDefault(locale)
-        config.setLocale(locale)
-        newContext = context.createConfigurationContext(config)
-        return newContext
-    }
+
 
     fun isArabic(context: Context): Boolean {
-        return getLanguage(context).language.equals(Constants.arabic_ar, ignoreCase = true)
+        val lang = getLanguage(context)
+        return if(lang == Language.DEFAULT){
+            Locale.getDefault().language.equals(Constants.arabic_ar, ignoreCase = true)
+        }else{
+            lang == Language.ARABIC
+        }
     }
 
 

@@ -11,7 +11,7 @@ class GetCurrentLanguageOptionUseCase @Inject constructor() {
 
     operator fun invoke(context:Context): Int {
         val language =  SharedPreferenceManager.getLanguage(context)
-        return when(language.language.lowercase()){
+        return when(language.shortcut.lowercase()){
             "ar" -> 0
             "en" -> 1
             else -> 0

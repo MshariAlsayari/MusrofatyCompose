@@ -9,9 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
 import com.msharialsayari.musrofaty.utils.AppTheme
 import com.msharialsayari.musrofaty.utils.Constants
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
-import com.simplemobiletools.calendar.domain.settings.GetAppAppearanceUseCase
-import com.simplemobiletools.calendar.domain.settings.GetAppLanguageUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.GetAppAppearanceUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.GetAppLanguageUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -65,20 +64,18 @@ class MainViewModel @Inject constructor(
             getAppLanguageUseCase().collect { id ->
                 val language = Language.getLanguageById(id)
                 Log.d(TAG, "observeAppLanguage() language:${language.name} ")
+                setAppLanguage(language)
                 _uiState.update {
                     it.copy(
                         appLanguage = language
                     )
                 }
-                setAppLanguage()
-
             }
         }
     }
 
 
-    private fun setAppLanguage() {
-        val language = _uiState.value.appLanguage
+    private fun setAppLanguage(language: Language) {
         val locale = if (language == Language.DEFAULT) {
             Locale(Locale.getDefault().language)
         } else

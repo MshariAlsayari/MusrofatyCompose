@@ -8,13 +8,11 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
-import com.simplemobiletools.calendar.domain.settings.GetAppAppearanceUseCase
-import com.simplemobiletools.calendar.domain.settings.GetAppLanguageUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.GetAppAppearanceUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.GetAppLanguageUseCase
 import com.simplemobiletools.calendar.domain.settings.UpdateAppAppearanceUseCase
-import com.simplemobiletools.calendar.domain.settings.UpdateAppLanguageUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.UpdateAppLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

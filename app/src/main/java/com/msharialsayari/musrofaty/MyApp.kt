@@ -18,13 +18,4 @@ class MyApp : Application(), Configuration.Provider {
         Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
-
-
-
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(SharedPreferenceManager.applyLanguage(newBase, SharedPreferenceManager.getLanguage(newBase)))
-    }
-
-
 }

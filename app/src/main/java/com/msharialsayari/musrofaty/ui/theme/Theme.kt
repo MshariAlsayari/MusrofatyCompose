@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui.theme
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -148,6 +149,6 @@ fun getColorSchema(appTheme: Theme): Pair<MusrofatyColors,Boolean> {
 @ReadOnlyComposable
 fun getDeviceLocal(): Locale {
     val configuration = LocalConfiguration.current
-    return ConfigurationCompat.getLocales(configuration).get(0)
-        ?: LocaleListCompat.getDefault()[0]!!
+    val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: LocaleListCompat.getDefault()[0]!!
+    return locale
 }

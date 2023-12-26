@@ -37,25 +37,7 @@ open class BaseActivity : AppCompatActivity() {
         window.statusBarColor = color
     }
 
-    private fun activityTransition() {
-//        if (SharedPreferenceManager.shouldUseDifferentActivityTransition(this)){
-//            // transition with finish activities ex:change language
-//            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-//            SharedPreferenceManager.setShouldUseDifferentActivityTransition(this, false)
-//        }else {
-//            // transition between activities
-//            if (SharedPreferenceManager.isArabic(this))
-//                overridePendingTransition(R.anim.enter_ar, R.anim.exit_ar)
-//            else
-//                overridePendingTransition(R.anim.enter, R.anim.exit)
-//        }
-    }
 
-
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(SharedPreferenceManager.applyLanguage(newBase, SharedPreferenceManager.getLanguage(newBase)))
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()
