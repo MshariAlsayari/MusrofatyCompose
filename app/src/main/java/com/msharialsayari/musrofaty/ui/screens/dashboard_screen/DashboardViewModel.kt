@@ -23,11 +23,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val getAllSmsForSendersUseCase: GetAllSmsForSendersUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
     private val ObservingPaginationAllSmsUseCase: ObservingPaginationAllSmsUseCase,
+    private val getAllSmsUseCase: GetSmsListUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val getSendersUseCase: GetSendersUseCase,
@@ -72,16 +72,20 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getAllSms(context: Context): List<SmsEntity> {
+        return getAllSmsUseCase.invoke(
+            filterOption = getFilterTimeOption(context),
+            isDeleted = false,
+            query = _uiState.value.query,
+            startDate = _uiState.value.startDate,
+            endDate = _uiState.value.endDate
+        )
+    }
+
     private fun getFinancialStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult = getAllSmsForSendersUseCase.invoke(
-                filterOption = getFilterTimeOption(context),
-                isDeleted = false,
-                startDate = _uiState.value.startDate,
-                endDate = _uiState.value.endDate,
-                query = _uiState.value.query
-            )
+            val smsResult = getAllSms(context)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -96,13 +100,7 @@ class DashboardViewModel @Inject constructor(
     private fun getCategoriesStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
-            val smsResult = getAllSmsForSendersUseCase.invoke(
-                filterOption = getFilterTimeOption(context),
-                isDeleted = false,
-                startDate = _uiState.value.startDate,
-                endDate = _uiState.value.endDate,
-                query = _uiState.value.query
-            )
+            val smsResult = getAllSms(context)
             val result = getCategoriesStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
