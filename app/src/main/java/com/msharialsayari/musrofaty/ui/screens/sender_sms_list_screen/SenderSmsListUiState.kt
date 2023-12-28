@@ -16,7 +16,6 @@ data class SenderSmsListUiState(
         var financialLoading: Boolean = false,
         var categoriesTabLoading: Boolean = false,
         var isRefreshing: Boolean = false,
-        var allSmsFlow: Flow<List<SmsEntity>>? = null,
         var selectedFilterTimeOption: SelectedItemModel? = null,
         var selectedFilter: SelectedItemModel? = null,
         var filters: List<FilterAdvancedModel> = emptyList(),

@@ -86,22 +86,13 @@ fun SendersListCompose(
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
                 model = sender,
                 onAvatarClicked = {
-                    if (screenType.isScreenWithDetails) {
-                        onSenderClicked(it.senderId)
-                    } else {
-                        viewModel.navigateToSenderSmsList(senderId = it.senderId)
-                    }
+                    viewModel.navigateToSenderSmsList(senderId = it.senderId)
                 }
             )
         },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-            if (screenType.isScreenWithDetails) {
-                onSenderClicked(item.senderId)
-            } else {
-                viewModel.navigateToSenderSmsList(senderId = item.senderId)
-            }
-
+            viewModel.navigateToSenderSmsList(senderId = item.senderId)
         },
         isLoading = uiState.isLoading,
         endActions = listOf(modifyAction, pinAction),

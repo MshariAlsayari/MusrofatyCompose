@@ -231,6 +231,11 @@
     <string name="common_years">Years</string>
     <string name="common_ago">ago</string>
 
+    <!--   App widget -->
+    <string name="today_widget_title">Today</string>
+    <string name="week_widget_title">Week</string>
+    <string name="month_widget_title">Month</string>
+
 
 
 </resources>

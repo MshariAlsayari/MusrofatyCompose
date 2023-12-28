@@ -17,12 +17,12 @@ def keystoreProperties = rootProject.file('keystore.properties')
 def props = new Properties()
 android {
 
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.msharialsayari.musrofaty"
         minSdk 27
-        targetSdk 33
+        targetSdk 31
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
@@ -118,6 +118,10 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.5.1'
     implementation "androidx.navigation:navigation-compose:$composeNavVersion"
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraint_version"
+
+    //AppWidgets
+    implementation "androidx.glance:glance:$appwidgets_version"
+    implementation "androidx.glance:glance-appwidget:$appwidgets_version"
 
     //Preferences
     implementation "androidx.preference:preference-ktx:1.2.0"

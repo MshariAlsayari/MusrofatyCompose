@@ -1,7 +1,11 @@
 package com.msharialsayari.musrofaty.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.NavigationRail
 import androidx.compose.material.NavigationRailItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,39 +28,47 @@ fun SideNavigation(
     bottomBarState: MutableState<Boolean>
 ) {
 
-    androidx.compose.material.NavigationRail(
-        backgroundColor = MaterialTheme.colors.background,
+    AnimatedVisibility(
+        visible = bottomBarState.value,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        items.forEach { item ->
-            NavigationRailItem(
-                icon = {
-                    Icon(
-                        painterResource(id = item.icon),
-                        contentDescription = stringResource(item.title!!),
-                        modifier = Modifier.mirror()
-                    )
-                },
-                label = { Text(text = stringResource(item.title!!), fontSize = 9.sp) },
-                selectedContentColor = MusrofatyTheme.colors.selectedItemColor,
-                unselectedContentColor = MusrofatyTheme.colors.onBackground.copy(0.4f),
-                alwaysShowLabel = true,
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route) {
+        NavigationRail(
+            backgroundColor = MaterialTheme.colors.background,
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            items.forEach { item ->
+                NavigationRailItem(
+                    icon = {
+                        Icon(
+                            painterResource(id = item.icon),
+                            contentDescription = stringResource(item.title!!),
+                            modifier = Modifier.mirror()
+                        )
+                    },
+                    label = { Text(text = stringResource(item.title!!), fontSize = 9.sp) },
+                    selectedContentColor = MusrofatyTheme.colors.selectedItemColor,
+                    unselectedContentColor = MusrofatyTheme.colors.onBackground.copy(0.4f),
+                    alwaysShowLabel = true,
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        navController.navigate(item.route) {
 
-                        navController.graph.startDestinationRoute?.let { screen_route ->
-                            popUpTo(screen_route) {
-                                saveState = true
+                            navController.graph.startDestinationRoute?.let { screen_route ->
+                                popUpTo(screen_route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
+
+
     }
 
 

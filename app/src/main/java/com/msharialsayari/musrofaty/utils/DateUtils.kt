@@ -1,10 +1,13 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
+import com.google.type.DateTime
 import com.msharialsayari.musrofaty.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.TextStyle
 import java.util.*
 
 object DateUtils {
@@ -31,6 +34,19 @@ object DateUtils {
     fun getCurrentDate(): Long {
         val calendar = Calendar.getInstance();
         return calendar.timeInMillis
+    }
+
+    @JvmStatic
+    fun getToday(): LocalDateTime {
+        return LocalDateTime.now()
+    }
+
+    fun getDisplayMonth(
+        date: LocalDateTime,
+        textStyle: TextStyle = TextStyle.FULL,
+        locale: Locale = Locale.getDefault()
+    ): String {
+        return date.month.getDisplayName(textStyle, locale)
     }
 
     @JvmStatic
@@ -207,19 +223,6 @@ object DateUtils {
         return currentCalender.timeInMillis
     }
 
-    fun getSalaryCalender(): Calendar {
-        val currentCalender = Calendar.getInstance()
-        val salaryDay = 15
-        val day = currentCalender.get(Calendar.DAY_OF_MONTH)
-        if (day < salaryDay ) {
-            currentCalender.add(Calendar.MONTH, -1)
-        }
-
-        val year = currentCalender.get(Calendar.YEAR)
-        val month = currentCalender.get(Calendar.MONTH)
-        currentCalender.set(year,month,salaryDay)
-        return currentCalender
-    }
 
     fun toTimestamp(date:LocalDate):Long{
         val calendar = Calendar.getInstance()

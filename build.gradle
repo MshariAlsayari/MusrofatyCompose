@@ -14,7 +14,8 @@ buildscript {
         workManagerVersion           = '2.7.1'
         constraint_version           = '1.0.1'
         material_date_version        = '0.8.1-rc'
-        datastore_version = "1.0.0"
+        datastore_version            = "1.0.0"
+        appwidgets_version            = "1.0.0"
     }
     dependencies {
 

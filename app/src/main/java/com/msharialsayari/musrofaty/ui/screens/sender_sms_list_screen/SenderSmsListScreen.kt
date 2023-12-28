@@ -68,8 +68,8 @@ fun SenderSmsListScreen(senderId: Int) {
     LaunchedEffect(
         key1 = uiState.isRefreshing,
     ) {
-        if(uiState.isRefreshing)
-        viewModel.getDate()
+        if (uiState.isRefreshing)
+            viewModel.getDate()
     }
 
     when {

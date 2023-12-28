@@ -25,6 +25,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberAllSmsState
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberPaginationAllSmsState
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
@@ -95,8 +96,7 @@ fun ToolbarActionsComposable(
     val activity = context.findActivity()
     val isFilterSelected = uiState.selectedFilter != null
     val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
-    val screenType = MusrofatyTheme.screenType
-    val smsList = uiState.allSmsFlow?.collectAsState(initial = emptyList())?.value ?: emptyList()
+    val smsList = rememberPaginationAllSmsState(viewModel = viewModel, isDeleted = null, isFavorite = null)
 
     Row(
         modifier = Modifier
@@ -105,18 +105,16 @@ fun ToolbarActionsComposable(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        if (!screenType.isScreenWithDetails) {
-            Icon(
-                Icons.Default.ArrowBack,
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
-                contentDescription = null,
-                modifier = Modifier
-                    .mirror()
-                    .clickable {
-                        viewModel.navigateBack()
-                    })
-        }
 
+        Icon(
+            Icons.Default.ArrowBack,
+            tint = MusrofatyTheme.colors.iconBackgroundColor,
+            contentDescription = null,
+            modifier = Modifier
+                .mirror()
+                .clickable {
+                    viewModel.navigateBack()
+                })
 
 
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -127,7 +125,7 @@ fun ToolbarActionsComposable(
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        if (smsList.isEmpty()) {
+                        if (smsList.itemSnapshotList.isEmpty()) {
                             Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
                         } else {
                             viewModel.generateExcelFile(activity)
@@ -140,7 +138,7 @@ fun ToolbarActionsComposable(
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        if (smsList.isEmpty()) {
+                        if (smsList.itemSnapshotList.isEmpty()) {
                             Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
                         } else {
                             viewModel.navigateToPDFActivity(activity,viewModel.getPdfBundle())

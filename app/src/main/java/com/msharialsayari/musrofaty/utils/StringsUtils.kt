@@ -2,8 +2,13 @@ package com.msharialsayari.musrofaty.utils
 
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.Locale
+import java.util.NavigableMap
+import java.util.TreeMap
 import java.util.regex.Pattern
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
 
 object StringsUtils {
 
@@ -73,6 +78,20 @@ object StringsUtils {
         val truncated = value / (divideBy / 10) //the number part of the output times 10
         val hasDecimal = truncated < 100 && truncated / 10.0 != (truncated / 10).toDouble()
         return if (hasDecimal) (truncated / 10.0).toString() + suffix else (truncated / 10).toString() + suffix
+    }
+
+    fun prettyCount(number: Long): String {
+        val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
+
+        val value = floor(log10(number.toDouble())).toInt()
+        val base = value / 3
+        return if (value >= 3 && base < suffix.size) {
+            DecimalFormat("#0.0").format(
+                number / 10.0.pow((base * 3).toDouble())
+            ) + suffix[base]
+        } else {
+            DecimalFormat("#,##0").format(number)
+        }
     }
 
     fun containSpecialCharacter(value: String):Boolean{

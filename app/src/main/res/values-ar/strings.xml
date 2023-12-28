@@ -244,6 +244,11 @@
     <string name="common_years">سنوات</string>
     <string name="common_ago">منذ</string>
 
+    <!--   App widget -->
+    <string name="today_widget_title">اليوم</string>
+    <string name="week_widget_title">اسبوع</string>
+    <string name="month_widget_title">شهر</string>
+
 
 
 </resources>

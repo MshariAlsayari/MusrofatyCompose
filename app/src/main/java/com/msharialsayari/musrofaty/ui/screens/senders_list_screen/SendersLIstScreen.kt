@@ -9,13 +9,8 @@ import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 fun SendersListScreen() {
 
     val viewModel: SendersListViewModel = hiltViewModel()
-    val screenType = MusrofatyTheme.screenType
 
-    if (screenType.isScreenWithDetails) {
-        SendersListLandscapeScreen(viewModel = viewModel)
-    } else {
-        SendersListPortraitScreen(viewModel = viewModel)
-    }
+    SendersListPortraitScreen(viewModel = viewModel)
 
 
 }
