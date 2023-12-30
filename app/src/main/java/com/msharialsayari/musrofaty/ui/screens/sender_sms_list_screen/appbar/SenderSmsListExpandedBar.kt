@@ -1,8 +1,11 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar
 
+import android.Manifest
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +40,8 @@ import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
 import com.msharialsayari.musrofaty.ui_component.TextComponent
 import com.msharialsayari.musrofaty.ui_component.singleMediaPicker
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.requestpermissionlib.component.RequestPermissions
+import com.msharialsayari.requestpermissionlib.model.DialogParams
 
 @Composable
 fun SenderSmsListExpandedBar(viewModel: SenderSmsListViewModel) {
@@ -56,6 +64,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val sender = uiState.sender
     val smsCount = rememberAllSmsState(viewModel).value.size
+    var openGallery by remember { mutableStateOf(false) }
     val model = SenderComponentModel(
         senderId = sender.id,
         senderName = sender.senderName,
@@ -82,13 +91,37 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
         imageCropLauncher.launch(cropOptions)
     })
 
+    if (openGallery){
+        RequestPermissions(
+            permissions = listOf(Manifest.permission.READ_MEDIA_IMAGES),
+            rationalDialogParams = DialogParams(
+                title = R.string.rational_dialog_title,
+                message = R.string.gallery_rational_dialog_message,
+                negativeButtonText = R.string.cancel,
+                positiveButtonText = R.string.common_ok
+            ),
+            deniedDialogParams = DialogParams(
+                title = R.string.denied_dialog_title,
+                message = R.string.gallery_denied_dialog_message,
+                positiveButtonText = R.string.common_ok
+            ),
+            isGranted = {
+                galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            onDone = {
+                openGallery = false
+
+            }
+        )
+    }
+
 
 
     SenderComponent(
         modifier = Modifier.padding(horizontal = 16.dp),
         model = model
     ) {
-        galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        openGallery = true
     }
 
     Row(
@@ -100,7 +133,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     ) {
         Column {
             TextComponent.PlaceholderText(
-                text = stringResource(id = R.string.common_sender_shortcut) + ": " + sender?.senderName
+                text = stringResource(id = R.string.common_sender_shortcut) + ": " + sender.senderName
             )
 
             TextComponent.PlaceholderText(

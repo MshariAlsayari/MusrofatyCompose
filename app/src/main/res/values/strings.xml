@@ -38,12 +38,12 @@
     <!--permissions-->
     <string name="ask_sms_permission">Click to ask permission</string>
     <string name="sms_permission_rational_dialog_title">Sms Permission</string>
-    <string name="sms_permission_rational_dialog_message">The app needs your permission to read sms</string>
+    <string name="sms_permission_rational_dialog_message">The app needs to access to specified bank SMS to help it to calculate expenses and revenues</string>
 
 
     <string name="sms_permission_denied_dialog_title">Sms Permission</string>
-    <string name="sms_permission_denied_dialog_message">The app needs to allow sms permission through app\'s settings</string>
-    <string name="permission_dialog_positive_button">Go to settings</string>
+    <string name="sms_permission_denied_dialog_message">please let the app to access to specified bank SMS through app\'s settings</string>
+    <string name="permission_dialog_positive_button">Settings</string>
 
 
     <!--Dashboard-->
@@ -235,6 +235,14 @@
     <string name="today_widget_title">Today</string>
     <string name="week_widget_title">Week</string>
     <string name="month_widget_title">Month</string>
+
+    <!--  Permissions -->
+    <string name="rational_dialog_title">Permission Request</string>
+    <string name="denied_dialog_title">Permission Request</string>
+
+    <!--   Gallery Permission -->
+    <string name="gallery_rational_dialog_message">the app wants to access the gallery to change the image</string>
+    <string name="gallery_denied_dialog_message">please let the app to access the gallery through settings</string>
 
 
 

@@ -15,15 +15,20 @@ class SmsBroadcastReceiver : BroadcastReceiver(){
 
 
 
+
     companion object {
         private val TAG = SmsBroadcastReceiver::class.java.simpleName
+        private const val SMS = "android.provider.Telephony.SMS_RECEIVED"
     }
 
 
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "onReceive() ")
-        val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+        if(intent.action.equals(SMS)){
+            val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
+            WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+        }
+
     }
 }

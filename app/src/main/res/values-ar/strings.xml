@@ -43,11 +43,11 @@
 
     <!--permissions-->
     <string name="ask_sms_permission">انقر لطلب الأذونات</string>
-    <string name="sms_permission_rational_dialog_title">قراءة الرسائل</string>
-    <string name="sms_permission_rational_dialog_message">التطبيق يحتاج لقراءة الرسائل</string>
+    <string name="sms_permission_rational_dialog_title">الأذونات</string>
+    <string name="sms_permission_rational_dialog_message">التطبيق يحتاج لقراءة رسائل البنوك المحددة لحساب المصروفات واللإيرادات</string>
 
     <string name="sms_permission_denied_dialog_title">الأذونات</string>
-    <string name="sms_permission_denied_dialog_message">التطبيق يحتاج إلى السماح له بقراءة الرسائل من خلال إعدادات التطبيق</string>
+    <string name="sms_permission_denied_dialog_message">التطبيق يحتاج إلى السماح له بقراءة رسائل البنوك المحددة لحساب المصروفات واللإيرادات  من خلال إعدادات التطبيق</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
 
     <!--Dashboard-->
@@ -249,6 +249,12 @@
     <string name="week_widget_title">اسبوع</string>
     <string name="month_widget_title">شهر</string>
 
+    <!--  Permissions -->
+    <string name="rational_dialog_title">السماح بالوصول</string>
+    <string name="denied_dialog_title">السماح بالوصول</string>
 
+    <!--   Gallery Permission -->
+    <string name="gallery_rational_dialog_message">يرغب التطبيق في الوصول إلى معرض الصور لتغيير الصورة</string>
+    <string name="gallery_denied_dialog_message">يرجى السماح بالوصول لمعرض الصور عن طريق اللإعدادات</string>
 
 </resources>

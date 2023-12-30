@@ -66,10 +66,10 @@ class PdfCreatorActivity : BasePDFCreator() {
             supportActionBar!!.hide()
         }
 
-        makeStatusNotification(
-            getString(R.string.notification_generate_pdf_file_title),
-            getString(R.string.notification_generate_excel_file_starting_message),
-            this)
+//        makeStatusNotification(
+//            getString(R.string.notification_generate_pdf_file_title),
+//            getString(R.string.notification_generate_excel_file_starting_message),
+//            this)
 
         initObserver()
         intent?.extras?.let {
@@ -106,10 +106,10 @@ class PdfCreatorActivity : BasePDFCreator() {
         smsList = list
         createPDF(getString(R.string.app_name), object : PDFUtilListener {
             override fun pdfGenerationSuccess(savedPDFFile: File) {
-                makeStatusNotification(
-                    getString(R.string.notification_generate_pdf_file_title),
-                    getString(R.string.notification_generate_excel_file_done_message),
-                    activity)
+//                makeStatusNotification(
+//                    getString(R.string.notification_generate_pdf_file_title),
+//                    getString(R.string.notification_generate_excel_file_done_message),
+//                    activity)
 
             }
 
