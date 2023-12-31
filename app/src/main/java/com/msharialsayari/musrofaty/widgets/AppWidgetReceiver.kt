@@ -8,6 +8,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
@@ -38,7 +39,11 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onReceive(context, intent)
         Log.d(TAG, "onReceive()")
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            UpdateAppWidgetJob.TAG,
+            ExistingWorkPolicy.REPLACE,
+            updateAppWidgetWorker
+        )
     }
 
     override fun onUpdate(
@@ -49,7 +54,11 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         Log.d(TAG, "onUpdate()")
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            UpdateAppWidgetJob.TAG,
+            ExistingWorkPolicy.REPLACE,
+            updateAppWidgetWorker
+        )
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

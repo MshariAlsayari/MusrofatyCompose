@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
@@ -36,7 +37,10 @@ class MyApp : Application(), Configuration.Provider {
             .setConstraints(Constraints.NONE)
             .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
-         WorkManager.getInstance(this).enqueue(workRequest)
+         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+             UpdateAppWidgetJob.TAG,
+             ExistingPeriodicWorkPolicy.KEEP,
+             workRequest)
     }
 
     private fun calculateInitialDelay(): Long {

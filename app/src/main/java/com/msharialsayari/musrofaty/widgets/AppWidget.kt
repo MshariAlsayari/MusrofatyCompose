@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -20,6 +21,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
@@ -36,6 +38,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.MainActivity
@@ -44,6 +47,8 @@ import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.StringsUtils
+import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 
 class AppWidget : GlanceAppWidget() {
 
@@ -53,6 +58,7 @@ class AppWidget : GlanceAppWidget() {
         val TODAY_FINANCIAL_INFO = stringPreferencesKey("today")
         val WEEK_FINANCIAL_INFO  = stringPreferencesKey("week")
         val MONTH_FINANCIAL_INFO = stringPreferencesKey("month")
+        val LOADING_WIDGET_PREF_KEY = booleanPreferencesKey("loading")
     }
 
 
@@ -115,8 +121,14 @@ class AppWidget : GlanceAppWidget() {
 
     @Composable
     private fun RefreshView(modifier: GlanceModifier = GlanceModifier){
+
+        val isLoading =  currentState(key = LOADING_WIDGET_PREF_KEY) ?: false
+
+        val icon = if (isLoading) R.drawable.ic_spinner else R.drawable.ic_refresh
+
+
         Image(
-            provider = ImageProvider(R.drawable.ic_refresh),
+            provider = ImageProvider(icon),
             modifier = modifier.clickable(
                 onClick = actionRunCallback<RefreshAction>()
             ),
@@ -318,8 +330,11 @@ class RefreshAction : ActionCallback {
     ) {
         Log.d(TAG , "onAction()  updating widget...")
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
-        AppWidget().update(context, glanceId)
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            UpdateAppWidgetJob.TAG,
+            ExistingWorkPolicy.REPLACE,
+            updateAppWidgetWorker
+        )
     }
 }
 

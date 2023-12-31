@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
@@ -27,7 +28,11 @@ class SmsBroadcastReceiver : BroadcastReceiver(){
         Log.i(TAG, "onReceive() ")
         if(intent.action.equals(SMS)){
             val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-            WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                UpdateAppWidgetJob.TAG,
+                ExistingWorkPolicy.REPLACE,
+                updateAppWidgetWorker
+            )
         }
 
     }
