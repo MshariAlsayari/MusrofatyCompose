@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,15 @@ class SplashViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<SplashUiState> = _uiState
 
 
+    fun initInsertStoresJob(context: Context){
+        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresJob>().build()
+        WorkManager.getInstance(context).enqueue(initStoresWorker)
+
+    }
     fun initInsertSmsJob(context: Context){
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
         val initStoresWorker = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
         WorkManager.getInstance(context).enqueue(initStoresWorker)
         _uiState.update {

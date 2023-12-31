@@ -2,7 +2,6 @@ package com.msharialsayari.musrofaty.jobs
 
 import android.content.Context
 import android.util.Log
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
@@ -19,7 +18,6 @@ import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import com.msharialsayari.musrofaty.widgets.AppWidget
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
 
 @HiltWorker
 class UpdateAppWidgetJob  @AssistedInject constructor(
@@ -41,11 +39,7 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
         glanceId = GlanceAppWidgetManager(appContext).getGlanceIds(AppWidget::class.java).firstOrNull()
         Log.d(TAG, "doWork() updating the app widget glanceId: $glanceId")
         glanceId?.let {glanceId->
-            updateAppWidgetState(appContext, glanceId) { mutablePreferences ->
-                Log.d(TAG, "doWork() loading")
-                mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = true
-                AppWidget().update(appContext, glanceId)
-            }
+            insertSmsUseCase.invoke()
             val todaySmsList = getAllSmsUseCase.invoke(
                 filterOption = DateUtils.FilterOption.TODAY,
                 isDeleted = false
@@ -60,10 +54,9 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
             )
 
             val todayFinResult = getFinancialStatisticsUseCase(todaySmsList)
-            val weekFinResult = getFinancialStatisticsUseCase(weekSmsList)
+            val weekFinResult  = getFinancialStatisticsUseCase(weekSmsList)
             val monthFinResult = getFinancialStatisticsUseCase(monthSmsList)
 
-            delay(5000)
             updateAppWidgetState(appContext, glanceId) { mutablePreferences ->
                 val todayPref = mutablePreferences[AppWidget.TODAY_FINANCIAL_INFO]
                 val weekPref  = mutablePreferences[AppWidget.WEEK_FINANCIAL_INFO]
@@ -93,8 +86,7 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
                     mutablePreferences[AppWidget.MONTH_FINANCIAL_INFO] = "0.0"
                 }
 
-                Log.d(TAG, "doWork() finish loading")
-                mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = false
+                Log.d(TAG, "doWork() finish updating the app widget glanceId: $glanceId")
                 AppWidget().update(appContext, glanceId)
             }
         }

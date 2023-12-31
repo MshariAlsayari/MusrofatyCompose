@@ -3,7 +3,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.hilt
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsSourceImpl
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.SettingsRepository
-import com.simplemobiletools.calendar.domain.settings.SettingsRepositoryImpl
+import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.SettingsRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

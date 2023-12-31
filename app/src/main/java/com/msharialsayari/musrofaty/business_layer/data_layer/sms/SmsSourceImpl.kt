@@ -2,8 +2,8 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 
 import android.content.Context
 import android.net.Uri
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.SmsUtils
@@ -17,17 +17,16 @@ class SmsSourceImpl @Inject constructor(
 ) : SmsDataSource {
 
 
-    private fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsModel> {
-        val lstSms = ArrayList<SmsModel>()
-        var objSmsModel: SmsModel
+    private fun loadAllSms(context: Context, activeSenders: List<SenderModel>): List<SmsEntity> {
+        val lstSms = ArrayList<SmsEntity>()
         val message = Uri.parse("content://sms/inbox")
         val cr = context.contentResolver
         val senders = activeSenders.map { it.senderName.uppercase() }.toList()
         val projection = arrayOf("_id", "address", "person", "body", "date")
         var whereAddress = "upper(address) IN ("
-        senders.forEachIndexed{index,item ->
+        senders.forEachIndexed { index, item ->
             whereAddress += "?"
-            if (index != senders.lastIndex){
+            if (index != senders.lastIndex) {
                 whereAddress += ","
             }
 
@@ -41,24 +40,32 @@ class SmsSourceImpl @Inject constructor(
         c?.let { cursor ->
             if (cursor.moveToFirst() && totalSMS != null) {
                 for (i in 0 until totalSMS) {
-                    val smsId      = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val smsId = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
                     val senderName =
                         if (SmsUtils.isAlahliSender(cursor.getString(cursor.getColumnIndexOrThrow("address")))) {
                             Constants.ALAHLI_WITH_SAMBA_BANK
                         } else {
                             cursor.getString(cursor.getColumnIndexOrThrow("address"))
                         }
-                    val smsBody    = SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
-                    val timestamp  = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
-                    val senderId   = activeSenders.find { it.senderName.equals( senderName , ignoreCase = true) }?.id!!
+                    val smsBody =
+                        SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
+                            ?: ""
+                    val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+                    val senderId = activeSenders.find {
+                        it.senderName.equals(
+                            senderName,
+                            ignoreCase = true
+                        )
+                    }?.id!!
 
                     if (SmsUtils.isValidSms(smsBody)) {
-                        objSmsModel            = SmsModel(id = smsId)
-                        objSmsModel.senderName = senderName
-                        objSmsModel.body       = smsBody
-                        objSmsModel.timestamp  = timestamp
-                        objSmsModel.senderId   = senderId
-                        lstSms.add(objSmsModel)
+                        lstSms.add(SmsEntity(
+                            id = smsId,
+                            body = smsBody,
+                            senderName = senderName,
+                            senderId = senderId,
+                            timestamp = timestamp
+                        ))
                     }
                     cursor.moveToNext()
 
@@ -74,19 +81,19 @@ class SmsSourceImpl @Inject constructor(
 
     }
 
-    override suspend fun loadBanksSms(context: Context): List<SmsModel> {
+    override suspend fun loadBanksSms(context: Context): List<SmsEntity> {
         val activeSender = senderRepo.getSendersModel()
-        val allSms = loadAllSms(context,activeSender)
+        val allSms = loadAllSms(context, activeSender)
         return allSms
     }
 
-    override suspend fun loadBanksSms(context: Context, senderName: String): List<SmsModel> {
+    override suspend fun loadBanksSms(context: Context, senderName: String): List<SmsEntity> {
         val sender = senderRepo.getSenderBySenderName(senderName)
-        var allSms = emptyList<SmsModel>()
+        var allSms = emptyList<SmsEntity>()
         if (sender != null) {
             val senders = mutableListOf<SenderModel>()
-             senders.add(sender)
-             allSms = loadAllSms(context, senders)
+            senders.add(sender)
+            allSms = loadAllSms(context, senders)
         }
         return allSms
     }

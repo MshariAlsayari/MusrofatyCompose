@@ -1,8 +1,7 @@
-package com.simplemobiletools.calendar.domain.settings
+package com.msharialsayari.musrofaty.business_layer.domain_layer.settings
 
 
 import com.msharialsayari.musrofaty.business_layer.AppPreferencesDataStore
-import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -11,7 +10,7 @@ class SettingsRepositoryImpl @Inject constructor(
 ) : SettingsRepository {
 
     companion object {
-        const val TAG = "SettingsRemoteDataSource"
+        private val TAG = SettingsRepositoryImpl::class.java.simpleName
     }
 
 

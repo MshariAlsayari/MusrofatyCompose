@@ -43,12 +43,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.MainActivity
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
-import com.msharialsayari.musrofaty.utils.StringsUtils
-import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 
 class AppWidget : GlanceAppWidget() {
 
@@ -329,12 +326,20 @@ class RefreshAction : ActionCallback {
         parameters: ActionParameters
     ) {
         Log.d(TAG , "onAction()  updating widget...")
+        updateAppWidgetState(context, glanceId) { mutablePreferences ->
+            mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = true
+            AppWidget().update(context, glanceId)
+        }
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             UpdateAppWidgetJob.TAG,
             ExistingWorkPolicy.REPLACE,
             updateAppWidgetWorker
         )
+        updateAppWidgetState(context, glanceId) { mutablePreferences ->
+            mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = false
+            AppWidget().update(context, glanceId)
+        }
     }
 }
 

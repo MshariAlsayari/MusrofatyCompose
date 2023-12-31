@@ -5,45 +5,50 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.msharialsayari.musrofaty.base.Response
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 
 @HiltWorker
 class InitStoresJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val storeRepo: StoreFirebaseRepo,
-
+    private val getSmsListUseCase: GetSmsListUseCase,
+    private val storeRepo: StoreRepo,
+    private val storeFirebaseRepo: StoreFirebaseRepo,
     ) : CoroutineWorker(appContext, workerParams) {
 
-    private val scope = CoroutineScope(coroutineContext)
+    private lateinit var smsList: List<SmsEntity>
+
     companion object{
-        private const val TAG = "InitStoresJob"
+        private val TAG = InitStoresJob::class.java.simpleName
     }
     override suspend fun doWork(): Result {
-
-        storeRepo.getStoresFromFirestore().collect{
-            when (it) {
-                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
-                is Response.Loading -> Log.d(TAG, "Loading...")
-                is Response.Success -> insertList(it.data)
-            }
+       smsList =  getSmsListUseCase.invoke()
+       Log.d(TAG, "doWork() smsList: ${smsList.size}")
+       smsList.forEach {
+            insertStore(it.toSmsModel())
         }
         return Result.success()
     }
 
-    private fun insertList(stores: List<StoreFirebaseEntity>) {
-        Log.d(TAG, "insertList...")
-        scope.launch {
-            storeRepo.insert(stores)
-        }
 
+
+    private suspend fun insertStore(sms: SmsModel) {
+        val smsStoreName = sms.storeName
+        val store = storeRepo.getStoreByStoreName(smsStoreName)
+        if (smsStoreName.isNotEmpty() && (store == null || store.categoryId == 0)) {
+            val storeFirebase = storeFirebaseRepo.getStoreByStoreName(smsStoreName)
+            val model = if (storeFirebase != null) StoreModel(name = sms.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = sms.storeName)
+            storeRepo.insertOrUpdateIfExisted(model)
+        }
     }
 
 }

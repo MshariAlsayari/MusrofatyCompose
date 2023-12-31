@@ -10,7 +10,9 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SmsUtils
@@ -237,33 +239,12 @@ class SmsRepo @Inject constructor(
 
     suspend fun insert() {
         val smsList = datasource.loadBanksSms(context)
-        val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.map {
-            smsEntityList.add(it.toSmsEntity())
-            insertStore(it)
-        }
-        dao.insertAll(*smsEntityList.toTypedArray())
+        dao.insertAll(*smsList.toTypedArray())
     }
 
-    suspend fun insert(senderName: String) {
+    suspend fun insertSenderSMSs(senderName: String) {
         val smsList = datasource.loadBanksSms(context, senderName)
-        val smsEntityList = mutableListOf<SmsEntity>()
-        smsList.map {
-            smsEntityList.add(it.toSmsEntity())
-            insertStore(it)
-        }
-        dao.insertAll(*smsEntityList.toTypedArray())
-    }
-
-    private suspend fun insertStore(sms: SmsModel) {
-        val store = storeRepo.getStoreByStoreName(sms.storeName)
-        if (sms.storeName.isNotEmpty() && (store == null || store.categoryId == 0)) {
-            val storeFirebase = storeFirebaseRepo.getStoreByStoreName(sms.storeName)
-            val model = if (storeFirebase != null) StoreModel(
-                name = sms.storeName, categoryId = storeFirebase.category_id
-            ) else StoreModel(name = sms.storeName)
-            storeRepo.insertStore(model)
-        }
+        dao.insertAll(*smsList.toTypedArray())
     }
 
 

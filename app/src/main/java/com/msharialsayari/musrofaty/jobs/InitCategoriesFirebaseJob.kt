@@ -11,13 +11,10 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @HiltWorker
-class InitCategoriesJob @AssistedInject constructor(
+class InitCategoriesFirebaseJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
     private val categoryRepo: CategoryRepo,
@@ -25,10 +22,8 @@ class InitCategoriesJob @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
 
-    private val scope = CoroutineScope(coroutineContext)
-
     companion object{
-        private const val TAG = "InitCategoriesJob"
+        private val TAG = InitCategoriesFirebaseJob::class.java.simpleName
     }
     override suspend fun doWork(): Result {
         categoryRepo.getCategoriesFromFirestore().collect{
@@ -42,15 +37,10 @@ class InitCategoriesJob @AssistedInject constructor(
         return Result.success()
     }
 
-    private fun insertList(categories: List<CategoryEntity>) {
-        Timber.tag(TAG).d( "insertList()..." + "categories:" + categories.size)
+    private suspend fun insertList(categories: List<CategoryEntity>) {
+        Log.d(TAG,  "insertList()..." + "categories:" + categories.size)
         val list = categories.map { it.toCategoryModel() }.toList()
-
-
-        scope.launch {
-            categoryRepo.insert(list)
-        }
-
+        categoryRepo.insert(list)
     }
 
 }

@@ -1,22 +1,16 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.msharialsayari.musrofaty.base.Response
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.toStoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,13 +49,6 @@ class StoreRepo @Inject constructor(
         val categoryModel: CategoryModel? = categoryRepo.getCategory(storeModel.categoryId)
 
         return StoreAndCategoryModel(storeModel,categoryModel)
-    }
-
-
-
-
-    suspend fun insertStore(storeModel: StoreModel) {
-        dao.insert(storeModel.toStoreEntity())
     }
 
     suspend fun insert(list: List<StoreModel>) {

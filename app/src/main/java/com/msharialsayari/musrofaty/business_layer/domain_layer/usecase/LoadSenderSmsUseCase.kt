@@ -11,7 +11,7 @@ class LoadSenderSmsUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(senderName:String) {
-        smsRepo.insert(senderName)
+        smsRepo.insertSenderSMSs(senderName)
 
     }
 }
