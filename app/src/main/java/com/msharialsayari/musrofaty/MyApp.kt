@@ -4,8 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
@@ -34,13 +32,9 @@ class MyApp : Application(), Configuration.Provider {
         super.onCreate()
 
         val workRequest = PeriodicWorkRequest.Builder(UpdateAppWidgetJob::class.java, 1, TimeUnit.DAYS)
-            .setConstraints(Constraints.NONE)
             .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
-         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-             UpdateAppWidgetJob.TAG,
-             ExistingPeriodicWorkPolicy.KEEP,
-             workRequest)
+         WorkManager.getInstance(this).enqueue(workRequest)
     }
 
     private fun calculateInitialDelay(): Long {
@@ -52,12 +46,9 @@ class MyApp : Application(), Configuration.Provider {
         val scheduledTimeMillis: Long = calendar.timeInMillis
 
         // Calculate the initial delay to reach 12:00 a.m.
-        var initialDelayMillis = scheduledTimeMillis - currentTimeMillis
+        val initialDelayMillis = scheduledTimeMillis - currentTimeMillis
 
-        // Ensure the initial delay is positive (avoid negative delays).
-        if (initialDelayMillis < 0) {
-            initialDelayMillis += TimeUnit.DAYS.toMillis(1) // Add 1 day if it's negative
-        }
+
         Log.d(TAG, "calculateInitialDelay() initialDelayMillis: $initialDelayMillis")
         return initialDelayMillis
     }
