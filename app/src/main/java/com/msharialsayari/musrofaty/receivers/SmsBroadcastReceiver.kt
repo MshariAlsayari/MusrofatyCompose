@@ -7,7 +7,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
@@ -46,14 +45,7 @@ class SmsBroadcastReceiver : BroadcastReceiver(){
             }
 
             val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-
-
-
-            WorkManager.getInstance(context).enqueueUniqueWork(
-                UpdateAppWidgetJob.TAG,
-                ExistingWorkPolicy.REPLACE,
-                updateAppWidgetWorker
-            )
+            WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
 
             scope.launch {
                 val glanceId = GlanceAppWidgetManager(context).getGlanceIds(AppWidget::class.java).firstOrNull()
