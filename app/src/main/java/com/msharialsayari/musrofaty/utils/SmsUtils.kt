@@ -9,11 +9,11 @@ object SmsUtils {
 
     private const val WHITESPACES_REGEX = "\\s"
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
-    private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
-    private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
-    private const val STC_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
-    private const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
     private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+"
+    private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
+    const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
+    const val STC_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
+    const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
 
 
     fun isValidSms(sms: String?): Boolean {

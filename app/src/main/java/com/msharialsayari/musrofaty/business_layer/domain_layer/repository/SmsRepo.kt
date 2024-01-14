@@ -32,7 +32,6 @@ class SmsRepo @Inject constructor(
     private val wordDetectorRepo: WordDetectorRepo,
     private val senderRepo: SenderRepo,
     private val storeRepo: StoreRepo,
-    private val storeFirebaseRepo: StoreFirebaseRepo,
     @ApplicationContext val context: Context
 ) {
 
@@ -337,6 +336,14 @@ class SmsRepo @Inject constructor(
         queryString += " order by timestamp DESC"
         return SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
     }
+
+    suspend fun getAllSmsContainsStore(storeName: String = ""): List<SmsModel> {
+         return dao.getAllSmsContainsStore(storeName).map {
+             fillSmsModel( it.toSmsModel())
+         }.toList()
+    }
+
+
 
 
 }
