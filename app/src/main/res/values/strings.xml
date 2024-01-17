@@ -27,7 +27,8 @@
     <string name="common_copied">copied</string>
     <string name="share_by">Share by</string>
     <string name="common_search">Search</string>
-    <string name="common_ok">Ok</string>
+    <string name="common_ok">OK</string>
+    <string name="common_period_time">Time</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>

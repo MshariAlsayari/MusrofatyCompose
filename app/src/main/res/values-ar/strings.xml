@@ -30,6 +30,7 @@
     <string name="share_by">مشاركة باستخدام</string>
     <string name="common_search">بحث</string>
     <string name="common_ok">موافق</string>
+    <string name="common_period_time">الفترة الزمنية</string>
 
 
     <plurals name="common_sms">

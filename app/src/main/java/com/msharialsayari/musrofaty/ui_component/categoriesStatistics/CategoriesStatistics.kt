@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui_component
+package com.msharialsayari.musrofaty.ui_component.categoriesStatistics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.github.mikephil.charting.data.PieEntry
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
+import com.msharialsayari.musrofaty.ui_component.ChartComponent
+import com.msharialsayari.musrofaty.ui_component.DividerComponent
+import com.msharialsayari.musrofaty.ui_component.RowComponent
 
 @Composable
 fun  CategoriesStatistics(modifier: Modifier = Modifier,

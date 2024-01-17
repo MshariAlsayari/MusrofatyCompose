@@ -10,11 +10,13 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,6 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.ClickableTextListItemCompose
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.BottomSheetType
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.DateRangeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.SelectCategoryBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.TimePeriodsBottomSheet
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
@@ -32,6 +36,11 @@ import kotlinx.coroutines.launch
 fun StatisticsScreen() {
 
     val viewModel: StatisticsViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(key1 = uiState.selectedCategory, key2 = uiState.selectedTimePeriod){
+        viewModel.getSmsList()
+    }
 
     Scaffold(
         topBar = {
@@ -53,7 +62,7 @@ private fun StatisticsContent(modifier: Modifier=Modifier, viewModel: Statistics
 
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val isFilterTimeOptionBottomSheet = rememberSaveable { mutableStateOf(true) }
+    val bottomSheetType = uiState.bottomSheetType
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -67,12 +76,12 @@ private fun StatisticsContent(modifier: Modifier=Modifier, viewModel: Statistics
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            if (isFilterTimeOptionBottomSheet.value) {
-                TimePeriodsBottomSheet(viewModel,sheetState)
-            }else{
-                SelectCategoryBottomSheet(viewModel,sheetState)
+            if(bottomSheetType != null)
+            when (bottomSheetType) {
+                BottomSheetType.CATEGORIES->   SelectCategoryBottomSheet(viewModel,sheetState)
+                BottomSheetType.TIME_PERIODS-> TimePeriodsBottomSheet(viewModel,sheetState)
+                BottomSheetType.DATE_PICKER -> DateRangeBottomSheet(viewModel,sheetState)
             }
-
         }) {
 
         Column (
@@ -81,14 +90,14 @@ private fun StatisticsContent(modifier: Modifier=Modifier, viewModel: Statistics
             verticalArrangement = Arrangement.Top
         ){
             CategoryItem(viewModel){
-                isFilterTimeOptionBottomSheet.value = false
+                viewModel.updateBottomSheetType(BottomSheetType.CATEGORIES)
                 coroutineScope.launch {
                     BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                 }
             }
 
             PeriodItem(viewModel){
-                isFilterTimeOptionBottomSheet.value = true
+                viewModel.updateBottomSheetType(BottomSheetType.TIME_PERIODS)
                 coroutineScope.launch {
                     BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                 }
@@ -120,7 +129,7 @@ private fun PeriodItem(viewModel: StatisticsViewModel, onClick:()->Unit){
     val value =  viewModel.getFilterTimeOption()
 
     ClickableTextListItemCompose(
-        title = stringResource(id = R.string.category),
+        title = stringResource(id = R.string.common_period_time),
         value = value,
         onClick = onClick)
 

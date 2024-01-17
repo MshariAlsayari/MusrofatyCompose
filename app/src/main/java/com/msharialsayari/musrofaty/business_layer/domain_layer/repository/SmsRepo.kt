@@ -119,7 +119,9 @@ class SmsRepo @Inject constructor(
         isFavorite:Boolean?=null,
         query: String = "",
         startDate: Long = 0,
-        endDate: Long = 0
+        endDate: Long = 0,
+        categoryId: Int?=null,
+        storeName: String?=null,
     ): List<SmsModel> {
 
         val finalQuery = getSmsQuery(
@@ -132,11 +134,20 @@ class SmsRepo @Inject constructor(
             endDate = endDate
         )
 
-        val returnedList = mutableListOf<SmsModel>()
+        var returnedList = mutableListOf<SmsModel>()
         val smsListEntity = dao.getAllSms(finalQuery)
 
         smsListEntity.map {
             returnedList.add(fillSmsModel( it.toSmsModel()))
+        }
+
+        if(!storeName.isNullOrEmpty()){
+            returnedList = returnedList.filter { it.storeName == storeName }.toMutableList()
+        }
+
+
+        if(categoryId != null){
+            returnedList = returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }.toMutableList()
         }
 
         return returnedList

@@ -6,45 +6,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.res.stringResource
-import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsViewModel
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui_component.RangeDateBottomSheet
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.ui_component.TimePeriodsBottomSheet
-import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TimePeriodsBottomSheet(viewModel: StatisticsViewModel, sheetState: ModalBottomSheetState){
+fun DateRangeBottomSheet(
+    viewModel: StatisticsViewModel,
+    sheetState: ModalBottomSheetState,
+){
 
     val uiState by viewModel.uiState.collectAsState()
-    val selectedItem = uiState.selectedTimePeriod
     val startDate = uiState.startDate
     val endDate = uiState.endDate
     val coroutineScope = rememberCoroutineScope()
 
-    TimePeriodsBottomSheet(
-        selectedItem = selectedItem,
+    RangeDateBottomSheet(
         startDate = startDate,
         endDate = endDate
-    ) {
+    ){ selectedStartDate , selectedEndDate ->
         coroutineScope.launch {
             BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false)
         }
-        if (DateUtils.FilterOption.isRangeDateSelected(it.id)) {
-            viewModel.updateBottomSheetType(BottomSheetType.DATE_PICKER)
-        } else {
-            if (uiState.selectedTimePeriod?.id == it.id) {
-                viewModel.updateSelectedFilterTimePeriods(null)
-            } else {
-                viewModel.updateSelectedFilterTimePeriods(it)
-            }
-
-            viewModel.onDatePeriodsSelected(0,0)
-        }
+        viewModel.updateBottomSheetType(null)
+        viewModel.onDatePeriodsSelected(selectedStartDate,selectedEndDate)
+        viewModel.updateSelectedFilterTimePeriods(SelectedItemModel(id = DateUtils.FilterOption.RANGE.id, value = DateUtils.formattedRangeDate(start =selectedStartDate , end = selectedEndDate), isSelected = true))
     }
-
 }

@@ -10,7 +10,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategory
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.EmptySmsCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoading
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
-import com.msharialsayari.musrofaty.ui_component.CategoriesStatistics
+import com.msharialsayari.musrofaty.ui_component.categoriesStatistics.CategoriesStatistics
 
 
 @Composable

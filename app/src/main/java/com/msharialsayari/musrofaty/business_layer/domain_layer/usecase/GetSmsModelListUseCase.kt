@@ -19,8 +19,10 @@ class GetSmsModelListUseCase @Inject constructor(
         isFavorite:Boolean?=null,
         query: String = "",
         startDate: Long = 0,
-        endDate: Long = 0
+        endDate: Long = 0,
+        categoryId: Int?=null,
+        storeName: String?=null,
     ): List<SmsModel> {
-        return smsRepo.getAllSmsModel(senderId, filterOption, isDeleted,isFavorite,query, startDate, endDate)
+        return smsRepo.getAllSmsModel(senderId, filterOption, isDeleted,isFavorite,query, startDate, endDate,categoryId,storeName)
     }
 }
