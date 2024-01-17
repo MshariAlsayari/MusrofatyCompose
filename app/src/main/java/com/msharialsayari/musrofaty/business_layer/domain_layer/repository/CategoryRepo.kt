@@ -37,6 +37,10 @@ class CategoryRepo @Inject constructor(
         return dao.getAll()
     }
 
+    fun getCategoriesList():List<CategoryEntity>{
+        return dao.getCategoriesList()
+    }
+
     fun getCategoriesWithStores(categoryId: Int?): Flow<List<CategoryWithStores>> {
         return if (categoryId != null)
             dao.getAllCategoriesWithStores(categoryId)

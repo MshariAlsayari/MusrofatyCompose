@@ -11,6 +11,9 @@ interface CategoryDao {
     @Query("SELECT * FROM CategoryEntity")
      fun getAll(): Flow<List<CategoryEntity>>
 
+    @Query("SELECT * FROM CategoryEntity")
+    fun getCategoriesList(): List<CategoryEntity>
+
     @Transaction
     @Query("SELECT * FROM CategoryEntity")
     fun getAllCategoriesWithStores(): Flow<List<CategoryWithStores>>

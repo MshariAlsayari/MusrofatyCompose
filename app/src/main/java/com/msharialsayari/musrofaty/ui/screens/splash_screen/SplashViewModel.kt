@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.msharialsayari.musrofaty.jobs.CategoriesStoresJob
 import com.msharialsayari.musrofaty.jobs.InitStoresJob
 import com.msharialsayari.musrofaty.jobs.InsertSmsJob
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,6 +36,11 @@ class SplashViewModel @Inject constructor() : ViewModel() {
         _uiState.update {
             it.copy(isLoading = false)
         }
+    }
+
+    fun initCategoriesStoresJob(context: Context){
+        val requestWorker = OneTimeWorkRequestBuilder<CategoriesStoresJob>().build()
+        WorkManager.getInstance(context).enqueue(requestWorker)
     }
 
 

@@ -30,6 +30,7 @@ fun SplashScreen(onLoadingDone:()->Unit) {
     LaunchedEffect(Unit) {
         viewModel.initInsertSmsJob(context)
         viewModel.initInsertStoresJob(context)
+        viewModel.initCategoriesStoresJob(context)
     }
 
     Column(
