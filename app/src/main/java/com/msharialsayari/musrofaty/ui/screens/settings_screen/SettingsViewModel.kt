@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.msharialsayari.musrofaty.BuildConfig
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFlowSendersUserCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -33,7 +32,10 @@ class SettingsViewModel @Inject constructor(
 
     fun navigateToAnalysis(){
         navigator.navigate(Screen.SmsAnalysisScreen.route)
+    }
 
+    fun navigateToStatistics(){
+        navigator.navigate(Screen.StatisticsScreen.route)
     }
 
     fun navigateToCategoryScreen(id:Int){

@@ -257,4 +257,7 @@
     <string name="gallery_rational_dialog_message">يرغب التطبيق في الوصول إلى معرض الصور لتغيير الصورة</string>
     <string name="gallery_denied_dialog_message">يرجى السماح بالوصول لمعرض الصور عن طريق اللإعدادات</string>
 
+    <!--   Statistics -->
+    <string name="statistics_screen_title">الإحصائيات</string>
+
 </resources>

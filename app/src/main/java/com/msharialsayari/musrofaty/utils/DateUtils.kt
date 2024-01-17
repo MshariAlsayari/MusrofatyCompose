@@ -1,14 +1,17 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
-import com.google.type.DateTime
 import com.msharialsayari.musrofaty.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.TextStyle
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 object DateUtils {
 
@@ -235,6 +238,16 @@ object DateUtils {
         val formattedEndDate   = getDateByTimestamp(end,pattern) ?:""
         return "$formattedStartDate - $formattedEndDate"
 
+    }
+
+    fun toMilliSecond(date: LocalDate): Long {
+        val localDateTime = date.atStartOfDay()
+        val zdt = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
+        return zdt.toInstant().toEpochMilli();
+    }
+
+    fun ofMilliSecond(millisecond: Long): LocalDateTime {
+        return Instant.ofEpochMilli(millisecond).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
 
 

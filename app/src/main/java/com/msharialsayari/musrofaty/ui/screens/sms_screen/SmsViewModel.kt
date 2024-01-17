@@ -6,15 +6,27 @@ import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.*
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoreAndCategoryUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -116,12 +128,11 @@ class SmsViewModel @Inject constructor(
         }
     }
 
-    fun onCategoryChanged() {
+    fun onCategorySelected(item: SelectedItemModel) {
         viewModelScope.launch {
-            val categoryId = _uiState.value.selectedCategory?.id ?: 0
+            val categoryId = item.id
             val storeName = _uiState.value.storeAndCategoryModel?.store?.name
-            val storeModel =
-                storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
+            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
                 postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())

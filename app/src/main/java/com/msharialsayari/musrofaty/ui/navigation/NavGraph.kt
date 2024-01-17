@@ -24,6 +24,7 @@ import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.utils.findActivity
@@ -160,6 +161,10 @@ fun NavigationGraph(
 
         composable(Screen.SinglePermission.route) {
             singlePermission("")
+        }
+
+        composable(Screen.StatisticsScreen.route) {
+            StatisticsScreen()
         }
 
     }

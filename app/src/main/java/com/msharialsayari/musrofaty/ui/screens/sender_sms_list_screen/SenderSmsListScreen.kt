@@ -35,7 +35,6 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterTimePeriodsBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.*
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
@@ -118,7 +117,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
             title = stringResource(id = R.string.common_end_date),
             onDone = {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
-                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
+                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = DateUtils.FilterOption.RANGE.id, value = ""))
                 viewModel.dismissAllDatePicker()
             },
             onDismiss = {
@@ -140,7 +139,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
         sheetState = sheetState,
         sheetContent = {
             if (isFilterTimeOptionBottomSheet.value)
-                FilterTimePeriodsBottomSheet(viewModel = viewModel) {
+                TimePeriodsBottomSheet(selectedItem = uiState.selectedFilterTimeOption, startDate = uiState.startDate , endDate = uiState.endDate) {
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }

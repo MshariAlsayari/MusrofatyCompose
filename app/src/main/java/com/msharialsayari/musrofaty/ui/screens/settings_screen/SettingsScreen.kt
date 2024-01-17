@@ -1,7 +1,9 @@
 package com.msharialsayari.musrofaty.ui.screens.settings_screen
 
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -10,21 +12,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.msharialsayari.musrofaty.BuildConfig
-import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceContent
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisContent
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.ListDetails
 import com.msharialsayari.musrofaty.ui_component.PlaceHolder
-import com.msharialsayari.musrofaty.ui_component.TextComponent
 import com.msharialsayari.musrofaty.utils.findActivity
 
 @Composable
@@ -42,6 +40,7 @@ fun SettingsScreen() {
             onAppearanceClicked = { viewModel.navigateToAppearance() },
             onStoresClicked = { viewModel.navigateToStores() },
             onAnalysisClicked = { viewModel.navigateToAnalysis() },
+            onStatisticsClicked = { viewModel.navigateToStatistics() },
             onUpdateClicked = { viewModel.onClickOnUpdatePreference(activity) }
         )
     }
@@ -54,7 +53,8 @@ private fun SettingScreePortrait(
     onAppearanceClicked: () -> Unit,
     onStoresClicked: () -> Unit,
     onAnalysisClicked: () -> Unit,
-    onUpdateClicked: () -> Unit
+    onStatisticsClicked: () -> Unit,
+    onUpdateClicked: () -> Unit,
 ) {
 
     Scaffold(topBar = {
@@ -70,6 +70,7 @@ private fun SettingScreePortrait(
                     PreferenceListEnum.Stores -> onStoresClicked()
                     PreferenceListEnum.Analysis -> onAnalysisClicked()
                     PreferenceListEnum.Update -> onUpdateClicked()
+                    PreferenceListEnum.Statistics -> onStatisticsClicked()
                 }
             })
 
@@ -104,6 +105,7 @@ private fun SettingScreeLandscape(viewModel: SettingsViewModel) {
 
             PreferenceListEnum.Stores -> StoresScreen()
             PreferenceListEnum.Analysis -> SmsAnalysisContent()
+            PreferenceListEnum.Statistics -> StatisticsScreen()
             PreferenceListEnum.Update -> {
                 viewModel.onClickOnUpdatePreference(activity)
             }

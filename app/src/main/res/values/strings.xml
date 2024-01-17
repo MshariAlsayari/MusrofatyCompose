@@ -244,6 +244,9 @@
     <string name="gallery_rational_dialog_message">the app wants to access the gallery to change the image</string>
     <string name="gallery_denied_dialog_message">please let the app to access the gallery through settings</string>
 
+    <!--   Statistics -->
+    <string name="statistics_screen_title">Statistics</string>
+
 
 
 </resources>

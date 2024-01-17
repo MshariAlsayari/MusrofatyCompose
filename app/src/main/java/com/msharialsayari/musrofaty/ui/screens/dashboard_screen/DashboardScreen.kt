@@ -20,7 +20,6 @@ import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
-import com.msharialsayari.musrofaty.utils.enums.ScreenType
 
 
 @Composable
@@ -54,8 +53,8 @@ fun DashboardScreen() {
             title = stringResource(id = R.string.common_end_date),
             onDone = {
                 viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
-                SharedPreferenceManager.setFilterTimePeriod(context,5)
-                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = 5, value = ""))
+                SharedPreferenceManager.setFilterTimePeriod(context,DateUtils.FilterOption.RANGE.id)
+                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = DateUtils.FilterOption.RANGE.id, value = ""))
                 viewModel.dismissAllDatePicker()
                 viewModel.getData(context)
 
