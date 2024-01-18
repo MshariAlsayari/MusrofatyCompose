@@ -16,7 +16,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategory
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
-import com.msharialsayari.musrofaty.ui_component.categoriesStatistics.CategoriesDashboardStatistics
+import com.msharialsayari.musrofaty.ui_component.categoriesStatistics.CategoriesStatistics
 
 
 @Composable
@@ -58,6 +58,6 @@ private fun CategoryCompose(viewModel: DashboardViewModel) {
             colors[index]
         )
     }
-   CategoriesDashboardStatistics(categories = categories)
+    CategoriesStatistics(categories = categories)
 
 }

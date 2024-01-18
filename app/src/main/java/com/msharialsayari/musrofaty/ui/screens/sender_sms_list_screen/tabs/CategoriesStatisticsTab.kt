@@ -1,9 +1,12 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs
 
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryStatisticsModel
@@ -35,6 +38,7 @@ fun CategoriesStatisticsTab(viewModel: SenderSmsListViewModel){
 fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
 
     val uiState  by viewModel.uiState.collectAsState()
+    val listState  = rememberLazyListState()
     val context = LocalContext.current
     val colors: ArrayList<Int> = ArrayList()
     colors.addAll(ColorTemplate.VORDIPLOM_COLORS.toList())
@@ -44,10 +48,24 @@ fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
     colors.addAll(ColorTemplate.PASTEL_COLORS.toList())
     colors.add(ColorTemplate.getHoloBlue())
 
+    val categories = uiState.categoriesStatistics.values.mapIndexed { index, it ->
+        it.toCategoryStatisticsModel(
+            context,
+            colors[index]
+        )
+    }
 
-    CategoriesStatistics(categories = uiState.categoriesStatistics.values.mapIndexed { index, it ->  it.toCategoryStatisticsModel(context, colors[index]) }, onSmsClicked = {
-        viewModel.navigateToSmsDetails(it)
-    })
+    LazyColumn(
+        modifier = Modifier,
+        state = listState,
+    ) {
+
+        item {
+            CategoriesStatistics(categories = categories)
+        }
+
+    }
+
 
 }
 

@@ -18,24 +18,37 @@ import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 
 @Composable
-fun  CategoriesStatistics(modifier: Modifier = Modifier,
-                          categories   : List<CategoryStatisticsModel>,
-                          onSmsClicked : (String)->Unit
-){
+fun CategoriesStatistics(
+    modifier: Modifier = Modifier,
+    categories: List<CategoryStatisticsModel>,
+    onSmsClicked: ((String) -> Unit)? = null
+) {
 
-    val percentList =ArrayList(categories.map { PieEntry(it.percent.toFloat(), "") })
-    val colorList = ArrayList(categories.map { it.color})
+    val percentList = ArrayList(categories.map { PieEntry(it.percent.toFloat(), "") })
+    val colorList = ArrayList(categories.map { it.color })
+    val withDetails = onSmsClicked != null
+
+    val columnModifier = if (withDetails) {
+        Modifier.verticalScroll(rememberScrollState())
+    } else {
+        Modifier
+    }
 
 
-    Column(modifier = modifier
-        .fillMaxWidth(),
+    Column(
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin10))
     ) {
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+            modifier = if (withDetails) {
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            } else {
+                Modifier
+                    .fillMaxWidth()
+            },
             contentAlignment = Alignment.Center
         ) {
             ChartComponent.PieChartCompose(
@@ -46,20 +59,26 @@ fun  CategoriesStatistics(modifier: Modifier = Modifier,
         }
 
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
+            modifier = columnModifier,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
         ) {
-            categories.forEach {
-                RowComponent.ExpandableCategoryStatisticsRow(model = it, onClick = { smsId ->
-                    onSmsClicked(smsId)
-                })
-                DividerComponent.HorizontalDividerComponent(modifier = modifier)
+
+            if (withDetails) {
+                categories.forEach {
+                    RowComponent.ExpandableCategoryStatisticsRow(model = it, onClick = { smsId ->
+                        onSmsClicked?.invoke(smsId)
+                    })
+                    DividerComponent.HorizontalDividerComponent(modifier = modifier)
+                }
+            } else {
+                categories.forEach {
+                    RowComponent.CategoryStatisticsRow(model = it)
+                    DividerComponent.HorizontalDividerComponent(modifier = modifier)
+                }
             }
 
 
         }
-
-
 
 
     }
