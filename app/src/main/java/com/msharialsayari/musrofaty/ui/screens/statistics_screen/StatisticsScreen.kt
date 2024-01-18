@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.statistics_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,10 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +28,7 @@ import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.Se
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.TimePeriodsBottomSheet
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui_component.ProgressBar.CircleProgressBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,7 +50,17 @@ fun StatisticsScreen() {
 
         }
     ) { innerPadding ->
-        StatisticsContent(modifier = Modifier.padding(innerPadding), viewModel = viewModel)
+        Box (
+            modifier = Modifier.padding(innerPadding),
+            contentAlignment = Alignment.Center
+        ){
+            if(uiState.loading){
+                CircleProgressBar()
+            }else{
+                StatisticsContent(modifier = Modifier, viewModel = viewModel)
+            }
+        }
+
     }
 
 }
