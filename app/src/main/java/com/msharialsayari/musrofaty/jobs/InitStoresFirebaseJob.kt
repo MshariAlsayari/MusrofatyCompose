@@ -26,7 +26,7 @@ class InitStoresFirebaseJob @AssistedInject constructor(
     }
     override suspend fun doWork(): Result {
 
-        storeFirebaseRepo.getStoresFromFirestore().collect{
+        storeFirebaseRepo.getStoresFromFirebase().collect{
             when (it) {
                 is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
                 is Response.Loading -> Log.d(TAG, "Loading...")

@@ -2,17 +2,18 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.utils.Constants
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.MathUtils
-import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -36,19 +37,14 @@ class StatisticsRepo @Inject constructor(
         list.forEach {
             var smsModel = it.toSmsModel()
             smsModel = smsRepo.fillSmsModel(smsModel)
-            if (smsModel.smsType != SmsType.NOTHING) {
-                if (SmsUtils.isSACurrency(smsModel.currency) || smsModel.currency.isEmpty()) {
-                    smsModel.currency = Constants.CURRENCY_1
-                }
-                if (smsModel.amount > 0) {
-                    val financialSummary =
-                        map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
-                    map[smsModel.currency] = calculateFinancialSummary(
-                        financialSummary,
-                        smsModel.amount,
-                        smsModel.smsType
-                    )
-                }
+            if (smsModel.smsType != SmsType.NOTHING && smsModel.amount > 0) {
+                val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
+                map[smsModel.currency] = calculateFinancialSummary(
+                    financialSummary,
+                    smsModel.amount,
+                    smsModel.smsType
+                )
+
             }
         }
         return map
@@ -74,12 +70,12 @@ class StatisticsRepo @Inject constructor(
         expensesSmsList.map {
             amountTotal += it.amount
             val categoryId = it.storeAndCategoryModel?.category?.id ?: 0
-            val categoryModel =
-                if (categoryId == 0 || it.storeAndCategoryModel?.category == null) CategoryModel.getNoSelectedCategory() else it.storeAndCategoryModel?.category!!
+            val storeAndCategory = if (categoryId == 0 || it.storeAndCategoryModel == null ||it.storeAndCategoryModel?.category == null)
+                StoreAndCategoryModel(store = StoreModel(name = "" ,categoryId=-1) ,category = CategoryModel.getNoSelectedCategory() ) else it.storeAndCategoryModel!!
             val categorySummary = returnedValue.data.getOrDefault(
                 categoryId,
                 CategoryStatistics(
-                    categoryModel = categoryModel,
+                    storeAndCategory = storeAndCategory,
                     key=key,
                     color = colors[Random.nextInt(0, colors.size)],
                 )
@@ -152,6 +148,7 @@ class StatisticsRepo @Inject constructor(
         model.average = average
         model.xValueFormatter = horizontalAxisValueFormatter
         model.yTitle = key
+        model.xTitle = context.getString(R.string.common_days)
         return model
     }
 

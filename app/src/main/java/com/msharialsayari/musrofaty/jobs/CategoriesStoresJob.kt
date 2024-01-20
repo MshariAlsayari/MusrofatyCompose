@@ -5,15 +5,21 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoresCategoriesModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsContainsStoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoresCategoriesKeysUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltWorker
 class CategoriesStoresJob @AssistedInject constructor(
@@ -23,6 +29,7 @@ class CategoriesStoresJob @AssistedInject constructor(
     private val categoryRepo:CategoryRepo,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val getStoresCategoriesKeysUseCase: GetStoresCategoriesKeysUseCase,
     ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
@@ -30,192 +37,47 @@ class CategoriesStoresJob @AssistedInject constructor(
     }
 
     var categories = emptyList<CategoryEntity>()
+    var list : List<StoresCategoriesModel> = emptyList()
 
 
     override suspend fun doWork(): Result {
         categories = categoryRepo.getCategoriesList()
-        if(categories.isNotEmpty()){
-            categoriesHospitals()
-            categoriesPharmacies()
-            categoriesHotels()
-            categoriesRestaurants()
-            categoriesCoffee()
-            categoriesMcdonaldsRestaurant()
-            categoriesDunkinCoffee()
-            categoriesSuperMarkets()
-            categoriesHyperMarkets()
-            categoriesTamimiSuperMarket()
-            categoriesDanubeSuperMarket()
+        getStoresCategoriesKeysUseCase().collect {
+            when (it) {
+                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
+                is Response.Loading -> Log.d(TAG, "Loading...")
+                is Response.Success -> getList(it.data)
+            }
+
+        }
+        if(categories.isNotEmpty() && list.isNotEmpty()){
+            categorising()
         }
         return Result.success()
     }
 
-    private suspend fun categoriesHospitals(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.HOSPITALS.search)
-        Log.d(TAG , "categoriesHospitals() size:${list.size}")
-        list.filter {
-           it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.HOSPITALS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
+    private  fun getList(stores: List<StoresCategoriesModel>) {
+        Log.d(TAG,  "getList()..." + "stores:" + stores.size)
+         list = stores
     }
 
-    private suspend fun categoriesPharmacies(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.PHARMACIES.search)
-        Log.d(TAG , "categoriesPharmacies() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.PHARMACIES.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+    private suspend fun categorising() {
+        Log.d(TAG,  "categorising()..." + "stores:" + list.size)
+        list.map {model->
+            model.keysSearch.map {
+                val smsList =  getAllSmsContainsStoreUseCase.invoke(storeName = it)
+                Log.d(TAG , "categorising() search_key:$it ")
+                smsList.filter { sms -> sms.storeAndCategoryModel == null || sms.storeAndCategoryModel?.category == null }
+                    .map { sms ->
+                        val storeName = sms.storeName
+                        val storeModel = StoreModel(name = storeName, categoryId = model.categoryId)
+                        addOrUpdateStoreUseCase.invoke(storeModel)
+                        postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+                    }
+            }
+
         }
 
     }
-
-    private suspend fun categoriesHotels(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.HOTELS.search)
-        Log.d(TAG , "categoriesHotels() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.HOTELS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-
-    }
-
-    private suspend fun categoriesRestaurants(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.RESTAURANTS.search)
-        Log.d(TAG , "categoriesRestaurants() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.RESTAURANTS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-    }
-
-    private suspend fun categoriesCoffee(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.COFFEES.search)
-        Log.d(TAG , "categoriesCoffee() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.COFFEES.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-    }
-
-    private suspend fun categoriesMcdonaldsRestaurant(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.MCDONALDSRESTURANT.search)
-        Log.d(TAG , "categoriesMcdonaldsRestaurant() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.MCDONALDSRESTURANT.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-
-    }
-
-    private suspend fun categoriesDunkinCoffee(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.DUNKINDONUTS.search)
-        Log.d(TAG , "categoriesDunkinCoffee() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.DUNKINDONUTS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-
-    }
-
-    private suspend fun categoriesSuperMarkets(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.SUPER_MARKETS.search).toMutableList()
-        list.addAll(getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.SUPERMARKETS.search))
-        Log.d(TAG , "categoriesSuperMarkets() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.SUPER_MARKETS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-
-    }
-
-    private suspend fun categoriesHyperMarkets(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.HYPERMARKETS.search).toMutableList()
-        list.addAll(getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.HYPER_MARKETS.search))
-        Log.d(TAG , "categoriesHyperMarkets() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.HYPERMARKETS.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-    }
-
-    private suspend fun categoriesTamimiSuperMarket(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.TAMIMISUPERMARKET.search)
-        Log.d(TAG , "categoriesTamimiSuperMarket() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.TAMIMISUPERMARKET.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-    }
-
-    private suspend fun categoriesDanubeSuperMarket(){
-        val list = getAllSmsContainsStoreUseCase.invoke(storeName = StoreWithCategory.DANUBESUPERMARKET.search)
-        Log.d(TAG , "categoriesDanubeSuperMarket() size:${list.size}")
-        list.filter {
-            it.storeAndCategoryModel == null || it.storeAndCategoryModel?.category == null
-        }.map {
-            val storeName = it.storeName
-            val storeModel = StoreModel(name = storeName, categoryId = StoreWithCategory.DANUBESUPERMARKET.categoryId)
-            addOrUpdateStoreUseCase.invoke(storeModel)
-            postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-        }
-    }
-
-
-}
-
-enum class StoreWithCategory(val search:String, val categoryId:Int){
-    COFFEES("coffee", 3),
-    DUNKINDONUTS("dunkin" , 3),
-    RESTAURANTS("restaurant", 5),
-    MCDONALDSRESTURANT("MCDONALDS" , 5),
-    PHARMACIES("pharmacy", 6),
-    SUPERMARKETS("supermarket" , 8),
-    SUPER_MARKETS("super market" , 8),
-    HYPERMARKETS("hypermarket" , 8),
-    HYPER_MARKETS("hyper market" , 8),
-    TAMIMISUPERMARKET("tamimi" , 8),
-    DANUBESUPERMARKET("danube" , 8),
-    HOTELS("hotel", 9),
-    HOSPITALS("hospital",13),
 
 }

@@ -275,7 +275,7 @@ object DateUtils {
 
 
         companion object{
-            fun getFilterOption(id:Int? = 0): FilterOption {
+            fun getFilterOptionOrDefault(id:Int? = 0, default:FilterOption =  ALL): FilterOption {
                 return when(id){
                     0-> ALL
                     1-> TODAY
@@ -283,7 +283,7 @@ object DateUtils {
                     3-> MONTH
                     4-> YEAR
                     5-> RANGE
-                    else -> MONTH
+                    else -> default
                 }
 
             }

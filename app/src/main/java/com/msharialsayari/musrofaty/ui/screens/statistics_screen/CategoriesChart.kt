@@ -72,7 +72,9 @@ fun CategoriesChart(modifier: Modifier = Modifier, viewModel: StatisticsViewMode
                     title = it.yTitle
                 ),
                 bottomAxis = rememberBottomAxis(
-                    valueFormatter = it.xValueFormatter
+                    valueFormatter = it.xValueFormatter,
+                    titleComponent = axisLabelComponent(),
+                    title = it.xTitle
                 ),
             )
         }

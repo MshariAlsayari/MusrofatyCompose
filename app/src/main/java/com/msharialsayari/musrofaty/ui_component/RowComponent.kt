@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.DateUtils.DEFAULT_DATE_PATTERN
@@ -198,7 +201,7 @@ object RowComponent {
             }
 
 
-            ExpandableContent(visible = expanded.value, initialVisibility = expanded.value, view = { CategoryDetailsStatisticsList(model.details, onItemClicked = onClick) })
+            ExpandableContent(visible = expanded.value, initialVisibility = expanded.value, view = { CategoryDetailsStatisticsList(model.smsList, onItemClicked = onClick) })
 
         }
     }
@@ -209,48 +212,70 @@ object RowComponent {
         modifier: Modifier = Modifier,
         model: CategoryStatisticsModel)  {
 
-        Column(modifier = modifier) {
+        val openDialog = rememberSaveable{ mutableStateOf(false) }
 
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
-                ,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(RectangleShape)
-                        .background(Color(model.color))
-                )
-
-                TextComponent.PlaceholderText(
-                    text = model.category
-                )
-
-                TextComponent.PlaceholderText(
-                    text = StringsUtils.formatNumberWithComma(model.totalAmount.toString())
-                )
-
-                TextComponent.PlaceholderText(
-                    text = StringsUtils.formatDecimalNumber(model.percent) + " %"
-                )
-
-                TextComponent.PlaceholderText(
-                    text = model.currency
-                )
-
-
-            }
-
+        if (openDialog.value){
+            DialogComponent.MessageDialog(
+                message = R.string.no_currency_message,
+                onDismiss = {
+                    openDialog.value = false
+                })
         }
+
+
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .clip(RectangleShape)
+                    .background(Color(model.color))
+            )
+
+            TextComponent.PlaceholderText(
+                modifier = Modifier.padding(start = 8.dp).weight(2f),
+                text = model.category,
+                alignment = TextAlign.Start
+            )
+
+            TextComponent.PlaceholderText(
+                modifier = Modifier.weight(1f),
+                text = StringsUtils.formatNumberWithComma(model.totalAmount.toString()),
+                alignment = TextAlign.Center
+            )
+
+            TextComponent.PlaceholderText(
+                modifier = Modifier.weight(1f),
+                text = StringsUtils.formatDecimalNumber(model.percent) + " %",
+                alignment = TextAlign.Center
+            )
+
+            if (model.currency.isEmpty()) {
+                TextComponent.ClickableText(
+                    modifier = Modifier.weight(1f).clickable {
+                        openDialog.value = true
+                    },
+                    text = stringResource(id = R.string.common_click),
+                    alignment = TextAlign.End
+                )
+            } else {
+                TextComponent.PlaceholderText(
+                    modifier = Modifier.weight(1f),
+                    text = model.currency,
+                    alignment = TextAlign.End
+                )
+            }
+        }
+
     }
     
     @Composable
-    fun CategoryDetailsStatisticsList(list:List<CategoryDetailsStatisticsModel>, onItemClicked: (String) -> Unit){
+    fun CategoryDetailsStatisticsList(list:List<SmsModel>, onItemClicked: (String) -> Unit){
         val listState = rememberLazyListState()
         LazyColumn(
             modifier = Modifier.height(80.dp),
@@ -263,7 +288,7 @@ object RowComponent {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(id = R.dimen.default_margin10))
-                        .clickable { onItemClicked(item.smsId) },
+                        .clickable { onItemClicked(item.id) },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
@@ -352,16 +377,18 @@ object RowComponent {
 data class CategoryStatisticsModel(
     var color: Int = 0,
     var category: String = "",
+    var storeAndCategoryModel: StoreAndCategoryModel?= null,
     var totalAmount: Double = 0.0,
     var percent: Double = 0.0,
     var currency: String = "",
-    var details: List<CategoryDetailsStatisticsModel> = emptyList()
+    var smsList: List<SmsModel> = emptyList()
 )
 
-data class CategoryDetailsStatisticsModel(
-    var smsId: String = "",
-    var storeName: String = "مدى",
-    var amount: Double = 0.0,
-    var currency: String = "",
-    var timestamp:Long= 0
-)
+//data class CategoryDetailsStatisticsModel(
+//    var smsId: String = "",
+//    var storeName: String = "",
+//    var storeAndCategoryModel: StoreAndCategoryModel?= null,
+//    var amount: Double = 0.0,
+//    var currency: String = "",
+//    var timestamp:Long= 0
+//)

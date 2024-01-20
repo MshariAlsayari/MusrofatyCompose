@@ -41,7 +41,6 @@ fun CategoriesContent(viewModel: DashboardViewModel){
 @Composable
 private fun CategoryCompose(viewModel: DashboardViewModel) {
 
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val categoriesList = uiState.categoriesStatistics
     Column {

@@ -233,6 +233,7 @@
     <string name="common_two_years">Years</string>
     <string name="common_years">Years</string>
     <string name="common_ago">ago</string>
+    <string name="common_click">Click</string>
 
     <!--   App widget -->
     <string name="today_widget_title">Today</string>
@@ -249,6 +250,9 @@
 
     <!--   Statistics -->
     <string name="statistics_screen_title">Statistics</string>
+
+    <!--   Message Dialog -->
+    <string name="no_currency_message">The app can\'t detect these messages currencies, you can add currencies through Settings > Analysis > Currencies</string>
 
 
 

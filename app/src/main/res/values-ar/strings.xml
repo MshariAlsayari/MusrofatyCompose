@@ -246,6 +246,8 @@
     <string name="common_two_years">سنتين</string>
     <string name="common_years">سنوات</string>
     <string name="common_ago">منذ</string>
+    <string name="common_click">اضغط هنا</string>
+
 
     <!--   App widget -->
     <string name="today_widget_title">اليوم</string>
@@ -262,5 +264,9 @@
 
     <!--   Statistics -->
     <string name="statistics_screen_title">الإحصائيات</string>
+
+
+    <!--   Message Dialog -->
+    <string name="no_currency_message">هذه الرسائل لم يتمكن التطبيق من التعرف على عملاتها، يمكن إضافة عملة عن طريق الذهاب إلى الإعدادات > التحليل > العملات</string>
 
 </resources>

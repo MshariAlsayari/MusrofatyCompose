@@ -61,7 +61,7 @@ class StatisticsViewModel @Inject constructor(
 
 
     fun getFilterTimeOption(): String {
-        val filterOption = DateUtils.FilterOption.getFilterOption(_uiState.value.selectedTimePeriod?.id)
+        val filterOption = DateUtils.FilterOption.getFilterOptionOrDefault(id = _uiState.value.selectedTimePeriod?.id, default = DateUtils.FilterOption.MONTH)
         return if(filterOption== DateUtils.FilterOption.RANGE){
              DateUtils.formattedRangeDate(_uiState.value.startDate,_uiState.value.endDate)
         }else{
@@ -98,7 +98,7 @@ class StatisticsViewModel @Inject constructor(
             Log.d(TAG , "getSmsList()")
             val startDate  = _uiState.value.startDate
             val endDate    = _uiState.value.endDate
-            val timeOption = DateUtils.FilterOption.getFilterOption(_uiState.value.selectedTimePeriod?.id)
+            val timeOption = DateUtils.FilterOption.getFilterOptionOrDefault(id = _uiState.value.selectedTimePeriod?.id , default = DateUtils.FilterOption.MONTH)
             val category   = _uiState.value.selectedCategory?.id
 
             _uiState.update {
@@ -120,7 +120,8 @@ class StatisticsViewModel @Inject constructor(
             val charts = mutableListOf<CategoriesChartModel>()
             groupSmsByCurrent.forEach { (key, value) ->
                 val result = getCategoriesStatisticsChartUseCase.invoke(key, value)
-                charts.add(result)
+                if (result.total > 0)
+                    charts.add(result)
                 Log.d(TAG , "chart() title:$key result: ${value.size}")
 
             }

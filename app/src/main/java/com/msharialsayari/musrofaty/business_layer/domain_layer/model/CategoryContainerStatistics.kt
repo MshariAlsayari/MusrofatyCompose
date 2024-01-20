@@ -1,8 +1,8 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.content.Context
-import android.icu.text.CaseMap.Title
 import android.os.Parcelable
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import kotlinx.parcelize.Parcelize
 
@@ -18,12 +18,11 @@ data class CategoryContainerStatistics(
 
 @Parcelize
 data class CategoryStatistics(
-    val categoryModel: CategoryModel,
+    val storeAndCategory: StoreAndCategoryModel,
     val key: String,
     var color:Int,
     var payPercent: Double = 0.0,
     var total: Double = 0.0,
-
     val sms: MutableList<SmsModel> = mutableListOf()
 
 ) : Parcelable
@@ -31,8 +30,10 @@ data class CategoryStatistics(
 fun CategoryStatistics.toCategoryStatisticsModel(context: Context) =
     CategoryStatisticsModel(
         color = color,
-        category = CategoryModel.getDisplayName(context, categoryModel),
+        storeAndCategoryModel = storeAndCategory ,
+        category = CategoryModel.getDisplayName(context, storeAndCategory.category),
         totalAmount = total,
         percent = payPercent,
         currency = key,
-        details = sms.map { it.toCategoryDetailsStatisticsModel() })
+        smsList = sms
+    )

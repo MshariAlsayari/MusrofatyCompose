@@ -8,6 +8,7 @@ import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoresCategoriesModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -24,9 +25,11 @@ class StoreFirebaseRepo @Inject constructor(
 
     private val db          = Firebase.firestore
     private val queryStores = db.collection(stores_path)
+    private val queryStoresAndCategories = db.collection(stores_categories_path)
 
     companion object{
         private const val stores_path =  "stores"
+        private const val stores_categories_path =  "storesCategories"
     }
 
     suspend fun getStoreByStoreName(storeName: String): StoreFirebaseEntity? {
@@ -47,7 +50,7 @@ class StoreFirebaseRepo @Inject constructor(
         dao.insert(*list.toTypedArray())
     }
 
-    fun getStoresFromFirestore() = flow {
+    fun getStoresFromFirebase() = flow {
         emit(Response.Loading())
         emit(Response.Success(queryStores.get().await().documents.mapNotNull { doc ->
             return@mapNotNull StoreFirebaseEntity(name = doc.data?.get("name") as String, category_id =(doc.data?.get("category_id") as Long).toInt())
@@ -58,7 +61,22 @@ class StoreFirebaseRepo @Inject constructor(
         }
     }
 
-    fun postStoreToFirestare(storeEntity: StoreEntity)  {
+
+    suspend fun getStoresAndCategoriesFromFirebase() = flow {
+        emit(Response.Loading())
+        emit(Response.Success(queryStoresAndCategories.get().await().documents.mapNotNull { doc ->
+            val model = StoresCategoriesModel(categoryId =(doc.data?.get("category_id") as Long).toInt())
+            val keysSearch = if(doc.data?.get("key_search") is List<*> ) doc.data?.get("key_search") as List<String> else emptyList()
+            model.keysSearch =keysSearch
+            return@mapNotNull model
+        }))
+    }. catch { error ->
+        error.message?.let { errorMessage ->
+            emit(Response.Failure(errorMessage))
+        }
+    }
+
+    fun submitStoreToFirebase(storeEntity: StoreEntity)  {
         val data = hashMapOf(
             "name" to storeEntity.name,
             "category_id" to storeEntity.category_id

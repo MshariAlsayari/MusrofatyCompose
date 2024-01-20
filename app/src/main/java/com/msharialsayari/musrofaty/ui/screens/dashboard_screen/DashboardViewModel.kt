@@ -118,8 +118,8 @@ class DashboardViewModel @Inject constructor(
             val categories = mutableListOf<CategoryContainerStatistics>()
             groupSmsByCurrent.forEach { (key, value) ->
                 val result = getCategoriesStatisticsUseCase.invoke(key, value)
-                if(result.total > 0)
-                categories.add(result)
+                if (result.total > 0)
+                    categories.add(result)
             }
             _uiState.update { state ->
                 state.copy(
@@ -210,14 +210,14 @@ class DashboardViewModel @Inject constructor(
 
     fun getFilterTimeOption(context: Context): DateUtils.FilterOption {
         return if (_uiState.value.selectedFilterTimeOption != null) {
-            DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
+            DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id)
         } else {
             _uiState.value.startDate = DateUtils.getSalaryDate()
             _uiState.value.endDate = DateUtils.getCurrentDate()
             val timeFilterOptionId = SharedPreferenceManager.getFilterTimePeriod(context)
             _uiState.value.selectedFilterTimeOption =
                 SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
-            DateUtils.FilterOption.getFilterOption(timeFilterOptionId)
+            DateUtils.FilterOption.getFilterOptionOrDefault(timeFilterOptionId)
         }
 
     }

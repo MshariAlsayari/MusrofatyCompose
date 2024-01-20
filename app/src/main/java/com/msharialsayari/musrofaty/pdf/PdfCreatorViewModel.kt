@@ -26,7 +26,7 @@ class PdfCreatorViewModel @Inject constructor(private val getAllSmsUseCase: GetS
     fun getAllBanksSms() {
         viewModelScope.launch {
             setEvent { PdfCreatorEvent.OnLoading(true) }
-            val result = getAllSmsUseCase.invoke(senderId = senderId, filterOption = DateUtils.FilterOption.getFilterOption(filterTimeId), query = filterWord,startDate=startDate, endDate = endDate)
+            val result = getAllSmsUseCase.invoke(senderId = senderId, filterOption = DateUtils.FilterOption.getFilterOptionOrDefault(filterTimeId), query = filterWord,startDate=startDate, endDate = endDate)
             setEvent { PdfCreatorEvent.OnGetSmsSuccess(result) }
             setEvent { PdfCreatorEvent.OnLoading(false) }
         }

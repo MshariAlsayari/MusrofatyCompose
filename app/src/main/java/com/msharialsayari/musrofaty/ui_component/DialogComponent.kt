@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -14,10 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.notEmpty
@@ -172,6 +175,40 @@ object DialogComponent {
 
             }
         }
+
+    }
+
+    @Composable
+    fun MessageDialog(
+        @StringRes message:Int,
+        onDismiss: () -> Unit,
+    ){
+
+        Dialog(onDismissRequest = onDismiss) {
+            Card(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    TextComponent.BodyText(
+                        text = stringResource(id = message),
+                        alignment = TextAlign.Center
+                    )
+                    TextComponent.ClickableText(modifier = Modifier.clickable {
+                        onDismiss()
+                    }, text = stringResource(id = R.string.common_ok), alignment = TextAlign.Center)
+                }
+
+            }
+
+        }
+
+
 
     }
 

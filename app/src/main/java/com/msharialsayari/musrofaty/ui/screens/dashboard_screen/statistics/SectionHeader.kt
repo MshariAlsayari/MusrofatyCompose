@@ -23,7 +23,7 @@ fun BottomSheetSectionHeader(viewModel: DashboardViewModel, @StringRes text:Int)
 
     val uiState by viewModel.uiState.collectAsState()
     val filterTimeOption = uiState.selectedFilterTimeOption
-    val filterText = if (filterTimeOption?.id == 5) DateUtils.formattedRangeDate(uiState.startDate,uiState.endDate) else stringResource(id = DateUtils.FilterOption.getFilterOption(filterTimeOption?.id).title)
+    val filterText = if (filterTimeOption?.id == 5) DateUtils.formattedRangeDate(uiState.startDate,uiState.endDate) else stringResource(id = DateUtils.FilterOption.getFilterOptionOrDefault(filterTimeOption?.id).title)
 
 
 

@@ -2,13 +2,11 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
@@ -31,7 +29,6 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
@@ -219,8 +216,8 @@ class SenderSmsListViewModel @Inject constructor(
             val categories = mutableListOf<CategoryContainerStatistics>()
             groupSmsByCurrent.forEach { (key, value) ->
                 val result = getCategoriesStatisticsUseCase.invoke(key, value)
-                if(result.total > 0)
-                categories.add(result)
+                if (result.total > 0)
+                    categories.add(result)
             }
             _uiState.update { state ->
                 state.copy(
@@ -272,7 +269,7 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     fun getFilterTimeOption(): DateUtils.FilterOption {
-        return DateUtils.FilterOption.getFilterOption(_uiState.value.selectedFilterTimeOption?.id)
+        return DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id)
     }
 
     private fun getFilterWord(): String {

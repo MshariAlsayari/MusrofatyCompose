@@ -1,8 +1,12 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -10,10 +14,12 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.data.PieEntry
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
+import com.msharialsayari.musrofaty.ui_component.DialogComponent.MessageDialog
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.MathUtils
 import com.msharialsayari.musrofaty.utils.StringsUtils
@@ -77,11 +83,23 @@ fun FinancialStatistics(modifier:Modifier=Modifier,
 fun FinancialStatisticsInfo(modifier:Modifier=Modifier,
                             total: String,
                             currency: String,
-                            isIncome:Boolean
+                            isIncome:Boolean,
 ){
 
-    Row( modifier = modifier.fillMaxWidth().padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))) {
+    val openDialog = rememberSaveable{ mutableStateOf(false) }
+
+    if (openDialog.value){
+        MessageDialog(
+            message = R.string.no_currency_message,
+            onDismiss = {
+                openDialog.value = false
+            })
+    }
+
+    Row( modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
+        horizontalArrangement = Arrangement.SpaceBetween) {
         Box(
             modifier = Modifier
                 .size(20.dp)
@@ -91,24 +109,35 @@ fun FinancialStatisticsInfo(modifier:Modifier=Modifier,
                 )
         )
 
+        TextComponent.BodyText(
+            modifier = Modifier.padding(start = 8.dp).weight(1f),
+            text = if (isIncome) stringResource(id = R.string.income) else stringResource(id = R.string.expenses),
+            alignment = TextAlign.Start
+        )
 
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
+        TextComponent.BodyText(
+            modifier = Modifier.weight(1f),
+            text = total,
+            alignment = TextAlign.Center
+        )
 
-            TextComponent.BodyText(
-                text = if (isIncome) stringResource(id = R.string.income) else stringResource(id = R.string.expenses)
+        if (currency.isEmpty()) {
+            TextComponent.ClickableText(
+                modifier = Modifier.weight(1f).clickable {
+                    openDialog.value = true
+                },
+                text = stringResource(id = R.string.common_click),
+                alignment = TextAlign.End
             )
-
+        } else {
             TextComponent.BodyText(
-                text = total
-            )
-
-            TextComponent.BodyText(
-                text = currency
+                modifier = Modifier.weight(1f),
+                text = currency,
+                alignment = TextAlign.End
             )
         }
+
+
     }
 
 
