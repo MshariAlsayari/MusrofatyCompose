@@ -72,7 +72,9 @@ fun PageCompose(
     }
 
     if (openDialog.value) {
-        AddCategoryDialog(viewModel, onDismiss = {
+        AddCategoryDialog(onAdd = {
+            viewModel.addCategory(it)
+        }, onDismiss = {
             openDialog.value = false
         })
     }
@@ -146,29 +148,7 @@ fun PageCompose(
         }
     }
 }
-@Composable
-fun AddCategoryDialog(viewModel: SmsViewModel, onDismiss: () -> Unit) {
 
-    Dialog(onDismissRequest = onDismiss) {
-
-        DialogComponent.AddCategoryDialog(
-            onClickPositiveBtn = { ar, en ->
-                viewModel.addCategory(
-                    CategoryModel(
-                        valueEn = en,
-                        valueAr = ar,
-                    )
-                )
-
-                onDismiss()
-
-            },
-            onClickNegativeBtn = onDismiss
-        )
-
-    }
-
-}
 
 
 

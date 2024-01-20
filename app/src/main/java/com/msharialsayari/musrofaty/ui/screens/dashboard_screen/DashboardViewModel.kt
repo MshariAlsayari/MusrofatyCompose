@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -28,6 +30,7 @@ class DashboardViewModel @Inject constructor(
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
     private val ObservingPaginationAllSmsUseCase: ObservingPaginationAllSmsUseCase,
     private val getAllSmsUseCase: GetSmsListUseCase,
+    private val getAllSmsModelUseCase: GetSmsModelListUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val getSendersUseCase: GetSendersUseCase,
@@ -82,6 +85,16 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
+    private suspend fun getAllSmsModel(context: Context): List<SmsModel> {
+        return getAllSmsModelUseCase.invoke(
+            filterOption = getFilterTimeOption(context),
+            isDeleted = false,
+            query = _uiState.value.query,
+            startDate = _uiState.value.startDate,
+            endDate = _uiState.value.endDate
+        )
+    }
+
     private fun getFinancialStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
@@ -100,11 +113,16 @@ class DashboardViewModel @Inject constructor(
     private fun getCategoriesStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCategoriesStatisticsSmsPageLoading = true) }
-            val smsResult = getAllSms(context)
-            val result = getCategoriesStatisticsUseCase.invoke(smsResult)
+            val smsList = getAllSmsModel(context)
+            val groupSmsByCurrent = smsList.groupBy { it.currency }
+            val categories = mutableListOf<CategoryContainerStatistics>()
+            groupSmsByCurrent.forEach { (key, value) ->
+                val result = getCategoriesStatisticsUseCase.invoke(key, value)
+                categories.add(result)
+            }
             _uiState.update { state ->
                 state.copy(
-                    categoriesStatistics = result,
+                    categoriesStatistics = categories,
                     isCategoriesStatisticsSmsPageLoading = false
                 )
             }

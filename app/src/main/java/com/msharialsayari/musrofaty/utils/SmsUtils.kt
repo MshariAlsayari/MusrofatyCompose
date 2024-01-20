@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.utils
 import android.util.Log
 import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
 import com.msharialsayari.musrofaty.utils.Constants.STC_PAY_WALLET
+import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 object SmsUtils {
@@ -55,7 +56,10 @@ object SmsUtils {
         smsBody?.let {
             for (currency in currencyList) {
                 if (isSmsContainsCurrency(currency, smsBody)) {
-                    return currency
+                    return if(listSACurrency.contains(currency) )
+                        Constants.CURRENCY_1
+                    else
+                        currency
                 }
             }
         }

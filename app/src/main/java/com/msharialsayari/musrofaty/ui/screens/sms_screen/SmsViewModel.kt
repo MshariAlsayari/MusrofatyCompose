@@ -175,7 +175,6 @@ class SmsViewModel @Inject constructor(
 
     fun navigateToCategoryScreen(id:Int){
         navigator.navigate(Screen.CategoryScreen.route + "/${id}")
-
     }
 
 

@@ -27,6 +27,7 @@ fun TimePeriodsBottomSheet(viewModel: StatisticsViewModel, sheetState: ModalBott
     val coroutineScope = rememberCoroutineScope()
 
     TimePeriodsBottomSheet(
+        title = R.string.common_period_time,
         selectedItem = selectedItem,
         startDate = startDate,
         endDate = endDate

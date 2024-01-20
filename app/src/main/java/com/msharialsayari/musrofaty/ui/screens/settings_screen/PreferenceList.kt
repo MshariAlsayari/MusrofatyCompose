@@ -45,9 +45,9 @@ fun PreferenceList(modifier: Modifier =Modifier, onClick:(PreferenceListEnum)->U
             )
 
         RowComponent.PreferenceRow(
-            iconId = R.drawable.ic_update,
-            header = stringResource(id = Screen.StatisticsScreen.title!!),
-            body = stringResource(id = R.string.pref_managment_update_summary),
+            iconId = R.drawable.ic_statistics,
+            header = stringResource(id = R.string.pref_managment_statistics_title),
+            body = stringResource(id = R.string.pref_managment_statistics_summary),
             onClick = { onClick(PreferenceListEnum.Statistics) }
         )
 

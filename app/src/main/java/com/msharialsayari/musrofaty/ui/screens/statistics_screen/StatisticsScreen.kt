@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -18,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -29,6 +31,7 @@ import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.Ti
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar.CircleProgressBar
+import com.msharialsayari.musrofaty.utils.Constants
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,7 +54,9 @@ fun StatisticsScreen() {
         }
     ) { innerPadding ->
         Box (
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             contentAlignment = Alignment.Center
         ){
             if(uiState.loading){
@@ -85,12 +90,12 @@ private fun StatisticsContent(modifier: Modifier=Modifier, viewModel: Statistics
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            if(bottomSheetType != null)
-            when (bottomSheetType) {
-                BottomSheetType.CATEGORIES->   SelectCategoryBottomSheet(viewModel,sheetState)
-                BottomSheetType.TIME_PERIODS-> TimePeriodsBottomSheet(viewModel,sheetState)
-                BottomSheetType.DATE_PICKER -> DateRangeBottomSheet(viewModel,sheetState)
-            }
+            if (bottomSheetType != null)
+                when (bottomSheetType) {
+                    BottomSheetType.CATEGORIES -> SelectCategoryBottomSheet(viewModel, sheetState)
+                    BottomSheetType.TIME_PERIODS -> TimePeriodsBottomSheet(viewModel, sheetState)
+                    BottomSheetType.DATE_PICKER -> DateRangeBottomSheet(viewModel, sheetState)
+                }
         }) {
 
         Column (
@@ -111,6 +116,10 @@ private fun StatisticsContent(modifier: Modifier=Modifier, viewModel: Statistics
                     BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                 }
             }
+
+            CategoriesChartContainer(modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp), viewModel = viewModel)
         }
 
 

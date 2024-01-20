@@ -86,6 +86,8 @@
     <string name="pref_managment_analysis_summary">ability to increase sms analysis performance</string>
     <string name="pref_managment_update_title">Update</string>
     <string name="pref_managment_update_summary">navigate to Play Store to get last update</string>
+    <string name="pref_managment_statistics_title">Statistics</string>
+    <string name="pref_managment_statistics_summary">ability to build charts to know your spending on a specific category</string>
 
     <!--filter options-->
     <string-array name="filter_options">

@@ -4,13 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.MyApp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsChartUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.BottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -27,6 +30,8 @@ import javax.inject.Inject
 class StatisticsViewModel @Inject constructor(
     private val getAllCategory: GetCategoriesUseCase,
     private val getAllSmsModelUseCase: GetSmsModelListUseCase,
+    private val getCategoriesStatisticsChartUseCase: GetCategoriesStatisticsChartUseCase,
+    private val addCategoryUseCase: AddCategoryUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context
     ) : ViewModel() {
@@ -103,21 +108,38 @@ class StatisticsViewModel @Inject constructor(
             }
 
 
-            val result = getAllSmsModelUseCase.invoke(
+            val smsList = getAllSmsModelUseCase.invoke(
                 filterOption = timeOption,
                 startDate = startDate,
                 endDate = endDate,
                 categoryId = category
             )
-            Log.d(TAG , "getSmsList() result: ${result.size}")
+
+
+            val groupSmsByCurrent = smsList.groupBy { it.currency }
+            val charts = mutableListOf<CategoriesChartModel>()
+            groupSmsByCurrent.forEach { (key, value) ->
+                val result = getCategoriesStatisticsChartUseCase.invoke(key, value)
+                charts.add(result)
+                Log.d(TAG , "chart() title:$key result: ${value.size}")
+
+            }
+
 
             _uiState.update {
                 it.copy(
-                    list = result,
+                    list = smsList,
+                    charts = charts,
                     loading = false ,
                 )
             }
 
+        }
+    }
+
+    fun addCategory(model: CategoryModel) {
+        viewModelScope.launch {
+            addCategoryUseCase.invoke(model)
         }
     }
 
@@ -146,6 +168,10 @@ class StatisticsViewModel @Inject constructor(
 
         return list
 
+    }
+
+    fun navigateToCategoryScreen(id:Int){
+        navigator.navigate(Screen.CategoryScreen.route + "/${id}")
     }
 
     fun navigateUp(){

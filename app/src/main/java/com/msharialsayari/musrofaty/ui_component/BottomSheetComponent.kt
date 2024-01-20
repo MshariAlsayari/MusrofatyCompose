@@ -24,23 +24,36 @@ import com.msharialsayari.musrofaty.utils.notEmpty
 object BottomSheetComponent {
 
     @Composable
-    fun TextFieldBottomSheetComponent(modifier: Modifier= Modifier, model: TextFieldBottomSheetModel){
-        val context  = LocalContext.current
-        val text  =  remember { mutableStateOf(model.textFieldValue) }
+    fun TextFieldBottomSheetComponent(
+        modifier: Modifier = Modifier,
+        model: TextFieldBottomSheetModel
+    ) {
+        val context = LocalContext.current
+        val text = remember { mutableStateOf(model.textFieldValue) }
         val error = remember { mutableStateOf("") }
         text.value = text.value
         Column(modifier = modifier) {
             TextComponent.HeaderText(
                 text = stringResource(id = model.title),
-                modifier = modifier.padding(start =dimensionResource(id = R.dimen.default_margin16), end =dimensionResource(id = R.dimen.default_margin16) , top =dimensionResource(id = R.dimen.default_margin16) )
+                modifier = modifier.padding(
+                    start = dimensionResource(id = R.dimen.default_margin16),
+                    end = dimensionResource(id = R.dimen.default_margin16),
+                    top = dimensionResource(id = R.dimen.default_margin16)
+                )
             )
-            model.description?.let {description->
+            model.description?.let { description ->
                 TextComponent.PlaceholderText(
                     text = stringResource(id = description),
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
                 )
             }
-            DividerComponent.HorizontalDividerComponent(Modifier.padding(vertical = dimensionResource(id = R.dimen.default_margin16)),)
+            DividerComponent.HorizontalDividerComponent(
+                Modifier.padding(
+                    vertical = dimensionResource(
+                        id = R.dimen.default_margin16
+                    )
+                ),
+            )
             TextFieldComponent.BoarderTextFieldComponent(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,20 +87,23 @@ object BottomSheetComponent {
 
 
     @Composable
-    fun SelectedItemListBottomSheetComponent(modifier: Modifier= Modifier,
-                                             @StringRes title:Int,
-                                             @StringRes description:Int?=null,
-                                             emptyListText:String= stringResource(id = R.string.no_result),
-                                             list: List<SelectedItemModel>,
-                                             trailIcon : (@Composable ()->Unit)? = null,
-                                             canUnSelect:Boolean = false,
-                                             onSelectItem:(SelectedItemModel)->Unit,
-                                             onLongPress:(SelectedItemModel)->Unit = {}
-    ){
+    fun SelectedItemListBottomSheetComponent(
+        modifier: Modifier = Modifier,
+        @StringRes title: Int,
+        @StringRes description: Int? = null,
+        emptyListText: String = stringResource(id = R.string.no_result),
+        list: List<SelectedItemModel>,
+        trailIcon: (@Composable () -> Unit)? = null,
+        canUnSelect: Boolean = false,
+        onSelectItem: (SelectedItemModel) -> Unit,
+        onLongPress: (SelectedItemModel) -> Unit = {}
+    ) {
 
-        Column(modifier = modifier
-            .verticalScroll(rememberScrollState())) {
-            if (trailIcon == null){
+        Column(
+            modifier = modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (trailIcon == null) {
                 TextComponent.HeaderText(
                     text = stringResource(id = title),
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16))
@@ -98,11 +114,14 @@ object BottomSheetComponent {
                         modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
                     )
                 }
-        }else{
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.default_margin16)), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column (verticalArrangement = Arrangement.Center){
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.default_margin16)),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(verticalArrangement = Arrangement.Center) {
                         TextComponent.HeaderText(text = stringResource(id = title))
                         description?.let {
                             TextComponent.PlaceholderText(
@@ -130,12 +149,14 @@ object BottomSheetComponent {
                         }
                     )
                 }
-            }else{
-                Box(modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center) {
-                EmptyComponent.EmptyTextComponent(text = emptyListText)
+            } else {
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    EmptyComponent.EmptyTextComponent(text = emptyListText)
                 }
             }
 
@@ -168,8 +189,14 @@ object BottomSheetComponent {
 
 
     @Composable
-    fun TimeOptionsBottomSheet(selectedItem: SelectedItemModel? = null,  startDate:Long=0,endDate:Long=0, onFilterSelected:(SelectedItemModel)->Unit ){
-        val context  = LocalContext.current
+    fun TimeOptionsBottomSheet(
+        @StringRes  title: Int? = null,
+        selectedItem: SelectedItemModel? = null,
+        startDate: Long = 0,
+        endDate: Long = 0,
+        onFilterSelected: (SelectedItemModel) -> Unit
+    ) {
+        val context = LocalContext.current
 
         val options = DateUtils.FilterOption.values()
         val list = mutableListOf<SelectedItemModel>()
@@ -178,14 +205,17 @@ object BottomSheetComponent {
                 SelectedItemModel(
                     id = item.id,
                     value = context.getString(item.title),
-                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(startDate,endDate) else context.getString(item.subtitle),
+                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(
+                        startDate,
+                        endDate
+                    ) else context.getString(item.subtitle),
                     isSelected = if (selectedItem != null) selectedItem.id == item.id else item.id == 0
                 )
             )
         }
 
         SelectedItemListBottomSheetComponent(
-            title = R.string.common_filter_options,
+            title = title ?: R.string.common_filter_options,
             list = list,
             onSelectItem = {
                 onFilterSelected(it)
@@ -199,11 +229,11 @@ object BottomSheetComponent {
 }
 
 data class TextFieldBottomSheetModel(
-    @StringRes var title:Int,
-    @StringRes var description:Int?=null,
-    var textFieldValue:String="",
-    @StringRes var buttonText:Int,
-    var onActionButtonClicked:(String)->Unit,
-    var isSingleLine:Boolean=false,
+    @StringRes var title: Int,
+    @StringRes var description: Int? = null,
+    var textFieldValue: String = "",
+    @StringRes var buttonText: Int,
+    var onActionButtonClicked: (String) -> Unit,
+    var isSingleLine: Boolean = false,
 
-)
+    )

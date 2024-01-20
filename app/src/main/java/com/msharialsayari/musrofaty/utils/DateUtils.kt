@@ -246,6 +246,11 @@ object DateUtils {
         return zdt.toInstant().toEpochMilli();
     }
 
+    fun toLocalDate(date:Long):LocalDate{
+        return  Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDate()
+
+    }
+
     fun ofMilliSecond(millisecond: Long): LocalDateTime {
         return Instant.ofEpochMilli(millisecond).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
@@ -272,12 +277,13 @@ object DateUtils {
         companion object{
             fun getFilterOption(id:Int? = 0): FilterOption {
                 return when(id){
+                    0-> ALL
                     1-> TODAY
                     2-> WEEK
                     3-> MONTH
                     4-> YEAR
                     5-> RANGE
-                    else -> ALL
+                    else -> MONTH
                 }
 
             }

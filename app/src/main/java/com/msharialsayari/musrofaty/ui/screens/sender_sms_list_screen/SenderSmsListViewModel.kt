@@ -2,11 +2,14 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
@@ -28,6 +31,7 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsViewModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
@@ -152,11 +156,12 @@ class SenderSmsListViewModel @Inject constructor(
         )
     }
 
-    private suspend fun getAllSmsModel(): List<SmsModel> {
+    private suspend fun getAllSmsModel(isDeleted: Boolean?=null): List<SmsModel> {
         return getAllSmsModelUseCase.invoke(
             senderId = _uiState.value.sender.id,
             filterOption = getFilterTimeOption(),
             query = getFilterWord(),
+            isDeleted = isDeleted,
             startDate = _uiState.value.startDate,
             endDate = _uiState.value.endDate
         )
@@ -209,11 +214,16 @@ class SenderSmsListViewModel @Inject constructor(
     fun getCategoriesStatistics() {
         viewModelScope.launch {
             _uiState.update { it.copy(categoriesTabLoading = true) }
-            val smsList = getAllSms()
-            val result = getCategoriesStatisticsUseCase.invoke(smsList)
+            val smsList = getAllSmsModel(isDeleted = false)
+            val groupSmsByCurrent = smsList.groupBy { it.currency }
+            val categories = mutableListOf<CategoryContainerStatistics>()
+            groupSmsByCurrent.forEach { (key, value) ->
+                val result = getCategoriesStatisticsUseCase.invoke(key, value)
+                categories.add(result)
+            }
             _uiState.update { state ->
                 state.copy(
-                    categoriesStatistics = result,
+                    categoriesStatistics = categories,
                     categoriesTabLoading = false
                 )
             }

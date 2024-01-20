@@ -31,6 +31,8 @@
     <string name="common_search">بحث</string>
     <string name="common_ok">موافق</string>
     <string name="common_period_time">الفترة الزمنية</string>
+    <string name="pref_managment_statistics_title">الإحصائيات</string>
+    <string name="pref_managment_statistics_summary">إمكانية إنشاء رسوم بيانية لمعرفة مقدار صرفك على فئة معينة</string>
 
 
     <plurals name="common_sms">
