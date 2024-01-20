@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toCategoryStatisticsModel
+import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.ChartComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.RowComponent
@@ -22,6 +23,7 @@ import com.msharialsayari.musrofaty.ui_component.RowComponent
 fun CategoriesStatistics(
     modifier: Modifier = Modifier,
     item: CategoryContainerStatistics,
+    onRowClicked:(CategoryStatisticsModel)->Unit
 ) {
 
     val context = LocalContext.current
@@ -45,11 +47,12 @@ fun CategoriesStatistics(
 
         Column(
             modifier = Modifier,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16), Alignment.Top)
         ) {
             item.data.forEach {
-                RowComponent.CategoryStatisticsRow(model = it.value.toCategoryStatisticsModel(context = context))
-                DividerComponent.HorizontalDividerComponent(modifier = modifier)
+                RowComponent.CategoryStatisticsRow(model = it.value.toCategoryStatisticsModel(context = context), onClicked = {
+                    onRowClicked(it)
+                })
+
             }
 
 

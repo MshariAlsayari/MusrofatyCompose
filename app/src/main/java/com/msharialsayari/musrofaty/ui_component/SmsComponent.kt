@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui_component
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,6 +22,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 
 
@@ -209,6 +214,46 @@ private fun SmsActionRowComponent(
 
     }
 
+
+}
+
+fun wrapSendersToSenderComponentModel(
+    sms: SmsEntity,
+    sender:SenderModel,
+    context: Context
+): SmsComponentModel {
+
+    return SmsComponentModel(
+        id = sms.id,
+        senderId = sms.senderId,
+        timestamp = sms.timestamp,
+        isFavorite = sms.isFavorite,
+        isDeleted = sms.isDeleted,
+        body = sms.body,
+        senderIcon = sender.senderIconUri,
+        senderDisplayName = SenderModel.getDisplayName(context, sender),
+        senderCategory = ContentModel.getDisplayName(context, sender.content)
+    )
+
+}
+
+fun wrapSendersToSenderComponentModel(
+    sms: SmsModel,
+    sender:SenderModel,
+    context: Context
+): SmsComponentModel {
+
+    return SmsComponentModel(
+        id = sms.id,
+        senderId = sms.senderId,
+        timestamp = sms.timestamp,
+        isFavorite = sms.isFavorite,
+        isDeleted = sms.isDeleted,
+        body = sms.body,
+        senderIcon = sender.senderIconUri,
+        senderDisplayName = SenderModel.getDisplayName(context, sender),
+        senderCategory = ContentModel.getDisplayName(context, sender.content)
+    )
 
 }
 

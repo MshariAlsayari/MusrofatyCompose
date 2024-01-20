@@ -45,7 +45,9 @@ fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
     ) {
 
         items(list) {
-            CategoriesStatistics(item = it)
+            CategoriesStatistics(item = it, onRowClicked = {
+                viewModel.navigateToCategorySmsListScreen(it)
+            })
         }
 
     }

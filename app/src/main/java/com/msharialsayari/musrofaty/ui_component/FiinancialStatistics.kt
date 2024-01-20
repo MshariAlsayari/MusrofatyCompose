@@ -99,7 +99,9 @@ fun FinancialStatisticsInfo(modifier:Modifier=Modifier,
     Row( modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
-        horizontalArrangement = Arrangement.SpaceBetween) {
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+        ) {
         Box(
             modifier = Modifier
                 .size(20.dp)

@@ -282,6 +282,7 @@ fun LazySenderSms(
     viewModel: SenderSmsListViewModel
 ) {
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier,
@@ -295,7 +296,7 @@ fun LazySenderSms(
                     onSmsClicked ={
                         viewModel.navigateToSmsDetails(item.id)
                     },
-                    model = viewModel.wrapSendersToSenderComponentModel(item, context),
+                    model = wrapSendersToSenderComponentModel(item, uiState.sender , context),
                     onActionClicked = { model, action ->
                         when (action) {
                             SmsActionType.FAVORITE -> viewModel.favoriteSms(

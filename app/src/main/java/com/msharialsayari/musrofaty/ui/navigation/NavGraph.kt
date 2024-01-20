@@ -13,6 +13,13 @@ import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.CATEGORY_ID_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.END_DATE_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.FILTER_OPTION_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.QUERY_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.SMS_LIST_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.START_DATE_KEY
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
@@ -45,7 +52,7 @@ fun NavigationGraph(
         Modifier.padding(innerPadding)
     ) {
         composable(Screen.Splash.route) {
-            SplashScreen( onLoadingDone = {
+            SplashScreen(onLoadingDone = {
                 navController.navigate(BottomNavItem.Dashboard.route) {
                     popUpTo(Screen.Splash.route) {
                         inclusive = true
@@ -86,7 +93,7 @@ fun NavigationGraph(
             )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId=senderId, filterId = null)
+            FilterScreen(senderId = senderId, filterId = null)
         }
 
         composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
@@ -96,7 +103,7 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val filterId = arguments?.getInt("filterId")
             val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId=senderId, filterId=filterId)
+            FilterScreen(senderId = senderId, filterId = filterId)
         }
 
         composable(Screen.SmsScreen.route + "/{smsId}",
@@ -105,18 +112,19 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val smsId = arguments?.getString("smsId")
             smsId?.let {
-                SmsScreen(smsId=it)
+                SmsScreen(smsId = it)
             }
         }
 
 
-        composable(Screen.CategoryScreen.route + "/{categoryId}",
+        composable(
+            Screen.CategoryScreen.route + "/{categoryId}",
             arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
         ) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val categoryId = arguments?.getInt("categoryId")
             categoryId?.let {
-                CategoriesScreen(categoryId=categoryId)
+                CategoriesScreen(categoryId = categoryId)
             }
         }
 
@@ -135,7 +143,7 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val contentId = arguments?.getInt("contentId")
             contentId?.let {
-                ContentScreen(contentId=it)
+                ContentScreen(contentId = it)
             }
         }
 
@@ -149,7 +157,7 @@ fun NavigationGraph(
 
         composable(Screen.StoreSmsListScreen.route + "/{storeName}",
             arguments = listOf(navArgument("storeName") { type = NavType.StringType }
-            )) {backStackEntry->
+            )) { backStackEntry ->
             val arguments = backStackEntry.arguments
             val storeName = arguments?.getString("storeName")
             storeName?.let {
@@ -165,6 +173,17 @@ fun NavigationGraph(
 
         composable(Screen.StatisticsScreen.route) {
             StatisticsScreen()
+        }
+
+        composable(
+            Screen.CategorySmsListScreen.route + "/{$SMS_LIST_KEY}" + "/{$CATEGORY_ID_KEY}",
+            arguments = listOf(navArgument(SMS_LIST_KEY) { type = NavType.StringType },
+                navArgument(CATEGORY_ID_KEY) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            CategorySmsListScreen()
         }
 
     }

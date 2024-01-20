@@ -10,8 +10,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -210,7 +212,9 @@ object RowComponent {
     @Composable
     fun CategoryStatisticsRow(
         modifier: Modifier = Modifier,
-        model: CategoryStatisticsModel)  {
+        model: CategoryStatisticsModel,
+        onClicked:(CategoryStatisticsModel)->Unit
+        )  {
 
         val openDialog = rememberSaveable{ mutableStateOf(false) }
 
@@ -223,53 +227,79 @@ object RowComponent {
         }
 
 
-        Row(
+        Column (
             modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+                .fillMaxSize()
+                .clickable {
+                    onClicked(model)
+                }
+        ){
 
-            Box(
+
+            Row(
                 modifier = Modifier
-                    .size(20.dp)
-                    .clip(RectangleShape)
-                    .background(Color(model.color))
-            )
+                    .fillMaxSize()
+                    .padding(dimensionResource(id = R.dimen.default_margin16)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            TextComponent.PlaceholderText(
-                modifier = Modifier.padding(start = 8.dp).weight(2f),
-                text = model.category,
-                alignment = TextAlign.Start
-            )
-
-            TextComponent.PlaceholderText(
-                modifier = Modifier.weight(1f),
-                text = StringsUtils.formatNumberWithComma(model.totalAmount.toString()),
-                alignment = TextAlign.Center
-            )
-
-            TextComponent.PlaceholderText(
-                modifier = Modifier.weight(1f),
-                text = StringsUtils.formatDecimalNumber(model.percent) + " %",
-                alignment = TextAlign.Center
-            )
-
-            if (model.currency.isEmpty()) {
-                TextComponent.ClickableText(
-                    modifier = Modifier.weight(1f).clickable {
-                        openDialog.value = true
-                    },
-                    text = stringResource(id = R.string.common_click),
-                    alignment = TextAlign.End
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(RectangleShape)
+                        .background(Color(model.color))
                 )
-            } else {
+
+                TextComponent.PlaceholderText(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(2f),
+                    text = model.category,
+                    alignment = TextAlign.Start
+                )
+
                 TextComponent.PlaceholderText(
                     modifier = Modifier.weight(1f),
-                    text = model.currency,
-                    alignment = TextAlign.End
+                    text = StringsUtils.formatNumberWithComma(model.totalAmount.toString()),
+                    alignment = TextAlign.Center
+                )
+
+                TextComponent.PlaceholderText(
+                    modifier = Modifier.weight(1f),
+                    text = StringsUtils.formatDecimalNumber(model.percent) + " %",
+                    alignment = TextAlign.Center
+                )
+
+                if (model.currency.isEmpty()) {
+                    TextComponent.ClickableText(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                openDialog.value = true
+                            },
+                        text = stringResource(id = R.string.common_click),
+                        alignment = TextAlign.End
+                    )
+                } else {
+                    TextComponent.PlaceholderText(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .weight(1f),
+                        text = model.currency,
+                        alignment = TextAlign.End
+                    )
+                }
+
+                Icon(
+                    Icons.Default.KeyboardArrowRight,
+                    modifier = Modifier
+                        .mirror(),
+                    contentDescription = null
                 )
             }
+
+            DividerComponent.HorizontalDividerComponent()
         }
 
     }
@@ -383,12 +413,3 @@ data class CategoryStatisticsModel(
     var currency: String = "",
     var smsList: List<SmsModel> = emptyList()
 )
-
-//data class CategoryDetailsStatisticsModel(
-//    var smsId: String = "",
-//    var storeName: String = "",
-//    var storeAndCategoryModel: StoreAndCategoryModel?= null,
-//    var amount: Double = 0.0,
-//    var currency: String = "",
-//    var timestamp:Long= 0
-//)

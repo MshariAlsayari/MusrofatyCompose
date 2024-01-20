@@ -34,7 +34,8 @@ object AppBarComponent {
 
     @Composable
     fun TopBarComponent(
-        @StringRes title: Int?,
+        @StringRes title: Int?=null,
+        titleString: String?=null,
         onArrowBackClicked: () -> Unit = {},
         actions: @Composable RowScope.() -> Unit = {},
         isParent: Boolean = false
@@ -50,18 +51,18 @@ object AppBarComponent {
         }
 
 
-        val appbarTitle = if (title != null) stringResource(id = title) else ""
-        AnimatedVisibility(
-            visible = title != null,
-        ) {
-
-            TopAppBar(
-                title = { Text(appbarTitle) },
-                navigationIcon = if (isParent) null else navigationIcon,
-                actions = actions,
-                contentColor = Color.White
-            )
+        val appbarTitle =when{
+            title != null -> stringResource(id = title)
+            titleString != null -> titleString
+            else -> ""
         }
+
+        TopAppBar(
+            title = { Text(appbarTitle) },
+            navigationIcon = if (isParent) null else navigationIcon,
+            actions = actions,
+            contentColor = Color.White
+        )
 
     }
 
@@ -216,7 +217,7 @@ object AppBarComponent {
             }
 
             AnimatedVisibility(visible = !isSearchMode) {
-                TopBarComponent(title, onArrowBackClicked, actions = actions, isParent)
+                TopBarComponent(title = title, titleString = null, onArrowBackClicked, actions = actions, isParent)
             }
 
         }

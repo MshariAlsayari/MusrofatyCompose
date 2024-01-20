@@ -64,7 +64,7 @@ fun CategoriesScreen(categoryId:Int){
 }
 
 @Composable
-fun ProgressCompose(modifier: Modifier=Modifier,){
+private fun ProgressCompose(modifier: Modifier=Modifier,){
     Box(modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center) {
         ProgressBar.CircleProgressBar()
@@ -74,7 +74,7 @@ fun ProgressCompose(modifier: Modifier=Modifier,){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
+private fun PageCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
 
     val coroutineScope                    = rememberCoroutineScope()
     val selectedStore = remember { mutableStateOf<StoreEntity?>(null) }
@@ -282,7 +282,7 @@ fun CategoryBottomSheet(viewModel: CategoriesViewModel, onCategorySelected:(Int)
 
 @Composable
 fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
-    val uiState                           by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Row (modifier = modifier){
         ButtonComponent.ActionButton(

@@ -1,15 +1,15 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.app.Activity
-import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.google.gson.Gson
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
@@ -29,8 +29,8 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
@@ -41,6 +41,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -230,28 +232,6 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-
-    fun wrapSendersToSenderComponentModel(
-        sms: SmsEntity,
-        context: Context
-    ): SmsComponentModel {
-
-        return SmsComponentModel(
-            id = sms.id,
-            senderId = sms.senderId,
-            timestamp = sms.timestamp,
-            isFavorite = sms.isFavorite,
-            isDeleted = sms.isDeleted,
-            body = sms.body,
-            senderIcon = _uiState.value.sender?.senderIconUri ?:"",
-            senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
-            senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
-
-        )
-
-    }
-
-
     fun getFilterOptions(selectedItem: SelectedItemModel? = null): List<SelectedItemModel> {
         val list = mutableListOf<SelectedItemModel>()
         _uiState.value.filters.mapIndexed { index, value ->
@@ -394,6 +374,16 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun navigateToPDFActivity(activity: Activity,pdfBundle: PdfCreatorViewModel.PdfBundle) {
         PdfCreatorActivity.startPdfCreatorActivity(activity,pdfBundle)
+    }
+
+    fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
+        val encodedList = model.smsList.map {
+            it.senderModel?.senderIconUri =  URLEncoder.encode( it.senderModel?.senderIconUri, StandardCharsets.UTF_8.toString())
+            it
+        }
+        val smsContainer = SmsContainer(encodedList)
+        val jsonList = Gson().toJson(smsContainer)
+        navigator.navigate(Screen.CategorySmsListScreen.route + "/${jsonList}"+ "/${model.storeAndCategoryModel?.category?.id}")
     }
 
 

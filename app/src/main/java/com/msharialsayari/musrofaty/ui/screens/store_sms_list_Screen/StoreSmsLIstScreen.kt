@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +23,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.ui_component.SmsActionType
+import com.msharialsayari.musrofaty.ui_component.SmsComponent
 import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.wrapSendersToSenderComponentModel
 
 
 @Composable
@@ -36,6 +41,7 @@ fun StoreSmsListScreen(storeName:String){
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit){
+        viewModel.getSenders()
         viewModel.getAllSms(storeName)
     }
 
@@ -64,7 +70,7 @@ fun StoreSmsListScreen(storeName:String){
 
 
 @Composable
-fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListViewModel){
+private fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListViewModel){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val smsList = uiState.smsFlow?.collectAsLazyPagingItems()
@@ -82,18 +88,40 @@ fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListViewModel){
 
             itemsIndexed(key = { _, sms -> sms.id }, items = smsList) { index, item ->
 
-                if (item != null) {
-                    TextComponent.BodyText(
-                        modifier = Modifier.padding(all = dimensionResource(id = R.dimen.default_margin16)),
-                        text = item.body
-                    )
+                    if (item != null && viewModel.getSenderById(item.senderId) != null) {
+                        SmsComponent(
+                            onSmsClicked ={
+                                viewModel.navigateToSmsDetails(item.id)
+                            },
+                            model = wrapSendersToSenderComponentModel(item,viewModel.getSenderById(item.senderId)!!, context),
+                            onActionClicked = { model, action ->
+                                when (action) {
+                                    SmsActionType.FAVORITE -> viewModel.favoriteSms(
+                                        model.id,
+                                        model.isFavorite
+                                    )
 
-                    if (smsList.itemSnapshotList.lastIndex != index){
-                        DividerComponent.HorizontalDividerComponent()
+                                    SmsActionType.COPY -> {
+                                        Utils.copyToClipboard(item.body, context)
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.common_copied),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    SmsActionType.SHARE -> {
+                                        Utils.shareText(item.body, context)
+                                    }
+
+                                    SmsActionType.DELETE -> viewModel.softDelete(
+                                        model.id,
+                                        model.isDeleted
+                                    )
+                                }
+                            })
 
                     }
-                }
-
 
             }
 
@@ -107,7 +135,7 @@ fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListViewModel){
 
 
 @Composable
-fun PageLoading(modifier: Modifier=Modifier){
+private fun PageLoading(modifier: Modifier=Modifier){
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -118,7 +146,7 @@ fun PageLoading(modifier: Modifier=Modifier){
 }
 
 @Composable
-fun PageEmpty(modifier: Modifier=Modifier){
+private fun PageEmpty(modifier: Modifier=Modifier){
     Column(
         modifier
             .fillMaxSize()
