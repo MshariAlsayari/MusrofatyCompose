@@ -17,7 +17,7 @@ object ChartComponent {
 
     @Composable
     fun FinancialPieChartCompose(modifier:Modifier = Modifier, entries:ArrayList<PieEntry>, colors: ArrayList<Color>){
-        Crossfade(targetState = entries) { pieChartData ->
+        Crossfade(targetState = entries, label = "") { pieChartData ->
             // on below line we are creating an
             // android view for pie chart.
             AndroidView(
@@ -37,13 +37,13 @@ object ChartComponent {
 
 
     @Composable
-    fun PieChartCompose(modifier:Modifier = Modifier, entries:ArrayList<PieEntry>,colors: ArrayList<Int>){
-        Crossfade(targetState = entries) { pieChartData ->
+    fun PieChartCompose(modifier:Modifier = Modifier, title:String, entries:ArrayList<PieEntry>,colors: ArrayList<Int>){
+        Crossfade(targetState = entries, label = "") { pieChartData ->
             // on below line we are creating an
             // android view for pie chart.
             AndroidView(
                 modifier = modifier.size(200.dp),
-                update = { it.drawChart(pieChartData,colors) },
+                update = { it.drawChart(title,pieChartData,colors) },
                 factory = { context ->
                     PieChart(context).apply {
                         layoutParams = LinearLayout.LayoutParams(

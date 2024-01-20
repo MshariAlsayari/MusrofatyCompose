@@ -219,6 +219,7 @@ class SenderSmsListViewModel @Inject constructor(
             val categories = mutableListOf<CategoryContainerStatistics>()
             groupSmsByCurrent.forEach { (key, value) ->
                 val result = getCategoriesStatisticsUseCase.invoke(key, value)
+                if(result.total > 0)
                 categories.add(result)
             }
             _uiState.update { state ->

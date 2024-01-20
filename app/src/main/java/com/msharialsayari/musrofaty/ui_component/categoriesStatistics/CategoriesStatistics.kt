@@ -36,6 +36,7 @@ fun CategoriesStatistics(
             contentAlignment = Alignment.Center
         ) {
             ChartComponent.PieChartCompose(
+                title = item.getTitle(),
                 entries = percentList,
                 colors = colorList
             )

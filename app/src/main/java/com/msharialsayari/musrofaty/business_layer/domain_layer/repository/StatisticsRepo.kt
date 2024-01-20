@@ -93,7 +93,7 @@ class StatisticsRepo @Inject constructor(
             it.value.payPercent = MathUtils.calculatePercentage(it.value.total, amountTotal)
             it.value.color = if (it.key < returnedValue.data.size) colors[it.key] else colors[Random.nextInt(0, colors.size)]
         }
-
+        returnedValue.total = amountTotal
         returnedValue.data = returnedValue.data.toList().sortedByDescending { (_, value) -> value.payPercent }.toMap().toMutableMap()
         return returnedValue
 

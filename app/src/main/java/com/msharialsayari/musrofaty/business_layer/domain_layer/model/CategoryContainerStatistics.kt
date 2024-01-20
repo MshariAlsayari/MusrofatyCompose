@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
 import android.content.Context
+import android.icu.text.CaseMap.Title
 import android.os.Parcelable
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import kotlinx.parcelize.Parcelize
@@ -11,7 +12,9 @@ data class CategoryContainerStatistics(
     val key: String,
     var data: MutableMap<Int, CategoryStatistics> = mutableMapOf(),
     var total: Double = 0.0,
-) : Parcelable
+) : Parcelable{
+    fun getTitle() = "$key\n$total"
+}
 
 @Parcelize
 data class CategoryStatistics(

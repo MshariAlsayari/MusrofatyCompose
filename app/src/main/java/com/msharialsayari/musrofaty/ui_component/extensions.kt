@@ -62,7 +62,7 @@ fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<
 }
 
 
-fun PieChart.drawChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
+fun PieChart.drawChart(title:String, entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
 
     this.description.isEnabled = false
     this.dragDecelerationFrictionCoef = 0.95f
@@ -77,12 +77,16 @@ fun PieChart.drawChart(entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
     this.setTransparentCircleColor(Transparent.toArgb())
     this.setHoleColor(Transparent.toArgb())
     this.setTransparentCircleAlpha(0)
-    this.holeRadius = 0f
+    this.holeRadius = 50f
+    this.centerText = title
+    this.setCenterTextSize(14f)
+    this.setDrawCenterText(true)
+    this.setCenterTextColor(Color.White.toArgb())
 
 
 
 
-    this.setEntryLabelColor(Transparent.toArgb())
+    this.setEntryLabelColor(Color.White.toArgb())
     this.setEntryLabelTextSize(12f)
 
 
