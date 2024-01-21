@@ -9,9 +9,12 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreRepo
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -20,12 +23,13 @@ import dagger.assisted.AssistedInject
 class InitStoresJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val getSmsListUseCase: GetSmsListUseCase,
+    private val getSmsListUseCase: GetSmsModelListUseCase,
+    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val storeRepo: StoreRepo,
     private val storeFirebaseRepo: StoreFirebaseRepo,
     ) : CoroutineWorker(appContext, workerParams) {
 
-    private lateinit var smsList: List<SmsEntity>
+    private lateinit var smsList: List<SmsModel>
 
     companion object{
         private val TAG = InitStoresJob::class.java.simpleName
@@ -34,7 +38,7 @@ class InitStoresJob @AssistedInject constructor(
        smsList =  getSmsListUseCase.invoke()
        Log.d(TAG, "doWork() smsList: ${smsList.size}")
        smsList.forEach {
-            insertStore(it.toSmsModel())
+            insertStore(it)
         }
         return Result.success()
     }
@@ -47,7 +51,7 @@ class InitStoresJob @AssistedInject constructor(
         if (smsStoreName.isNotEmpty() && (store == null || store.categoryId == 0)) {
             val storeFirebase = storeFirebaseRepo.getStoreByStoreName(smsStoreName)
             val model = if (storeFirebase != null) StoreModel(name = sms.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = sms.storeName)
-            storeRepo.insertOrUpdateIfExisted(model)
+            addOrUpdateStoreUseCase.invoke(model)
         }
     }
 

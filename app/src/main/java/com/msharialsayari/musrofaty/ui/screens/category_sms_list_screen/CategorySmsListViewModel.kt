@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,7 +66,12 @@ class CategorySmsListViewModel @Inject constructor(
         get() {
             val jsonList = savedStateHandle.get<String>(SMS_LIST_KEY)
             val container = Gson().fromJson(jsonList, SmsContainer::class.java)
-            return container.list
+            val decodedList = container.list.map {
+                it.senderModel?.senderIconUri =    URLDecoder.decode(it.senderModel?.senderIconUri, StandardCharsets.UTF_8.name())
+                it.body=    URLDecoder.decode(it.body, StandardCharsets.UTF_8.name())
+                it
+            }
+            return decodedList
         }
 
 

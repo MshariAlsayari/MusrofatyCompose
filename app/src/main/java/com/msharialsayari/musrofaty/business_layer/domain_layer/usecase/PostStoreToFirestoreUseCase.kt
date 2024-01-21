@@ -15,7 +15,7 @@ class PostStoreToFirestoreUseCase @Inject constructor(
     suspend operator fun invoke(storeEntity: StoreEntity) {
         val category = getCategoryUseCase(storeEntity.category_id)
 
-        if (category?.isDefault ==true)
+        if (category?.isDefault ==true && storeEntity.name.isNotEmpty())
            storeRepo.submitStoreToFirebase(storeEntity)
     }
 }

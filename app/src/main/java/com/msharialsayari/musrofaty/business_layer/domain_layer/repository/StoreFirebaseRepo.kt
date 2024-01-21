@@ -8,7 +8,6 @@ import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoresCategoriesModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -24,12 +23,16 @@ class StoreFirebaseRepo @Inject constructor(
 )  {
 
     private val db          = Firebase.firestore
-    private val queryStores = db.collection(stores_path)
-    private val queryStoresAndCategories = db.collection(stores_categories_path)
+    private val collectionRef = db.collection(stores_path)
+    private val collectionNewRef = db.collection(new_stores_path)
+
 
     companion object{
+        private var TAG = StoreFirebaseRepo::class.java.simpleName
         private const val stores_path =  "stores"
-        private const val stores_categories_path =  "storesCategories"
+        private const val new_stores_path =  "newStores"
+        private const val category_id_field =  "category_id"
+        private const val name_search_field =  "name"
     }
 
     suspend fun getStoreByStoreName(storeName: String): StoreFirebaseEntity? {
@@ -52,8 +55,10 @@ class StoreFirebaseRepo @Inject constructor(
 
     fun getStoresFromFirebase() = flow {
         emit(Response.Loading())
-        emit(Response.Success(queryStores.get().await().documents.mapNotNull { doc ->
-            return@mapNotNull StoreFirebaseEntity(name = doc.data?.get("name") as String, category_id =(doc.data?.get("category_id") as Long).toInt())
+        emit(Response.Success(collectionNewRef.get().await().documents.mapNotNull { doc ->
+            val name = doc[name_search_field].toString()
+            val categoryId = (doc[category_id_field] as Long).toInt()
+            return@mapNotNull StoreFirebaseEntity(name = name, category_id =categoryId)
         }))
     }. catch { error ->
         error.message?.let { errorMessage ->
@@ -61,33 +66,44 @@ class StoreFirebaseRepo @Inject constructor(
         }
     }
 
-
-    suspend fun getStoresAndCategoriesFromFirebase() = flow {
-        emit(Response.Loading())
-        emit(Response.Success(queryStoresAndCategories.get().await().documents.mapNotNull { doc ->
-            val model = StoresCategoriesModel(categoryId =(doc.data?.get("category_id") as Long).toInt())
-            val keysSearch = if(doc.data?.get("key_search") is List<*> ) doc.data?.get("key_search") as List<String> else emptyList()
-            model.keysSearch =keysSearch
-            return@mapNotNull model
-        }))
-    }. catch { error ->
-        error.message?.let { errorMessage ->
-            emit(Response.Failure(errorMessage))
-        }
-    }
-
-    fun submitStoreToFirebase(storeEntity: StoreEntity)  {
+    suspend fun submitStoreToFirebase(storeEntity: StoreEntity)  {
         val data = hashMapOf(
-            "name" to storeEntity.name,
-            "category_id" to storeEntity.category_id
+            name_search_field to storeEntity.name,
+            category_id_field to storeEntity.category_id
         )
 
+        val documents = collectionNewRef.whereEqualTo(name_search_field,storeEntity.name).get().await().documents
+        val documentData = if(documents.isNotEmpty()) documents.first().data else null
+        val documentId = if(documents.isNotEmpty()) documents.first().id else null
+        val entity = if(documentData != null) {
+            val name = documentData[name_search_field].toString()
+            val categoryId = (documentData[category_id_field] as Long).toInt()
+            StoreEntity(name = name, category_id= categoryId)
+        } else null
+        val needToUpdate = entity?.category_id != storeEntity.category_id
 
-        queryStores.document(storeEntity.name).set(data).addOnSuccessListener {
-            Log.d("StoreFirebaseRepo", "${storeEntity.name} addedd successfully")
-        }.addOnFailureListener {
-            Log.d("StoreFirebaseRepo", "${storeEntity.name} there was an error to add")
-            Log.d("StoreFirebaseRepo", it.message?:"error")
+
+        if(needToUpdate){
+            if (documentId == null){
+                collectionNewRef.document().set(data).addOnCompleteListener {
+                    Log.d(TAG, "submitStoreToFirebase() date: $data added successfully")
+                }.addOnFailureListener {
+                    Log.d(TAG, "submitStoreToFirebase() date: $data there was an error to add")
+                    Log.d(TAG, "submitStoreToFirebase() " + (it.message ?: "error"))
+                }
+            }else{
+                collectionNewRef.document(documentId).set(data).addOnSuccessListener {
+                    Log.d(TAG, "documentId:$documentId date: $data added successfully")
+                }.addOnFailureListener {
+                    Log.d(TAG, "documentId:$documentId date: $data there was an error to add")
+                    Log.d(TAG, "submitStoreToFirebase() " + (it.message?:"error"))
+                }
+            }
+
+        }else{
+            Log.d(TAG, "submitStoreToFirebase() date: $data no need to update")
         }
+
+
     }
 }

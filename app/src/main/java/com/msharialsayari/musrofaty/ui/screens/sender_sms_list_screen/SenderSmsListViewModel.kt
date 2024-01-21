@@ -380,6 +380,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
         val encodedList = model.smsList.map {
             it.senderModel?.senderIconUri =  URLEncoder.encode( it.senderModel?.senderIconUri, StandardCharsets.UTF_8.toString())
+            it.body=  URLEncoder.encode( it.body, StandardCharsets.UTF_8.toString())
             it
         }
         val smsContainer = SmsContainer(encodedList)

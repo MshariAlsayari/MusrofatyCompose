@@ -1,8 +1,10 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
+import android.content.Context
 import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
@@ -26,7 +28,7 @@ data class SmsModel(
 
     val storeName: String
         get() =
-            SmsUtils.getStoreName(body, senderName)
+            SmsUtils.getStoreName(body, senderName,smsType)
 }
 
 
@@ -38,4 +40,20 @@ fun SmsModel.toSmsEntity() = SmsEntity(
     senderId = senderId,
     isFavorite = isFavorite,
     isDeleted = isDeleted
+)
+
+fun SmsModel.toSmsComponentModel(context: Context) = SmsComponentModel(
+     id = id,
+     senderId = senderId,
+    timestamp=timestamp,
+     body = body,
+     smsType= context.getString(smsType.valueString),
+     currency= currency,
+     senderDisplayName= SenderModel.getDisplayName(context, senderModel),
+     senderCategory= ContentModel.getDisplayName(context, senderModel?.content),
+     senderIcon= senderModel?.senderIconUri ?: "",
+     isFavorite= isFavorite,
+     isDeleted=isDeleted,
+     storeName = storeAndCategoryModel?.store?.name ?: "",
+     storeCategory= CategoryModel.getDisplayName(context, storeAndCategoryModel?.category),
 )

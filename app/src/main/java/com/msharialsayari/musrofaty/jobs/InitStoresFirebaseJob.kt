@@ -37,7 +37,7 @@ class InitStoresFirebaseJob @AssistedInject constructor(
     }
 
     private suspend fun insertList(stores: List<StoreFirebaseEntity>) {
-        Log.d(TAG, "insertStoresList...")
+        Log.d(TAG, "insertList() stores:${stores.size}")
         storeFirebaseRepo.insert(stores)
     }
 

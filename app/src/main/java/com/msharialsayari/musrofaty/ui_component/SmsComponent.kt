@@ -26,6 +26,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 
 
@@ -121,12 +122,8 @@ private fun StoreAndCategoryComponent(
             )
         }
 
-        if (model.storeName.isNotEmpty() && model.storeCategory.isNotEmpty()) {
+        if (model.storeName.isNotEmpty()) {
             DividerComponent.HorizontalDividerComponent()
-        }
-
-
-        if (model.storeCategory.isNotEmpty()) {
             ListItem(
                 text = { Text(text = stringResource(id = R.string.category)) },
                 trailing = {
@@ -138,6 +135,10 @@ private fun StoreAndCategoryComponent(
                 }
             )
         }
+
+
+
+
 
     }
 
@@ -239,21 +240,10 @@ fun wrapSendersToSenderComponentModel(
 
 fun wrapSendersToSenderComponentModel(
     sms: SmsModel,
-    sender:SenderModel,
     context: Context
 ): SmsComponentModel {
 
-    return SmsComponentModel(
-        id = sms.id,
-        senderId = sms.senderId,
-        timestamp = sms.timestamp,
-        isFavorite = sms.isFavorite,
-        isDeleted = sms.isDeleted,
-        body = sms.body,
-        senderIcon = sender.senderIconUri,
-        senderDisplayName = SenderModel.getDisplayName(context, sender),
-        senderCategory = ContentModel.getDisplayName(context, sender.content)
-    )
+    return sms.toSmsComponentModel(context)
 
 }
 

@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -31,6 +32,3 @@ data class SmsEntity(
 
 
 fun SmsEntity.toSmsModel()= SmsModel(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite,isDeleted =isDeleted)
-
-
-

@@ -70,7 +70,7 @@ class StatisticsRepo @Inject constructor(
         expensesSmsList.map {
             amountTotal += it.amount
             val categoryId = it.storeAndCategoryModel?.category?.id ?: 0
-            val storeAndCategory = if (categoryId == 0 || it.storeAndCategoryModel == null ||it.storeAndCategoryModel?.category == null)
+            val storeAndCategory = if (categoryId == 0)
                 StoreAndCategoryModel(store = StoreModel(name = "" ,categoryId=-1) ,category = CategoryModel.getNoSelectedCategory() ) else it.storeAndCategoryModel!!
             val categorySummary = returnedValue.data.getOrDefault(
                 categoryId,

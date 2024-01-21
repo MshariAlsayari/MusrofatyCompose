@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.utils
 
-import android.util.Log
 import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
 import com.msharialsayari.musrofaty.utils.Constants.STC_PAY_WALLET
 import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
@@ -67,17 +66,23 @@ object SmsUtils {
     }
 
 
-    fun getStoreName(sms: String?, senderName:String): String {
-        sms?.let {
+    fun getStoreName(sms: String?, senderName: String, smsType: SmsType): String {
+        if(smsType == SmsType.EXPENSES && sms?.isNotEmpty() ==true  ){
             return try {
-
-                val groupRegex = if (ALINMA_BANK.equals(senderName, ignoreCase = true)) {
-                    ALINMA_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: ""
-                } else if (STC_PAY_WALLET.equals(senderName, ignoreCase = true)) {
-                    STC_PAY_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                val groupRegex = when {
+                    ALINMA_BANK.equals(
+                        senderName,
+                        ignoreCase = true
+                    ) -> ALINMA_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
                         .find(sms)?.groupValues?.get(0) ?: ""
-                } else {
-                    STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+
+                    STC_PAY_WALLET.equals(
+                        senderName,
+                        ignoreCase = true
+                    ) -> STC_PAY_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                        .find(sms)?.groupValues?.get(0) ?: ""
+
+                    else -> STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
                         .find(sms)?.groupValues?.get(0) ?: ""
                 }
 
@@ -91,7 +96,10 @@ object SmsUtils {
             } catch (e: Exception) {
                 ""
             }
-        }?: kotlin.run { return "" }
+        }
+
+        return ""
+
     }
 
 

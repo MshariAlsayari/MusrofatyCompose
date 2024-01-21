@@ -16,7 +16,6 @@ class InsertSmsJob  @AssistedInject constructor(
     private val smsRepo: SmsRepo,
 ): CoroutineWorker(appContext, workerParams){
     override suspend fun doWork(): Result {
-        delay(7000)
         smsRepo.insert()
         return Result.success()
     }

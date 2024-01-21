@@ -11,6 +11,7 @@ class AddOrUpdateStoreUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(storeModel: StoreModel) {
+        if(storeModel.name.isNotEmpty())
          storeRepo.insertOrUpdateIfExisted(storeModel)
     }
 }

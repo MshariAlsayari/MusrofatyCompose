@@ -38,8 +38,8 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
     override suspend fun doWork(): Result {
         glanceId = GlanceAppWidgetManager(appContext).getGlanceIds(AppWidget::class.java).firstOrNull()
         Log.d(TAG, "doWork() updating the app widget glanceId: $glanceId")
+        insertSmsUseCase.invoke()
         glanceId?.let {glanceId->
-            insertSmsUseCase.invoke()
             val todaySmsList = getAllSmsUseCase.invoke(
                 filterOption = DateUtils.FilterOption.TODAY,
                 isDeleted = false

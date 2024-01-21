@@ -21,23 +21,23 @@ data class CategoryModel(
     companion object{
         fun getDisplayName(context: Context, model:CategoryModel?):String {
             return if (SharedPreferenceManager.isArabic(context)){
-                model?.valueAr?: ""
+                model?.valueAr?: "غير محدد"
             }else{
-                model?.valueEn ?: ""
+                model?.valueEn ?: "No Category"
             }
         }
 
         fun getDisplayName(context: Context, model:CategoryEntity?):String {
             return if (SharedPreferenceManager.isArabic(context)){
-                model?.valueAr?: ""
+                model?.valueAr?: "غير محدد"
             }else{
-                model?.valueEn ?: ""
+                model?.valueEn ?: "No Category"
             }
         }
 
         fun getNoSelectedCategory():CategoryModel {
             return CategoryModel(
-                id = 0,
+                id = -1,
                 valueAr = "غير محدد",
                 valueEn = "No Category",
                 isSelected = false,

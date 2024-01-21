@@ -85,15 +85,12 @@ private fun PageCompose(modifier: Modifier = Modifier, viewModel: CategorySmsLis
     ) {
 
         items(items = smsList) { item ->
-
-            if (viewModel.getSenderById(item.senderId) != null) {
                 SmsComponent(
                     onSmsClicked = {
-                        viewModel.navigateToSmsDetails(item.id)
+
                     },
                     model = wrapSendersToSenderComponentModel(
                         item,
-                        viewModel.getSenderById(item.senderId)!!,
                         context
                     ),
                     onActionClicked = { model, action ->
@@ -122,8 +119,6 @@ private fun PageCompose(modifier: Modifier = Modifier, viewModel: CategorySmsLis
                             )
                         }
                     })
-
-            }
 
         }
 

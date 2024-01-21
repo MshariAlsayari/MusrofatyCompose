@@ -7,22 +7,19 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoresCategoriesModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsContainsStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoresCategoriesKeysUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltWorker
-class CategoriesStoresJob @AssistedInject constructor(
+class AutoCategoriesStoresJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
     private val getAllSmsContainsStoreUseCase: GetAllSmsContainsStoreUseCase,
@@ -33,7 +30,7 @@ class CategoriesStoresJob @AssistedInject constructor(
     ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
-        private val TAG = CategoriesStoresJob::class.java.simpleName
+        private val TAG = AutoCategoriesStoresJob::class.java.simpleName
     }
 
     var categories = emptyList<CategoryEntity>()
