@@ -101,6 +101,7 @@ class SenderSmsListViewModel @Inject constructor(
     fun getDate() {
         getFinancialStatistics()
         getCategoriesStatistics()
+        getFilters(senderId)
     }
 
     fun refreshSms() {
