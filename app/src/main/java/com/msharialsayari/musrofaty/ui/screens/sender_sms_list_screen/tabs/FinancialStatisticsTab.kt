@@ -14,17 +14,14 @@ import com.msharialsayari.musrofaty.ui_component.FinancialStatistics
 import com.msharialsayari.musrofaty.ui_component.FinancialStatisticsModel
 
 @Composable
-fun FinancialStatisticsTab(viewModel: SenderSmsListViewModel ){
+fun FinancialStatisticsTab(viewModel: SenderSmsListViewModel){
 
     val uiState  by viewModel.uiState.collectAsState()
 
-//    LaunchedEffect(uiState.selectedFilter, uiState.selectedFilterTimeOption){
-//        viewModel.getFinancialStatistics()
-//    }
 
 
     when {
-        uiState.financialLoading -> PageLoading()
+        uiState.financialTabLoading -> PageLoading()
         uiState.financialStatistics.isNotEmpty() -> BuildChartCompose(viewModel = viewModel)
         else -> EmptySmsCompose()
     }

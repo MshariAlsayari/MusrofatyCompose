@@ -1,17 +1,25 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 
 import android.app.Activity
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.google.gson.Gson
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFiltersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
@@ -19,6 +27,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsMo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSenderSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingPaginationAllSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateSenderIconUseCase
 import com.msharialsayari.musrofaty.excei.ExcelModel
@@ -55,6 +64,10 @@ class SenderSmsListViewModel @Inject constructor(
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val updateSenderIconUseCase: UpdateSenderIconUseCase,
+    private val addCategoryUseCase: AddCategoryUseCase,
+    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val navigator: AppNavigator,
 ) : ViewModel() {
@@ -69,6 +82,7 @@ class SenderSmsListViewModel @Inject constructor(
     
     init{
         initSender()
+        getCategories()
     }
 
     private fun initSender() {
@@ -76,13 +90,15 @@ class SenderSmsListViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             val senderResult = getSenderUseCase.invoke(senderId)
             if (senderResult != null) {
-                getFilters(senderResult.id)
-                getDate()
                 _uiState.update {
                     it.copy(
                         sender = senderResult,
                     )
                 }
+                getFilters(senderResult.id)
+                getData()
+            }else{
+                navigator.navigateUp()
             }
 
             _uiState.update {
@@ -93,11 +109,23 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
+     private fun getCategories() {
+        viewModelScope.launch {
+            val categoriesResult = getCategoriesUseCase.invoke()
+            _uiState.update {
+                it.copy(
+                    categories = categoriesResult
+                )
+            }
+        }
+    }
 
-    fun getDate() {
+
+    fun getData() {
         getSmsList()
         getFilters(senderId)
         getStatisticsData()
+        getSmsListTabs()
     }
 
     private fun getStatisticsData(){
@@ -135,19 +163,51 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
+    private fun getSmsListTabs() {
+        viewModelScope.launch {
+
+            val allSmsTab :Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                senderId =  senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                isDeleted = null,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+
+            val favoriteSmsTab :Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                senderId =  senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                isDeleted = null,
+                isFavorite = true,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
 
 
-    fun observingPaginationAllSms(isDeleted:Boolean?, isFavorite:Boolean?): Flow<PagingData<SmsModel>> {
-        return observingPaginationAllSmsUseCase(
-            senderId =  senderId,
-            filterOption = getFilterTimeOption(),
-            query = getFilterWord(),
-            isDeleted = isDeleted,
-            isFavorite = isFavorite,
-            startDate = _uiState.value.startDate,
-            endDate = _uiState.value.endDate,
-        )
+            val softDeletedSmsTab :Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                senderId =  senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                isDeleted = true,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+
+            _uiState.update { state ->
+                state.copy(
+                    allSmsList = allSmsTab,
+                    favoriteSmsList = favoriteSmsTab,
+                    softDeletedSmsList = softDeletedSmsTab
+                )
+            }
+        }
+
     }
+
 
      private fun getSmsList() {
          viewModelScope.launch {
@@ -189,7 +249,7 @@ class SenderSmsListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { state ->
                 state.copy(
-                    financialLoading = true,
+                    financialTabLoading = true,
                 )
             }
 
@@ -197,7 +257,7 @@ class SenderSmsListViewModel @Inject constructor(
             val result = getFinancialStatisticsUseCase.invoke(smsList)
             _uiState.update { state ->
                 state.copy(
-                    financialLoading = false,
+                    financialTabLoading = false,
                     financialStatistics = result,
                 )
             }
@@ -342,10 +402,53 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun updateSenderIcon(iconPath: String) {
         viewModelScope.launch {
-            val senderId = _uiState.value.sender?.id
-            senderId?.let {
-                updateSenderIconUseCase.invoke(it, iconPath)
+            val senderId = _uiState.value.sender.id
+            updateSenderIconUseCase.invoke(senderId, iconPath)
+        }
+    }
+
+    fun addCategory(model: CategoryModel) {
+        viewModelScope.launch {
+            addCategoryUseCase.invoke(model)
+        }
+    }
+
+    fun onCategorySelected(item: SelectedItemModel) {
+        viewModelScope.launch {
+            val categoryId = item.id
+            val storeName = _uiState.value.selectedSms?.storeAndCategoryModel?.store?.name
+            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
+
+            storeModel?.let {
+                addOrUpdateStoreUseCase.invoke(it)
+                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                getData()
             }
+        }
+    }
+
+    fun getCategoryItems(
+        context: Context,
+        categories: List<CategoryEntity>
+    ): List<SelectedItemModel> {
+        val list = mutableListOf<SelectedItemModel>()
+        categories.map { value ->
+            list.add(
+                SelectedItemModel(
+                    id = value.id,
+                    value = CategoryModel.getDisplayName(context, value),
+                    isSelected = _uiState.value.selectedSms?.storeAndCategoryModel?.category?.id == value.id
+                )
+            )
+        }
+
+        return list
+
+    }
+
+    fun onSmsCategoryClicked(item: SmsModel) {
+        _uiState.update {
+            it.copy(selectedSms = item)
         }
     }
 
@@ -370,6 +473,10 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun navigateToPDFActivity(activity: Activity,pdfBundle: PdfCreatorViewModel.PdfBundle) {
         PdfCreatorActivity.startPdfCreatorActivity(activity,pdfBundle)
+    }
+
+    fun navigateToCategoryScreen(id:Int){
+        navigator.navigate(Screen.CategoryScreen.route + "/${id}")
     }
 
     fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {

@@ -35,7 +35,10 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.CategoriesBottomSheet
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterTimeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.*
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
@@ -62,14 +65,14 @@ fun SenderSmsListScreen(senderId: Int) {
         key1 = uiState.selectedFilter,
         key2 = uiState.selectedFilterTimeOption
     ) {
-        viewModel.getDate()
+        viewModel.getData()
     }
 
     LaunchedEffect(
         key1 = uiState.isRefreshing,
     ) {
         if (uiState.isRefreshing)
-            viewModel.getDate()
+            viewModel.getData()
     }
 
     LaunchedEffect(key1 = selectedTab){
@@ -97,11 +100,10 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
     val toolbarState = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState by viewModel.uiState.collectAsState()
-    val isFilterTimeOptionBottomSheet = remember { mutableStateOf(false) }
+    val bottomSheetType = remember { mutableStateOf<SenderSmsListBottomSheetType?>(null) }
     val coroutineScope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     BackHandler(sheetState.isVisible) {
@@ -148,33 +150,12 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            if (isFilterTimeOptionBottomSheet.value)
-                TimePeriodsBottomSheet(selectedItem = uiState.selectedFilterTimeOption, startDate = uiState.startDate , endDate = uiState.endDate) {
-                    coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
-                    }
-                    if (DateUtils.FilterOption.isRangeDateSelected(it.id)) {
-                        viewModel.showStartDatePicker()
-                    } else {
-                        if( uiState.selectedFilterTimeOption?.id == it.id){
-                           viewModel.updateSelectedFilterTimePeriods(null)
-                        }else{
-                            viewModel.updateSelectedFilterTimePeriods(it)
-                        }
-                        viewModel.dismissAllDatePicker()
-                    }
 
-                }
-            else{
-                FilterWordsBottomSheet(
-                    viewModel = viewModel,
-                    onDismiss = {
-                        coroutineScope.launch {
-                            handleVisibilityOfBottomSheet(sheetState, false)
-                        }
-                    }
-                )
-
+            when(bottomSheetType.value){
+                SenderSmsListBottomSheetType.TIME_PERIODS ->  FilterTimeBottomSheet(viewModel,sheetState)
+                SenderSmsListBottomSheetType.FILTER ->  FilterWordsBottomSheet(viewModel, sheetState)
+                SenderSmsListBottomSheetType.CATEGORIES ->CategoriesBottomSheet(viewModel, sheetState)
+                null -> {}
             }
         }) {
 
@@ -195,14 +176,14 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                     viewModel = viewModel,
                     onFilterIconClicked = {
                         coroutineScope.launch {
-                            isFilterTimeOptionBottomSheet.value = false
+                            bottomSheetType.value = SenderSmsListBottomSheetType.FILTER
                             handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                         }
 
                     },
                     onFilterTimeIconClicked = {
                         coroutineScope.launch {
-                            isFilterTimeOptionBottomSheet.value = true
+                            bottomSheetType.value = SenderSmsListBottomSheetType.TIME_PERIODS
                             handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
                         }
 
@@ -210,7 +191,12 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                     }
 
                 )
-                Tabs(viewModel = viewModel)
+                Tabs(viewModel = viewModel){
+                    bottomSheetType.value = SenderSmsListBottomSheetType.CATEGORIES
+                    coroutineScope.launch {
+                        handleVisibilityOfBottomSheet(sheetState, true)
+                    }
+                }
             }
         }
 
@@ -220,8 +206,9 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Tabs(viewModel: SenderSmsListViewModel) {
+fun Tabs(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
     Column(Modifier.fillMaxWidth()) {
@@ -254,9 +241,9 @@ fun Tabs(viewModel: SenderSmsListViewModel) {
             }
         }
         when (SenderSmsListScreenTabs.getTabByIndex(tabIndex)) {
-            SenderSmsListScreenTabs.ALL -> AllSmsTab(viewModel)
-            SenderSmsListScreenTabs.FAVORITE -> FavoriteSmsTab(viewModel)
-            SenderSmsListScreenTabs.DELETED -> SoftDeletedTab(viewModel)
+            SenderSmsListScreenTabs.ALL -> AllSmsTab(viewModel,onCategoryClicked)
+            SenderSmsListScreenTabs.FAVORITE -> FavoriteSmsTab(viewModel,onCategoryClicked)
+            SenderSmsListScreenTabs.DELETED -> SoftDeletedTab(viewModel,onCategoryClicked)
             SenderSmsListScreenTabs.FINANCIAL -> FinancialStatisticsTab(viewModel)
             SenderSmsListScreenTabs.CATEGORIES -> CategoriesStatisticsTab(viewModel)
         }
@@ -278,13 +265,14 @@ fun PageLoading() {
 }
 
 
+
 @Composable
 fun LazySenderSms(
     list: LazyPagingItems<SmsModel>,
-    viewModel: SenderSmsListViewModel
+    viewModel: SenderSmsListViewModel,
+    onCategoryClicked:()->Unit
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier,
@@ -295,10 +283,12 @@ fun LazySenderSms(
 
             if (item != null) {
                 SmsComponent(
-                    onSmsClicked ={
-                        viewModel.navigateToSmsDetails(item.id)
-                    },
                     model = wrapSendersToSenderComponentModel(item , context),
+                    onCategoryClicked = {
+                        viewModel.onSmsCategoryClicked(item)
+                        onCategoryClicked()
+
+                    },
                     onActionClicked = { model, action ->
                         when (action) {
                             SmsActionType.FAVORITE -> viewModel.favoriteSms(

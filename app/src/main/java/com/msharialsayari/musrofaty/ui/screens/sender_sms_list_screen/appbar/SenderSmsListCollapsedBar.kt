@@ -20,10 +20,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberPaginationAllSmsState
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
@@ -94,7 +94,7 @@ fun ToolbarActionsComposable(
     val activity = context.findActivity()
     val isFilterSelected = uiState.selectedFilter != null
     val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
-    val smsList = rememberPaginationAllSmsState(viewModel = viewModel, isDeleted = null, isFavorite = null)
+    val canGenerateFile = uiState.allSmsList?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true
 
     Row(
         modifier = Modifier
@@ -123,10 +123,10 @@ fun ToolbarActionsComposable(
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        if (smsList.itemSnapshotList.isEmpty()) {
-                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
-                        } else {
+                        if (canGenerateFile) {
                             viewModel.generateExcelFile(activity)
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
                         }
 
                     })
@@ -136,10 +136,10 @@ fun ToolbarActionsComposable(
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        if (smsList.itemSnapshotList.isEmpty()) {
-                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
-                        } else {
+                        if (canGenerateFile) {
                             viewModel.navigateToPDFActivity(activity,viewModel.getPdfBundle())
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.no_sms_to_generat_file), Toast.LENGTH_SHORT).show()
                         }
 
                     })

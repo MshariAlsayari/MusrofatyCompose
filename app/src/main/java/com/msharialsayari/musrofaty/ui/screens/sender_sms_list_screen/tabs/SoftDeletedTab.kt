@@ -1,13 +1,19 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.LazySenderSms
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberPaginationAllSmsState
+
 
 @Composable
-fun SoftDeletedTab(viewModel: SenderSmsListViewModel){
-    val allDeletedSmsState = rememberPaginationAllSmsState(viewModel = viewModel, isDeleted = true, isFavorite = null)
-    LazySenderSms(viewModel = viewModel, list = allDeletedSmsState)
-
+fun SoftDeletedTab(viewModel: SenderSmsListViewModel,onCategoryClicked:()->Unit){
+    val uiState  by viewModel.uiState.collectAsState()
+    val smsList = uiState.softDeletedSmsList?.collectAsLazyPagingItems()
+    if (smsList != null)
+        LazySenderSms(viewModel = viewModel, list = smsList) {
+            onCategoryClicked()
+        }
 }

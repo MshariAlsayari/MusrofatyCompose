@@ -106,7 +106,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingSmsListByStoreNameUseCase(
+    fun observingSmsListByStoreName(
         senderId: Int?= null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean?=null,
@@ -142,7 +142,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingSmsListByStoreNameUseCase(query: String): Flow<PagingData<SmsModel>> {
+    fun observingSmsListByStoreName(query: String): Flow<PagingData<SmsModel>> {
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
         ){
