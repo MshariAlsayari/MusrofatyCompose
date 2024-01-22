@@ -143,6 +143,7 @@ class SenderSmsListViewModel @Inject constructor(
             _uiState.update { it.copy(isRefreshing = true) }
             val senderName = _uiState.value.sender.senderName
             loadSenderSmsUseCase.invoke(senderName)
+            getData()
             _uiState.update { it.copy(isRefreshing = false) }
         }
     }
