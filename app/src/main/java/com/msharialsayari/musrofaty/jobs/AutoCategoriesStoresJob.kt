@@ -14,7 +14,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.Categ
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsContainsStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoresCategoriesKeysUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -25,7 +25,7 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
     private val getAllSmsContainsStoreUseCase: GetAllSmsContainsStoreUseCase,
     private val categoryRepo:CategoryRepo,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
-    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val getStoresCategoriesKeysUseCase: GetStoresCategoriesKeysUseCase,
     ) : CoroutineWorker(appContext, workerParams) {
 
@@ -69,7 +69,7 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
                         val storeName = sms.storeName
                         val storeModel = StoreModel(name = storeName, categoryId = model.categoryId)
                         addOrUpdateStoreUseCase.invoke(storeModel)
-                        postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+                        postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
                     }
             }
 

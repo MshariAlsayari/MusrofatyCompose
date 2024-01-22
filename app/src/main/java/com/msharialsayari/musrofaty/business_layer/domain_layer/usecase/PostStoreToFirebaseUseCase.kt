@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class PostStoreToFirestoreUseCase @Inject constructor(
+class PostStoreToFirebaseUseCase @Inject constructor(
     private val storeRepo: StoreFirebaseRepo,
     private val getCategoryUseCase: GetCategoryUseCase
 ) {

@@ -15,10 +15,7 @@ import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScree
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.CATEGORY_ID_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.END_DATE_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.FILTER_OPTION_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.QUERY_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.START_DATE_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.SMS_IDS_KEY
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
@@ -32,6 +29,7 @@ import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListScreen
+import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListViewModel.Companion.STORE_NAME_KEY
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.utils.findActivity
 
@@ -154,14 +152,10 @@ fun NavigationGraph(
             StoresScreen()
         }
 
-        composable(Screen.StoreSmsListScreen.route + "/{storeName}",
-            arguments = listOf(navArgument("storeName") { type = NavType.StringType }
+        composable(Screen.StoreSmsListScreen.route + "/{$STORE_NAME_KEY}",
+            arguments = listOf(navArgument(STORE_NAME_KEY) { type = NavType.StringType }
             )) { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val storeName = arguments?.getString("storeName")
-            storeName?.let {
-                StoreSmsListScreen(storeName = storeName)
-            }
+            StoreSmsListScreen()
         }
 
 
@@ -175,17 +169,12 @@ fun NavigationGraph(
         }
 
         composable(
-            Screen.CategorySmsListScreen.route + "/{$CATEGORY_ID_KEY}" + "/{$FILTER_OPTION_KEY}" + "/{$START_DATE_KEY}" + "/{$END_DATE_KEY}"+ "/{$QUERY_KEY}",
+            Screen.CategorySmsListScreen.route + "/{$CATEGORY_ID_KEY}" + "/{$SMS_IDS_KEY}",
             arguments = listOf(
                 navArgument(CATEGORY_ID_KEY) { type = NavType.IntType },
-                navArgument(FILTER_OPTION_KEY) { type = NavType.IntType },
-                navArgument(START_DATE_KEY) { type = NavType.LongType },
-                navArgument(END_DATE_KEY) { type = NavType.LongType },
-                navArgument(QUERY_KEY) {
+                navArgument(SMS_IDS_KEY) {
                     type = NavType.StringType
-                    nullable = true
-                    defaultValue = "null"
-                },
+                }
 
             )
         ) {

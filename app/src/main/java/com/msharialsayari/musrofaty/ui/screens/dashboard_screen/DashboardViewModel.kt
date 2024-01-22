@@ -3,7 +3,9 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
@@ -239,14 +241,12 @@ class DashboardViewModel @Inject constructor(
         navigator.navigate(Screen.SenderSmsListScreen.route + "/${senderId}")
     }
 
-    fun navigateToCategorySmsListScreen(context:Context,model: CategoryStatisticsModel) {
+    fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
         val categoryId = model.storeAndCategoryModel?.category?.id
-        val filterOption = getFilterTimeOption(context)
-        val startDate = _uiState.value.startDate
-        val endDate = _uiState.value.endDate
-        val query = uiState.value.query.ifEmpty { null }
-        val routeArgument = "/${categoryId}"+ "/${filterOption.id}"+ "/${startDate}"+ "/${endDate}" + "/${query}"
-
+        val ids=model.smsList.map { it.id }
+        val smsContainer = SmsContainer(ids)
+        val json = Gson().toJson(smsContainer)
+        val routeArgument = "/${categoryId}"+ "/${json}"
         navigator.navigate(Screen.CategorySmsListScreen.route + routeArgument)
     }
 

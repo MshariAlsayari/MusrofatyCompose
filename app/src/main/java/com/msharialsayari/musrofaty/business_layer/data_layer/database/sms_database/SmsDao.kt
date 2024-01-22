@@ -4,7 +4,6 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_data
 import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
-import com.msharialsayari.musrofaty.utils.SmsUtils
 import kotlinx.coroutines.flow.Flow
 
 
@@ -34,6 +33,9 @@ interface SmsDao {
 
     @RawQuery(observedEntities = [SmsEntity::class])
     fun observingSmsList(query: SupportSQLiteQuery): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE id IN (:ids)")
+    fun observingSmsListByIds(ids: List<String>): Flow<List<SmsEntity>>
 
     @Query("SELECT * FROM SmsEntity WHERE body LIKE '%' || :query || '%' order by timestamp DESC ")
     fun getPaginationAllSms(query:String=""): PagingSource<Int,SmsEntity>

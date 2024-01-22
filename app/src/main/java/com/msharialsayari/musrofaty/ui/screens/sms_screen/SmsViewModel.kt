@@ -19,7 +19,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCateg
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoreAndCategoryUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
@@ -43,7 +43,7 @@ class SmsViewModel @Inject constructor(
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
-    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 ) : ViewModel() {
@@ -135,7 +135,7 @@ class SmsViewModel @Inject constructor(
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
-                postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
             }
 
             getData(_uiState.value.sms?.id!!)

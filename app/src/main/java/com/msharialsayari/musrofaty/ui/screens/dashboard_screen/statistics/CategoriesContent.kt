@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
@@ -43,11 +42,10 @@ private fun CategoryCompose(viewModel: DashboardViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
     val categoriesList = uiState.categoriesStatistics
-    val context = LocalContext.current
     Column {
         categoriesList.forEach {
             CategoriesStatistics(item = it, onRowClicked = {
-                viewModel.navigateToCategorySmsListScreen(context,it)
+                viewModel.navigateToCategorySmsListScreen(it)
             })
         }
     }

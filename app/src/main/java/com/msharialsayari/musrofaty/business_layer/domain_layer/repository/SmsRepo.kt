@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.filter
 import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
@@ -105,7 +106,7 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingPaginationAllSms(
+    fun observingSmsListByStoreNameUseCase(
         senderId: Int?= null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean?=null,
@@ -141,14 +142,18 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingPaginationAllSms(query: String = ""): Flow<PagingData<SmsModel>> {
+    fun observingSmsListByStoreNameUseCase(query: String): Flow<PagingData<SmsModel>> {
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
         ){
             dao.getPaginationAllSms(query)
         }.flow.map { pagingData ->
-            pagingData.map {
+            pagingData.filter {
                var model =  it.toSmsModel()
+                model = fillSmsModel(model)
+                model.storeName==query
+            }.map {
+                var model =  it.toSmsModel()
                 model = fillSmsModel(model)
                 model
             }
@@ -202,6 +207,18 @@ class SmsRepo @Inject constructor(
     }
 
 
+    fun observingAllSmsModelByIds(
+      ids:List<String>
+    ): Flow<List<SmsModel>> {
+        return dao.observingSmsListByIds(ids)
+            .map {list->
+               list.map {smsEntity ->
+                    var model = smsEntity.toSmsModel()
+                    model = fillSmsModel(model)
+                    model
+                }
+            }
+    }
 
    private suspend fun getSmsType(body: String): SmsType {
         val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_WORDS).map { it.word }

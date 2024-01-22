@@ -23,6 +23,6 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
         startDate: Long = 0,
         endDate: Long = 0
     ): Flow<PagingData<SmsModel>> {
-        return smsRepo.observingPaginationAllSms(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate)
+        return smsRepo.observingSmsListByStoreNameUseCase(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate)
     }
 }

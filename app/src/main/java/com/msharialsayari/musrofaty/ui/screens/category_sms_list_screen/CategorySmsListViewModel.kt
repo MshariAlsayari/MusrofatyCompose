@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
@@ -14,15 +16,13 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpd
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoryUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingAllSmsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingSmsListByIdsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,12 +40,9 @@ class CategorySmsListViewModel @Inject constructor(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
-    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
-    private val observingAllSmsUseCase: ObservingAllSmsUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
+    private val observingAllSmsUseCase: ObservingSmsListByIdsUseCase,
     private val navigator: AppNavigator,
-    @ApplicationContext val context: Context
-
-
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(CategorySmsListUIState())
@@ -53,39 +50,22 @@ class CategorySmsListViewModel @Inject constructor(
     private var observeSmsJob: Job? = null
 
     companion object{
-        const val FILTER_OPTION_KEY = "filterOption"
-        const val QUERY_KEY = "query"
-        const val START_DATE_KEY = "startDate"
-        const val END_DATE_KEY = "endDate"
         const val CATEGORY_ID_KEY = "categoryId"
+        const val SMS_IDS_KEY = "ids"
     }
-
-
-    val filterOption: DateUtils.FilterOption
-        get() {
-            val filterId = savedStateHandle.get<Int>(FILTER_OPTION_KEY)
-            return DateUtils.FilterOption.getFilterOptionOrDefault(filterId)
-        }
-
-    val query: String
-        get() {
-            val q = savedStateHandle.get<String>(QUERY_KEY)
-            return if(q.isNullOrEmpty() || q.equals("null", ignoreCase = true)) "" else q
-        }
-    val startDate: Long
-        get() {
-            return savedStateHandle.get<Long>(START_DATE_KEY) ?: 0
-        }
-
-    val endDate: Long
-        get() {
-            return savedStateHandle.get<Long>(END_DATE_KEY)?: 0
-        }
 
     val categoryId: Int?
         get() {
             val id = savedStateHandle.get<Int>(CATEGORY_ID_KEY)
             return if(id==null || id == -1) null else savedStateHandle.get<Int>(CATEGORY_ID_KEY)
+        }
+
+
+    private val ids: List<String>
+        get() {
+            val json = savedStateHandle.get<String>(SMS_IDS_KEY)
+            val model = Gson().fromJson(json, SmsContainer::class.java)
+            return model.ids
         }
 
 
@@ -119,21 +99,12 @@ class CategorySmsListViewModel @Inject constructor(
     private fun getSms() {
         viewModelScope.launch {
 
-        observingAllSmsUseCase.invoke(
-                filterOption = filterOption,
-                startDate = startDate,
-                endDate = endDate,
-                query = query,
-                categoryId = categoryId
-            ).collect{list->
+        observingAllSmsUseCase.invoke(ids).collect{list->
                 _uiState.update {
                     it.copy(smsList = list)
                 }
 
             }
-
-
-
         }
 
     }
@@ -183,7 +154,7 @@ class CategorySmsListViewModel @Inject constructor(
 
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
-                postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
                 getSms()
             }
         }

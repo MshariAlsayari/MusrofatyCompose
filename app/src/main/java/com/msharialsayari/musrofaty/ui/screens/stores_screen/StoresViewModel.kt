@@ -13,14 +13,13 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCateg
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.notEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -34,7 +33,7 @@ class StoresViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
-    private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
@@ -67,7 +66,7 @@ class StoresViewModel @Inject constructor(
             val storeName  = _uiState.value.selectedStore?.store?.name
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
-                postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
+                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
             }
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
