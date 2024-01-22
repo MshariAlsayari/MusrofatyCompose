@@ -15,11 +15,7 @@ import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScree
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.CATEGORY_ID_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.END_DATE_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.FILTER_OPTION_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.QUERY_KEY
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.SMS_LIST_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.START_DATE_KEY
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
