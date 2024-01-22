@@ -60,13 +60,12 @@ class StoreSmsListViewModel  @Inject constructor(
 
      private fun getAllSms(){
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true)
+          getAllSmsUseCase.invoke(query = storeName).collect{list->
+              _uiState.update {
+                  it.copy(smsList = list)
+              }
             }
-            val smsResult = getAllSmsUseCase.invoke(query = storeName)
-            _uiState.update {
-                it.copy(smsFlow = smsResult, isLoading = false)
-            }
+
         }
 
     }
@@ -119,7 +118,7 @@ class StoreSmsListViewModel  @Inject constructor(
                 SelectedItemModel(
                     id = value.id,
                     value = CategoryModel.getDisplayName(context, value),
-                    isSelected = false
+                    isSelected = _uiState.value.selectedSms?.storeAndCategoryModel?.category?.id == value.id
                 )
             )
         }

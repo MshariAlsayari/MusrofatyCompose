@@ -13,7 +13,7 @@ class ObservingSmsListByStoreNameUseCase @Inject constructor(
     private val smsRepo: SmsRepo
 ) {
 
-    operator fun invoke(query:String): Flow<PagingData<SmsModel>> {
+    operator fun invoke(query:String): Flow<List<SmsModel>> {
         return smsRepo.observingSmsListByStoreName(query)
     }
 }

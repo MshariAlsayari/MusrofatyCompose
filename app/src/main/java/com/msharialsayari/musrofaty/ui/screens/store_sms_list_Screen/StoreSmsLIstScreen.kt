@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
@@ -43,6 +45,7 @@ fun StoreSmsListScreen(){
 
     val viewModel: StoreSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val smsList = uiState.smsList
 
     Scaffold(
         topBar = {
@@ -62,7 +65,7 @@ fun StoreSmsListScreen(){
         ) {
 
             when{
-                uiState.smsFlow != null -> PageCompose(Modifier, viewModel)
+                smsList.isNotEmpty()    -> PageCompose(Modifier, viewModel)
                 else                    -> PageEmpty(Modifier)
             }
 
@@ -140,64 +143,54 @@ private fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListView
 private fun StoreListContent(modifier: Modifier=Modifier, viewModel: StoreSmsListViewModel, sheetState: BottomSheetScaffoldState){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val smsList = uiState.smsFlow?.collectAsLazyPagingItems()
+    val smsList = uiState.smsList
     val listState  = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    if (smsList?.itemSnapshotList?.isNotEmpty() == true) {
+    LazyColumn(
+        modifier = modifier,
+        state = listState,
+    ) {
+        items(smsList) { item ->
+            SmsComponent(
+                model = wrapSendersToSenderComponentModel(item, context),
+                onCategoryClicked = {
+                    viewModel.onSmsCategoryClicked(item)
+                    coroutineScope.launch {
+                        BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, true)
+                    }
+                },
+                onActionClicked = { model, action ->
+                    when (action) {
+                        SmsActionType.FAVORITE -> viewModel.favoriteSms(
+                            model.id,
+                            model.isFavorite
+                        )
 
-        LazyColumn(
-            modifier = modifier,
-            state = listState,
-        ) {
+                        SmsActionType.COPY -> {
+                            Utils.copyToClipboard(item.body, context)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.common_copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-            itemsIndexed(key = { _, sms -> sms.id }, items = smsList) { index, item ->
+                        SmsActionType.SHARE -> {
+                            Utils.shareText(item.body, context)
+                        }
 
-                if (item != null) {
-                    SmsComponent(
-                        model = wrapSendersToSenderComponentModel(item, context),
-                        onCategoryClicked = {
-                            viewModel.onSmsCategoryClicked(item)
-                            coroutineScope.launch {
-                                BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, true)
-                            }
-                        },
-                        onActionClicked = { model, action ->
-                            when (action) {
-                                SmsActionType.FAVORITE -> viewModel.favoriteSms(
-                                    model.id,
-                                    model.isFavorite
-                                )
-
-                                SmsActionType.COPY -> {
-                                    Utils.copyToClipboard(item.body, context)
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.common_copied),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                SmsActionType.SHARE -> {
-                                    Utils.shareText(item.body, context)
-                                }
-
-                                SmsActionType.DELETE -> viewModel.softDelete(
-                                    model.id,
-                                    model.isDeleted
-                                )
-                            }
-                        })
-
-                }
-
-            }
+                        SmsActionType.DELETE -> viewModel.softDelete(
+                            model.id,
+                            model.isDeleted
+                        )
+                    }
+                })
 
 
         }
-    }else{
-        PageEmpty(modifier)
     }
+
 }
 
 

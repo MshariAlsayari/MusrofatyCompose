@@ -136,7 +136,7 @@ class CategorySmsListViewModel @Inject constructor(
                 SelectedItemModel(
                     id = value.id,
                     value = CategoryModel.getDisplayName(context, value),
-                    isSelected = categoryId == value.id
+                    isSelected = _uiState.value.selectedSms?.storeAndCategoryModel?.category?.id == value.id
                 )
             )
         }

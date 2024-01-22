@@ -142,12 +142,8 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingSmsListByStoreName(query: String): Flow<PagingData<SmsModel>> {
-        return Pager(
-            config = PagingConfig(pageSize = ITEM_SIZE),
-        ){
-            dao.getPaginationAllSms(query)
-        }.flow.map { pagingData ->
+    fun observingSmsListByStoreName(query: String): Flow<List<SmsModel>> {
+        return  dao.observingSmsListByQuery(query).map { pagingData ->
             pagingData.filter {
                var model =  it.toSmsModel()
                 model = fillSmsModel(model)

@@ -38,6 +38,9 @@ interface SmsDao {
     fun observingSmsListByIds(ids: List<String>): Flow<List<SmsEntity>>
 
     @Query("SELECT * FROM SmsEntity WHERE body LIKE '%' || :query || '%' order by timestamp DESC ")
+    fun observingSmsListByQuery(query:String=""): Flow<List<SmsEntity>>
+
+    @Query("SELECT * FROM SmsEntity WHERE body LIKE '%' || :query || '%' order by timestamp DESC ")
     fun getPaginationAllSms(query:String=""): PagingSource<Int,SmsEntity>
 
     @Query("DELETE FROM SmsEntity WHERE senderId = :senderId")
