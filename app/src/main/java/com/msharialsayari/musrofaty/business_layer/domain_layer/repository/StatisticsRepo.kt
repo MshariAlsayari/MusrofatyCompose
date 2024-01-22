@@ -3,12 +3,10 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 import android.content.Context
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
@@ -32,20 +30,16 @@ class StatisticsRepo @Inject constructor(
     private val smsRepo: SmsRepo,
     @ApplicationContext val context: Context
 ) {
-    suspend fun getFinancialStatistics(list: List<SmsEntity>): Map<String, FinancialStatistics> {
+    fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        list.forEach {
-            var smsModel = it.toSmsModel()
-            smsModel = smsRepo.fillSmsModel(smsModel)
-            if (smsModel.smsType != SmsType.NOTHING && smsModel.amount > 0) {
+        val expensesSmsList = list.filter { (it.smsType == SmsType.EXPENSES ||it.smsType == SmsType.INCOME ) && it.amount > 0 }
+        expensesSmsList.forEach {smsModel->
                 val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
                 map[smsModel.currency] = calculateFinancialSummary(
                     financialSummary,
                     smsModel.amount,
                     smsModel.smsType
                 )
-
-            }
         }
         return map
     }

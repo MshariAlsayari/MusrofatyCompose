@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.ui.screens.dashboard_screen.sms
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,12 +21,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
 import com.msharialsayari.musrofaty.ui_component.SmsActionType
 import com.msharialsayari.musrofaty.ui_component.SmsComponent
+import com.msharialsayari.musrofaty.ui_component.wrapSendersToSenderComponentModel
 
 @Composable
 fun SmsContent(
@@ -53,7 +53,7 @@ fun SmsContent(
 
 @Composable
 fun SmsList(
-    list: LazyPagingItems<SmsEntity>,
+    list: LazyPagingItems<SmsModel>,
     viewModel: DashboardViewModel
 ) {
     val context = LocalContext.current
@@ -67,7 +67,7 @@ fun SmsList(
             if (item != null) {
 
                 SmsComponent(
-                    model = viewModel.wrapSendersToSenderComponentModel(item, context),
+                    model = wrapSendersToSenderComponentModel(item, context),
                     onSmsClicked = {
                       viewModel.navigateToSmsDetails(it)
                     },

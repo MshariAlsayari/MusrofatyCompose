@@ -43,10 +43,11 @@ private fun CategoryCompose(viewModel: DashboardViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
     val categoriesList = uiState.categoriesStatistics
+    val context = LocalContext.current
     Column {
         categoriesList.forEach {
             CategoriesStatistics(item = it, onRowClicked = {
-                viewModel.navigateToCategorySmsListScreen(it)
+                viewModel.navigateToCategorySmsListScreen(context,it)
             })
         }
     }

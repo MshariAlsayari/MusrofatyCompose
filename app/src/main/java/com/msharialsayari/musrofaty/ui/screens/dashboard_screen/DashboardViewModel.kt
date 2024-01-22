@@ -3,19 +3,20 @@ package com.msharialsayari.musrofaty.ui.screens.dashboard_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSendersUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadAllSenderSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingPaginationAllSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +24,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 
@@ -33,8 +32,7 @@ class DashboardViewModel @Inject constructor(
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val loadAllSenderSmsUseCase: LoadAllSenderSmsUseCase,
-    private val ObservingPaginationAllSmsUseCase: ObservingPaginationAllSmsUseCase,
-    private val getAllSmsUseCase: GetSmsListUseCase,
+    private val observingPaginationAllSmsUseCase: ObservingPaginationAllSmsUseCase,
     private val getAllSmsModelUseCase: GetSmsModelListUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
@@ -80,16 +78,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getAllSms(context: Context): List<SmsEntity> {
-        return getAllSmsUseCase.invoke(
-            filterOption = getFilterTimeOption(context),
-            isDeleted = false,
-            query = _uiState.value.query,
-            startDate = _uiState.value.startDate,
-            endDate = _uiState.value.endDate
-        )
-    }
-
     private suspend fun getAllSmsModel(context: Context): List<SmsModel> {
         return getAllSmsModelUseCase.invoke(
             filterOption = getFilterTimeOption(context),
@@ -103,7 +91,7 @@ class DashboardViewModel @Inject constructor(
     private fun getFinancialStatistics(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isFinancialStatisticsSmsPageLoading = true) }
-            val smsResult = getAllSms(context)
+            val smsResult = getAllSmsModel(context)
             val result = getFinancialStatisticsUseCase.invoke(smsResult)
             _uiState.update { state ->
                 state.copy(
@@ -143,7 +131,7 @@ class DashboardViewModel @Inject constructor(
                 it.copy(isSmsPageLoading = true)
             }
 
-            val smsResult = ObservingPaginationAllSmsUseCase.invoke(
+            val smsResult = observingPaginationAllSmsUseCase.invoke(
                 filterOption = getFilterTimeOption(context),
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
@@ -227,32 +215,6 @@ class DashboardViewModel @Inject constructor(
 
     }
 
-    fun wrapSendersToSenderComponentModel(
-        sms: SmsEntity,
-        context: Context
-    ): SmsComponentModel {
-
-        val sender = getSenderById(sms.senderId)
-
-        return SmsComponentModel(
-            id = sms.id,
-            senderId = sms.senderId,
-            timestamp = sms.timestamp,
-            isFavorite = sms.isFavorite,
-            isDeleted = sms.isDeleted,
-            body = sms.body,
-            senderIcon = sender?.senderIconUri ?: "",
-            senderDisplayName = SenderModel.getDisplayName(context, sender),
-            senderCategory = ContentModel.getDisplayName(context, sender?.content)
-
-        )
-
-    }
-
-    private fun getSenderById(senderId: Int): SenderModel? {
-        return _uiState.value.senders.find { it.id == senderId }
-
-    }
 
     fun favoriteSms(id: String, favorite: Boolean) {
         viewModelScope.launch {
@@ -277,15 +239,15 @@ class DashboardViewModel @Inject constructor(
         navigator.navigate(Screen.SenderSmsListScreen.route + "/${senderId}")
     }
 
-    fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
-        val encodedList = model.smsList.map {
-           it.senderModel?.senderIconUri =  URLEncoder.encode( it.senderModel?.senderIconUri, StandardCharsets.UTF_8.toString())
-            it.body=  URLEncoder.encode( it.body, StandardCharsets.UTF_8.toString())
-            it
-        }
-        val smsContainer = SmsContainer(encodedList)
-        val jsonList = Gson().toJson(smsContainer)
-        navigator.navigate(Screen.CategorySmsListScreen.route + "/${jsonList}"+ "/${model.storeAndCategoryModel?.category?.id}")
+    fun navigateToCategorySmsListScreen(context:Context,model: CategoryStatisticsModel) {
+        val categoryId = model.storeAndCategoryModel?.category?.id
+        val filterOption = getFilterTimeOption(context)
+        val startDate = _uiState.value.startDate
+        val endDate = _uiState.value.endDate
+        val query = uiState.value.query.ifEmpty { null }
+        val routeArgument = "/${categoryId}"+ "/${filterOption.id}"+ "/${startDate}"+ "/${endDate}" + "/${query}"
+
+        navigator.navigate(Screen.CategorySmsListScreen.route + routeArgument)
     }
 
 

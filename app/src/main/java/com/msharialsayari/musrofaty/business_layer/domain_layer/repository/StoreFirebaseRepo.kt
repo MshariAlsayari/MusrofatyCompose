@@ -72,6 +72,7 @@ class StoreFirebaseRepo @Inject constructor(
             category_id_field to storeEntity.category_id
         )
 
+        return
         val documents = collectionNewRef.whereEqualTo(name_search_field,storeEntity.name).get().await().documents
         val documentData = if(documents.isNotEmpty()) documents.first().data else null
         val documentId = if(documents.isNotEmpty()) documents.first().id else null

@@ -9,7 +9,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertSmsUseCase
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -24,7 +24,7 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
     private val insertSmsUseCase: InsertSmsUseCase,
-    private val getAllSmsUseCase: GetSmsListUseCase,
+    private val getAllSmsUseCase: GetSmsModelListUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
 ): CoroutineWorker(appContext, workerParams){
 

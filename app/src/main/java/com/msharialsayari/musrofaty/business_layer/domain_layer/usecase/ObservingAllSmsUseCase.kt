@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.usecase
 
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +21,10 @@ class ObservingAllSmsUseCase @Inject constructor(
         isFavorite:Boolean?=null,
         query: String = "",
         startDate: Long = 0,
-        endDate: Long = 0
-    ): Flow<List<SmsEntity>> {
-        return smsRepo.observingAllSms(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate)
+        endDate: Long = 0,
+        categoryId: Int?=null,
+        storeName: String?=null,
+    ): Flow<List<SmsModel>> {
+        return smsRepo.observingAllSmsModel(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate,categoryId, storeName)
     }
 }

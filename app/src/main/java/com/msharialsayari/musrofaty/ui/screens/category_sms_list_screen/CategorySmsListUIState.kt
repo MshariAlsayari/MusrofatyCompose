@@ -7,7 +7,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import kotlinx.coroutines.flow.Flow
 
 data class CategorySmsListUIState (
-    var isLoading:Boolean = false,
     var smsList :List<SmsModel> = emptyList(),
     var senders: List<SenderModel> = emptyList(),
     var category: CategoryModel = CategoryModel.getNoSelectedCategory(),

@@ -4,12 +4,8 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
@@ -18,38 +14,34 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpd
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoryUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSendersUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirestoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
-import com.patrykandpatrick.vico.core.extension.getFieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
 class CategorySmsListViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val savedStateHandle: SavedStateHandle,
-    private val getSendersUseCase: GetSendersUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val getCategoryUseCase: GetCategoryUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirestoreUseCase: PostStoreToFirestoreUseCase,
+    private val observingAllSmsUseCase: ObservingAllSmsUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 
@@ -58,38 +50,91 @@ class CategorySmsListViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CategorySmsListUIState())
     val uiState: StateFlow<CategorySmsListUIState> = _uiState
+    private var observeSmsJob: Job? = null
 
     companion object{
+        const val FILTER_OPTION_KEY = "filterOption"
+        const val QUERY_KEY = "query"
+        const val START_DATE_KEY = "startDate"
+        const val END_DATE_KEY = "endDate"
         const val CATEGORY_ID_KEY = "categoryId"
-        const val SMS_LIST_KEY = "smsList"
     }
 
 
+    val filterOption: DateUtils.FilterOption
+        get() {
+            val filterId = savedStateHandle.get<Int>(FILTER_OPTION_KEY)
+            return DateUtils.FilterOption.getFilterOptionOrDefault(filterId)
+        }
+
+    val query: String
+        get() {
+            val q = savedStateHandle.get<String>(QUERY_KEY)
+            return if(q.isNullOrEmpty() || q.equals("null", ignoreCase = true)) "" else q
+        }
+    val startDate: Long
+        get() {
+            return savedStateHandle.get<Long>(START_DATE_KEY) ?: 0
+        }
+
+    val endDate: Long
+        get() {
+            return savedStateHandle.get<Long>(END_DATE_KEY)?: 0
+        }
+
     val categoryId: Int?
         get() {
-            return savedStateHandle.get<Int>(CATEGORY_ID_KEY)
+            val id = savedStateHandle.get<Int>(CATEGORY_ID_KEY)
+            return if(id==null || id == -1) null else savedStateHandle.get<Int>(CATEGORY_ID_KEY)
         }
 
-
-    val smsList: List<SmsModel>
-        get() {
-            val jsonList = savedStateHandle.get<String>(SMS_LIST_KEY)
-            val container = Gson().fromJson(jsonList, SmsContainer::class.java)
-            val decodedList = container.list.map {
-                it.senderModel?.senderIconUri =    URLDecoder.decode(it.senderModel?.senderIconUri, StandardCharsets.UTF_8.name())
-                it.body=    URLDecoder.decode(it.body, StandardCharsets.UTF_8.name())
-                it
-            }
-            return decodedList
-        }
 
 
 
     init {
+        startObserveChat(true)
         getCategory()
-        getSms()
-        getSenders()
         getCategories()
+     
+    }
+    fun startObserveChat(force: Boolean = false) {
+        if (force) {
+            observeSmsJob?.cancelChildren()
+            observeSmsJob = viewModelScope.launch {
+                getSms()
+            }
+        } else if (observeSmsJob?.isActive == false || observeSmsJob == null) {
+            observeSmsJob = viewModelScope.launch {
+                getSms()
+            }
+        }
+    }
+
+    fun stopObserveChat() {
+        observeSmsJob?.cancel()
+    }
+    
+
+    
+    private fun getSms() {
+        viewModelScope.launch {
+
+        observingAllSmsUseCase.invoke(
+                filterOption = filterOption,
+                startDate = startDate,
+                endDate = endDate,
+                query = query,
+                categoryId = categoryId
+            ).collect{list->
+                _uiState.update {
+                    it.copy(smsList = list)
+                }
+
+            }
+
+
+
+        }
 
     }
 
@@ -128,24 +173,7 @@ class CategorySmsListViewModel @Inject constructor(
         return list
     }
 
-    private fun getSms() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            _uiState.update {
-                it.copy(isLoading = false, smsList = smsList)
-            }
-        }
-    }
 
-    private fun getSenders(){
-        viewModelScope.launch {
-            val result = getSendersUseCase.invoke()
-            _uiState.update {
-                it.copy(senders = result)
-            }
-        }
-
-    }
 
     fun onCategorySelected(item: SelectedItemModel) {
         viewModelScope.launch {
@@ -156,49 +184,10 @@ class CategorySmsListViewModel @Inject constructor(
             storeModel?.let {
                 addOrUpdateStoreUseCase.invoke(it)
                 postStoreToFirestoreUseCase.invoke(storeModel.toStoreEntity())
-                _uiState.value.selectedSms?.let {smsModel->
-                    updateSmsList(smsModel,storeModel, categoryId)
-                }
-
+                getSms()
             }
         }
     }
-
-    private fun updateSmsList(smsModel: SmsModel,storeModel: StoreModel, newCategoryId:Int) {
-        viewModelScope.launch {
-            val selectedSms =getSmsById(smsModel)
-            val newCategory = getCategoryUseCase.invoke(newCategoryId)
-            if(selectedSms!= null && newCategory != null){
-                selectedSms.storeAndCategoryModel = StoreAndCategoryModel(
-                    store = storeModel,
-                    category = newCategory
-                )
-                replaceSms(selectedSms)
-            }
-        }
-
-
-    }
-
-    private fun getSmsById(selectedSms:SmsModel): SmsModel? {
-        return _uiState.value.smsList.find { it.id ==  selectedSms.id}
-    }
-
-    private fun replaceSms(selectedSms:SmsModel){
-        val newList = _uiState.value.smsList.toMutableList().apply {
-            removeIf {  it.id == selectedSms.id}
-            selectedSms.apply {
-                isSelected = !isSelected
-            }
-            add(selectedSms)
-        }
-
-        _uiState.update {
-            it.copy(smsList = newList)
-        }
-
-    }
-
 
     fun onSmsCategoryClicked(item: SmsModel) {
         _uiState.update {
@@ -212,7 +201,6 @@ class CategorySmsListViewModel @Inject constructor(
                 val category = getCategoryUseCase.invoke(categoryId!!)
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
                         category = category ?: CategoryModel.getNoSelectedCategory(),
                     )
 

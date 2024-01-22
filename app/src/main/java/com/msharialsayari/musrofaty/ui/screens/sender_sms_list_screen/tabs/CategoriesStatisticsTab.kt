@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,10 +16,6 @@ import com.msharialsayari.musrofaty.ui_component.categoriesStatistics.Categories
 @Composable
 fun CategoriesStatisticsTab(viewModel: SenderSmsListViewModel){
     val uiState  by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(uiState.selectedFilter, uiState.selectedFilterTimeOption){
-       viewModel.getCategoriesStatistics()
-    }
 
     when{
         uiState.categoriesTabLoading  -> PageLoading()

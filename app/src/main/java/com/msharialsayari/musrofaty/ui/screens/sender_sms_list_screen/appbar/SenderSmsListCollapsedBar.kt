@@ -22,9 +22,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberAllSmsState
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberPaginationAllSmsState
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
@@ -67,7 +65,7 @@ fun SenderSmsListCollapsedBar(
 fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val smsCount =  rememberAllSmsState(viewModel).value.size
+    val smsCount =  uiState.smsList.size
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TextComponent.HeaderText(

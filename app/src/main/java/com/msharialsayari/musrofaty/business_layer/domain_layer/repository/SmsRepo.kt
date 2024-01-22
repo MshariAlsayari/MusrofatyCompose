@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
@@ -14,12 +14,12 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdva
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
-import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -63,56 +63,6 @@ class SmsRepo @Inject constructor(
 
     }
 
-    suspend fun getAllSmsForAllSenders(
-        filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
-        query: String = "",
-        startDate: Long = 0,
-        endDate: Long = 0
-    ): List<SmsEntity> {
-        val senders = senderRepo.getAllSenders()
-        val smsList = mutableListOf<SmsEntity>()
-        senders.forEach {
-            val list = getAllSms(
-                senderId = it.id,
-                filterOption = filterOption,
-                isDeleted = isDeleted,
-                isFavorite=isFavorite,
-                query = query,
-                startDate = startDate,
-                endDate = endDate
-            ).toList()
-            smsList.addAll(list)
-        }
-        return smsList
-
-    }
-
-    suspend fun getAllSms(
-        senderId: Int?= null,
-        filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
-        query: String = "",
-        startDate: Long = 0,
-        endDate: Long = 0
-    ): List<SmsEntity> {
-
-        val finalQuery = getSmsQuery(
-            senderId = senderId,
-            filterOption = filterOption,
-            isDeleted = isDeleted,
-            isFavorite = isFavorite,
-            query = query,
-            startDate = startDate,
-            endDate = endDate
-        )
-        return dao.getAllSms(finalQuery)
-    }
-
-
-
     suspend fun getAllSmsModel(
         senderId: Int?= null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
@@ -139,7 +89,7 @@ class SmsRepo @Inject constructor(
         val smsListEntity = dao.getAllSms(finalQuery)
 
         smsListEntity.map {
-            returnedList.add(fillSmsModel( it.toSmsModel()))
+            returnedList.add(fillSmsModel(it.toSmsModel()))
         }
 
         if(!storeName.isNullOrEmpty()){
@@ -162,8 +112,8 @@ class SmsRepo @Inject constructor(
         isFavorite:Boolean?=null,
         query: String = "",
         startDate: Long = 0,
-        endDate: Long = 0
-    ): Flow<PagingData<SmsEntity>> {
+        endDate: Long = 0,
+    ): Flow<PagingData<SmsModel>> {
 
         val finalQuery = getSmsQuery(
             senderId = senderId,
@@ -176,37 +126,49 @@ class SmsRepo @Inject constructor(
         )
 
 
-        val pagingSourceFactory = { dao.getPaginationAllSms(finalQuery) }
-
-
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
-            pagingSourceFactory = pagingSourceFactory,
-        ).flow
+        ){
+            dao.getPaginationAllSms(finalQuery)
+        }.flow.map { pagingData ->
+           pagingData.map {
+                var model =  it.toSmsModel()
+                model = fillSmsModel(model)
+                model
+            }
+        }
 
     }
 
 
-    fun observingPaginationAllSms(query: String = ""): Flow<PagingData<SmsEntity>> {
-        val pagingSourceFactory = { dao.getPaginationAllSms(query) }
-
+    fun observingPaginationAllSms(query: String = ""): Flow<PagingData<SmsModel>> {
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
-            pagingSourceFactory = pagingSourceFactory,
-        ).flow
+        ){
+            dao.getPaginationAllSms(query)
+        }.flow.map { pagingData ->
+            pagingData.map {
+               var model =  it.toSmsModel()
+                model = fillSmsModel(model)
+                model
+            }
+
+        }
 
     }
 
 
-    fun observingAllSms(
+    fun observingAllSmsModel(
         senderId: Int?= null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean?=null,
         isFavorite:Boolean?=null,
         query: String = "",
         startDate: Long = 0,
-        endDate: Long = 0
-    ): Flow<List<SmsEntity>> {
+        endDate: Long = 0,
+        categoryId: Int?=null,
+        storeName: String?=null,
+    ): Flow<List<SmsModel>> {
 
         val finalQuery = getSmsQuery(
             senderId = senderId,
@@ -219,6 +181,24 @@ class SmsRepo @Inject constructor(
         )
 
         return dao.observingSmsList(finalQuery)
+            .map {list->
+               var returnedList =  list.map {smsEntity ->
+                    var model = smsEntity.toSmsModel()
+                    model = fillSmsModel(model)
+                    model
+                }
+
+                if(!storeName.isNullOrEmpty()){
+                    returnedList = returnedList.filter { it.storeName == storeName }.toMutableList()
+                }
+
+
+                if(categoryId != null){
+                    returnedList = returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }.toMutableList()
+                }
+
+                returnedList
+        }
     }
 
 

@@ -30,5 +30,13 @@ data class SmsEntity(
 ) : Parcelable
 
 
-
-fun SmsEntity.toSmsModel()= SmsModel(id=id, senderName = senderName, timestamp = timestamp, body = body, senderId = senderId, isFavorite = isFavorite,isDeleted =isDeleted)
+fun SmsEntity.toSmsModel(smsType: SmsType = SmsType.NOTHING) = SmsModel(
+    id = id,
+    senderName = senderName,
+    timestamp = timestamp,
+    body = body,
+    senderId = senderId,
+    isFavorite = isFavorite,
+    isDeleted = isDeleted,
+    smsType = smsType
+)

@@ -33,7 +33,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.*
@@ -56,6 +56,7 @@ private val MaxToolbarHeight = 85.dp
 fun SenderSmsListScreen(senderId: Int) {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val selectedTab = uiState.selectedTabIndex
 
     LaunchedEffect(
         key1 = uiState.selectedFilter,
@@ -69,6 +70,15 @@ fun SenderSmsListScreen(senderId: Int) {
     ) {
         if (uiState.isRefreshing)
             viewModel.getDate()
+    }
+
+    LaunchedEffect(key1 = selectedTab){
+        when(SenderSmsListScreenTabs.getTabByIndex(selectedTab)){
+            SenderSmsListScreenTabs.FINANCIAL -> viewModel.getFinancialStatistics()
+            SenderSmsListScreenTabs.CATEGORIES -> viewModel.getCategoriesStatistics()
+            else -> {}
+        }
+
     }
 
     when {
@@ -214,14 +224,6 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 fun Tabs(viewModel: SenderSmsListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
-    val tabTitles = listOf(
-        R.string.tab_all_sms,
-        R.string.tab_favorite_sms,
-        R.string.tab_financial_statistics,
-        R.string.tab_categories_statistics,
-        R.string.tab_deleted_sms,
-    )
-
     Column(Modifier.fillMaxWidth()) {
         ScrollableTabRow(
             modifier = Modifier.fillMaxWidth(),
@@ -236,14 +238,14 @@ fun Tabs(viewModel: SenderSmsListViewModel) {
                 )
             }
         ) {
-            tabTitles.forEachIndexed { index, stringResId ->
+            SenderSmsListScreenTabs.values().forEachIndexed { index, tab ->
                 Tab(
                     modifier = Modifier.background(MaterialTheme.colors.background),
                     selected = tabIndex == index,
                     onClick = { viewModel.onTabSelected(index) },
                     text = {
                         TextComponent.ClickableText(
-                            text = stringResource(id = stringResId),
+                            text = stringResource(id = tab.title),
                             color = if (tabIndex == index) MaterialTheme.colors.secondary else colorResource(
                                 id = R.color.light_gray
                             )
@@ -251,12 +253,12 @@ fun Tabs(viewModel: SenderSmsListViewModel) {
                     })
             }
         }
-        when (tabIndex) {
-            0 -> AllSmsTab(viewModel)
-            1 -> FavoriteSmsTab(viewModel)
-            2 -> FinancialStatisticsTab(viewModel)
-            3 -> CategoriesStatisticsTab(viewModel)
-            4 -> SoftDeletedTab(viewModel)
+        when (SenderSmsListScreenTabs.getTabByIndex(tabIndex)) {
+            SenderSmsListScreenTabs.ALL -> AllSmsTab(viewModel)
+            SenderSmsListScreenTabs.FAVORITE -> FavoriteSmsTab(viewModel)
+            SenderSmsListScreenTabs.DELETED -> SoftDeletedTab(viewModel)
+            SenderSmsListScreenTabs.FINANCIAL -> FinancialStatisticsTab(viewModel)
+            SenderSmsListScreenTabs.CATEGORIES -> CategoriesStatisticsTab(viewModel)
         }
     }
 
@@ -278,7 +280,7 @@ fun PageLoading() {
 
 @Composable
 fun LazySenderSms(
-    list: LazyPagingItems<SmsEntity>,
+    list: LazyPagingItems<SmsModel>,
     viewModel: SenderSmsListViewModel
 ) {
     val context = LocalContext.current
@@ -296,7 +298,7 @@ fun LazySenderSms(
                     onSmsClicked ={
                         viewModel.navigateToSmsDetails(item.id)
                     },
-                    model = wrapSendersToSenderComponentModel(item, uiState.sender , context),
+                    model = wrapSendersToSenderComponentModel(item , context),
                     onActionClicked = { model, action ->
                         when (action) {
                             SmsActionType.FAVORITE -> viewModel.favoriteSms(

@@ -5,18 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.google.gson.Gson
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFiltersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsListUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSenderSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingAllSmsUseCase
@@ -29,6 +25,7 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SenderSmsListScreenTabs
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.Constants
@@ -41,8 +38,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,7 +49,6 @@ class SenderSmsListViewModel @Inject constructor(
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
     private val getAllSmsModelUseCase: GetSmsModelListUseCase,
-    private val getAllSmsUseCase: GetSmsListUseCase,
     private val loadSenderSmsUseCase: LoadSenderSmsUseCase,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
@@ -99,9 +93,18 @@ class SenderSmsListViewModel @Inject constructor(
 
 
     fun getDate() {
-        getFinancialStatistics()
-        getCategoriesStatistics()
+        getSmsList()
         getFilters(senderId)
+        getStatisticsData()
+    }
+
+    private fun getStatisticsData(){
+        val selectedTabIndex = _uiState.value.selectedTabIndex
+        when(SenderSmsListScreenTabs.getTabByIndex(selectedTabIndex)){
+            SenderSmsListScreenTabs.FINANCIAL -> getFinancialStatistics()
+            SenderSmsListScreenTabs.CATEGORIES -> getCategoriesStatistics()
+            else -> {}
+        }
     }
 
     fun refreshSms() {
@@ -132,7 +135,7 @@ class SenderSmsListViewModel @Inject constructor(
 
 
 
-    fun observingPaginationAllSms(isDeleted:Boolean?, isFavorite:Boolean?): Flow<PagingData<SmsEntity>> {
+    fun observingPaginationAllSms(isDeleted:Boolean?, isFavorite:Boolean?): Flow<PagingData<SmsModel>> {
         return observingPaginationAllSmsUseCase(
             senderId =  senderId,
             filterOption = getFilterTimeOption(),
@@ -144,16 +147,17 @@ class SenderSmsListViewModel @Inject constructor(
         )
     }
 
-    fun observingAllSms(): Flow<List<SmsEntity>> {
-        return observingAllSmsUseCase(
-            senderId =  senderId,
-            filterOption = getFilterTimeOption(),
-            query = getFilterWord(),
-            isDeleted = false,
-            isFavorite = null,
-            startDate = _uiState.value.startDate,
-            endDate = _uiState.value.endDate,
-        )
+     private fun getSmsList() {
+         viewModelScope.launch {
+             val result = getAllSmsModel()
+
+             _uiState.update { state ->
+                 state.copy(
+                     smsList = result,
+                 )
+             }
+         }
+
     }
 
     private suspend fun getAllSmsModel(isDeleted: Boolean?=null): List<SmsModel> {
@@ -162,17 +166,6 @@ class SenderSmsListViewModel @Inject constructor(
             filterOption = getFilterTimeOption(),
             query = getFilterWord(),
             isDeleted = isDeleted,
-            startDate = _uiState.value.startDate,
-            endDate = _uiState.value.endDate
-        )
-    }
-
-    private suspend fun getAllSms(): List<SmsEntity> {
-        return getAllSmsUseCase.invoke(
-            senderId = _uiState.value.sender.id,
-            filterOption = getFilterTimeOption(),
-            isDeleted = false,
-            query = getFilterWord(),
             startDate = _uiState.value.startDate,
             endDate = _uiState.value.endDate
         )
@@ -198,7 +191,7 @@ class SenderSmsListViewModel @Inject constructor(
                 )
             }
 
-            val smsList = getAllSms()
+            val smsList = getAllSmsModel(isDeleted = false)
             val result = getFinancialStatisticsUseCase.invoke(smsList)
             _uiState.update { state ->
                 state.copy(
@@ -378,14 +371,15 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
-        val encodedList = model.smsList.map {
-            it.senderModel?.senderIconUri =  URLEncoder.encode( it.senderModel?.senderIconUri, StandardCharsets.UTF_8.toString())
-            it.body=  URLEncoder.encode( it.body, StandardCharsets.UTF_8.toString())
-            it
-        }
-        val smsContainer = SmsContainer(encodedList)
-        val jsonList = Gson().toJson(smsContainer)
-        navigator.navigate(Screen.CategorySmsListScreen.route + "/${jsonList}"+ "/${model.storeAndCategoryModel?.category?.id}")
+        val categoryId = model.storeAndCategoryModel?.category?.id
+        val filterOption = getFilterTimeOption()
+        val startDate = _uiState.value.startDate
+        val endDate = _uiState.value.endDate
+        val query =  getFilterWord().ifEmpty { null }
+
+        val routeArgument = "/${categoryId}"+ "/${filterOption.id}"+ "/${startDate}"+ "/${endDate}" + "/${query}"
+
+        navigator.navigate(Screen.CategorySmsListScreen.route + routeArgument)
     }
 
 

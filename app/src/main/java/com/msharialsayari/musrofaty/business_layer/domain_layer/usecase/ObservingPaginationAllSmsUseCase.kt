@@ -1,7 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.usecase
 
 import androidx.paging.PagingData
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0
-    ): Flow<PagingData<SmsEntity>> {
+    ): Flow<PagingData<SmsModel>> {
         return smsRepo.observingPaginationAllSms(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate)
     }
 }

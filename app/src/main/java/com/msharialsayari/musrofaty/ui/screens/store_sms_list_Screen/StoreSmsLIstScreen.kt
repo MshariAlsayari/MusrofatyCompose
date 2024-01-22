@@ -18,19 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
-import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.ProgressBar
 import com.msharialsayari.musrofaty.ui_component.SmsActionType
 import com.msharialsayari.musrofaty.ui_component.SmsComponent
-import com.msharialsayari.musrofaty.ui_component.TextComponent
 import com.msharialsayari.musrofaty.ui_component.wrapSendersToSenderComponentModel
 
 
@@ -75,8 +72,6 @@ private fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListView
     val uiState by viewModel.uiState.collectAsState()
     val smsList = uiState.smsFlow?.collectAsLazyPagingItems()
 
-
-
     val listState  = rememberLazyListState()
 
     if (smsList?.itemSnapshotList?.isNotEmpty() == true) {
@@ -88,12 +83,12 @@ private fun PageCompose(modifier: Modifier=Modifier, viewModel: StoreSmsListView
 
             itemsIndexed(key = { _, sms -> sms.id }, items = smsList) { index, item ->
 
-                    if (item != null && viewModel.getSenderById(item.senderId) != null) {
+                    if (item != null) {
                         SmsComponent(
                             onSmsClicked ={
                                 viewModel.navigateToSmsDetails(item.id)
                             },
-                            model = wrapSendersToSenderComponentModel(item,viewModel.getSenderById(item.senderId)!!, context),
+                            model = wrapSendersToSenderComponentModel(item, context),
                             onActionClicked = { model, action ->
                                 when (action) {
                                     SmsActionType.FAVORITE -> viewModel.favoriteSms(

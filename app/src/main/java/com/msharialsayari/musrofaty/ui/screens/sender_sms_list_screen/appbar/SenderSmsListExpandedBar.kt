@@ -1,11 +1,9 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar
 
 import android.Manifest
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
@@ -32,7 +29,6 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.rememberAllSmsState
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.SenderComponent
@@ -63,7 +59,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val sender = uiState.sender
-    val smsCount = rememberAllSmsState(viewModel).value.size
+    val smsCount = uiState.smsList.size
     var openGallery by remember { mutableStateOf(false) }
     val model = SenderComponentModel(
         senderId = sender.id,

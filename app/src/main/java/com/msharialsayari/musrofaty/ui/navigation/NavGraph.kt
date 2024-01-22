@@ -15,7 +15,10 @@ import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScree
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.CATEGORY_ID_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.SMS_LIST_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.END_DATE_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.FILTER_OPTION_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.QUERY_KEY
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.START_DATE_KEY
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
@@ -172,11 +175,18 @@ fun NavigationGraph(
         }
 
         composable(
-            Screen.CategorySmsListScreen.route + "/{$SMS_LIST_KEY}" + "/{$CATEGORY_ID_KEY}",
-            arguments = listOf(navArgument(SMS_LIST_KEY) { type = NavType.StringType },
-                navArgument(CATEGORY_ID_KEY) {
-                    type = NavType.IntType
-                }
+            Screen.CategorySmsListScreen.route + "/{$CATEGORY_ID_KEY}" + "/{$FILTER_OPTION_KEY}" + "/{$START_DATE_KEY}" + "/{$END_DATE_KEY}"+ "/{$QUERY_KEY}",
+            arguments = listOf(
+                navArgument(CATEGORY_ID_KEY) { type = NavType.IntType },
+                navArgument(FILTER_OPTION_KEY) { type = NavType.IntType },
+                navArgument(START_DATE_KEY) { type = NavType.LongType },
+                navArgument(END_DATE_KEY) { type = NavType.LongType },
+                navArgument(QUERY_KEY) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = "null"
+                },
+
             )
         ) {
             CategorySmsListScreen()
