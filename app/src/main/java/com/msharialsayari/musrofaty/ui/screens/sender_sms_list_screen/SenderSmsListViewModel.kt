@@ -36,7 +36,9 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.pdf.PdfCreatorActivity
 import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SenderSmsListScreenTabs
+import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.BottomSheetType
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.Constants
@@ -55,7 +57,6 @@ import javax.inject.Inject
 class SenderSmsListViewModel @Inject constructor(
     private val getSenderUseCase: GetSenderUseCase,
     private val observingPaginationAllSmsUseCase: ObservingPaginationAllSmsUseCase,
-    private val observingAllSmsUseCase: ObservingAllSmsUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
     private val getCategoriesStatisticsUseCase: GetCategoriesStatisticsUseCase,
     private val getFiltersUseCase: GetFiltersUseCase,
@@ -329,32 +330,19 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun showStartDatePicker() {
+
+    fun onDatePeriodsSelected(start: Long, end: Long){
+        _uiState.update {
+            it.copy(startDate = start,endDate = end)
+        }
+
+    }
+
+    fun updateBottomSheetType(type: SenderSmsListBottomSheetType?){
         _uiState.update {
             it.copy(
-                startDate = 0,
-                endDate = 0,
-                showStartDatePicker = true,
-                showEndDatePicker = false
+                bottomSheetType = type,
             )
-        }
-    }
-
-    fun dismissAllDatePicker() {
-        _uiState.update {
-            it.copy(showStartDatePicker = false, showEndDatePicker = false)
-        }
-    }
-
-    fun onStartDateSelected(value: Long) {
-        _uiState.update {
-            it.copy(startDate = value, showStartDatePicker = false, showEndDatePicker = true)
-        }
-    }
-
-    fun onEndDateSelected(value: Long) {
-        _uiState.update {
-            it.copy(endDate = value, showStartDatePicker = false, showEndDatePicker = false)
         }
     }
 

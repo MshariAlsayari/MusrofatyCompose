@@ -23,18 +23,17 @@ fun FilterTimeBottomSheet(viewModel:SenderSmsListViewModel, sheetState: ModalBot
     val endDate = uiState.endDate
 
     TimePeriodsBottomSheet(selectedItem = timeOption, startDate = startDate , endDate = endDate) {
-        coroutineScope.launch {
-            BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false)
-        }
         if (DateUtils.FilterOption.isRangeDateSelected(it.id)) {
-            viewModel.showStartDatePicker()
+            viewModel.updateBottomSheetType(SenderSmsListBottomSheetType.DATE_PICKER)
         } else {
+            coroutineScope.launch {
+                BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false)
+            }
             if(timeOption?.id == it.id){
                 viewModel.updateSelectedFilterTimePeriods(null)
             }else{
                 viewModel.updateSelectedFilterTimePeriods(it)
             }
-            viewModel.dismissAllDatePicker()
         }
 
     }

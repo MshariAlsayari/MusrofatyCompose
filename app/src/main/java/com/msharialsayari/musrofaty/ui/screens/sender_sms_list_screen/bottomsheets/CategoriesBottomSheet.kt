@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CategoriesBottomSheet(viewModel: SenderSmsListViewModel, sheetState: ModalBottomSheetState) {
+fun CategoriesBottomSheet(viewModel: SenderSmsListViewModel,
+                          sheetState: ModalBottomSheetState) {
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

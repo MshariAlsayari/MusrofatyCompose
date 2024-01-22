@@ -36,6 +36,7 @@ import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.CategoriesBottomSheet
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.DateRangeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterTimeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
@@ -56,7 +57,7 @@ private val MaxToolbarHeight = 85.dp
 
 
 @Composable
-fun SenderSmsListScreen(senderId: Int) {
+fun SenderSmsListScreen() {
     val viewModel: SenderSmsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val selectedTab = uiState.selectedTabIndex
@@ -100,7 +101,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
     val toolbarState = rememberToolbarState(toolbarHeightRange)
     val nestedScrollConnection = getNestedScrollConnection(toolbarState = toolbarState)
     val uiState by viewModel.uiState.collectAsState()
-    val bottomSheetType = remember { mutableStateOf<SenderSmsListBottomSheetType?>(null) }
+    val bottomSheetType = uiState.bottomSheetType
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -112,49 +113,20 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 
 
 
-    if (uiState.showStartDatePicker) {
-        ComposeDatePicker(
-            title = stringResource(id = R.string.common_start_date),
-            onDone = {
-                viewModel.onStartDateSelected(DateUtils.toTimestamp(it))
-            },
-            onDismiss = {
-                viewModel.dismissAllDatePicker()
-            }
-        )
-    }
-
-    if (uiState.showEndDatePicker) {
-        ComposeDatePicker(
-            title = stringResource(id = R.string.common_end_date),
-            onDone = {
-                viewModel.onEndDateSelected(DateUtils.toTimestamp(it))
-                viewModel.onFilterTimeOptionSelected(SelectedItemModel(id = DateUtils.FilterOption.RANGE.id, value = ""))
-                viewModel.dismissAllDatePicker()
-            },
-            onDismiss = {
-                uiState.startDate = 0
-                uiState.endDate = 0
-                viewModel.dismissAllDatePicker()
-            }
-        )
-    }
 
     if (uiState.showGeneratingExcelFileDialog) {
         DialogComponent.LoadingDialog(message = R.string.notification_generate_excel_file_starting_message,)
     }
 
 
-
-
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-
-            when(bottomSheetType.value){
+            when(bottomSheetType){
                 SenderSmsListBottomSheetType.TIME_PERIODS ->  FilterTimeBottomSheet(viewModel,sheetState)
                 SenderSmsListBottomSheetType.FILTER ->  FilterWordsBottomSheet(viewModel, sheetState)
                 SenderSmsListBottomSheetType.CATEGORIES ->CategoriesBottomSheet(viewModel, sheetState)
+                SenderSmsListBottomSheetType.DATE_PICKER ->DateRangeBottomSheet(viewModel, sheetState)
                 null -> {}
             }
         }) {
@@ -175,24 +147,22 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                     toolbarState = toolbarState,
                     viewModel = viewModel,
                     onFilterIconClicked = {
+                        viewModel.updateBottomSheetType(SenderSmsListBottomSheetType.FILTER)
                         coroutineScope.launch {
-                            bottomSheetType.value = SenderSmsListBottomSheetType.FILTER
-                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                            handleVisibilityOfBottomSheet(sheetState, true)
                         }
 
                     },
                     onFilterTimeIconClicked = {
+                        viewModel.updateBottomSheetType(SenderSmsListBottomSheetType.TIME_PERIODS)
                         coroutineScope.launch {
-                            bottomSheetType.value = SenderSmsListBottomSheetType.TIME_PERIODS
-                            handleVisibilityOfBottomSheet(sheetState, !sheetState.isVisible)
+                            handleVisibilityOfBottomSheet(sheetState, true)
                         }
-
-
                     }
 
                 )
                 Tabs(viewModel = viewModel){
-                    bottomSheetType.value = SenderSmsListBottomSheetType.CATEGORIES
+                    viewModel.updateBottomSheetType(SenderSmsListBottomSheetType.CATEGORIES)
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, true)
                     }

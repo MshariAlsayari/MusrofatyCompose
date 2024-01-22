@@ -78,10 +78,8 @@ fun NavigationGraph(
 
         composable(Screen.SenderSmsListScreen.route + "/{senderId}",
             arguments = listOf(navArgument("senderId") { type = NavType.IntType }
-            )) { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val senderId = arguments?.getInt("senderId") ?: 0
-            SenderSmsListScreen(senderId = senderId)
+            )) {
+            SenderSmsListScreen()
         }
 
 

@@ -6,6 +6,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryCo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ data class SenderSmsListUiState(
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
         var isRefreshing: Boolean = false,
+        val bottomSheetType: SenderSmsListBottomSheetType? = null,
 
         //allSms tab
         var allSmsList :Flow<PagingData<SmsModel>>? =null,
@@ -47,7 +49,7 @@ data class SenderSmsListUiState(
         //Date picker
         var startDate: Long = 0,
         var endDate: Long = 0,
-        var showStartDatePicker: Boolean = false,
-        var showEndDatePicker: Boolean = false,
+
+        //Excel dialog
         var showGeneratingExcelFileDialog: Boolean = false
 )
