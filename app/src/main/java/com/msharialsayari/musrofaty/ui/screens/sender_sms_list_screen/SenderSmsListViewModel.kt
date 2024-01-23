@@ -18,6 +18,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEnt
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFiltersUseCase
@@ -69,6 +70,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getAllSmsUseCase: GetAllSmsUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val navigator: AppNavigator,
 ) : ViewModel() {
@@ -121,12 +123,31 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
+    private fun getSmsTotal() {
+        viewModelScope.launch {
+            val result = getAllSmsUseCase.invoke(
+                senderId =  senderId,
+                filterOption = getFilterTimeOption(),
+                query = getFilterWord(),
+                isDeleted = null,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+            _uiState.update {
+                it.copy(
+                    totalSms = result.size
+                )
+            }
+        }
+    }
+
 
     fun getData() {
-        getSmsList()
         getFilters(senderId)
         getStatisticsData()
         getSmsListTabs()
+        getSmsTotal()
     }
 
     private fun getStatisticsData(){
@@ -211,18 +232,7 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
 
-     private fun getSmsList() {
-         viewModelScope.launch {
-             val result = getAllSmsModel()
 
-             _uiState.update { state ->
-                 state.copy(
-                     smsList = result,
-                 )
-             }
-         }
-
-    }
 
     private suspend fun getAllSmsModel(isDeleted: Boolean?=null): List<SmsModel> {
         return getAllSmsModelUseCase.invoke(

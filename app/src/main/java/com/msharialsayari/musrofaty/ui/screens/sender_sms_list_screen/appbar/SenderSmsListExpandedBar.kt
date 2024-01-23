@@ -59,7 +59,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val sender = uiState.sender
-    val smsCount = uiState.smsList.size
+    val smsCount = uiState.totalSms
     var openGallery by remember { mutableStateOf(false) }
     val model = SenderComponentModel(
         senderId = sender.id,
@@ -144,7 +144,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
         ButtonComponent.OutlineButton(
             text = R.string.common_details,
             onClick = {
-                viewModel.navigateToSenderDetails(sender?.id ?: 0)
+                viewModel.navigateToSenderDetails(sender.id)
             }
         )
 
@@ -159,6 +159,7 @@ fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val filters = uiState.filters
     val selectedTimeFilter = uiState.selectedFilterTimeOption
     val selectedFilter = uiState.selectedFilter
+    val sender = uiState.sender
 
     Row(
         modifier = Modifier
@@ -184,9 +185,7 @@ fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
 
                 TextComponent.ClickableText(
                     modifier = Modifier.clickable {
-                        uiState.sender?.let {
-                            viewModel.navigateToFilterScreen(it.id, null)
-                        }
+                        viewModel.navigateToFilterScreen(sender.id, null)
                     },
                     text = stringResource(id = R.string.create_filter)
                 )

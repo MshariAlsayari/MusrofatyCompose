@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.Flow
 
 data class SenderSmsListUiState(
         val sender: SenderModel,
-        var smsList: List<SmsModel> = emptyList(),
         var selectedSms: SmsModel? = null,
         var categories: Flow<List<CategoryEntity>>? = null,
         var selectedTabIndex: Int = 0,
         var isLoading: Boolean = false,
         var isRefreshing: Boolean = false,
         val bottomSheetType: SenderSmsListBottomSheetType? = null,
+        val totalSms: Int = 0,
 
         //allSms tab
         var allSmsList :Flow<PagingData<SmsModel>>? =null,

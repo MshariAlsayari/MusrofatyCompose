@@ -8,6 +8,7 @@ import androidx.paging.filter
 import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
@@ -38,7 +39,7 @@ class SmsRepo @Inject constructor(
 ) {
 
 
-    suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
+    private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
         smsModel.smsType = getSmsType(smsModel.body)
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.amount = getAmount(smsModel.body)
@@ -103,6 +104,30 @@ class SmsRepo @Inject constructor(
         }
 
         return returnedList
+    }
+
+
+    suspend fun getAllSms(
+        senderId: Int?= null,
+        filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
+        isDeleted: Boolean?=null,
+        isFavorite:Boolean?=null,
+        query: String = "",
+        startDate: Long = 0,
+        endDate: Long = 0,
+    ): List<SmsEntity> {
+
+        val finalQuery = getSmsQuery(
+            senderId = senderId,
+            filterOption = filterOption,
+            isDeleted = isDeleted,
+            isFavorite = isFavorite,
+            query = query,
+            startDate = startDate,
+            endDate = endDate
+        )
+
+        return dao.getAllSms(finalQuery)
     }
 
 

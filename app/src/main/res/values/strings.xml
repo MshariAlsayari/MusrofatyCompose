@@ -253,6 +253,7 @@
 
     <!--   Message Dialog -->
     <string name="no_currency_message">The app can\'t detect these messages currencies, you can add currencies through Settings > Analysis > Currencies</string>
+    <string name="no_currency">No currency</string>
 
 
 

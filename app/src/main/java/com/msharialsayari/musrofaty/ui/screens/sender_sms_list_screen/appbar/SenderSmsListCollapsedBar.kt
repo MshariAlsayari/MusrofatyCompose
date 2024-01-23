@@ -65,7 +65,7 @@ fun SenderSmsListCollapsedBar(
 fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val smsCount =  uiState.smsList.size
+    val smsCount =  uiState.totalSms
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TextComponent.HeaderText(
@@ -94,7 +94,7 @@ fun ToolbarActionsComposable(
     val activity = context.findActivity()
     val isFilterSelected = uiState.selectedFilter != null
     val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
-    val canGenerateFile = uiState.allSmsList?.collectAsLazyPagingItems()?.itemSnapshotList?.isNotEmpty() == true
+    val canGenerateFile = uiState.totalSms > 0
 
     Row(
         modifier = Modifier
@@ -155,7 +155,6 @@ fun ToolbarActionsComposable(
                     .mirror()
                     .clickable {
                         onFilterIconClicked()
-
                     })
 
             Icon(
@@ -166,7 +165,6 @@ fun ToolbarActionsComposable(
                     .mirror()
                     .clickable {
                         onFilterTimeIconClicked()
-
                     })
         }
 

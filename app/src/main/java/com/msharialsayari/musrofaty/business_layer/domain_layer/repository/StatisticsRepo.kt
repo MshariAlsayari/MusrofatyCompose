@@ -27,7 +27,6 @@ import kotlin.random.Random
 
 @Singleton
 class StatisticsRepo @Inject constructor(
-    private val smsRepo: SmsRepo,
     @ApplicationContext val context: Context
 ) {
     fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
@@ -99,7 +98,7 @@ class StatisticsRepo @Inject constructor(
         var average = 0.0f
 
         //get expenses sms
-        val expensesSmsList = list.filter { it.smsType == SmsType.EXPENSES }
+        val expensesSmsList = list.filter { it.smsType == SmsType.EXPENSES && it.amount > 0}
 
         //get map of sms Map<LocalData,List<SmsModel>>
         val groupedByLocalDate = expensesSmsList.groupBy { item ->
@@ -141,7 +140,7 @@ class StatisticsRepo @Inject constructor(
         model.total = total
         model.average = average
         model.xValueFormatter = horizontalAxisValueFormatter
-        model.yTitle = key
+        model.yTitle = key.ifEmpty { context.getString(R.string.no_currency) }
         model.xTitle = context.getString(R.string.common_days)
         return model
     }

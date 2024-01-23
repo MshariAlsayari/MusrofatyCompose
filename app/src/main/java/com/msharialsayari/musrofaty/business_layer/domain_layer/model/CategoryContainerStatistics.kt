@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
+import com.msharialsayari.musrofaty.utils.StringsUtils
 import kotlinx.parcelize.Parcelize
 
 
@@ -13,7 +14,10 @@ data class CategoryContainerStatistics(
     var data: MutableMap<Int, CategoryStatistics> = mutableMapOf(),
     var total: Double = 0.0,
 ) : Parcelable{
-    fun getTitle() = "$key\n$total"
+    fun getTitle() :String{
+        val prettyTotal = StringsUtils.prettyCount(total.toLong())
+        return "$key\n$prettyTotal"
+    }
 }
 
 @Parcelize

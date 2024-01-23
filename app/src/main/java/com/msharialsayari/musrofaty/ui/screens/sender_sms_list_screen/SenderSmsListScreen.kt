@@ -254,6 +254,9 @@ fun LazySenderSms(
             if (item != null) {
                 SmsComponent(
                     model = wrapSendersToSenderComponentModel(item , context),
+                    onSmsClicked = {
+                        viewModel.navigateToSmsDetails(it)
+                    },
                     forceHideStoreAndCategory = true,
                     onCategoryClicked = {
                         viewModel.onSmsCategoryClicked(item)

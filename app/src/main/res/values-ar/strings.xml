@@ -268,5 +268,6 @@
 
     <!--   Message Dialog -->
     <string name="no_currency_message">هذه الرسائل لم يتمكن التطبيق من التعرف على عملاتها، يمكن إضافة عملة عن طريق الذهاب إلى الإعدادات > التحليل > العملات</string>
+    <string name="no_currency">لاتوجد عملة</string>
 
 </resources>
