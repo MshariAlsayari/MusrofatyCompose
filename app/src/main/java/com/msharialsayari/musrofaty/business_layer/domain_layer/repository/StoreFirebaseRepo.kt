@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
 import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.msharialsayari.musrofaty.base.Response
@@ -12,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -73,36 +75,42 @@ class StoreFirebaseRepo @Inject constructor(
         )
 
 
-        val documents = collectionNewRef.whereEqualTo(name_search_field,storeEntity.name).get().await().documents
-        val documentData = if(documents.isNotEmpty()) documents.first().data else null
-        val documentId = if(documents.isNotEmpty()) documents.first().id else null
-        val entity = if(documentData != null) {
-            val name = documentData[name_search_field].toString()
-            val categoryId = (documentData[category_id_field] as Long).toInt()
-            StoreEntity(name = name, category_id= categoryId)
-        } else null
-        val needToUpdate = entity?.category_id != storeEntity.category_id
+        try {
+
+            val documents = collectionNewRef.whereEqualTo(name_search_field, storeEntity.name).get()
+                .await().documents
+            val documentData = if (documents.isNotEmpty()) documents.first().data else null
+            val documentId = if (documents.isNotEmpty()) documents.first().id else null
+            val entity = if (documentData != null) {
+                val name = documentData[name_search_field].toString()
+                val categoryId = (documentData[category_id_field] as Long).toInt()
+                StoreEntity(name = name, category_id = categoryId)
+            } else null
+            val needToUpdate = entity?.category_id != storeEntity.category_id
 
 
-        if(needToUpdate){
-            if (documentId == null){
-                collectionNewRef.document().set(data).addOnCompleteListener {
-                    Log.d(TAG, "submitStoreToFirebase() date: $data added successfully")
-                }.addOnFailureListener {
-                    Log.d(TAG, "submitStoreToFirebase() date: $data there was an error to add")
-                    Log.d(TAG, "submitStoreToFirebase() " + (it.message ?: "error"))
+            if (needToUpdate) {
+                if (documentId == null) {
+                    collectionNewRef.document().set(data).addOnCompleteListener {
+                        Log.d(TAG, "submitStoreToFirebase() date: $data added successfully")
+                    }.addOnFailureListener {
+                        Log.d(TAG, "submitStoreToFirebase() date: $data there was an error to add")
+                        Log.d(TAG, "submitStoreToFirebase() " + (it.message ?: "error"))
+                    }
+                } else {
+                    collectionNewRef.document(documentId).set(data).addOnSuccessListener {
+                        Log.d(TAG, "documentId:$documentId date: $data added successfully")
+                    }.addOnFailureListener {
+                        Log.d(TAG, "documentId:$documentId date: $data there was an error to add")
+                        Log.d(TAG, "submitStoreToFirebase() " + (it.message ?: "error"))
+                    }
                 }
-            }else{
-                collectionNewRef.document(documentId).set(data).addOnSuccessListener {
-                    Log.d(TAG, "documentId:$documentId date: $data added successfully")
-                }.addOnFailureListener {
-                    Log.d(TAG, "documentId:$documentId date: $data there was an error to add")
-                    Log.d(TAG, "submitStoreToFirebase() " + (it.message?:"error"))
-                }
+
+            } else {
+                Log.d(TAG, "submitStoreToFirebase() date: $data no need to update")
             }
-
-        }else{
-            Log.d(TAG, "submitStoreToFirebase() date: $data no need to update")
+        }catch (e:Exception){
+            Log.d(TAG, "submitStoreToFirebase() error message:${e.message?: ""}")
         }
 
 

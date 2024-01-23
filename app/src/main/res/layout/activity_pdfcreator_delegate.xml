@@ -75,7 +75,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="@string/text_previous_page"
-                android:src="@drawable/ic_arrow_back" />
+                android:src="@drawable/ic_arrow_back_pdf" />
 
             <TextView
                 android:id="@+id/textViewPreviewPageNumber"

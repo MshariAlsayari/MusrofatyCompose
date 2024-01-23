@@ -129,7 +129,7 @@ public abstract class BasePDFCreator extends BaseActivity implements View.OnClic
                     layoutPrintPreview.setVisibility(View.VISIBLE);
                     selectedPreviewPage = 0;
                     imageViewPDFPreview.setImageBitmap(pagePreviewBitmapList.get(selectedPreviewPage));
-                    textViewPageNumber.setText(StringsUtils.formatArabicDigits(getString(R.string.pdf_preview_pages,selectedPreviewPage + 1, pagePreviewBitmapList.size())));
+                    textViewPageNumber.setText(StringsUtils.formatArabicDigits((selectedPreviewPage + 1) + " / " +  pagePreviewBitmapList.size()));
 
 
                 } catch (Exception e) {
@@ -237,7 +237,7 @@ public abstract class BasePDFCreator extends BaseActivity implements View.OnClic
                 }
                 selectedPreviewPage = selectedPreviewPage + 1;
                 imageViewPDFPreview.setImageBitmap(pagePreviewBitmapList.get(selectedPreviewPage));
-                textViewPageNumber.setText(StringsUtils.formatArabicDigits(getString(R.string.pdf_preview_pages,selectedPreviewPage + 1, pagePreviewBitmapList.size())));
+                textViewPageNumber.setText(StringsUtils.formatArabicDigits((selectedPreviewPage + 1) + " / " +  pagePreviewBitmapList.size()));
 
             } else if (v == buttonPreviousPage) {
                 if (selectedPreviewPage == 0) {
@@ -245,7 +245,7 @@ public abstract class BasePDFCreator extends BaseActivity implements View.OnClic
                 }
                 selectedPreviewPage = selectedPreviewPage - 1;
                 imageViewPDFPreview.setImageBitmap(pagePreviewBitmapList.get(selectedPreviewPage));
-                textViewPageNumber.setText(StringsUtils.formatArabicDigits(getString(R.string.pdf_preview_pages,selectedPreviewPage + 1, pagePreviewBitmapList.size())));
+                textViewPageNumber.setText(StringsUtils.formatArabicDigits((selectedPreviewPage + 1) + " / " +  pagePreviewBitmapList.size()));
             }
         }
     }
