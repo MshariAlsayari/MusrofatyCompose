@@ -105,7 +105,7 @@
     <string name="filter_options_month_title">Current month</string>
     <string name="filter_options_year_title">Current year</string>
     <string name="filter_options_range_title">Date range</string>
-    <string name="filter_options_week_subtitle">Weak starts from Monday until Sunday</string>
+    <string name="filter_options_week_subtitle">A week starts from Monday until Sunday</string>
     <string name="empty"/>
 
     <!--Theme-->
