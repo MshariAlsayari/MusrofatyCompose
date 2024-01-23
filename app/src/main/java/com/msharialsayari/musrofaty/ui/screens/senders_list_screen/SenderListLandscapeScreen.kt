@@ -75,7 +75,7 @@ fun SenderSmsListContent(senderId: Int?=null){
 
     Box(contentAlignment = Alignment.Center) {
         if(senderId != null){
-            SenderSmsListScreen(senderId = senderId)
+            SenderSmsListScreen()
         }else{
             PlaceHolder.ScreenPlaceHolder()
         }

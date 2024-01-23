@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
+import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.dialogs.DashboardDialogType
 import com.msharialsayari.musrofaty.ui_component.AppBarComponent
 import com.msharialsayari.musrofaty.utils.mirror
 
@@ -51,7 +52,7 @@ fun DashboardTopBar(viewModel: DashboardViewModel,){
                     modifier = Modifier
                         .mirror()
                         .clickable {
-                            viewModel.onDateRangeClicked()
+                            viewModel.updateDialogType(DashboardDialogType.TIMES_PERIODS)
                         })
 
                 Icon(

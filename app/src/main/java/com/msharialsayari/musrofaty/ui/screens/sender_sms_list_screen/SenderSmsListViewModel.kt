@@ -336,7 +336,6 @@ class SenderSmsListViewModel @Inject constructor(
         _uiState.update {
             it.copy(startDate = start,endDate = end)
         }
-
     }
 
     fun updateBottomSheetType(type: SenderSmsListBottomSheetType?){

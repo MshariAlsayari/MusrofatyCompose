@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsViewModel
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
-import com.msharialsayari.musrofaty.ui_component.RangeDateBottomSheet
+import com.msharialsayari.musrofaty.ui_component.RangeDatePickerCompose
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ fun DateRangeBottomSheet(
     val endDate = uiState.endDate
     val coroutineScope = rememberCoroutineScope()
 
-    RangeDateBottomSheet(
+    RangeDatePickerCompose(
         startDate = startDate,
         endDate = endDate
     ){ selectedStartDate , selectedEndDate ->

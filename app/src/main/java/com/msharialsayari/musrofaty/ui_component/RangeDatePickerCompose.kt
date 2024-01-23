@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun RangeDateBottomSheet(
+fun RangeDatePickerCompose(
     modifier: Modifier = Modifier,
     startDate: Long? = null,
     endDate: Long? = null,

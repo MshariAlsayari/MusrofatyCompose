@@ -68,6 +68,7 @@ fun SmsList(
 
                 SmsComponent(
                     model = wrapSendersToSenderComponentModel(item, context),
+                    forceHideStoreAndCategory = true,
                     onSmsClicked = {
                       viewModel.navigateToSmsDetails(it)
                     },

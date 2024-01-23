@@ -17,6 +17,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.Observin
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.dialogs.DashboardDialogType
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -149,39 +150,7 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    fun showStartDatePicker() {
-        _uiState.update {
-            it.copy(
-                startDate = 0,
-                endDate = 0,
-                showStartDatePicker = true,
-                showEndDatePicker = false
-            )
-        }
-    }
 
-    fun dismissAllDatePicker() {
-        _uiState.update {
-            it.copy(
-                showStartDatePicker = false,
-                showEndDatePicker = false,
-                showFilterTimeOptionDialog = false
-            )
-        }
-    }
-
-    fun onStartDateSelected(value: Long) {
-        _uiState.update {
-            it.copy(startDate = value, showStartDatePicker = false, showEndDatePicker = true)
-        }
-    }
-
-    fun onEndDateSelected(value: Long) {
-        _uiState.update {
-            it.copy(endDate = value, showStartDatePicker = false, showEndDatePicker = false)
-        }
-
-    }
 
     fun onFilterTimeOptionSelected(item: SelectedItemModel) {
         _uiState.update {
@@ -189,9 +158,15 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun onDateRangeClicked() {
+    fun updateDialogType(dialogType: DashboardDialogType?) {
         _uiState.update {
-            it.copy(showFilterTimeOptionDialog = !_uiState.value.showFilterTimeOptionDialog)
+            it.copy(dashboardDialogType = dialogType)
+        }
+    }
+
+    fun onDatePeriodsSelected(start: Long, end: Long){
+        _uiState.update {
+            it.copy(startDate = start,endDate = end)
         }
     }
 

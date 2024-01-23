@@ -34,6 +34,7 @@ import com.msharialsayari.musrofaty.utils.DateUtils
 fun SmsComponent(
     modifier: Modifier = Modifier,
     model: SmsComponentModel,
+    forceHideStoreAndCategory: Boolean = false,
     onSmsClicked:((String)->Unit)? = null,
     onActionClicked: (SmsComponentModel, SmsActionType) -> Unit,
     onCategoryClicked: (String) -> Unit = {},
@@ -53,7 +54,8 @@ fun SmsComponent(
     ) {
         SenderInfoComponent(model.senderId, model.senderDisplayName, model.senderCategory, model.senderIcon, onSenderIconClicked)
         SmsBodyComponent(model.body)
-        StoreAndCategoryComponent(model, onCategoryClicked = onCategoryClicked)
+        if (!forceHideStoreAndCategory)
+            StoreAndCategoryComponent(model, onCategoryClicked = onCategoryClicked)
         SmsInfoRowComponent(model)
         SmsActionRowComponent(model, onActionClicked = { model, action ->
             onActionClicked(model, action)
