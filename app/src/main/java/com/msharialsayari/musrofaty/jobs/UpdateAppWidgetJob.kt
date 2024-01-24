@@ -23,7 +23,6 @@ import dagger.assisted.AssistedInject
 class UpdateAppWidgetJob  @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val insertSmsUseCase: InsertSmsUseCase,
     private val getAllSmsUseCase: GetSmsModelListUseCase,
     private val getFinancialStatisticsUseCase: GetFinancialStatisticsUseCase,
 ): CoroutineWorker(appContext, workerParams){
@@ -38,7 +37,6 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
     override suspend fun doWork(): Result {
         glanceId = GlanceAppWidgetManager(appContext).getGlanceIds(AppWidget::class.java).firstOrNull()
         Log.d(TAG, "doWork() updating the app widget glanceId: $glanceId")
-        insertSmsUseCase.invoke()
         glanceId?.let {glanceId->
             val todaySmsList = getAllSmsUseCase.invoke(
                 filterOption = DateUtils.FilterOption.TODAY,

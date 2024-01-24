@@ -62,7 +62,7 @@ fun PieChart.drawFinancialChart(entries: ArrayList<PieEntry>, colors: ArrayList<
 }
 
 
-fun PieChart.drawChart(title:String, entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
+fun PieChart.drawChart(title:String, colorTitle:Color, entries: ArrayList<PieEntry>, colors: ArrayList<Int>){
 
     this.description.isEnabled = false
     this.dragDecelerationFrictionCoef = 0.95f
@@ -81,7 +81,7 @@ fun PieChart.drawChart(title:String, entries: ArrayList<PieEntry>, colors: Array
     this.centerText = title
     this.setCenterTextSize(14f)
     this.setDrawCenterText(true)
-    this.setCenterTextColor(Color.White.toArgb())
+    this.setCenterTextColor(colorTitle.toArgb())
 
 
 

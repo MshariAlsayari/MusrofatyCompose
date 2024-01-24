@@ -76,4 +76,8 @@ class StoreRepo @Inject constructor(
        dao.update(storeModel.toStoreEntity())
     }
 
+    suspend fun delete(storeModel: StoreModel) {
+        dao.delete(storeModel.toStoreEntity())
+    }
+
 }

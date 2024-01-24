@@ -6,4 +6,5 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 interface SmsDataSource {
     suspend fun loadBanksSms(context: Context): List<SmsEntity>
     suspend fun loadBanksSms(context: Context, senderName:String): List<SmsEntity>
+    suspend fun loadLatestSms(context: Context): SmsEntity?
 }

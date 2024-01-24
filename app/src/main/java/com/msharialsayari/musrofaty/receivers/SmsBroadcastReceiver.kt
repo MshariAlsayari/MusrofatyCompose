@@ -9,6 +9,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.msharialsayari.musrofaty.jobs.InsertLatestSmsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import com.msharialsayari.musrofaty.widgets.AppWidget
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,29 +34,12 @@ class SmsBroadcastReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "onReceive() ")
         if(intent.action.equals(SMS)){
-            scope.launch {
-                val glanceId = GlanceAppWidgetManager(context).getGlanceIds(AppWidget::class.java).firstOrNull()
-                glanceId?.let {
-                    updateAppWidgetState(context, it) { mutablePreferences ->
-                        mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = true
-                        AppWidget().update(context, it)
-                    }
-                }
-
-            }
+            val insertLatestSmsJobWorker = OneTimeWorkRequestBuilder<InsertLatestSmsJob>().build()
+            WorkManager.getInstance(context).enqueue(insertLatestSmsJobWorker)
 
             val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
             WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
 
-            scope.launch {
-                val glanceId = GlanceAppWidgetManager(context).getGlanceIds(AppWidget::class.java).firstOrNull()
-                glanceId?.let {
-                    updateAppWidgetState(context, it) { mutablePreferences ->
-                        mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = false
-                        AppWidget().update(context, it)
-                    }
-                }
-            }
         }
 
     }

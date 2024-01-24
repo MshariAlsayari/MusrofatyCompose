@@ -10,5 +10,4 @@ data class StoresUiState(
         var stores: Flow<List<StoreWithCategory>>? = null,
         var categories: Flow<List<CategoryEntity>>? = null,
         var selectedStore: StoreWithCategory? = null,
-        var selectedCategory: SelectedItemModel? = null,
     )

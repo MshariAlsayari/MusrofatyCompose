@@ -16,20 +16,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.Utils.getScreenSize
-import com.msharialsayari.musrofaty.jobs.InitAppJob
-import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
-import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.utils.DialogsUtils
-import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
 

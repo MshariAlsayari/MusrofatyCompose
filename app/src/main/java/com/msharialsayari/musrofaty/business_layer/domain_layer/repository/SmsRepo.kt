@@ -1,10 +1,10 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.filter
 import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
@@ -365,6 +365,13 @@ class SmsRepo @Inject constructor(
         // End of query string
         queryString += " order by timestamp DESC"
         return SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
+    }
+
+    suspend fun insertLatestSms(){
+        val smsEntity = datasource.loadLatestSms(context)
+        smsEntity?.let {
+            dao.insertAll(it)
+        }
     }
 
     suspend fun getAllSmsContainsStore(storeName: String = ""): List<SmsModel> {

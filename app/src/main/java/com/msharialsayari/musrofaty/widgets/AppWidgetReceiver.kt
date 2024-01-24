@@ -42,6 +42,13 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         Log.d(TAG, "onUpdate()")
+        val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            UpdateAppWidgetJob.TAG,
+            ExistingWorkPolicy.REPLACE,
+            updateAppWidgetWorker
+        )
+
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

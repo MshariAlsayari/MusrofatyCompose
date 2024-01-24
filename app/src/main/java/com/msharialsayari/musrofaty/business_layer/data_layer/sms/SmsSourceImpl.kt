@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.sms
 
 import android.content.Context
 import android.net.Uri
+import android.provider.Telephony
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
@@ -71,6 +72,7 @@ class SmsSourceImpl @Inject constructor(
 
                 }
             }
+            cursor.close()
         }
 
 
@@ -97,4 +99,70 @@ class SmsSourceImpl @Inject constructor(
         }
         return allSms
     }
+
+    override suspend fun loadLatestSms(context: Context): SmsEntity? {
+        val activeSenders = senderRepo.getSendersModel()
+        val returnedValue: SmsEntity?
+
+        val uri: Uri = Uri.parse("content://sms/inbox")
+        val cr = context.contentResolver
+        val senders = activeSenders.map { it.senderName.uppercase() }.toList()
+        val projection = arrayOf("_id", "address", "person", "body", "date")
+        var whereAddress = "upper(address) IN ("
+        senders.forEachIndexed { index, item ->
+            whereAddress += "?"
+            if (index != senders.lastIndex) {
+                whereAddress += ","
+            }
+
+        }
+        whereAddress += ")"
+
+        val cursor = cr.query(
+            uri,
+            projection,
+            whereAddress,
+            senders.toTypedArray(),
+            Telephony.Sms.DATE + " DESC"
+        )
+        if (cursor != null && cursor.moveToFirst()) {
+            val smsId = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+            val smsSenderName = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+            val isAlahliSender = SmsUtils.isAlahliSender(smsSenderName)
+            val finalSenderName = if (isAlahliSender) {
+                Constants.ALAHLI_WITH_SAMBA_BANK
+            } else {
+                smsSenderName
+            }
+            val smsBody =
+                SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
+            val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
+            val senderId = activeSenders.find {
+                it.senderName.equals(
+                    finalSenderName,
+                    ignoreCase = true
+                )
+            }?.id
+
+            returnedValue = if (senderId != null && SmsUtils.isValidSms(smsBody)) {
+                SmsEntity(
+                    id = smsId,
+                    body = smsBody,
+                    senderName = finalSenderName,
+                    senderId = senderId,
+                    timestamp = timestamp
+                )
+            } else {
+                null
+            }
+        } else {
+            returnedValue = null
+        }
+
+        cursor?.close()
+        return returnedValue
+
+    }
+
+
 }
