@@ -111,7 +111,7 @@ fun PageCompose(
 
         Box(modifier = Modifier.fillMaxSize()) {
             SmsComponent(
-                model = viewModel.wrapSendersToSenderComponentModel(sms, context),
+                model = wrapSendersToSenderComponentModel(sms, context),
                 onCategoryClicked = {
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, true)

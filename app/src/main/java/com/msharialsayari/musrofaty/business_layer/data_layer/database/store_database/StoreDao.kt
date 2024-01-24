@@ -25,4 +25,7 @@ interface StoreDao {
 
     @Update
     suspend fun update(storeEntity: StoreEntity)
+
+    @Delete
+    suspend fun delete(storeEntity: StoreEntity)
 }

@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
@@ -60,16 +61,21 @@ class StoresViewModel @Inject constructor(
 
 
 
-    fun changeStoreCategory(){
+    fun changeStoreCategory(selectedItemModel: SelectedItemModel) {
         viewModelScope.launch {
-            val categoryId = _uiState.value.selectedCategory?.id ?: 0
+            val categoryId = selectedItemModel.id
             val storeName  = _uiState.value.selectedStore?.store?.name
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
+
             storeModel?.let {
-                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
-            }
-            storeModel?.let {
-                addOrUpdateStoreUseCase.invoke(it)
+                if(selectedItemModel.isSelected){
+                    postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                    addOrUpdateStoreUseCase.invoke(it)
+                }else{
+                    storeModel.categoryId = -1
+                    addOrUpdateStoreUseCase.invoke(storeModel)
+                }
+
             }
 
 
@@ -114,6 +120,7 @@ class StoresViewModel @Inject constructor(
                 SelectedItemModel(
                     id = value.id,
                     value = CategoryModel.getDisplayName(context,value),
+                    isSelected = _uiState.value.selectedStore?.store?.category_id == value.id
                 )
             )
         }
@@ -130,13 +137,6 @@ class StoresViewModel @Inject constructor(
         }
     }
 
-    fun onCategorySelected(item: SelectedItemModel) {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(selectedCategory = item)
-            }
-        }
-    }
     fun navigateToCategoryScreen(id:Int){
         navigator.navigate(Screen.CategoryScreen.route + "/${id}")
 

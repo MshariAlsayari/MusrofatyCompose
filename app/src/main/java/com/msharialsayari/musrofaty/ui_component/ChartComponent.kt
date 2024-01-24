@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieEntry
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 
 
 object ChartComponent {
@@ -38,12 +39,13 @@ object ChartComponent {
 
     @Composable
     fun PieChartCompose(modifier:Modifier = Modifier, title:String, entries:ArrayList<PieEntry>,colors: ArrayList<Int>){
+        val titleColor = MusrofatyTheme.colors.onBackground
         Crossfade(targetState = entries, label = "") { pieChartData ->
             // on below line we are creating an
             // android view for pie chart.
             AndroidView(
                 modifier = modifier.size(200.dp),
-                update = { it.drawChart(title,pieChartData,colors) },
+                update = { it.drawChart(title, titleColor,pieChartData,colors) },
                 factory = { context ->
                     PieChart(context).apply {
                         layoutParams = LinearLayout.LayoutParams(

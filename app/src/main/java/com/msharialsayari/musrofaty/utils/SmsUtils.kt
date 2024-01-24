@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.utils
 
 import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
 import com.msharialsayari.musrofaty.utils.Constants.STC_PAY_WALLET
+import com.msharialsayari.musrofaty.utils.Constants.UR_PAY_BANK
 import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 
@@ -14,7 +15,7 @@ object SmsUtils {
     const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
     const val STC_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
     const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
-
+    const val UR_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
 
     fun isValidSms(sms: String?): Boolean {
         sms?.let {
@@ -74,6 +75,12 @@ object SmsUtils {
                         senderName,
                         ignoreCase = true
                     ) -> ALINMA_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                        .find(sms)?.groupValues?.get(0) ?: ""
+
+                    UR_PAY_BANK.equals(
+                        senderName,
+                        ignoreCase = true
+                    ) -> UR_PAY_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
                         .find(sms)?.groupValues?.get(0) ?: ""
 
                     STC_PAY_WALLET.equals(

@@ -133,8 +133,7 @@ fun PageCompose(
             CategoryBottomSheet(
                 viewModel = viewModel,
                 onCategorySelected = {
-                    viewModel.onCategorySelected(it)
-                    viewModel.changeStoreCategory()
+                    viewModel.changeStoreCategory(it)
                     coroutineScope.launch {
                         handleVisibilityOfBottomSheet(sheetState, false)
                     }
@@ -277,6 +276,7 @@ fun CategoryBottomSheet(
         title = R.string.store_category,
         description = R.string.common_long_click_to_modify,
         list = viewModel.getCategoryItems(context, categories),
+        canUnSelect = true,
         trailIcon = {
             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
                 onCreateCategoryClicked()

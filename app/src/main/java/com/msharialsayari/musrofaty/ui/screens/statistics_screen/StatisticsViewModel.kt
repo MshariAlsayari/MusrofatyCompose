@@ -80,7 +80,7 @@ class StatisticsViewModel @Inject constructor(
     fun updateSelectedCategory(selectedItem: SelectedItemModel?){
         _uiState.update {
             it.copy(
-                selectedCategory = selectedItem,
+                selectedCategory = if(selectedItem?.isSelected == true) selectedItem else null,
             )
         }
     }

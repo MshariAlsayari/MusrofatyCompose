@@ -153,8 +153,14 @@ class CategorySmsListViewModel @Inject constructor(
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
 
             storeModel?.let {
-                addOrUpdateStoreUseCase.invoke(it)
-                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                if(item.isSelected){
+                    addOrUpdateStoreUseCase.invoke(it)
+                    postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                }else{
+                    storeModel.categoryId = -1
+                    addOrUpdateStoreUseCase.invoke(storeModel)
+                }
+
                 getSms()
             }
         }

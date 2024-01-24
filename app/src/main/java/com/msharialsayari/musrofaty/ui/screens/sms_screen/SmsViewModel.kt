@@ -134,44 +134,20 @@ class SmsViewModel @Inject constructor(
             val storeName = _uiState.value.storeAndCategoryModel?.store?.name
             val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
             storeModel?.let {
-                addOrUpdateStoreUseCase.invoke(it)
-                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+
+                if (item.isSelected) {
+                    addOrUpdateStoreUseCase.invoke(it)
+                    postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                } else {
+                    storeModel.categoryId = -1
+                    addOrUpdateStoreUseCase.invoke(storeModel)
+                }
             }
 
             getData(_uiState.value.sms?.id!!)
         }
     }
 
-
-    fun wrapSendersToSenderComponentModel(
-        sms: SmsModel,
-        context: Context
-    ): SmsComponentModel {
-        val store = _uiState.value.storeAndCategoryModel?.store?.name ?: ""
-        var category = ""
-        if (store.isNotEmpty()) {
-            category =
-                CategoryModel.getDisplayName(context, uiState.value.storeAndCategoryModel?.category)
-            if (category.isEmpty())
-                category = context.getString(R.string.common_no_category)
-        }
-
-        return SmsComponentModel(
-            id = sms.id,
-            senderId = sms.senderId,
-            timestamp = sms.timestamp,
-            isFavorite = sms.isFavorite,
-            isDeleted = sms.isDeleted,
-            body = sms.body,
-            storeName = store,
-            storeCategory = category,
-            senderIcon = _uiState.value.sender?.senderIconUri ?: "",
-            senderDisplayName = SenderModel.getDisplayName(context, _uiState.value.sender),
-            senderCategory = ContentModel.getDisplayName(context, _uiState.value.sender?.content)
-
-        )
-
-    }
 
     fun navigateToCategoryScreen(id:Int){
         navigator.navigate(Screen.CategoryScreen.route + "/${id}")
