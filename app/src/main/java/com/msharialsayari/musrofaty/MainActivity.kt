@@ -51,8 +51,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppCheckFirebase()
-        initJobs()
     }
 
 
@@ -102,42 +100,6 @@ class MainActivity : ComponentActivity() {
         intent.data = uri
         return intent
     }
-
-    private fun initAppCheckFirebase() {
-        FirebaseApp.initializeApp(this)
-        val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
-    }
-
-    private fun initJobs() {
-        if (!SharedPreferenceManager.sendersInitiated(this)) {
-            initAppJob()
-            SharedPreferenceManager.setSendersInitiated(this)
-        }
-        initCategoriesJob()
-        initStoresJob()
-    }
-
-    private fun initAppJob() {
-        val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
-        WorkManager.getInstance(this).enqueue(initAppWorker)
-    }
-
-    private fun initCategoriesJob() {
-        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesFirebaseJob>().build()
-        WorkManager.getInstance(this).enqueue(initCategoriesWorker)
-    }
-
-    private fun initStoresJob() {
-        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresFirebaseJob>().build()
-        WorkManager.getInstance(this).enqueue(initStoresWorker)
-    }
-
-
-
-
 
     private fun runApp() {
         setContent {

@@ -17,6 +17,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStore
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import okio.utf8Size
 
 @HiltWorker
 class AutoCategoriesStoresJob @AssistedInject constructor(
@@ -54,18 +55,20 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
     }
 
     private  fun getList(stores: List<StoresCategoriesModel>) {
-        Log.d(TAG,  "getList()..." + "stores:" + stores.size)
+        Log.d(TAG,  "getList()..." + "list of categories:" + stores.size)
          list = stores
     }
 
     private suspend fun categorising() {
-        Log.d(TAG,  "categorising()..." + "stores:" + list.size)
+        Log.d(TAG,  "categorising()..." + "list of categories:" + list.size)
         list.map {model->
             model.keysSearch.map {
                 val smsList =  getAllSmsContainsStoreUseCase.invoke(storeName = it)
                 Log.d(TAG , "categorising() search_key:$it ")
-                smsList.filter { sms -> sms.storeAndCategoryModel == null || sms.storeAndCategoryModel?.category == null }
-                    .map { sms ->
+                Log.d(TAG , "categorising() smsList:${smsList.size} ")
+                val filteredList = smsList.filter { sms -> sms.storeAndCategoryModel == null || sms.storeAndCategoryModel?.category == null }
+                Log.d(TAG , "categorising() filteredList:${filteredList.size} ")
+                filteredList.map { sms ->
                         val storeName = sms.storeName
                         val storeModel = StoreModel(name = storeName, categoryId = model.categoryId)
                         addOrUpdateStoreUseCase.invoke(storeModel)

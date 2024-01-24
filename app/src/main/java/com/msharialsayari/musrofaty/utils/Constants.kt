@@ -45,6 +45,7 @@ object Constants {
     const val CURRENCY_3 = "SR"
     const val CURRENCY_4 = "ر.س"
     const val CURRENCY_5 = "USD"
+    const val CURRENCY_6 = "AED"
     var listSACurrency  = listOf(
         CURRENCY_1,
         CURRENCY_2,
@@ -92,7 +93,8 @@ object Constants {
                                    CURRENCY_2,
                                    CURRENCY_3,
                                    CURRENCY_4,
-                                   CURRENCY_5
+                                   CURRENCY_5,
+                                   CURRENCY_6
     )
 
 
