@@ -2,15 +2,12 @@ package com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddWordDetectorUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteWordDetectorUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetWordDetectorUseCase
-import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -36,7 +33,7 @@ class SmsAnalysisViewModel @Inject constructor(
     private fun getWordDetectors(){
         viewModelScope.launch {
             val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
-            val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_WORDS)
+            val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PURCHASES_WORDS)
             val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
             _uiState.update {
                 it.copy(currencyList = currencyResult, expensesList = expensesResult, incomesList = incomesResult)

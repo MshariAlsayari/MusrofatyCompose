@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -242,7 +241,7 @@ class SmsRepo @Inject constructor(
     }
 
    private suspend fun getSmsType(body: String): SmsType {
-        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_WORDS).map { it.word }
+        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
         val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
         return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord)
     }

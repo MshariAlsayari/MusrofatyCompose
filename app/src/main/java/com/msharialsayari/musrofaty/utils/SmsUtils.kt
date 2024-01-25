@@ -68,7 +68,7 @@ object SmsUtils {
 
 
     fun getStoreName(sms: String?, senderName: String, smsType: SmsType): String {
-        if(smsType == SmsType.EXPENSES && sms?.isNotEmpty() ==true  ){
+        if(smsType == SmsType.EXPENSES_PURCHASES && sms?.isNotEmpty() ==true  ){
             return try {
                 val groupRegex = when {
                     ALINMA_BANK.equals(
@@ -113,7 +113,7 @@ object SmsUtils {
 
     fun getSmsType(sms: String, expensesList:List<String>,incomesList:List<String>): SmsType {
         if (isExpensesSMS(sms, expensesList)) {
-            return SmsType.EXPENSES
+            return SmsType.EXPENSES_PURCHASES
         }
 
         if (isIncomeSMS(sms, incomesList)) {

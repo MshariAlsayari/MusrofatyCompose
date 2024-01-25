@@ -222,6 +222,9 @@
     <string name="incomes_sms_type">إيرادات</string>
     <string name="expenses_sms_type">مصروفات</string>
     <string name="nothing_sms_type">غير محدد</string>
+    <string name="outgoing_transfer_sms_type">حوالات صادرة</string>
+    <string name="incoming_transfer_sms_type">حوالات واردة</string>
+    <string name="pay_bill_sms_type">سداد فواتير</string>
 
     <!--   Time duration -->
     <string name="common_minute">دقيقة</string>

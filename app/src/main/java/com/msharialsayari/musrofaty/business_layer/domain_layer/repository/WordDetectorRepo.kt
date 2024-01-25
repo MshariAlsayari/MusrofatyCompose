@@ -37,7 +37,7 @@ class WordDetectorRepo @Inject constructor(
         dao.insertAll(*words.toTypedArray())
     }
 
-    suspend fun delete( id: Int) {
+    suspend fun delete(id: Int) {
         dao.delete(id)
     }
 

@@ -3,17 +3,42 @@ package com.msharialsayari.musrofaty.utils
 
 object Constants {
 
+    //Incomes
+    private const val INCOME_1   = "حوالة واردة"
+    var listIncomeWords  = listOf(INCOME_1)
+
+    //Expenses purchases
     private const val EXPENSES_1 = "شراء"
     private const val EXPENSES_2 = "خصم"
-    private const val EXPENSES_3 = "مدين"
-    private const val EXPENSES_4 = "سداد"
-    private const val EXPENSES_5 = "حوالة صادرة"
-    private const val EXPENSES_6 = "سحب"
-    const val EXPENSES_7 = "إصدار فاتورتك"
+    private const val EXPENSES_3 = "سحب"
+    private const val EXPENSES_4 = "مشتريات"
 
-    private const val INCOME_1   = "حوالة واردة"
-    private const val INCOME_2   = "دائن"
-    private const val INCOME_3   = "عكس عملية"
+    var listExpenseWords = listOf(
+        EXPENSES_1,
+        EXPENSES_2,
+        EXPENSES_3,
+        EXPENSES_4,
+    )
+
+    //Expenses pay bills
+    private const val EXPENSES_PAY_BILL_1 = "سداد فاتورة"
+    var listExpensePayBillsWords = listOf(
+        EXPENSES_PAY_BILL_1
+    )
+
+    //Expenses outgoing transfer
+    private const val EXPENSES_OUTGOING_TRANSFER_1 = "حوالة صادرة"
+    private const val EXPENSES_OUTGOING_TRANSFER_2 = "حوالة صادرة داخلية"
+    private const val EXPENSES_OUTGOING_TRANSFER_3 = "حوالة فورية محلية صادرة"
+    private const val EXPENSES_OUTGOING_TRANSFER_4 = "خصم عبر حوالة محفظة"
+    private const val EXPENSES_OUTGOING_TRANSFER_5 = "حوالة داخلية صادرة"
+    var listExpenseOutgoingTransferWords = listOf(
+        EXPENSES_OUTGOING_TRANSFER_1,
+        EXPENSES_OUTGOING_TRANSFER_2,
+        EXPENSES_OUTGOING_TRANSFER_3,
+        EXPENSES_OUTGOING_TRANSFER_4,
+        EXPENSES_OUTGOING_TRANSFER_5
+    )
 
 
     //Senders
@@ -54,21 +79,7 @@ object Constants {
     )
 
 
-    var listIncomeWords  = listOf(
-                                  INCOME_1,
-                                  INCOME_2,
-                                  INCOME_3
-    )
 
-    var listExpenseWords = listOf(
-                                  EXPENSES_1,
-                                  EXPENSES_2,
-                                  EXPENSES_3,
-                                  EXPENSES_4,
-                                  EXPENSES_5,
-                                  EXPENSES_6,
-                                  EXPENSES_7
-    )
     var listOfSenders    = listOf(
                                   SAIB_BANK,
                                   ALINMA_BANK,

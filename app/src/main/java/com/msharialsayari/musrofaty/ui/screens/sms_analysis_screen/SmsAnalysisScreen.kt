@@ -2,10 +2,28 @@ package com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,9 +42,15 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordD
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
-
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.AppBarComponent
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
+import com.msharialsayari.musrofaty.ui_component.ButtonComponent
+import com.msharialsayari.musrofaty.ui_component.DividerComponent
+import com.msharialsayari.musrofaty.ui_component.EmptyComponent
+import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -128,7 +152,7 @@ fun SmsAnalysisContent(modifier: Modifier=Modifier){
                 when (tabIndex) {
                     0 -> SmsAnalysisTab(
                         viewModel = viewModel,
-                        word = WordDetectorType.EXPENSES_WORDS
+                        word = WordDetectorType.EXPENSES_PURCHASES_WORDS
 
 
                     )

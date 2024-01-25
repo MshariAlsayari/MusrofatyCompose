@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
-import android.util.Log
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderWithRelationsModel
@@ -77,7 +76,7 @@ class SenderRepo @Inject constructor(
 
 
     private suspend fun getSmsType(body:String): SmsType {
-        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_WORDS).map { it.word }
+        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
         val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
         return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord )
     }

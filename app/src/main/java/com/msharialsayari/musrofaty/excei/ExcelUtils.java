@@ -214,7 +214,7 @@ public class ExcelUtils {
                 case INCOME:
                     incomeAmount = smsModel.getAmount();
                     break;
-                case EXPENSES:
+                case EXPENSES_PURCHASES:
                     expensesAmount = smsModel.getAmount();
                     break;
             }

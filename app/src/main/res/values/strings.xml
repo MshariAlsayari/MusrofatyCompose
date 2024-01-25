@@ -209,6 +209,10 @@
     <string name="incomes_sms_type">Incomes</string>
     <string name="expenses_sms_type">Expenses</string>
     <string name="nothing_sms_type">No Type</string>
+    <string name="outgoing_transfer_sms_type">Outgoing transfers</string>
+    <string name="incoming_transfer_sms_type">Incoming transfers</string>
+    <string name="pay_bill_sms_type">Pay Bill</string>
+
 
     <!--   Time duration -->
     <string name="common_minute">Minute</string>

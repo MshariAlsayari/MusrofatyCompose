@@ -31,8 +31,8 @@ class StatisticsRepo @Inject constructor(
 ) {
     fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        val expensesSmsList = list.filter { (it.smsType == SmsType.EXPENSES ||it.smsType == SmsType.INCOME ) && it.amount > 0 }
-        expensesSmsList.forEach {smsModel->
+        val expensesPURCHASESSmsList = list.filter { (it.smsType == SmsType.EXPENSES_PURCHASES ||it.smsType == SmsType.INCOME ) && it.amount > 0 }
+        expensesPURCHASESSmsList.forEach { smsModel->
                 val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
                 map[smsModel.currency] = calculateFinancialSummary(
                     financialSummary,
@@ -58,9 +58,9 @@ class StatisticsRepo @Inject constructor(
         var amountTotal = 0.0
 
         //get expenses sms
-        val expensesSmsList = list.filter { it.smsType == SmsType.EXPENSES && it.amount > 0 }
+        val expensesPURCHASESSmsList = list.filter { it.smsType == SmsType.EXPENSES_PURCHASES && it.amount > 0 }
 
-        expensesSmsList.map {
+        expensesPURCHASESSmsList.map {
             amountTotal += it.amount
             val categoryId = it.storeAndCategoryModel?.category?.id ?: 0
             val storeAndCategory = if (categoryId == 0)
@@ -98,10 +98,10 @@ class StatisticsRepo @Inject constructor(
         var average = 0.0f
 
         //get expenses sms
-        val expensesSmsList = list.filter { it.smsType == SmsType.EXPENSES && it.amount > 0}
+        val expensesPURCHASESSmsList = list.filter { it.smsType == SmsType.EXPENSES_PURCHASES && it.amount > 0}
 
         //get map of sms Map<LocalData,List<SmsModel>>
-        val groupedByLocalDate = expensesSmsList.groupBy { item ->
+        val groupedByLocalDate = expensesPURCHASESSmsList.groupBy { item ->
             DateUtils.toLocalDate(item.timestamp)
         }
 
@@ -115,10 +115,10 @@ class StatisticsRepo @Inject constructor(
             entries.add(FloatEntry(x = key.toEpochDay().toFloat(), y = subTotal))
             total += subTotal
         }
-        average = if (expensesSmsList.isEmpty()) {
+        average = if (expensesPURCHASESSmsList.isEmpty()) {
             0f
         } else {
-            total / expensesSmsList.size
+            total / expensesPURCHASESSmsList.size
         }
 
         val xValuesToDates = data.keys.associateBy { it.toEpochDay().toFloat() }
@@ -153,7 +153,7 @@ class StatisticsRepo @Inject constructor(
     ): FinancialStatistics {
         when (smsType) {
             SmsType.INCOME -> financialSummary.income += amount
-            SmsType.EXPENSES -> financialSummary.expenses += amount
+            SmsType.EXPENSES_PURCHASES -> financialSummary.expenses += amount
             else -> {}
         }
         return financialSummary
