@@ -12,10 +12,10 @@ object SmsUtils {
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
     private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+"
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
-    const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
-    const val STC_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
-    const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
-    const val UR_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
+    private const val STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
+    private const val STC_PAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
+    private const val ALINMA_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
+    private const val URPAY_STORE_FROM_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for urpay
 
     fun isValidSms(sms: String?): Boolean {
         sms?.let {
@@ -80,7 +80,7 @@ object SmsUtils {
                     UR_PAY_BANK.equals(
                         senderName,
                         ignoreCase = true
-                    ) -> UR_PAY_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                    ) -> URPAY_STORE_FROM_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
                         .find(sms)?.groupValues?.get(0) ?: ""
 
                     STC_PAY_WALLET.equals(
@@ -111,24 +111,34 @@ object SmsUtils {
 
 
 
-    fun getSmsType(sms: String, expensesList:List<String>,incomesList:List<String>): SmsType {
-        if (isExpensesSMS(sms, expensesList)) {
+    fun getSmsType(sms: String,
+                   expensesPurchasesList:List<String>,
+                   expensesOutGoingTransferList:List<String>,
+                   expensesPayBillsList:List<String>,
+                   incomesList:List<String>): SmsType {
+
+
+        if (expensesPurchasesList.any { sms.contains(it, ignoreCase = true) }) {
             return SmsType.EXPENSES_PURCHASES
         }
 
-        if (isIncomeSMS(sms, incomesList)) {
+        if (expensesOutGoingTransferList.any { sms.contains(it, ignoreCase = true) }) {
+            return SmsType.OUTGOING_TRANSFER
+        }
+
+        if (expensesPayBillsList.any { sms.contains(it, ignoreCase = true) }) {
+            return SmsType.PAY_BILLS
+        }
+
+        if (incomesList.any { sms.contains(it, ignoreCase = true) }) {
             return SmsType.INCOME
         }
+
+
         return SmsType.NOTHING
     }
 
-    private fun isExpensesSMS(smsBody: String?, words:List<String>): Boolean {
-        return words.any { smsBody?.contains(it, ignoreCase = true) == true }
-    }
 
-    private fun isIncomeSMS(smsBody: String?, words:List<String>): Boolean {
-        return words.any { smsBody?.contains(it, ignoreCase = true) == true }
-    }
 
     fun isSACurrency(currency: String) =   currency.equals(Constants.CURRENCY_1, ignoreCase = true) || currency.equals(
         Constants.CURRENCY_2,

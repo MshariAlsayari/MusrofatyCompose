@@ -26,12 +26,15 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
             ?: emptyList()
         WordDetectorType.CURRENCY_WORDS -> uiState.currencyList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
+
+        else -> emptyList()
     }
 
     val description = when (word) {
         WordDetectorType.INCOME_WORDS -> stringResource(id = R.string.tab_income_description)
         WordDetectorType.EXPENSES_PURCHASES_WORDS -> stringResource(id = R.string.tab_expenses_description)
         WordDetectorType.CURRENCY_WORDS -> stringResource(id = R.string.tab_currency_description)
+        else -> ""
     }
 
     Column(

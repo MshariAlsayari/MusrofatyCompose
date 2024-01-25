@@ -13,6 +13,8 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.MathUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
+import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isExpenses
+import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isIncome
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
@@ -31,7 +33,7 @@ class StatisticsRepo @Inject constructor(
 ) {
     fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        val expensesPURCHASESSmsList = list.filter { (it.smsType == SmsType.EXPENSES_PURCHASES ||it.smsType == SmsType.INCOME ) && it.amount > 0 }
+        val expensesPURCHASESSmsList = list.filter { (it.smsType.isExpenses() || it.smsType.isIncome()) && it.amount > 0 }
         expensesPURCHASESSmsList.forEach { smsModel->
                 val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
                 map[smsModel.currency] = calculateFinancialSummary(
@@ -58,7 +60,7 @@ class StatisticsRepo @Inject constructor(
         var amountTotal = 0.0
 
         //get expenses sms
-        val expensesPURCHASESSmsList = list.filter { it.smsType == SmsType.EXPENSES_PURCHASES && it.amount > 0 }
+        val expensesPURCHASESSmsList = list.filter { it.smsType.isExpenses() && it.amount > 0 }
 
         expensesPURCHASESSmsList.map {
             amountTotal += it.amount
@@ -98,7 +100,7 @@ class StatisticsRepo @Inject constructor(
         var average = 0.0f
 
         //get expenses sms
-        val expensesPURCHASESSmsList = list.filter { it.smsType == SmsType.EXPENSES_PURCHASES && it.amount > 0}
+        val expensesPURCHASESSmsList = list.filter { it.smsType.isExpenses() && it.amount > 0}
 
         //get map of sms Map<LocalData,List<SmsModel>>
         val groupedByLocalDate = expensesPURCHASESSmsList.groupBy { item ->

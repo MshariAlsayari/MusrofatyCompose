@@ -51,7 +51,7 @@ class SmsRepo @Inject constructor(
         return dao.favoriteSms(smsId, favorite)
     }
 
-    suspend fun softDeleteSms(smsId: String, delete: Boolean){
+    suspend fun softDeleteSms(smsId: String, delete: Boolean) {
         return dao.softDelete(smsId, delete)
     }
 
@@ -65,15 +65,15 @@ class SmsRepo @Inject constructor(
     }
 
     suspend fun getAllSmsModel(
-        senderId: Int?= null,
+        senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
+        isDeleted: Boolean? = null,
+        isFavorite: Boolean? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
-        categoryId: Int?=null,
-        storeName: String?=null,
+        categoryId: Int? = null,
+        storeName: String? = null,
     ): List<SmsModel> {
 
         val finalQuery = getSmsQuery(
@@ -93,13 +93,15 @@ class SmsRepo @Inject constructor(
             returnedList.add(fillSmsModel(it.toSmsModel()))
         }
 
-        if(!storeName.isNullOrEmpty()){
+        if (!storeName.isNullOrEmpty()) {
             returnedList = returnedList.filter { it.storeName == storeName }.toMutableList()
         }
 
 
-        if(categoryId != null){
-            returnedList = returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }.toMutableList()
+        if (categoryId != null) {
+            returnedList =
+                returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }
+                    .toMutableList()
         }
 
         return returnedList
@@ -107,10 +109,10 @@ class SmsRepo @Inject constructor(
 
 
     suspend fun getAllSms(
-        senderId: Int?= null,
+        senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
+        isDeleted: Boolean? = null,
+        isFavorite: Boolean? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -131,10 +133,10 @@ class SmsRepo @Inject constructor(
 
 
     fun observingSmsListByStoreName(
-        senderId: Int?= null,
+        senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
+        isDeleted: Boolean? = null,
+        isFavorite: Boolean? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -153,11 +155,11 @@ class SmsRepo @Inject constructor(
 
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
-        ){
+        ) {
             dao.getPaginationAllSms(finalQuery)
         }.flow.map { pagingData ->
-           pagingData.map {
-                var model =  it.toSmsModel()
+            pagingData.map {
+                var model = it.toSmsModel()
                 model = fillSmsModel(model)
                 model
             }
@@ -167,13 +169,13 @@ class SmsRepo @Inject constructor(
 
 
     fun observingSmsListByStoreName(query: String): Flow<List<SmsModel>> {
-        return  dao.observingSmsListByQuery(query).map { pagingData ->
+        return dao.observingSmsListByQuery(query).map { pagingData ->
             pagingData.filter {
-               var model =  it.toSmsModel()
+                var model = it.toSmsModel()
                 model = fillSmsModel(model)
-                model.storeName==query
+                model.storeName == query
             }.map {
-                var model =  it.toSmsModel()
+                var model = it.toSmsModel()
                 model = fillSmsModel(model)
                 model
             }
@@ -184,15 +186,15 @@ class SmsRepo @Inject constructor(
 
 
     fun observingAllSmsModel(
-        senderId: Int?= null,
+        senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?=null,
-        isFavorite:Boolean?=null,
+        isDeleted: Boolean? = null,
+        isFavorite: Boolean? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
-        categoryId: Int?=null,
-        storeName: String?=null,
+        categoryId: Int? = null,
+        storeName: String? = null,
     ): Flow<List<SmsModel>> {
 
         val finalQuery = getSmsQuery(
@@ -206,33 +208,35 @@ class SmsRepo @Inject constructor(
         )
 
         return dao.observingSmsList(finalQuery)
-            .map {list->
-               var returnedList =  list.map {smsEntity ->
+            .map { list ->
+                var returnedList = list.map { smsEntity ->
                     var model = smsEntity.toSmsModel()
                     model = fillSmsModel(model)
                     model
                 }
 
-                if(!storeName.isNullOrEmpty()){
+                if (!storeName.isNullOrEmpty()) {
                     returnedList = returnedList.filter { it.storeName == storeName }.toMutableList()
                 }
 
 
-                if(categoryId != null){
-                    returnedList = returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }.toMutableList()
+                if (categoryId != null) {
+                    returnedList =
+                        returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }
+                            .toMutableList()
                 }
 
                 returnedList
-        }
+            }
     }
 
 
     fun observingAllSmsModelByIds(
-      ids:List<String>
+        ids: List<String>
     ): Flow<List<SmsModel>> {
         return dao.observingSmsListByIds(ids)
-            .map {list->
-               list.map {smsEntity ->
+            .map { list ->
+                list.map { smsEntity ->
                     var model = smsEntity.toSmsModel()
                     model = fillSmsModel(model)
                     model
@@ -240,10 +244,20 @@ class SmsRepo @Inject constructor(
             }
     }
 
-   private suspend fun getSmsType(body: String): SmsType {
-        val expensesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
+    private suspend fun getSmsType(body: String): SmsType {
+        val expensesPurchasesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
+        val expensesOutGoingTransferWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS).map { it.word }
+        val expensesPayBillsWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PAY_BILLS_WORDS).map { it.word }
+
         val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
-        return SmsUtils.getSmsType(body, expensesList = expensesWord, incomesList = incomesWord)
+
+        return SmsUtils.getSmsType(
+            sms = body,
+            expensesPurchasesList = expensesPurchasesWord,
+            expensesOutGoingTransferList = expensesOutGoingTransferWord,
+            expensesPayBillsList = expensesPayBillsWord,
+            incomesList = incomesWord
+        )
     }
 
     private suspend fun getSmsCurrency(body: String): String {
@@ -294,33 +308,34 @@ class SmsRepo @Inject constructor(
         var queryString = "SELECT * FROM SmsEntity "
 
         //adding where
-        if(senderId != null || isDeleted != null || isFavorite != null){
-            queryString+=" WHERE "
+        if (senderId != null || isDeleted != null || isFavorite != null) {
+            queryString += " WHERE "
         }
 
-        if(senderId!= null){
-            queryString+= " senderId=? "
+        if (senderId != null) {
+            queryString += " senderId=? "
             args.add(senderId)
         }
 
-        if(isDeleted!= null){
-            queryString += if(senderId != null){ " AND isDeleted=$isDeleted  "
-            }else{
+        if (isDeleted != null) {
+            queryString += if (senderId != null) {
+                " AND isDeleted=$isDeleted  "
+            } else {
                 " isDeleted=$isDeleted "
             }
         }
 
-        if(isFavorite!= null){
-            queryString += if(senderId != null || isDeleted != null){
+        if (isFavorite != null) {
+            queryString += if (senderId != null || isDeleted != null) {
                 " AND isFavorite=$isFavorite "
-            }else{
+            } else {
                 " isFavorite=$isFavorite "
             }
         }
 
-        queryString += if(senderId != null || isDeleted != null || isFavorite != null){
+        queryString += if (senderId != null || isDeleted != null || isFavorite != null) {
             " AND "
-        }else{
+        } else {
             " WHERE "
         }
 
@@ -366,7 +381,7 @@ class SmsRepo @Inject constructor(
         return SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
     }
 
-    suspend fun insertLatestSms(){
+    suspend fun insertLatestSms() {
         val smsEntity = datasource.loadLatestSms(context)
         smsEntity?.let {
             dao.insertAll(it)
@@ -374,12 +389,10 @@ class SmsRepo @Inject constructor(
     }
 
     suspend fun getAllSmsContainsStore(storeName: String = ""): List<SmsModel> {
-         return dao.getAllSmsContainsStore(storeName).map {
-             fillSmsModel( it.toSmsModel())
-         }.toList()
+        return dao.getAllSmsContainsStore(storeName).map {
+            fillSmsModel(it.toSmsModel())
+        }.toList()
     }
-
-
 
 
 }

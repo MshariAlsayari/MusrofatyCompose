@@ -1,12 +1,10 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
-import android.content.res.Configuration
 import androidx.preference.PreferenceManager
-import com.google.gson.Gson
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
-import java.util.*
+import java.util.Locale
 
 
 object SharedPreferenceManager {
@@ -16,6 +14,7 @@ object SharedPreferenceManager {
     private const val PREF_THEME                                           = "PREF_THEME"
     private const val PREF_INIT_APP                                        = "PREF_INIT_APP"
     private const val PREF_FILTER_PERIOD = "PREF_FILTER_PERIOD"
+    private const val PREF_INIT_TRANSFER_JOB = "PREF_INIT_TRANSFER_JOB"
 
     fun storeTheme(context: Context, theme: Theme) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -65,6 +64,15 @@ object SharedPreferenceManager {
 
      fun setSendersInitiated(context: Context) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_APP, true).apply()
+    }
+
+    fun transferJobInitiated(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            PREF_INIT_TRANSFER_JOB, false)
+    }
+
+    fun setTransferJobInitiated(context: Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_TRANSFER_JOB, true).apply()
     }
 
 

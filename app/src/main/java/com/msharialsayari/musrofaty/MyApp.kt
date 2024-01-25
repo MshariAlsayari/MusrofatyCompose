@@ -13,6 +13,7 @@ import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderF
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
 import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
+import com.msharialsayari.musrofaty.jobs.InitTransferWordsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.HiltAndroidApp
@@ -57,6 +58,11 @@ class MyApp : Application(), Configuration.Provider {
             initAppJob()
             SharedPreferenceManager.setSendersInitiated(this)
         }
+
+        if (!SharedPreferenceManager.transferJobInitiated(this)) {
+            initTransferSmsJob()
+            SharedPreferenceManager.setTransferJobInitiated(this)
+        }
         initCategoriesJob()
         initFirebaseStoresJob()
     }
@@ -64,6 +70,11 @@ class MyApp : Application(), Configuration.Provider {
     private fun initAppJob() {
         val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
         WorkManager.getInstance(this).enqueue(initAppWorker)
+    }
+
+    private fun initTransferSmsJob() {
+        val worker = OneTimeWorkRequestBuilder<InitTransferWordsJob>().build()
+        WorkManager.getInstance(this).enqueue(worker)
     }
 
     private fun initCategoriesJob() {
