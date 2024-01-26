@@ -22,12 +22,15 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
     val list = when (word) {
         WordDetectorType.INCOME_WORDS -> uiState.incomesList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
-        WordDetectorType.EXPENSES_PURCHASES_WORDS -> uiState.expensesList?.collectAsState(initial = emptyList())?.value
+        WordDetectorType.EXPENSES_PURCHASES_WORDS -> uiState.expensesPurchasesList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
         WordDetectorType.CURRENCY_WORDS -> uiState.currencyList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
 
-        else -> emptyList()
+        WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS -> uiState.expensesOutgoingTransferList?.collectAsState(initial = emptyList())?.value
+            ?: emptyList()
+        WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> uiState.expensesPayBillsList?.collectAsState(initial = emptyList())?.value
+            ?: emptyList()
     }
 
     val description = when (word) {

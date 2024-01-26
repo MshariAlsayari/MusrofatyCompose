@@ -42,18 +42,18 @@ fun SmsModel.toSmsEntity() = SmsEntity(
     isDeleted = isDeleted
 )
 
-fun SmsModel.toSmsComponentModel(context: Context) = SmsComponentModel(
+fun SmsModel.toSmsComponentModel(context: Context, storeName:String, category:String) = SmsComponentModel(
      id = id,
      senderId = senderId,
      timestamp=timestamp,
      body = body,
-     smsType= context.getString(smsType.valueString),
+     smsType= smsType,
      currency= currency,
      senderDisplayName= SenderModel.getDisplayName(context, senderModel),
      senderCategory= ContentModel.getDisplayName(context, senderModel?.content),
      senderIcon= senderModel?.senderIconUri ?: "",
      isFavorite= isFavorite,
      isDeleted=isDeleted,
-     storeName = storeAndCategoryModel?.store?.name ?: "",
-     storeCategory= CategoryModel.getDisplayName(context, storeAndCategoryModel?.category),
+     storeName = storeName,
+     storeCategory= category,
 )

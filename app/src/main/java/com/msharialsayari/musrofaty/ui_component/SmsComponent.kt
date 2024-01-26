@@ -23,11 +23,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SmsUtils
+import com.msharialsayari.musrofaty.utils.enums.SmsType
 
 
 @Composable
@@ -116,12 +119,17 @@ private fun StoreAndCategoryComponent(
     model: SmsComponentModel,
     onCategoryClicked:(String)->Unit
 ){
+    val storeNameTitle = when(model.smsType){
+        SmsType.OUTGOING_TRANSFER -> stringResource(id = R.string.common_receiver)
+        SmsType.PAY_BILLS -> stringResource(id = R.string.bill)
+        else -> stringResource(id = R.string.store)
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
         if (model.storeName.isNotEmpty()) {
             ListItem(
-                text = { Text(text = stringResource(id = R.string.store)) },
+                text = { Text(text = storeNameTitle) },
                 trailing = {
                     TextComponent.PlaceholderText(
                         text = model.storeName,
@@ -135,11 +143,17 @@ private fun StoreAndCategoryComponent(
             ListItem(
                 text = { Text(text = stringResource(id = R.string.category)) },
                 trailing = {
-                    TextComponent.ClickableText(
-                        text = model.storeCategory,
-                        modifier = Modifier.clickable {
-                            onCategoryClicked(model.storeCategory)
-                        })
+
+                    if(model.smsType ==  SmsType.OUTGOING_TRANSFER || model.smsType ==  SmsType.PAY_BILLS ){
+
+                    }else{
+                        TextComponent.ClickableText(
+                            text = model.storeCategory,
+                            modifier = Modifier.clickable {
+                                onCategoryClicked(model.storeCategory)
+                            })
+                    }
+
                 }
             )
         }
@@ -226,32 +240,24 @@ private fun SmsActionRowComponent(
 
 }
 
-fun wrapSendersToSenderComponentModel(
-    sms: SmsEntity,
-    sender:SenderModel,
-    context: Context
-): SmsComponentModel {
-
-    return SmsComponentModel(
-        id = sms.id,
-        senderId = sms.senderId,
-        timestamp = sms.timestamp,
-        isFavorite = sms.isFavorite,
-        isDeleted = sms.isDeleted,
-        body = sms.body,
-        senderIcon = sender.senderIconUri,
-        senderDisplayName = SenderModel.getDisplayName(context, sender),
-        senderCategory = ContentModel.getDisplayName(context, sender.content)
-    )
-
-}
 
 fun wrapSendersToSenderComponentModel(
     sms: SmsModel,
     context: Context
 ): SmsComponentModel {
 
-    return sms.toSmsComponentModel(context)
+    val storeName = when (sms.smsType) {
+        SmsType.OUTGOING_TRANSFER, SmsType.PAY_BILLS -> sms.storeName
+        else -> sms.storeAndCategoryModel?.store?.name ?: ""
+    }
+
+    val category = when (sms.smsType) {
+        SmsType.OUTGOING_TRANSFER -> context.getString(SmsType.OUTGOING_TRANSFER.valueString)
+        SmsType.PAY_BILLS -> context.getString(SmsType.PAY_BILLS.valueString)
+        else -> CategoryModel.getDisplayName(context, sms.storeAndCategoryModel?.category)
+    }
+
+    return sms.toSmsComponentModel(context, storeName=storeName, category = category)
 
 }
 
@@ -265,7 +271,7 @@ data class SmsComponentModel(
     var senderId: Int,
     var timestamp: Long = 0,
     var body: String = "",
-    var smsType: String = "",
+    var smsType: SmsType,
     var currency: String = "",
     var senderDisplayName: String = "",
     var senderCategory: String = "",

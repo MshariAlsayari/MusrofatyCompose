@@ -35,8 +35,16 @@ class SmsAnalysisViewModel @Inject constructor(
             val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
             val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PURCHASES_WORDS)
             val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
+            val expensesOutgoingResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS)
+            val expensesPayBillsResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PAY_BILLS_WORDS)
             _uiState.update {
-                it.copy(currencyList = currencyResult, expensesList = expensesResult, incomesList = incomesResult)
+                it.copy(
+                    currencyList = currencyResult,
+                    expensesPurchasesList = expensesResult,
+                    incomesList = incomesResult,
+                    expensesOutgoingTransferList = expensesOutgoingResult,
+                    expensesPayBillsList = expensesPayBillsResult
+                )
             }
         }
 

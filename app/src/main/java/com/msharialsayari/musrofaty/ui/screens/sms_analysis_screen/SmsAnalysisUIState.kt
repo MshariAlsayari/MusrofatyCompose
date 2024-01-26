@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 data class SmsAnalysisUIState(
     var currencyList: Flow<List<WordDetectorEntity>>? = null,
-    var expensesList: Flow<List<WordDetectorEntity>>? = null,
+    var expensesPurchasesList: Flow<List<WordDetectorEntity>>? = null,
     var incomesList: Flow<List<WordDetectorEntity>>? = null,
+    var expensesOutgoingTransferList: Flow<List<WordDetectorEntity>>? = null,
+    var expensesPayBillsList: Flow<List<WordDetectorEntity>>? = null,
 )

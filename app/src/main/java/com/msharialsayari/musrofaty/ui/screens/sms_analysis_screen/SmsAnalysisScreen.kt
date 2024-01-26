@@ -127,7 +127,7 @@ fun SmsAnalysisContent(modifier: Modifier=Modifier){
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            val tabTitles = listOf(R.string.tab_expensess, R.string.tab_income, R.string.tab_currency)
+            val tabTitles = WordDetectorType.entries.map { it.value }
             Column {
                 TabRow(
                     selectedTabIndex = tabIndex,
@@ -149,23 +149,10 @@ fun SmsAnalysisContent(modifier: Modifier=Modifier){
                             })
                     }
                 }
-                when (tabIndex) {
-                    0 -> SmsAnalysisTab(
-                        viewModel = viewModel,
-                        word = WordDetectorType.EXPENSES_PURCHASES_WORDS
-
-
-                    )
-                    1 -> SmsAnalysisTab(
-                        viewModel = viewModel,
-                        word = WordDetectorType.INCOME_WORDS
-                    )
-
-                    2 -> SmsAnalysisTab(
-                        viewModel = viewModel,
-                        word = WordDetectorType.CURRENCY_WORDS
-                    )
-                }
+                SmsAnalysisTab(
+                    viewModel = viewModel,
+                    word = WordDetectorType.getById(tabIndex)
+                )
             }
 
 

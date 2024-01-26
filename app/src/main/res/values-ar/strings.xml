@@ -31,8 +31,7 @@
     <string name="common_search">بحث</string>
     <string name="common_ok">موافق</string>
     <string name="common_period_time">الفترة الزمنية</string>
-    <string name="pref_managment_statistics_title">الإحصائيات</string>
-    <string name="pref_managment_statistics_summary">إمكانية إنشاء رسوم بيانية لمعرفة مقدار صرفك على فئة معينة</string>
+    <string name="common_receiver">المستلم</string>
 
 
     <plurals name="common_sms">
@@ -90,6 +89,8 @@
     <string name="pref_managment_analysis_summary">إمكانية زيادة كفاءة تحليل الرسائل</string>
     <string name="pref_managment_update_title">التحديث</string>
     <string name="pref_managment_update_summary">الذهاب إلى متجر Play Store للحصول على آخر نسخة من التطبيق</string>
+    <string name="pref_managment_statistics_title">الإحصائيات</string>
+    <string name="pref_managment_statistics_summary">إمكانية إنشاء رسوم بيانية لمعرفة مقدار صرفك على فئة معينة</string>
 
 
     <!--filter options-->
@@ -213,6 +214,7 @@
     <string name="income">الإيرادات</string>
     <string name="expenses">المصروفات</string>
     <string name="store">المتجر</string>
+    <string name="bill">فاتورة</string>
     <string name="category">الفئة</string>
     <string name="add">إضافة</string>
     <string name="cancel">إلغاء</string>

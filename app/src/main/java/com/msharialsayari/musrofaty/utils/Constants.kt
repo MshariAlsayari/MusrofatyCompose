@@ -22,8 +22,10 @@ object Constants {
 
     //Expenses pay bills
     private const val EXPENSES_PAY_BILL_1 = "سداد فاتورة"
+    private const val EXPENSES_PAY_BILL_2 = "مدفوعات سداد"
     var listExpensePayBillsWords = listOf(
-        EXPENSES_PAY_BILL_1
+        EXPENSES_PAY_BILL_1,
+        EXPENSES_PAY_BILL_2
     )
 
     //Expenses outgoing transfer

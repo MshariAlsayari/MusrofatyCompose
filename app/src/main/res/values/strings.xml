@@ -29,6 +29,7 @@
     <string name="common_search">Search</string>
     <string name="common_ok">OK</string>
     <string name="common_period_time">Time</string>
+    <string name="common_receiver">Receiver</string>
 
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
@@ -188,6 +189,7 @@
     <string name="number_of_sms">Total of Sms</string>
     <string name="no_result">No Result</string>
     <string name="store">Store</string>
+    <string name="bill">Bill</string>
     <string name="category">Category</string>
     <string name="income">Income</string>
     <string name="expenses">Expenses</string>
