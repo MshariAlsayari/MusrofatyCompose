@@ -178,7 +178,7 @@ class CategorySmsListViewModel @Inject constructor(
                 val category = getCategoryUseCase.invoke(categoryId!!)
                 _uiState.update {
                     it.copy(
-                        category = category ?: CategoryModel.getNoSelectedCategory(),
+                        category = category ?: CategoryModel.getCategory(),
                     )
 
                 }

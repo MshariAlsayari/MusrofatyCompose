@@ -33,7 +33,7 @@ class StatisticsRepo @Inject constructor(
 ) {
     fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        val expensesPURCHASESSmsList = list.filter { (it.smsType.isExpenses() || it.smsType.isIncome()) && it.amount > 0 }
+        val expensesPURCHASESSmsList = list.filter { !it.isDeleted && (it.smsType.isExpenses() || it.smsType.isIncome()) && it.amount > 0 }
         expensesPURCHASESSmsList.forEach { smsModel->
                 val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
                 map[smsModel.currency] = calculateFinancialSummary(
@@ -60,15 +60,28 @@ class StatisticsRepo @Inject constructor(
         var amountTotal = 0.0
 
         //get expenses sms
-        val expensesPURCHASESSmsList = list.filter { it.smsType.isExpenses() && it.amount > 0 }
+        val filteredList = list.filter { !it.isDeleted && it.smsType.isExpenses() && it.amount > 0 }
 
-        expensesPURCHASESSmsList.map {
+        filteredList.map {
             amountTotal += it.amount
-            val categoryId = it.storeAndCategoryModel?.category?.id ?: 0
-            val storeAndCategory = if (categoryId == 0)
-                StoreAndCategoryModel(store = StoreModel(name = "" ,categoryId=-1) ,category = CategoryModel.getNoSelectedCategory() ) else it.storeAndCategoryModel!!
+            val category = when (it.smsType) {
+                SmsType.PAY_BILLS ->CategoryModel.getCategory(id = -2, valueAr = "سداد فاتورة", valueEn = "Pay Bill")
+                SmsType.OUTGOING_TRANSFER -> CategoryModel.getCategory(id =-3,valueAr = "حوالات صادرة", valueEn = "Outgoing transfers")
+                else -> it.storeAndCategoryModel?.category ?: CategoryModel.getCategory(-1)
+            }
+
+
+
+            val storeModel = when (it.smsType) {
+                SmsType.EXPENSES_PURCHASES -> it.storeAndCategoryModel?.store!!
+                else -> StoreModel(name = "" ,categoryId= category.id)
+            }
+
+
+
+            val storeAndCategory = StoreAndCategoryModel(store = storeModel ,category = category )
             val categorySummary = returnedValue.data.getOrDefault(
-                categoryId,
+                category.id,
                 CategoryStatistics(
                     storeAndCategory = storeAndCategory,
                     key=key,
@@ -77,12 +90,12 @@ class StatisticsRepo @Inject constructor(
             )
             categorySummary.total += it.amount
             categorySummary.sms.add(it)
-            returnedValue.data[categoryId] = categorySummary
+            returnedValue.data[category.id] = categorySummary
         }
 
         returnedValue.data.map {
             it.value.payPercent = MathUtils.calculatePercentage(it.value.total, amountTotal)
-            it.value.color = if (it.key < returnedValue.data.size) colors[it.key] else colors[Random.nextInt(0, colors.size)]
+            it.value.color = if (it.key > 0 && it.key < returnedValue.data.size) colors[it.key] else colors[Random.nextInt(0, colors.size)]
         }
         returnedValue.total = amountTotal
         returnedValue.data = returnedValue.data.toList().sortedByDescending { (_, value) -> value.payPercent }.toMap().toMutableMap()
@@ -100,7 +113,7 @@ class StatisticsRepo @Inject constructor(
         var average = 0.0f
 
         //get expenses sms
-        val expensesPURCHASESSmsList = list.filter { it.smsType.isExpenses() && it.amount > 0}
+        val expensesPURCHASESSmsList = list.filter { !it.isDeleted && it.smsType.isExpenses() && it.amount > 0}
 
         //get map of sms Map<LocalData,List<SmsModel>>
         val groupedByLocalDate = expensesPURCHASESSmsList.groupBy { item ->

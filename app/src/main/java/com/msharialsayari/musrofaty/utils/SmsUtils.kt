@@ -26,7 +26,7 @@ object SmsUtils {
     private const val BILL_NAME_REGEX = "/الخدمة(:|\\s).+|الخدمة(:|\\s).+|الجهة(:|\\s).+"
 
     //Outgoing transfer Regex
-    private const val RECEIVER_NAME_REGEX = "/اسم المستلم(:|\\s).+|إلى(:|\\s).+|المستفيد(:|\\s).+|اسم المستلم(:|\\s).+"
+    private const val RECEIVER_NAME_REGEX = "/اسم المستلم(:|\\s).+|إلى(:|\\s).+|الى(:|\\s).+|المستفيد(:|\\s).+|اسم المستلم(:|\\s).+"
 
 
 

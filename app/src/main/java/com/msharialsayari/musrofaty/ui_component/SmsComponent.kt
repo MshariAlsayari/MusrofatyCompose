@@ -145,7 +145,9 @@ private fun StoreAndCategoryComponent(
                 trailing = {
 
                     if(model.smsType ==  SmsType.OUTGOING_TRANSFER || model.smsType ==  SmsType.PAY_BILLS ){
-
+                        TextComponent.PlaceholderText(
+                            text = model.storeCategory,
+                        )
                     }else{
                         TextComponent.ClickableText(
                             text = model.storeCategory,

@@ -35,11 +35,11 @@ data class CategoryModel(
             }
         }
 
-        fun getNoSelectedCategory():CategoryModel {
+        fun getCategory(id: Int = -1,valueAr: String = "غير محدد",valueEn: String = "No Category"):CategoryModel {
             return CategoryModel(
-                id = -1,
-                valueAr = "غير محدد",
-                valueEn = "No Category",
+                id = id,
+                valueAr = valueAr,
+                valueEn = valueEn,
                 isSelected = false,
                 isDefault = false,
                 sortOrder = 0

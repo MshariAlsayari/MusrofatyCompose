@@ -12,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -129,7 +130,7 @@ fun SmsAnalysisContent(modifier: Modifier=Modifier){
 
             val tabTitles = WordDetectorType.entries.map { it.value }
             Column {
-                TabRow(
+                ScrollableTabRow(
                     selectedTabIndex = tabIndex,
                     indicator = {
                         TabRowDefaults.Indicator(

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 data class CategorySmsListUIState (
     var smsList :List<SmsModel> = emptyList(),
-    var category: CategoryModel = CategoryModel.getNoSelectedCategory(),
+    var category: CategoryModel = CategoryModel.getCategory(),
     var categories: Flow<List<CategoryEntity>>? = null,
     var selectedSms: SmsModel? = null,
 )
