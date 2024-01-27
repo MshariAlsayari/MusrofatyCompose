@@ -34,6 +34,18 @@
     <string name="common_receiver">المستلم</string>
 
 
+    <!-- Sorted BY-->
+    <string name="common_sorted_by">ترتيب حسب</string>
+
+    <string name="sorted_by_amount_title">المبلغ</string>
+    <string name="sorted_by_highest">الأعلى قيمة</string>
+    <string name="sorted_by_least">اللأقل قيمة</string>
+
+    <string name="sorted_by_time_title">الوقت</string>
+    <string name="sorted_by_oldest">الأقدم</string>
+    <string name="sorted_by_newest">الأجدد</string>
+
+
     <plurals name="common_sms">
         <item quantity="zero">رسالة</item>
         <item quantity="one">رسالة</item>

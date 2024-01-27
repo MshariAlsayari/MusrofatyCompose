@@ -31,6 +31,18 @@
     <string name="common_period_time">Time</string>
     <string name="common_receiver">Receiver</string>
 
+
+    <!-- Sorted BY-->
+    <string name="common_sorted_by">Sorted by</string>
+
+    <string name="sorted_by_amount_title">Amount</string>
+    <string name="sorted_by_highest">highest amount</string>
+    <string name="sorted_by_least">least amount</string>
+
+    <string name="sorted_by_time_title">Time</string>
+    <string name="sorted_by_oldest">oldest</string>
+    <string name="sorted_by_newest">newest</string>
+
     <plurals name="common_sms">
         <item quantity="zero">SMS</item>
         <item quantity="one">SMS</item>

@@ -33,6 +33,23 @@ object TextComponent {
 
     }
 
+    @Composable
+    fun BodyLargeText(
+        modifier: Modifier = Modifier,
+        alignment: TextAlign = TextAlign.Start,
+        color:Color = MusrofatyTheme.colors.textBodyColor,
+        text: String
+    ) {
+        Text(
+            text = text,
+            modifier = modifier,
+            textAlign = alignment,
+            color= color,
+            fontSize = dimensionResource(id = R.dimen.text_medium_large).value.sp
+        )
+
+    }
+
 
     @Composable
     fun BodyText(

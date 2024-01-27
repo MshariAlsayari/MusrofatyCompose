@@ -21,6 +21,7 @@ import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.utils.DialogsUtils
+import com.msharialsayari.musrofaty.utils.SetStatusBarColor
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
                 screenType =screenType
             ) {
 
-                //SetStatusBarColor()
+                SetStatusBarColor()
                 MainScreenView(
                     navigatorViewModel =navigatorViewModel,
                     screenType = screenType

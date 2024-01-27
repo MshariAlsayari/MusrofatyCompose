@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomSheet.CategoryBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.SmsActionType
 import com.msharialsayari.musrofaty.ui_component.SmsComponent
@@ -24,7 +25,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CategorySmsListContent(modifier: Modifier = Modifier,
                            viewModel: CategorySmsListViewModel,
-                           sheetState: BottomSheetScaffoldState
 ){
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -46,9 +46,7 @@ fun CategorySmsListContent(modifier: Modifier = Modifier,
                 ),
                 onCategoryClicked = {
                     viewModel.onSmsCategoryClicked(item)
-                    coroutineScope.launch {
-                        BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, true)
-                    }
+                    viewModel.updateSelectedBottomSheet(CategoryBottomSheetType.CATEGORIES)
                 },
                 onActionClicked = { model, action ->
                     when (action) {

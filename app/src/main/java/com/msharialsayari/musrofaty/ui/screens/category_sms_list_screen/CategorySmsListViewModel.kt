@@ -21,7 +21,9 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStor
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomSheet.CategoryBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
+import com.msharialsayari.musrofaty.ui_component.SortedByAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
@@ -100,10 +102,7 @@ class CategorySmsListViewModel @Inject constructor(
         viewModelScope.launch {
 
         observingAllSmsUseCase.invoke(ids).collect{list->
-                _uiState.update {
-                    it.copy(smsList = list)
-                }
-
+              updateList(getSortedList(list))
             }
         }
 
@@ -197,6 +196,22 @@ class CategorySmsListViewModel @Inject constructor(
             softDeleteSMsUseCase.invoke(id, delete)
         }
     }
+    fun updateSelectedSortByAmount(item:SortedByAmount){
+        _uiState.update {
+            it.copy(
+                selectedSortedByAmount = item,
+            )
+
+        }
+    }
+
+    fun updateSelectedBottomSheet(type:CategoryBottomSheetType?){
+        _uiState.update {
+            it.copy(
+                bottomSheetType = type,
+            )
+        }
+    }
 
 
     fun navigateToCategoryScreen(id:Int){
@@ -206,6 +221,17 @@ class CategorySmsListViewModel @Inject constructor(
         navigator.navigateUp()
     }
 
+    fun getSortedList(list: List<SmsModel>): List<SmsModel> {
+        val amount = _uiState.value.selectedSortedByAmount
+        return if (amount == SortedByAmount.HIGHEST)
+            list.sortedByDescending { it.amount }
+        else
+            list.sortedBy { it.amount }
+    }
 
-
+    fun updateList(list: List<SmsModel>){
+        _uiState.update {
+            it.copy(smsList = list)
+        }
+    }
 }
