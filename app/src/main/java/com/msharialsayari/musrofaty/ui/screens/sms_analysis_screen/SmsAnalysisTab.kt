@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,11 +39,14 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
         WordDetectorType.INCOME_WORDS -> stringResource(id = R.string.tab_income_description)
         WordDetectorType.EXPENSES_PURCHASES_WORDS -> stringResource(id = R.string.tab_expenses_description)
         WordDetectorType.CURRENCY_WORDS -> stringResource(id = R.string.tab_currency_description)
-        else -> ""
+        WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS -> stringResource(id = R.string.tab_outgoing_transfer_description)
+        WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> stringResource(id = R.string.tab_pay_bill_description)
     }
 
     Column(
-        modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.default_margin16) ).fillMaxSize(),
+        modifier = Modifier
+            .padding(vertical = dimensionResource(id = R.dimen.default_margin16))
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16))
     ) {
 
