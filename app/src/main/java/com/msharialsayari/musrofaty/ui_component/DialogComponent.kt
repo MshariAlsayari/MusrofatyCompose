@@ -2,7 +2,13 @@ package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -20,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.notEmpty
@@ -249,10 +254,19 @@ object DialogComponent {
     }
 
     @Composable
-    fun TimeOptionDialog(selectedItem: SelectedItemModel? = null,  startDate:Long=0,endDate:Long=0, onFilterSelected:(SelectedItemModel)->Unit ){
+    fun TimeOptionDialog(
+        selectedItem: SelectedItemModel? = null,
+        ignoreFilterOption:DateUtils.FilterOption? = null,
+        startDate: Long = 0,
+        endDate: Long = 0,
+        onFilterSelected: (SelectedItemModel) -> Unit
+    ){
         val context  = LocalContext.current
 
-        val options = DateUtils.FilterOption.values()
+
+        val options =
+            if (ignoreFilterOption == null || ignoreFilterOption.id == selectedItem?.id) DateUtils.FilterOption.entries
+            else DateUtils.FilterOption.entries.filter { ignoreFilterOption.id != it.id }
         val list = mutableListOf<SelectedItemModel>()
         options.map { item ->
             list.add(

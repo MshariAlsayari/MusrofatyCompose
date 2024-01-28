@@ -26,7 +26,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinan
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSenderSmsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingPaginationAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
@@ -39,13 +38,14 @@ import com.msharialsayari.musrofaty.pdf.PdfCreatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SenderSmsListScreenTabs
-import com.msharialsayari.musrofaty.ui.screens.statistics_screen.bottomsheets.BottomSheetType
 import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.SharingFileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,7 +73,10 @@ class SenderSmsListViewModel @Inject constructor(
     private val getAllSmsUseCase: GetAllSmsUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val navigator: AppNavigator,
+    @ApplicationContext val context: Context,
 ) : ViewModel() {
+
+
 
     private val _uiState = MutableStateFlow(SenderSmsListUiState(sender = SenderModel(senderName = "")))
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
@@ -317,7 +320,16 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     fun getFilterTimeOption(): DateUtils.FilterOption {
-        return DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id)
+        return if (_uiState.value.selectedFilterTimeOption != null) {
+            DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id, default = DateUtils.FilterOption.MONTH)
+        } else {
+            _uiState.value.startDate = DateUtils.getSalaryDate()
+            _uiState.value.endDate = DateUtils.getCurrentDate()
+            val savedFilterOption = SharedPreferenceManager.getFilterTimePeriod(context)
+            val timeFilterOptionId = if (savedFilterOption == DateUtils.FilterOption.ALL.id ) DateUtils.FilterOption.MONTH.id else savedFilterOption
+            _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
+            DateUtils.FilterOption.getFilterOptionOrDefault(timeFilterOptionId)
+        }
     }
 
     private fun getFilterWord(): String {
@@ -388,12 +400,6 @@ class SenderSmsListViewModel @Inject constructor(
                 activity.startActivity(intent)
             }
 
-        }
-    }
-
-    fun onFilterTimeOptionSelected(item: SelectedItemModel) {
-        _uiState.update {
-            it.copy(selectedFilterTimeOption = item)
         }
     }
 

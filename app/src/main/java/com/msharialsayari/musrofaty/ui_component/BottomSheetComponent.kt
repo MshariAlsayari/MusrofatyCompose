@@ -192,13 +192,17 @@ object BottomSheetComponent {
     fun TimeOptionsBottomSheet(
         @StringRes  title: Int? = null,
         selectedItem: SelectedItemModel? = null,
+        ignoreFilterOption: DateUtils.FilterOption? = null,
         startDate: Long = 0,
         endDate: Long = 0,
         onFilterSelected: (SelectedItemModel) -> Unit
     ) {
         val context = LocalContext.current
 
-        val options = DateUtils.FilterOption.values()
+        val options =
+            if (ignoreFilterOption == null || ignoreFilterOption.id == selectedItem?.id) DateUtils.FilterOption.entries
+            else DateUtils.FilterOption.entries.filter { ignoreFilterOption.id != it.id }
+
         val list = mutableListOf<SelectedItemModel>()
         options.map { item ->
             list.add(

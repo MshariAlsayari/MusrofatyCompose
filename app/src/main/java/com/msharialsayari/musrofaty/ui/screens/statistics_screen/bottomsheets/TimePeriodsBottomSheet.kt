@@ -26,6 +26,7 @@ fun TimePeriodsBottomSheet(viewModel: StatisticsViewModel, sheetState: ModalBott
     TimePeriodsBottomSheet(
         title = R.string.common_period_time,
         selectedItem = selectedItem,
+        ignoreFilterOption = DateUtils.FilterOption.ALL,
         startDate = startDate,
         endDate = endDate
     ) {
