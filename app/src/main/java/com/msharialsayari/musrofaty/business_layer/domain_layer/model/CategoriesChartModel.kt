@@ -20,3 +20,8 @@ data class CategoriesChartModel(
     var xTitle:String = "",
     var yTitle:String = "",
 )
+
+data class ChartEntry(
+    var amount:Float = 0f,
+    var date:LocalDate,
+)

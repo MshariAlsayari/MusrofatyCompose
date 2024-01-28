@@ -4,12 +4,15 @@ import android.content.Context
 import com.msharialsayari.musrofaty.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
+import java.time.temporal.WeekFields
 import java.util.Calendar
 import java.util.Locale
 
@@ -253,6 +256,18 @@ object DateUtils {
 
     fun ofMilliSecond(millisecond: Long): LocalDateTime {
         return Instant.ofEpochMilli(millisecond).atZone(ZoneId.systemDefault()).toLocalDateTime()
+    }
+
+    fun getDateByWeekOfMonth(weekOfMonth: Long, date: LocalDate = LocalDate.now()): LocalDate {
+        return LocalDate.of(date.year, date.month, 1)
+            .with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+            .plusWeeks(weekOfMonth - 1)
+
+    }
+
+    fun getDateByMonthOfYear(monthValue: Month, date: LocalDate = LocalDate.now() ): LocalDate {
+        return LocalDate.of(date.year, monthValue, 1)
+
     }
 
 
