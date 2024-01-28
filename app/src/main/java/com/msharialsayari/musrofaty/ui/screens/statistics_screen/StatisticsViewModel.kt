@@ -119,7 +119,7 @@ class StatisticsViewModel @Inject constructor(
             val groupSmsByCurrent = smsList.groupBy { it.currency }
             val charts = mutableListOf<CategoriesChartModel>()
             groupSmsByCurrent.forEach { (key, value) ->
-                val result = getCategoriesStatisticsChartUseCase.invoke(key, value)
+                val result = getCategoriesStatisticsChartUseCase.invoke(key,timeOption,value)
                 if (result.total > 0)
                     charts.add(result)
                 Log.d(TAG , "chart() title:$key result: ${value.size}")

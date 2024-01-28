@@ -21,6 +21,7 @@ fun FilterTimesOptionsDialog(viewModel: DashboardViewModel){
 
     DialogComponent.TimeOptionDialog(
         selectedItem = selectedItem,
+        ignoreFilterOption = DateUtils.FilterOption.ALL,
         startDate = startDate,
         endDate = endDate
     ) {

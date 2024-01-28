@@ -180,13 +180,13 @@ class DashboardViewModel @Inject constructor(
 
     fun getFilterTimeOption(context: Context): DateUtils.FilterOption {
         return if (_uiState.value.selectedFilterTimeOption != null) {
-            DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id)
+            DateUtils.FilterOption.getFilterOptionOrDefault(_uiState.value.selectedFilterTimeOption?.id, default = DateUtils.FilterOption.MONTH)
         } else {
             _uiState.value.startDate = DateUtils.getSalaryDate()
             _uiState.value.endDate = DateUtils.getCurrentDate()
-            val timeFilterOptionId = SharedPreferenceManager.getFilterTimePeriod(context)
-            _uiState.value.selectedFilterTimeOption =
-                SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
+            val savedFilterOption = SharedPreferenceManager.getFilterTimePeriod(context)
+            val timeFilterOptionId = if (savedFilterOption == DateUtils.FilterOption.ALL.id ) DateUtils.FilterOption.MONTH.id else savedFilterOption
+            _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
             DateUtils.FilterOption.getFilterOptionOrDefault(timeFilterOptionId)
         }
 

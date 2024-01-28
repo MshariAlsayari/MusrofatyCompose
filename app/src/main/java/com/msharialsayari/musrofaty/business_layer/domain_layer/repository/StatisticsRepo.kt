@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
+import android.util.Log
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
@@ -8,6 +9,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.Categories
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ChartEntry
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -22,6 +24,10 @@ import com.patrykandpatrick.vico.core.entry.FloatEntry
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
+import java.time.temporal.WeekFields
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -103,51 +109,112 @@ class StatisticsRepo @Inject constructor(
 
     }
 
-    fun getCategoriesStatisticsChartData(key: String, list: List<SmsModel>): CategoriesChartModel {
+    fun getCategoriesStatisticsChartData(
+        key: String,
+        filterOption: DateUtils.FilterOption,
+        list: List<SmsModel>
+    ): CategoriesChartModel {
 
         //declaring variables
         val model = CategoriesChartModel(key = key)
+        val chartEntryList = mutableListOf<ChartEntry>()
         val data = mutableMapOf<LocalDate, Float>()
         val entries = mutableListOf<FloatEntry>()
         var total = 0.0f
         var average = 0.0f
+        val filteredList = list.filter { !it.isDeleted && it.smsType.isExpenses() && it.amount > 0}
+        if(filteredList.isEmpty())
+            return model
 
-        //get expenses sms
-        val expensesPURCHASESSmsList = list.filter { !it.isDeleted && it.smsType.isExpenses() && it.amount > 0}
 
-        //get map of sms Map<LocalData,List<SmsModel>>
-        val groupedByLocalDate = expensesPURCHASESSmsList.groupBy { item ->
-            DateUtils.toLocalDate(item.timestamp)
-        }
+        val sortedList = filteredList.sortedByDescending { it.timestamp }
+        val endDate =  sortedList.first().timestamp
+        val startDate = sortedList.last().timestamp
+        val finalFilterOption = if(filterOption == DateUtils.FilterOption.RANGE || filterOption == DateUtils.FilterOption.YEAR){
+            val start = DateUtils.ofMilliSecond(startDate)
+            val end = DateUtils.ofMilliSecond(endDate)
+            val monthsBetween = ChronoUnit.MONTHS.between(start, end).toInt()
+            val weeksBetween = ChronoUnit.WEEKS.between(start, end).toInt()
 
-        groupedByLocalDate.forEach { (localDate, items) ->
-            val key = localDate
-            var subTotal = 0.0f
-            items.map {
-                subTotal += it.amount.toFloat()
+            if(weeksBetween <= 7){
+                DateUtils.FilterOption.MONTH
+            }else if(monthsBetween <=12){
+                DateUtils.FilterOption.YEAR
+            }else{
+                DateUtils.FilterOption.WEEK
             }
-            data[key] = subTotal
-            entries.add(FloatEntry(x = key.toEpochDay().toFloat(), y = subTotal))
-            total += subTotal
+        }else {
+            filterOption
         }
-        average = if (expensesPURCHASESSmsList.isEmpty()) {
+
+
+        val groupedDate = sortedList.groupBy {
+            val smsDate = DateUtils.toLocalDate(it.timestamp)
+            when (finalFilterOption) {
+                DateUtils.FilterOption.MONTH -> {
+                    val weekOfMonth = smsDate.get(WeekFields.of(Locale.ENGLISH).weekOfMonth())
+                    val keyDate = DateUtils.getDateByWeekOfMonth(weekOfMonth.toLong(), smsDate)
+                    keyDate
+                }
+                DateUtils.FilterOption.YEAR -> {
+                    smsDate.withDayOfMonth(1)
+                }
+                else -> {
+                    smsDate
+                }
+            }
+
+        }
+
+
+        groupedDate.entries.map {entry->
+            var amount = 0f
+            entry.value.map { amount += it.amount.toFloat() }
+            val chartEntry = ChartEntry(amount=amount, date = entry.key )
+            Log.d("MshariTest", "add an entry chartEntry:$chartEntry")
+            chartEntryList.add(chartEntry)
+        }
+
+
+        chartEntryList.mapIndexed { index,entry ->
+            data[entry.date] = entry.amount
+            entries.add(FloatEntry(x = entry.date.toEpochDay().toFloat(), y = entry.amount))
+            total += entry.amount
+        }
+        average = if (chartEntryList.isEmpty()) {
             0f
         } else {
-            total / expensesPURCHASESSmsList.size
+            total / chartEntryList.size
         }
 
-        val xValuesToDates = data.keys.associateBy { it.toEpochDay().toFloat() }
-        val dateTimeFormatter: DateTimeFormatter = if (data.keys.size <= 6) {
-            DateTimeFormatter.ofPattern("d MMM")
-        } else {
-            DateTimeFormatter.ofPattern("d")
-        }
+
+
+        val xValuesToDates = chartEntryList.associateBy { it.date.toEpochDay().toFloat() }
+        val dateTimeFormatter: DateTimeFormatter =
+           if (entries.size <= 6) {
+                DateTimeFormatter.ofPattern("d MMM")
+            } else {
+                DateTimeFormatter.ofPattern("d")
+            }
 
         val horizontalAxisValueFormatter =
             AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValue ->
-                (xValuesToDates[value] ?: LocalDate.ofEpochDay(value.toLong())).format(
-                    dateTimeFormatter
-                )
+                when (finalFilterOption) {
+                    DateUtils.FilterOption.MONTH -> {
+                       val weekFields = WeekFields.of(Locale.getDefault())
+                       val numberOfWeek =  xValuesToDates[value]?.date?.get(weekFields.weekOfWeekBasedYear())
+                        "${context.getString(R.string.common_week)} $numberOfWeek"
+                    }
+
+                    DateUtils.FilterOption.YEAR -> {
+                        xValuesToDates[value]?.date?.month?.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())?: ""
+                    }
+                    else -> {
+                        (xValuesToDates[value])?.date?.format(dateTimeFormatter) ?:""
+                    }
+                }
+
+
             }
 
         model.data = data
@@ -156,7 +223,17 @@ class StatisticsRepo @Inject constructor(
         model.average = average
         model.xValueFormatter = horizontalAxisValueFormatter
         model.yTitle = key.ifEmpty { context.getString(R.string.no_currency) }
-        model.xTitle = context.getString(R.string.common_days)
+        model.xTitle =   when (finalFilterOption) {
+            DateUtils.FilterOption.MONTH -> {
+                context.getString(R.string.common_weeks)
+            }
+            DateUtils.FilterOption.YEAR -> {
+                context.getString(R.string.common_months)
+            }
+            else -> {
+                context.getString(R.string.common_days)
+            }
+        }
         return model
     }
 
