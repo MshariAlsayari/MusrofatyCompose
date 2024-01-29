@@ -122,7 +122,7 @@
     <string name="filter_options_month_title">الشهر الحالي</string>
     <string name="filter_options_year_title">السنة الحالية</string>
     <string name="filter_options_range_title">تحديد تاريخ</string>
-    <string name="filter_options_week_subtitle">الإسبوع يبدأ من يوم الإثنين إلى يوم الأحد</string>
+    <string name="filter_options_week_subtitle">الإسبوع يبدأ من يوم السبت إلى يوم الجمعة</string>
     <string name="empty"/>
 
     <!--Theme-->

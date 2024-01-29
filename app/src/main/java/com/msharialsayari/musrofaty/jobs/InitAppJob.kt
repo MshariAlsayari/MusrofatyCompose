@@ -6,15 +6,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.FilterRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
-import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -31,9 +28,6 @@ class InitAppJob @AssistedInject constructor(
     override suspend fun doWork(): Result {
         initContent()
         initSenders()
-        initIncomesWords()
-        initExpensesWords()
-        initCurrencyWords()
         initFilters()
         return Result.success()
     }
@@ -45,44 +39,6 @@ class InitAppJob @AssistedInject constructor(
 
     }
 
-
-    private suspend fun initIncomesWords() {
-        val incomes: List<WordDetectorModel> =
-            Constants.listIncomeWords.map {
-                WordDetectorModel(
-                    word = it,
-                    type = WordDetectorType.INCOME_WORDS.name
-                )
-            }.toList()
-
-        wordDetectorRepo.insert(incomes)
-    }
-
-    private suspend fun initExpensesWords() {
-        val expenses: List<WordDetectorModel> =
-            Constants.listExpenseWords.map {
-                WordDetectorModel(
-                    word = it,
-                    type = WordDetectorType.EXPENSES_PURCHASES_WORDS.name
-                )
-            }.toList()
-        wordDetectorRepo.insert(expenses)
-
-    }
-
-    private suspend fun initCurrencyWords() {
-        val currency: List<WordDetectorModel> =
-            Constants.listCurrencyWords.map {
-                WordDetectorModel(
-                    word = it,
-                    type = WordDetectorType.CURRENCY_WORDS.name
-                )
-            }.toList()
-
-        wordDetectorRepo.insert(currency)
-
-
-    }
 
     private suspend fun initSenders() {
         val sendersContent = contentRepo.getContentByKey(ContentKey.SENDERS.name)

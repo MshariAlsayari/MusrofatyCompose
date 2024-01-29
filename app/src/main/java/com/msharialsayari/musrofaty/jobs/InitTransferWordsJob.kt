@@ -20,12 +20,12 @@ class InitTransferWordsJob @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        wordDetectorRepo.delete(WordDetectorType.INCOME_WORDS.id)
-        wordDetectorRepo.delete(WordDetectorType.EXPENSES_PURCHASES_WORDS.id)
+        wordDetectorRepo.deleteAll()
         initIncomesWords()
         initExpensesPurchasesWords()
         initExpensesOutGoingTransferWords()
         initExpensesPayBillsWords()
+        initCurrencyWords()
         return Result.success()
     }
 
@@ -74,6 +74,20 @@ class InitTransferWordsJob @AssistedInject constructor(
                 )
             }.toList()
         wordDetectorRepo.insert(expenses)
+
+    }
+
+    private suspend fun initCurrencyWords() {
+        val currency: List<WordDetectorModel> =
+            Constants.listCurrencyWords.map {
+                WordDetectorModel(
+                    word = it,
+                    type = WordDetectorType.CURRENCY_WORDS.name
+                )
+            }.toList()
+
+        wordDetectorRepo.insert(currency)
+
 
     }
 

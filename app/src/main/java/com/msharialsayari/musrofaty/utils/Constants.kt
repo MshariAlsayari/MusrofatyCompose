@@ -9,15 +9,11 @@ object Constants {
 
     //Expenses purchases
     private const val EXPENSES_1 = "شراء"
-    private const val EXPENSES_2 = "خصم"
-    private const val EXPENSES_3 = "سحب"
-    private const val EXPENSES_4 = "مشتريات"
+    private const val EXPENSES_2 = "مشتريات"
 
     var listExpenseWords = listOf(
         EXPENSES_1,
         EXPENSES_2,
-        EXPENSES_3,
-        EXPENSES_4,
     )
 
     //Expenses pay bills
@@ -34,12 +30,16 @@ object Constants {
     private const val EXPENSES_OUTGOING_TRANSFER_3 = "حوالة فورية محلية صادرة"
     private const val EXPENSES_OUTGOING_TRANSFER_4 = "خصم عبر حوالة محفظة"
     private const val EXPENSES_OUTGOING_TRANSFER_5 = "حوالة داخلية صادرة"
+    const val EXPENSES_OUTGOING_TRANSFER_6 = "حوالة محلية"
+    const val EXPENSES_OUTGOING_TRANSFER_7 = "حوالة داخلية"
     var listExpenseOutgoingTransferWords = listOf(
         EXPENSES_OUTGOING_TRANSFER_1,
         EXPENSES_OUTGOING_TRANSFER_2,
         EXPENSES_OUTGOING_TRANSFER_3,
         EXPENSES_OUTGOING_TRANSFER_4,
-        EXPENSES_OUTGOING_TRANSFER_5
+        EXPENSES_OUTGOING_TRANSFER_5,
+        EXPENSES_OUTGOING_TRANSFER_6,
+        EXPENSES_OUTGOING_TRANSFER_7
     )
 
 

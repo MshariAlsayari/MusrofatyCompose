@@ -68,14 +68,14 @@ class SenderRepo @Inject constructor(
 
 
      private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
-        smsModel.smsType  = getSmsType(smsModel.body)
+        smsModel.smsType  = getSmsType(smsModel.body,smsModel.senderName )
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.amount   = getAmount(smsModel.body)
         return smsModel
     }
 
 
-    private suspend fun getSmsType(body:String): SmsType {
+    private suspend fun getSmsType(body:String, senderName: String): SmsType {
         val expensesPurchasesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
         val expensesOutGoingTransferWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS).map { it.word }
         val expensesPayBillsWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PAY_BILLS_WORDS).map { it.word }
@@ -84,6 +84,7 @@ class SenderRepo @Inject constructor(
 
         return SmsUtils.getSmsType(
             sms = body,
+            senderName=senderName,
             expensesPurchasesList = expensesPurchasesWord,
             expensesOutGoingTransferList = expensesOutGoingTransferWord,
             expensesPayBillsList = expensesPayBillsWord,

@@ -39,7 +39,7 @@ class SmsRepo @Inject constructor(
 
 
     private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
-        smsModel.smsType = getSmsType(smsModel.body)
+        smsModel.smsType = getSmsType(smsModel.body,smsModel.senderName)
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.amount = getAmount(smsModel.body)
         smsModel.senderModel = getSender(smsModel.senderId)
@@ -244,7 +244,7 @@ class SmsRepo @Inject constructor(
             }
     }
 
-    private suspend fun getSmsType(body: String): SmsType {
+    private suspend fun getSmsType(body: String,senderName: String): SmsType {
         val expensesPurchasesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
         val expensesOutGoingTransferWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS).map { it.word }
         val expensesPayBillsWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PAY_BILLS_WORDS).map { it.word }
@@ -253,6 +253,7 @@ class SmsRepo @Inject constructor(
 
         return SmsUtils.getSmsType(
             sms = body,
+            senderName=senderName,
             expensesPurchasesList = expensesPurchasesWord,
             expensesOutGoingTransferList = expensesOutGoingTransferWord,
             expensesPayBillsList = expensesPayBillsWord,
@@ -364,7 +365,7 @@ class SmsRepo @Inject constructor(
         when (filterOption) {
             DateUtils.FilterOption.ALL -> queryString += ""
             DateUtils.FilterOption.TODAY -> queryString += " AND  strftime('%d-%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%d-%m-%Y', date('now','localtime'))"
-            DateUtils.FilterOption.WEEK -> queryString += " AND  strftime('%W-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%W-%Y', date('now','localtime'))"
+            DateUtils.FilterOption.WEEK -> queryString += " AND  strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) >= date('now', 'weekday 6', '-7 days') AND strftime('%Y-%m-%d', date(timestamp/1000,'unixepoch', 'localtime')) < date('now', 'weekday 5')"
             DateUtils.FilterOption.MONTH -> queryString += " AND  strftime('%m-%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%m-%Y', date('now'))"
             DateUtils.FilterOption.YEAR -> queryString += " AND  strftime('%Y', date(timestamp/1000,'unixepoch', 'localtime')) =  strftime('%Y', date('now'))"
             DateUtils.FilterOption.RANGE -> {

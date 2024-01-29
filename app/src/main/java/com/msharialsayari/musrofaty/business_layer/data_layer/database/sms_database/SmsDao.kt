@@ -13,7 +13,7 @@ interface SmsDao {
     @Query("SELECT * FROM SmsEntity WHERE id = :id")
     suspend fun getSms(id:String): SmsEntity?
 
-    @Query("SELECT * FROM SmsEntity WHERE (LOWER(body) LiKE '%at:%' OR body LiKE '%لدى:%' OR body LiKE '%من:%' OR body LiKE '%في:%') AND (LOWER(body) LIKE LOWER(:storeName) || '%' OR LOWER(body) LIKE '%' ||  LOWER(:storeName) )  ")
+    @Query("SELECT * FROM SmsEntity WHERE (LOWER(body) LiKE '%at:%' OR body LiKE '%لدى:%' OR body LiKE '%من:%' OR body LiKE '%في:%'OR body LiKE '%محطة:%') AND (LOWER(body) LIKE '%' || LOWER(:storeName) || '%' )  ")
     suspend fun getAllSmsContainsStore(storeName: String): List<SmsEntity>
 
     @Query("UPDATE SmsEntity SET isFavorite =:favorite WHERE id=:id")

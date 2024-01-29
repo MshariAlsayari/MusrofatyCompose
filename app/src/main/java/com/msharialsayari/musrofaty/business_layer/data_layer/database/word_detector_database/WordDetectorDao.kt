@@ -17,6 +17,9 @@ interface WordDetectorDao {
     @Query("DELETE  FROM WordDetectorEntity WHERE id =:id")
     suspend fun delete(id:Int)
 
+    @Query("DELETE  FROM WordDetectorEntity")
+    suspend fun deleteAll()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg wordDetectorEntity: WordDetectorEntity)
 

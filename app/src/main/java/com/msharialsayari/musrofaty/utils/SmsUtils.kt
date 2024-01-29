@@ -28,6 +28,9 @@ object SmsUtils {
     //Outgoing transfer Regex
     private const val RECEIVER_NAME_REGEX = "/اسم المستلم(:|\\s).+|إلى(:|\\s).+|الى(:|\\s).+|المستفيد(:|\\s).+|اسم المستلم(:|\\s).+"
 
+    // Internal transfer rajhi
+    private const val INTERNAL_TRANSFER_AS_OUTGOING_TRANSFER_REGEX = "هههههه(:|\\s).+|الى(:|\\s).[\\p{L}]+"
+
 
 
     fun isValidSms(sms: String?): Boolean {
@@ -176,6 +179,7 @@ object SmsUtils {
 
 
     fun getSmsType(sms: String,
+                   senderName: String,
                    expensesPurchasesList:List<String>,
                    expensesOutGoingTransferList:List<String>,
                    expensesPayBillsList:List<String>,
@@ -186,7 +190,18 @@ object SmsUtils {
             return SmsType.EXPENSES_PURCHASES
         }
 
-        if (expensesOutGoingTransferList.any { sms.contains(it, ignoreCase = true) }) {
+        if (expensesOutGoingTransferList.any {
+                if(it == Constants.EXPENSES_OUTGOING_TRANSFER_6 && senderName == Constants.ALRAJHI_BANK)  {
+                    sms.contains("رسوم:", ignoreCase = true)
+                }else if(it == Constants.EXPENSES_OUTGOING_TRANSFER_7 && senderName == Constants.ALRAJHI_BANK){
+                 !INTERNAL_TRANSFER_AS_OUTGOING_TRANSFER_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
+                    .find(sms)?.groupValues?.get(0).isNullOrEmpty()
+
+                }else{
+                    sms.contains(it, ignoreCase = true)
+                }
+
+        }) {
             return SmsType.OUTGOING_TRANSFER
         }
 
