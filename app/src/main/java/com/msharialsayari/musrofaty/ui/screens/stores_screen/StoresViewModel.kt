@@ -5,19 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllStoreWithCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.notEmpty
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,9 +24,6 @@ import javax.inject.Inject
 class StoresViewModel @Inject constructor(
     private val getAllStoreWithCategoryUseCase: GetAllStoreWithCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val addCategoryUseCase: AddCategoryUseCase,
-    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
-    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
@@ -60,30 +49,6 @@ class StoresViewModel @Inject constructor(
     }
 
 
-
-    fun changeStoreCategory(selectedItemModel: SelectedItemModel) {
-        viewModelScope.launch {
-            val categoryId = selectedItemModel.id
-            val storeName  = _uiState.value.selectedStore?.store?.name
-            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
-
-            storeModel?.let {
-                if(selectedItemModel.isSelected){
-                    postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
-                    addOrUpdateStoreUseCase.invoke(it)
-                }else{
-                    storeModel.categoryId = -1
-                    addOrUpdateStoreUseCase.invoke(storeModel)
-                }
-
-            }
-
-
-        }
-    }
-
-
-
     private fun getCategories(){
         viewModelScope.launch {
             _uiState.update {
@@ -96,12 +61,6 @@ class StoresViewModel @Inject constructor(
         }
     }
 
-    fun addCategory(model: CategoryModel){
-        viewModelScope.launch {
-            addCategoryUseCase.invoke(model)
-        }
-    }
-
     fun getCategoryDisplayName(categoryId: Int, categories: List<CategoryEntity>):String{
         val entity = categories.find { it.id ==  categoryId}
         val displayName = CategoryModel.getDisplayName(context, entity)
@@ -110,35 +69,6 @@ class StoresViewModel @Inject constructor(
         }else{
             context.getString(R.string.common_no_category)
         }
-
-    }
-
-    fun getCategoryItems(context: Context, categories: List<CategoryEntity> ): List<SelectedItemModel> {
-        val list = mutableListOf<SelectedItemModel>()
-        categories.map { value ->
-            list.add(
-                SelectedItemModel(
-                    id = value.id,
-                    value = CategoryModel.getDisplayName(context,value),
-                    isSelected = _uiState.value.selectedStore?.store?.category_id == value.id
-                )
-            )
-        }
-
-        return list
-
-    }
-
-    fun onStoreSelected(storeWithCategory: StoreWithCategory) {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(selectedStore = storeWithCategory)
-            }
-        }
-    }
-
-    fun navigateToCategoryScreen(id:Int){
-        navigator.navigate(Screen.CategoryScreen.route + "/${id}")
 
     }
 

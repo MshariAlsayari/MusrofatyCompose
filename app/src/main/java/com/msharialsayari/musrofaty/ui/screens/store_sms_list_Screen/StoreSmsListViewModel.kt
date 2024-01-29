@@ -54,15 +54,20 @@ class StoreSmsListViewModel  @Inject constructor(
 
     init {
         getCategories()
-        getAllSms()
+        getAllSms(true)
     }
 
 
-     private fun getAllSms(){
+     private fun getAllSms(withLoading:Boolean = false){
         viewModelScope.launch {
+            if(withLoading){
+                _uiState.update {
+                    it.copy(isLoading = true )
+                }
+            }
           getAllSmsUseCase.invoke(query = storeName).collect{list->
               _uiState.update {
-                  it.copy(smsList = list)
+                  it.copy(smsList = list, isLoading = false )
               }
             }
 

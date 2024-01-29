@@ -13,14 +13,14 @@ object SmsUtils {
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
 
     //Amount Regex
-    private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+"
+    private const val AMOUNT_WORD_REGEX = "Amount(:|\\s).+|مبلغ(:|\\s).+|بمبلغ(:|\\s).+|بقيمة(:|\\s).+|القيمة(:|\\s).+|اضافة(:|\\s).+|القسط(:|\\s).+|المبلغ(:|\\s).+|تعبئة(:|\\s).+"
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
 
     //Stores Regex
-    private const val STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+"
-    private const val STC_PAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+"// for stcpay
-    private const val ALINMA_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for bank alinma
-    private const val URPAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+" // for urpay
+    private const val STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|محطة(:|\\s).+"
+    private const val STC_PAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+|محطة(:|\\s).+"// for stcpay
+    private const val ALINMA_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for bank alinma
+    private const val URPAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for urpay
 
     //Bills Regex
     private const val BILL_NAME_REGEX = "/الخدمة(:|\\s).+|الخدمة(:|\\s).+|الجهة(:|\\s).+"

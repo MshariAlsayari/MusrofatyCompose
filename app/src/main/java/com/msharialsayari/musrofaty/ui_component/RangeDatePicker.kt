@@ -1,15 +1,10 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
@@ -51,10 +46,12 @@ fun RangeDatePicker(
         initialDisplayedMonthMillis = if (startDate == null || startDate == 0L) DateUtils.toMilliSecond(
             getToday().toLocalDate()
         ) else startDate,
+
+        yearRange = IntRange(getToday().minusYears(1).year, getToday().year),
     )
 
-    val selectedStartDate = rememberSaveable { mutableStateOf<String>("") }
-    val selectedEndDate = rememberSaveable { mutableStateOf<String>("") }
+    val selectedStartDate = rememberSaveable { mutableStateOf("") }
+    val selectedEndDate = rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(key1 = state.selectedStartDateMillis) {
         state.selectedStartDateMillis?.let {
@@ -94,14 +91,9 @@ fun RangeDatePicker(
 
                 Text(text = selectedStartDate.value)
                 Text(text = selectedEndDate.value)
-                IconButton(onClick = {
+                ButtonComponent.OutlineButton(text = R.string.common_ok){
                     onDone(state.selectedStartDateMillis, state.selectedEndDateMillis)
-                }) {
-                    Icon(imageVector = Icons.Default.Done, contentDescription = null)
-
                 }
-
-
             }
 
         },

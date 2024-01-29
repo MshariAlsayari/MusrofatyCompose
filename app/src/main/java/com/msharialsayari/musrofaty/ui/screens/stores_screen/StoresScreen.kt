@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.stores_screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,26 +9,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreWithCategory
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
-import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.utils.mirror
-import kotlinx.coroutines.launch
 
 @Composable
 fun StoresScreen() {
@@ -75,14 +69,9 @@ fun StoresScreen() {
             else -> PageCompose(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                onCategoryLongPressed = {
-                    viewModel.navigateToCategoryScreen(it)
-                },
-
                 onStoreClicked = {
                     viewModel.navigateToStoreSmsListScreen(it)
                 }
-
             )
         }
     }
@@ -100,77 +89,25 @@ fun PageLoading(modifier: Modifier = Modifier) {
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PageCompose(
     modifier: Modifier = Modifier,
     viewModel: StoresViewModel,
-    onCategoryLongPressed: (Int) -> Unit,
     onStoreClicked: (String) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val openDialog = remember { mutableStateOf(false) }
-    val sheetState = rememberBottomSheetScaffoldState()
 
-
-    BackHandler(sheetState.bottomSheetState.isExpanded) {
-        coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
+    StoresList(modifier,viewModel){
+        onStoreClicked(it)
     }
 
-    if (openDialog.value) {
-        AddCategoryDialog(
-            viewModel,
-            onDismiss = {
-                openDialog.value = false
-            })
-    }
-
-    BottomSheetScaffold(
-        scaffoldState = sheetState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            CategoryBottomSheet(
-                viewModel = viewModel,
-                onCategorySelected = {
-                    viewModel.changeStoreCategory(it)
-                    coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
-                    }
-
-                },
-                onCreateCategoryClicked = {
-                    openDialog.value = true
-                    coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-                },
-                onCategoryLongPressed = { categoryId ->
-                    coroutineScope.launch { handleVisibilityOfBottomSheet(sheetState, false) }
-                    onCategoryLongPressed(categoryId)
-
-                }
-            )
-
-        }) {
-        StoresList(viewModel, onCategoryClicked = {
-            viewModel.onStoreSelected(it)
-            coroutineScope.launch {
-                handleVisibilityOfBottomSheet(sheetState, true)
-            }
-        },
-            onStoreNameClicked = {
-                onStoreClicked(it)
-            }
-
-        )
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StoresList(
+    modifier: Modifier,
     viewModel: StoresViewModel,
-    onCategoryClicked: (StoreWithCategory) -> Unit,
-    onStoreNameClicked: (String) -> Unit
+    onRowClicked: (String) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -181,6 +118,7 @@ fun StoresList(
         .toSortedMap(compareBy<Int> { it }.thenBy { it }.reversed())
 
     LazyColumn(
+        modifier=modifier,
         state = listState,
     ) {
 
@@ -212,21 +150,11 @@ fun StoresList(
 
             }
 
-
             items(stores) { item ->
-                StoreAndCategoryCompose(viewModel, item, onCategoryClicked = {
-                    onCategoryClicked(it)
-                },
-                    onStoreNameClicked = {
-                        onStoreNameClicked(it)
-                    }
-                )
+                StoreAndCategoryCompose(viewModel, item ){ onRowClicked(it) }
                 DividerComponent.HorizontalDividerComponent()
-
             }
         }
-
-
     }
 
 }
@@ -236,8 +164,7 @@ fun StoresList(
 fun StoreAndCategoryCompose(
     viewModel: StoresViewModel,
     item: StoreWithCategory,
-    onCategoryClicked: (StoreWithCategory) -> Unit,
-    onStoreNameClicked: (String) -> Unit
+    onRowClicked: (String) -> Unit
 ) {
 
 
@@ -248,71 +175,26 @@ fun StoreAndCategoryCompose(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onStoreNameClicked(item.store.name)
+                onRowClicked(item.store.name)
             }
             .padding(all = dimensionResource(id = R.dimen.default_margin16)),
         text = { Text(text = item.store.name) },
         trailing = {
-            TextComponent.ClickableText(
-                modifier = Modifier.clickable { onCategoryClicked(item) },
-                text = viewModel.getCategoryDisplayName(item.store.category_id, categories)
-            )
-        }
-    )
 
-}
-
-@Composable
-fun CategoryBottomSheet(
-    viewModel: StoresViewModel,
-    onCategorySelected: (SelectedItemModel) -> Unit,
-    onCreateCategoryClicked: () -> Unit,
-    onCategoryLongPressed: (Int) -> Unit
-) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val categories = uiState.categories?.collectAsState(initial = emptyList())?.value ?: emptyList()
-    BottomSheetComponent.SelectedItemListBottomSheetComponent(
-        title = R.string.store_category,
-        description = R.string.common_long_click_to_modify,
-        list = viewModel.getCategoryItems(context, categories),
-        canUnSelect = true,
-        trailIcon = {
-            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
-                onCreateCategoryClicked()
-            })
-        },
-        onSelectItem = {
-            onCategorySelected(it)
-        },
-        onLongPress = {
-            onCategoryLongPressed(it.id)
-        }
-
-
-    )
-}
-
-@Composable
-fun AddCategoryDialog(viewModel: StoresViewModel, onDismiss: () -> Unit) {
-
-    Dialog(onDismissRequest = onDismiss) {
-
-        DialogComponent.AddCategoryDialog(
-            onClickPositiveBtn = { ar, en ->
-                viewModel.addCategory(
-                    CategoryModel(
-                        valueEn = en,
-                        valueAr = ar,
-                    )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                TextComponent.PlaceholderText(
+                    text = viewModel.getCategoryDisplayName(item.store.category_id, categories)
                 )
 
-                onDismiss()
+                Icon(Icons.Default.KeyboardArrowRight,
+                    modifier = Modifier.mirror(),
+                    contentDescription = null )
+            }
 
-            },
-            onClickNegativeBtn = onDismiss
-        )
-
-    }
+        }
+    )
 
 }

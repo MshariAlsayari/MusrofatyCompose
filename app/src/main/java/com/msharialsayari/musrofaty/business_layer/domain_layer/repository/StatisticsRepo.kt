@@ -1,7 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
-import android.util.Log
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
@@ -171,7 +170,6 @@ class StatisticsRepo @Inject constructor(
             var amount = 0f
             entry.value.map { amount += it.amount.toFloat() }
             val chartEntry = ChartEntry(amount=amount, date = entry.key )
-            Log.d("MshariTest", "add an entry chartEntry:$chartEntry")
             chartEntryList.add(chartEntry)
         }
 
