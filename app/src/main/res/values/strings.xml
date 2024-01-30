@@ -30,6 +30,9 @@
     <string name="common_ok">OK</string>
     <string name="common_period_time">Time</string>
     <string name="common_receiver">Receiver</string>
+    <string name="common_network_error_message">Sorry something went wrong, please try again</string>
+    <string name="common_network_no_data">No Data</string>
+    <string name="common_network_no_connection_message">No internet connection available, please reconnect and try again later</string>
 
 
     <!-- Sorted BY-->

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoresCategoriesModel
@@ -17,7 +16,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStore
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import okio.utf8Size
 
 @HiltWorker
 class AutoCategoriesStoresJob @AssistedInject constructor(
@@ -39,18 +37,18 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
 
     override suspend fun doWork(): Result {
-        categories = categoryRepo.getCategoriesList()
-        getStoresCategoriesKeysUseCase().collect {
-            when (it) {
-                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
-                is Response.Loading -> Log.d(TAG, "Loading...")
-                is Response.Success -> getList(it.data)
-            }
-
-        }
-        if(categories.isNotEmpty() && list.isNotEmpty()){
-            categorising()
-        }
+//        categories = categoryRepo.getCategoriesList()
+//        getStoresCategoriesKeysUseCase().collect {
+//            when (it) {
+//                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
+//                is Response.Loading -> Log.d(TAG, "Loading...")
+//                is Response.Success -> getList(it.data)
+//            }
+//
+//        }
+//        if(categories.isNotEmpty() && list.isNotEmpty()){
+//            categorising()
+//        }
         return Result.success()
     }
 

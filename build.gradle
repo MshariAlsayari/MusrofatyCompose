@@ -15,6 +15,8 @@ buildscript {
         material_date_version        = '0.8.1-rc'
         datastore_version            = "1.0.0"
         appwidgets_version            = "1.0.0"
+        retrofit_version = "2.9.0"
+        loggingInterceptor_version = "4.12.0"
     }
     dependencies {
 

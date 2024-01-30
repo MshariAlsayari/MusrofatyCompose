@@ -32,6 +32,9 @@
     <string name="common_ok">موافق</string>
     <string name="common_period_time">الفترة الزمنية</string>
     <string name="common_receiver">المستلم</string>
+    <string name="common_network_error_message">عذرًا، لقد حدث خطأ ما، الرجاء المحاولة مره اخرى</string>
+    <string name="common_network_no_data">لا توجد بيانات</string>
+    <string name="common_network_no_connection_message">لا يوجد إتصال بالإنترنت ، الرجاء إعادة الإتصال و المحاولة لاحقاً</string>
 
 
     <!-- Sorted BY-->
