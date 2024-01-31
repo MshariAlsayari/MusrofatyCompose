@@ -17,7 +17,7 @@ object SmsUtils {
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
 
     //Stores Regex
-    private const val STORE_NAME_REGEX = "At(:).+ | لدى | +.(:)محطة(:).+"
+    private const val STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|محطة(:|\\s).+"
     private const val STC_PAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+|محطة(:|\\s).+"// for stcpay
     private const val ALINMA_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for bank alinma
     private const val URPAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for urpay
