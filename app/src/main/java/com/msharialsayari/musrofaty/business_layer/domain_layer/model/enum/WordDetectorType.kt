@@ -10,7 +10,8 @@ enum class WordDetectorType(val id: Int, val value:Int) {
 
 
     INCOME_WORDS(3,SmsType.INCOME.valueString),
-    CURRENCY_WORDS(4, R.string.tab_currency);
+    CURRENCY_WORDS(4, R.string.tab_currency),
+    AMOUNT_WORDS(5, R.string.tab_amount);
 
 
     companion object {
@@ -21,6 +22,7 @@ enum class WordDetectorType(val id: Int, val value:Int) {
                 EXPENSES_PAY_BILLS_WORDS.id -> EXPENSES_PAY_BILLS_WORDS
                 INCOME_WORDS.id -> INCOME_WORDS
                 CURRENCY_WORDS.id -> CURRENCY_WORDS
+                AMOUNT_WORDS.id -> AMOUNT_WORDS
                 else -> throw Exception("The id is not existed")
             }
         }

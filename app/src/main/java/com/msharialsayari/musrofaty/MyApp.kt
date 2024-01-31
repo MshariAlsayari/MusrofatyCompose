@@ -12,6 +12,7 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
+import com.msharialsayari.musrofaty.jobs.InitNewWordDetectorJob
 import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
 import com.msharialsayari.musrofaty.jobs.InitTransferWordsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
@@ -63,6 +64,11 @@ class MyApp : Application(), Configuration.Provider {
             initTransferSmsJob()
             SharedPreferenceManager.setTransferJobInitiated(this)
         }
+
+        if (!SharedPreferenceManager.newWordDetectors(this)) {
+            initNewWordDetectorJob()
+            SharedPreferenceManager.setNewWordDetectors(this)
+        }
         initCategoriesJob()
         initFirebaseStoresJob()
     }
@@ -74,6 +80,11 @@ class MyApp : Application(), Configuration.Provider {
 
     private fun initTransferSmsJob() {
         val worker = OneTimeWorkRequestBuilder<InitTransferWordsJob>().build()
+        WorkManager.getInstance(this).enqueue(worker)
+    }
+
+    private fun initNewWordDetectorJob() {
+        val worker = OneTimeWorkRequestBuilder<InitNewWordDetectorJob>().build()
         WorkManager.getInstance(this).enqueue(worker)
     }
 

@@ -17,7 +17,7 @@ object SmsUtils {
     private const val AMOUNT_REGEX = "([\\d]+[.][\\d]{2}|[\\d]+)"
 
     //Stores Regex
-    private const val STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|محطة(:|\\s).+"
+    private const val STORE_NAME_REGEX = "At(:).+ | لدى | +.(:)محطة(:).+"
     private const val STC_PAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|في(:|\\s).+|محطة(:|\\s).+"// for stcpay
     private const val ALINMA_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for bank alinma
     private const val URPAY_STORE_NAME_REGEX = "At(:|\\s).+|لدى(:|\\s).+|من(:|\\s).+|محطة(:|\\s).+" // for urpay
@@ -68,10 +68,10 @@ object SmsUtils {
     }
 
 
-    fun getCurrency(smsBody: String?, currencyList:List<String>): String {
+    fun getCurrency(smsBody: String?, currencyList:List<String>,amountList: List<String>): String {
         smsBody?.let {
             for (currency in currencyList) {
-                if (isSmsContainsCurrency(currency, smsBody)) {
+                if (isSmsContainsCurrency(currency, smsBody,amountList)) {
                     return if(listSACurrency.contains(currency) )
                         Constants.CURRENCY_1
                     else
@@ -230,15 +230,15 @@ object SmsUtils {
         ignoreCase = true
     )
 
-    fun extractAmount(sms: String?, currencyList: List<String>): Double {
+    fun extractAmount(sms: String?, currencyList: List<String>,amountList: List<String>): Double {
         var amount = 0.0
         sms?.let {
             for (currency in currencyList) {
-                if (isSmsContainsCurrency(currency, sms)) {
-                    amount = getAmount(sms)
+                if (isSmsContainsCurrency(currency, sms, amountList)) {
+                    amount = getAmount(sms,amountList)
                     return amount
-                }else if (getAmount(sms) > 0){
-                    amount = getAmount(sms)
+                }else if (getAmount(sms,amountList) > 0){
+                    amount = getAmount(sms,amountList)
                     return amount
                 }
             }
@@ -246,10 +246,11 @@ object SmsUtils {
         return amount
     }
 
-    private fun getAmount(sms: String?): Double {
+    private fun getAmount(sms: String?,amountList: List<String>): Double {
         sms?.let {
             return try {
-                val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
+                val regex = getRegex(amountList)
+                val amountLine = regex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
                 var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(amountLine)?.groupValues?.get(0) ?: "0"
                 amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
                 amount.toDouble()
@@ -262,10 +263,22 @@ object SmsUtils {
 
 
 
-    private fun isSmsContainsCurrency(currency: String, sms: String?): Boolean {
+    private fun isSmsContainsCurrency(currency: String, sms: String?, amountList: List<String>): Boolean {
         sms?.let {
-            val amountLine = AMOUNT_WORD_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
+            val regex = getRegex(amountList)
+            val amountLine = regex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
             return amountLine.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
         }?: run { return false }
+    }
+
+    private fun getRegex(words: List<String>):String{
+        var regex = ""
+        words.mapIndexed { index,  item->
+            regex+= "$item.+"
+            if(words.lastIndex != index){
+                regex+="|"
+            }
+        }
+        return regex
     }
 }

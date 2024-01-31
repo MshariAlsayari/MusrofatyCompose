@@ -9,4 +9,5 @@ data class SmsAnalysisUIState(
     var incomesList: Flow<List<WordDetectorEntity>>? = null,
     var expensesOutgoingTransferList: Flow<List<WordDetectorEntity>>? = null,
     var expensesPayBillsList: Flow<List<WordDetectorEntity>>? = null,
+    var amountsList: Flow<List<WordDetectorEntity>>? = null,
 )

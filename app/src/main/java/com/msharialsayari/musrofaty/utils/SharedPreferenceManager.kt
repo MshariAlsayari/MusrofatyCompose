@@ -15,6 +15,7 @@ object SharedPreferenceManager {
     private const val PREF_INIT_APP                                        = "PREF_INIT_APP"
     private const val PREF_FILTER_PERIOD = "PREF_FILTER_PERIOD"
     private const val PREF_INIT_TRANSFER_JOB = "PREF_INIT_TRANSFER_JOB"
+    private const val PREF_NEW_WORD_DETECTOR = "PREF_NEW_WORD_DETECTOR"
 
     fun storeTheme(context: Context, theme: Theme) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -84,6 +85,15 @@ object SharedPreferenceManager {
 
     fun getFilterTimePeriod(context: Context):Int {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREF_FILTER_PERIOD, 5)
+    }
+
+    fun newWordDetectors(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            PREF_NEW_WORD_DETECTOR, false)
+    }
+
+    fun setNewWordDetectors(context: Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_NEW_WORD_DETECTOR, true).apply()
     }
 
 

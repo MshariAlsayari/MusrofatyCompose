@@ -30,6 +30,7 @@
     <string name="common_ok">OK</string>
     <string name="common_period_time">Time</string>
     <string name="common_receiver">Receiver</string>
+    <string name="common_amount">Amount</string>
 
 
     <!-- Sorted BY-->
@@ -165,11 +166,14 @@
     <string name="tab_income">Incomes</string>
     <string name="tab_income_description">You can add/delete incomes words to make the app able to recognize incomes SMSs</string>
 
-
     <string name="tab_expensess">Expenses</string>
     <string name="tab_expenses_description">You can add/delete expenses words to make the app able to recognize expenses SMSs</string>
+
     <string name="tab_outgoing_transfer_description">You can add/delete expenses words to make the app able to recognize outgoing transfers SMSs</string>
     <string name="tab_pay_bill_description">You can add/delete expenses words to make the app able to recognize pay bills SMSs</string>
+
+    <string name="tab_amount">Amounts</string>
+    <string name="tab_amount_description">You can add/delete amounts words to make the app able to recognize amounts SMSs</string>
 
     <!--Appearance-->
     <string name="theme">Theme</string>

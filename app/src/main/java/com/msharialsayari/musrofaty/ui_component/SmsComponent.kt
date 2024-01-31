@@ -21,6 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.msharialsayari.musrofaty.BuildConfig
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
@@ -160,6 +161,17 @@ private fun StoreAndCategoryComponent(
             )
         }
 
+        if (model.storeName.isNotEmpty() && BuildConfig.DEBUG){
+            ListItem(
+                text = { Text(text = stringResource(id = R.string.common_amount)) },
+                trailing = {
+                    TextComponent.PlaceholderText(
+                        text = model.amount.toString(),
+                    )
+                }
+            )
+        }
+
 
 
 
@@ -282,4 +294,5 @@ data class SmsComponentModel(
     var isDeleted: Boolean = false,
     var storeName: String = "",
     var storeCategory: String = "",
+    var amount: Double = 0.0,
 )

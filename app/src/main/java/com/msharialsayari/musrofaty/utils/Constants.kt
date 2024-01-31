@@ -113,16 +113,6 @@ object Constants {
 
     // EXCEL
     const val EXCEL_FILE_NAME  = "sms.xls"
-    const val EXCEL_SHEET_NAME = "My Sms"
-
-    //PDF
-    const val PDF_FILE_NAME = "sms.pdf"
-
-
-    //Room
-    const val TOTAL_NUMBER_OF_TASKS = 998
-    const val MAXIMUM_SMS           = 1000
-
 
     //Notifications
     const val CHANNEL_ID      = "VERBOSE_NOTIFICATION"
@@ -168,22 +158,48 @@ object Constants {
         credit_limit_en
     )
 
-    // mada
-    const val mada_ar  ="مدى"
-    const val mada_en  ="mada"
-    var madaWordList = listOf(mada_ar, mada_en)
+    //Amount words
+    private const val Amount_1 = "Amount"
+    private const val Amount_2 = "مبلغ"
+    private const val Amount_3 = "بمبلغ"
+    private const val Amount_4 = "بقيمة"
+    private const val Amount_5 = "القيمة"
+    private const val Amount_6 = "اضافة"
+    private const val Amount_7 = "القسط"
+    private const val Amount_8 = "المبلغ"
+    private const val Amount_9 = "تعبئة"
 
-    //visa
-    const val visa_ar  ="فيزا"
-    const val visa_en  ="visa"
-    const val visa_safar  ="سفر"
-    const val visa_credit  ="ائتمانية"
-    const val visa_urpay  ="urpay"
-    var visaWordList = listOf(visa_ar, visa_en, visa_safar, visa_credit, visa_urpay)
 
-    //visa
-    const val mastercard_ar  ="ماستركارد"
-    const val mastercard_en  ="mastercard"
-    var mastercardWordList = listOf(mastercard_ar, mastercard_en)
+    var listAmountWords = listOf(
+        Amount_1,
+        Amount_2,
+        Amount_3,
+        Amount_4,
+        Amount_5,
+        Amount_6,
+        Amount_7,
+        Amount_8,
+        Amount_9,
+    )
+
+
+    //Store words
+    private const val Store_1 = "At"
+    private const val Store_2 = "لدى"
+    private const val Store_3 = "من"
+    private const val Store_4 = "في"
+    private const val Store_5 = "محطة"
+
+
+    var listStoreWords = listOf(
+        Store_1,
+        Store_2,
+        Store_3,
+        Store_4,
+        Store_5,
+    )
+
+
+
 
 }

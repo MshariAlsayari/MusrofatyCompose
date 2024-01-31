@@ -18,7 +18,6 @@ import javax.inject.Singleton
 @Singleton
 class SenderRepo @Inject constructor(
     private val dao: SenderDao,
-    private val wordDetectorRepo: WordDetectorRepo,
     private val contentRepo: ContentRepo
 ) {
 
@@ -50,61 +49,6 @@ class SenderRepo @Inject constructor(
             return fillSenderModel(model)
         return null
     }
-
-    suspend fun getSenderByIdWithSms(senderId:Int):SenderWithRelationsModel{
-        val model =  dao.getSenderByIdWithSms(senderId)
-        var senderModel = model.sender.toSenderModel()
-        senderModel = fillSenderModel(senderModel)
-        val smsList = model.sms.map {
-            var smsModel = it.toSmsModel()
-            smsModel = fillSmsModel(smsModel)
-            smsModel.senderModel = senderModel
-            return@map smsModel
-        }
-        return  SenderWithRelationsModel(sender = senderModel, sms = smsList)
-    }
-
-
-
-
-     private suspend fun fillSmsModel(smsModel: SmsModel): SmsModel {
-        smsModel.smsType  = getSmsType(smsModel.body,smsModel.senderName )
-        smsModel.currency = getSmsCurrency(smsModel.body)
-        smsModel.amount   = getAmount(smsModel.body)
-        return smsModel
-    }
-
-
-    private suspend fun getSmsType(body:String, senderName: String): SmsType {
-        val expensesPurchasesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
-        val expensesOutGoingTransferWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS).map { it.word }
-        val expensesPayBillsWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PAY_BILLS_WORDS).map { it.word }
-
-        val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
-
-        return SmsUtils.getSmsType(
-            sms = body,
-            senderName=senderName,
-            expensesPurchasesList = expensesPurchasesWord,
-            expensesOutGoingTransferList = expensesOutGoingTransferWord,
-            expensesPayBillsList = expensesPayBillsWord,
-            incomesList = incomesWord
-        )
-    }
-
-    private suspend fun getSmsCurrency(body:String):String{
-        val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.getCurrency(body, currencyList = currencyWord )
-    }
-
-    private suspend fun getAmount(body: String): Double {
-        val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.extractAmount(body, currencyList = currencyWord)
-    }
-
-
-
-
 
     suspend fun pinSender(senderId:Int, pin:Boolean){
         dao.removePinFromAll()

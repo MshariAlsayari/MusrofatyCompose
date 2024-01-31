@@ -33,6 +33,9 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
             ?: emptyList()
         WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> uiState.expensesPayBillsList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
+
+        WordDetectorType.AMOUNT_WORDS -> uiState.amountsList?.collectAsState(initial = emptyList())?.value
+            ?: emptyList()
     }
 
     val description = when (word) {
@@ -41,6 +44,7 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
         WordDetectorType.CURRENCY_WORDS -> stringResource(id = R.string.tab_currency_description)
         WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS -> stringResource(id = R.string.tab_outgoing_transfer_description)
         WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> stringResource(id = R.string.tab_pay_bill_description)
+        WordDetectorType.AMOUNT_WORDS -> stringResource(id = R.string.tab_amount_description)
     }
 
     Column(

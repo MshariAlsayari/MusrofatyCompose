@@ -58,7 +58,9 @@ class SmsRepo @Inject constructor(
     suspend fun getSms(smsId: String): SmsModel? {
         val sms = dao.getSms(smsId)
         sms?.let {
-            return fillSmsModel(it.toSmsModel())
+            var model = it.toSmsModel()
+            model = fillSmsModel(model)
+            return model
         }
         return null
 
@@ -263,12 +265,14 @@ class SmsRepo @Inject constructor(
 
     private suspend fun getSmsCurrency(body: String): String {
         val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.getCurrency(body, currencyList = currencyWord)
+        val amountWord = wordDetectorRepo.getAll(WordDetectorType.AMOUNT_WORDS).map { it.word }
+        return SmsUtils.getCurrency(body, currencyList = currencyWord, amountWord)
     }
 
     private suspend fun getAmount(body: String): Double {
         val currencyWord = wordDetectorRepo.getAll(WordDetectorType.CURRENCY_WORDS).map { it.word }
-        return SmsUtils.extractAmount(body, currencyList = currencyWord)
+        val amountWord = wordDetectorRepo.getAll(WordDetectorType.AMOUNT_WORDS).map { it.word }
+        return SmsUtils.extractAmount(body, currencyList = currencyWord,amountWord)
     }
 
     private suspend fun getSender(senderId: Int): SenderModel? {

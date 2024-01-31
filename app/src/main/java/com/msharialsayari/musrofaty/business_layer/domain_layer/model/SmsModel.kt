@@ -56,4 +56,5 @@ fun SmsModel.toSmsComponentModel(context: Context, storeName:String, category:St
      isDeleted=isDeleted,
      storeName = storeName,
      storeCategory= category,
+    amount = amount
 )
