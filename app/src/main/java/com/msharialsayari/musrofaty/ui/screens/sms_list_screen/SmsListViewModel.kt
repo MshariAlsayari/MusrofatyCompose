@@ -1,4 +1,4 @@
-package com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen
+package com.msharialsayari.musrofaty.ui.screens.sms_list_screen
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
@@ -21,7 +21,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStor
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomSheet.CategoryBottomSheetType
+import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.bottomSheet.SmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.ui_component.SortedByAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CategorySmsListViewModel @Inject constructor(
+class SmsListViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
@@ -47,19 +47,19 @@ class CategorySmsListViewModel @Inject constructor(
     private val navigator: AppNavigator,
 ) : ViewModel(){
 
-    private val _uiState = MutableStateFlow(CategorySmsListUIState())
-    val uiState: StateFlow<CategorySmsListUIState> = _uiState
+    private val _uiState = MutableStateFlow(SmsListUIState())
+    val uiState: StateFlow<SmsListUIState> = _uiState
     private var observeSmsJob: Job? = null
 
     companion object{
-        const val CATEGORY_ID_KEY = "categoryId"
+        const val SCREEN_TITLE_KEY = "screenTitle"
         const val SMS_IDS_KEY = "ids"
     }
 
-    val categoryId: Int?
+
+    val screenTitle: String
         get() {
-            val id = savedStateHandle.get<Int>(CATEGORY_ID_KEY)
-            return if(id==null || id == -1) null else savedStateHandle.get<Int>(CATEGORY_ID_KEY)
+            return savedStateHandle.get<String>(SCREEN_TITLE_KEY) ?: ""
         }
 
 
@@ -75,7 +75,6 @@ class CategorySmsListViewModel @Inject constructor(
 
     init {
         startObserveChat(true)
-        getCategory()
         getCategories()
      
     }
@@ -171,19 +170,6 @@ class CategorySmsListViewModel @Inject constructor(
         }
     }
 
-    private fun getCategory() {
-        viewModelScope.launch {
-            if(categoryId != null){
-                val category = getCategoryUseCase.invoke(categoryId!!)
-                _uiState.update {
-                    it.copy(
-                        category = category ?: CategoryModel.getCategory(),
-                    )
-
-                }
-            }
-        }
-    }
 
     fun favoriteSms(id: String, favorite: Boolean) {
         viewModelScope.launch {
@@ -205,7 +191,7 @@ class CategorySmsListViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedBottomSheet(type:CategoryBottomSheetType?){
+    fun updateSelectedBottomSheet(type:SmsListBottomSheetType?){
         _uiState.update {
             it.copy(
                 bottomSheetType = type,

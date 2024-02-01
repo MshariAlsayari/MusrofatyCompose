@@ -21,7 +21,7 @@ sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title)
     object SinglePermission        : Screen("single_permission_screen")
     object StatisticsScreen       : Screen("statistics_screen",title = R.string.statistics_screen_title)
 
-    object CategorySmsListScreen   : Screen("category_sms_list_screen",title = R.string.category_title_screen)
+    object SmsListScreen   : Screen("sms_list_screen",title = R.string.category_title_screen)
 
 }
 

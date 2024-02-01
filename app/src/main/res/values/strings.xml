@@ -37,8 +37,8 @@
     <string name="common_sorted_by">Sorted by</string>
 
     <string name="sorted_by_amount_title">Amount</string>
-    <string name="sorted_by_highest">highest amount</string>
-    <string name="sorted_by_least">least amount</string>
+    <string name="sorted_by_highest">max amount</string>
+    <string name="sorted_by_least">min amount</string>
 
     <string name="sorted_by_time_title">Time</string>
     <string name="sorted_by_oldest">oldest</string>

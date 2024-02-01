@@ -10,7 +10,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
+import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.EmptyComponent
 import com.msharialsayari.musrofaty.ui_component.FinancialStatistics
 import com.msharialsayari.musrofaty.ui_component.FinancialStatisticsModel
@@ -45,19 +47,36 @@ fun FinancialContent(viewModel: DashboardViewModel){
 
 
 @Composable
-private fun FinancialCompose(viewModel: DashboardViewModel, financialList: List<FinancialStatistics>) {
+private fun FinancialCompose(viewModel: DashboardViewModel, list: List<FinancialStatistics>) {
     val context = LocalContext.current
     Column {
-        financialList.forEach {
+        list.mapIndexed { index, item ->
             FinancialStatistics(
                 model = FinancialStatisticsModel(
                     filterOption = viewModel.getFilterTimeOption(context),
-                    currency = it.currency,
-                    total = it.expenses.plus(it.income),
-                    incomeTotal = it.income,
-                    expensesTotal = it.expenses,
+                    currency = item.currency,
+                    total = item.expenses.plus(item.income),
+                    incomeTotal = item.income,
+                    expensesTotal = item.expenses,
+                    expensesSmsList = item.expensesSmsList,
+                    incomesSmsList = item.incomeSmsList
                 )
-            )
+            ){ smsList, isExpenses ->
+                    val ids = smsList.map { it.id }
+                    val smsContainer = SmsContainer(ids)
+                    viewModel.navigateToSmsListScreen(
+                        smsContainer,
+                        categoryModel = null,
+                        isCategoryRowClicked = false,
+                        isExpensesSmsRowClicked = isExpenses,
+                        context
+                    )
+
+            }
+
+            if(list.lastIndex != index){
+                DividerComponent.HorizontalDividerComponent()
+            }
         }
 
     }

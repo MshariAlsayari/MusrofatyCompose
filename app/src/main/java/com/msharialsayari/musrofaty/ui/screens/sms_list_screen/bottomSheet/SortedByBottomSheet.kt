@@ -1,12 +1,12 @@
-package com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomSheet
+package com.msharialsayari.musrofaty.ui.screens.sms_list_screen.bottomSheet
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel
+import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel
 
 @Composable
-fun SortedByBottomSheet(viewModel: CategorySmsListViewModel){
+fun SortedByBottomSheet(viewModel: SmsListViewModel){
 
     val uiState by viewModel.uiState.collectAsState()
     val amount = uiState.selectedSortedByAmount

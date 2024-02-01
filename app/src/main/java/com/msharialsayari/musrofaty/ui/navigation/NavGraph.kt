@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,9 +12,6 @@ import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.CATEGORY_ID_KEY
-import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel.Companion.SMS_IDS_KEY
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
@@ -25,13 +21,15 @@ import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListSc
 import com.msharialsayari.musrofaty.ui.screens.senders_management_screen.SendersManagementScreen
 import com.msharialsayari.musrofaty.ui.screens.settings_screen.SettingsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisScreen
+import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListScreen
+import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SCREEN_TITLE_KEY
+import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SMS_IDS_KEY
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListViewModel.Companion.STORE_NAME_KEY
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
-import com.msharialsayari.musrofaty.utils.findActivity
 
 
 @Composable
@@ -39,9 +37,6 @@ fun NavigationGraph(
     navController: NavHostController,
     innerPadding: PaddingValues,
 ) {
-
-    val context = LocalContext.current
-    val activity = context.findActivity()
 
     NavHost(
         navController = navController,
@@ -167,16 +162,16 @@ fun NavigationGraph(
         }
 
         composable(
-            Screen.CategorySmsListScreen.route + "/{$CATEGORY_ID_KEY}" + "/{$SMS_IDS_KEY}",
+            Screen.SmsListScreen.route + "/{$SCREEN_TITLE_KEY}" + "/{$SMS_IDS_KEY}",
             arguments = listOf(
-                navArgument(CATEGORY_ID_KEY) { type = NavType.IntType },
+                navArgument(SCREEN_TITLE_KEY) { type = NavType.StringType },
                 navArgument(SMS_IDS_KEY) {
                     type = NavType.StringType
                 }
 
             )
         ) {
-            CategorySmsListScreen()
+            SmsListScreen()
         }
 
     }

@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
@@ -18,7 +20,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDele
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.dialogs.DashboardDialogType
-import com.msharialsayari.musrofaty.ui_component.CategoryStatisticsModel
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -216,13 +217,22 @@ class DashboardViewModel @Inject constructor(
         navigator.navigate(Screen.SenderSmsListScreen.route + "/${senderId}")
     }
 
-    fun navigateToCategorySmsListScreen(model: CategoryStatisticsModel) {
-        val categoryId = model.storeAndCategoryModel?.category?.id
-        val ids=model.smsList.map { it.id }
-        val smsContainer = SmsContainer(ids)
-        val json = Gson().toJson(smsContainer)
-        val routeArgument = "/${categoryId}"+ "/${json}"
-        navigator.navigate(Screen.CategorySmsListScreen.route + routeArgument)
+    fun navigateToSmsListScreen(model: SmsContainer,
+                                categoryModel: CategoryModel?,
+                                isCategoryRowClicked:Boolean,
+                                isExpensesSmsRowClicked:Boolean,
+                                context: Context) {
+        val title = if (isCategoryRowClicked) {
+            CategoryModel.getDisplayName(context, categoryModel)
+        } else if (isExpensesSmsRowClicked) {
+            context.getString(R.string.expenses_sms_type)
+        } else {
+            context.getString(R.string.incomes_sms_type)
+        }
+
+        val json = Gson().toJson(model)
+        val routeArgument = "/${title}"+ "/${json}"
+        navigator.navigate(Screen.SmsListScreen.route + routeArgument)
     }
 
 

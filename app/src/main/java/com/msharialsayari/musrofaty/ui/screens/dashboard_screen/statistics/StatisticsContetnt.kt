@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardViewModel
+import com.msharialsayari.musrofaty.ui_component.DividerComponent
 
 
 @Composable
@@ -21,6 +22,10 @@ fun StatisticsContent(modifier: Modifier=Modifier, viewModel: DashboardViewModel
 
         item {
             FinancialContent(viewModel)
+        }
+
+        item {
+            DividerComponent.HorizontalDividerComponent()
         }
 
         item{

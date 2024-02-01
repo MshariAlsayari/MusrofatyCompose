@@ -38,14 +38,22 @@ class StatisticsRepo @Inject constructor(
 ) {
     fun getFinancialStatistics(list: List<SmsModel>): Map<String, FinancialStatistics> {
         val map = mutableMapOf<String, FinancialStatistics>()
-        val expensesPURCHASESSmsList = list.filter { !it.isDeleted && (it.smsType.isExpenses() || it.smsType.isIncome()) && it.amount > 0 }
-        expensesPURCHASESSmsList.forEach { smsModel->
-                val financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
-                map[smsModel.currency] = calculateFinancialSummary(
-                    financialSummary,
-                    smsModel.amount,
-                    smsModel.smsType
-                )
+        val filteredList = list.filter { !it.isDeleted && (it.smsType.isExpenses() || it.smsType.isIncome()) && it.amount > 0 }
+        filteredList.forEach { smsModel->
+                var financialSummary = map.getOrDefault(smsModel.currency, FinancialStatistics(smsModel.currency))
+                  financialSummary = calculateFinancialSummary(
+                      financialSummary,
+                      smsModel.amount,
+                      smsModel.smsType
+                  )
+
+                if(smsModel.smsType.isExpenses()){
+                    financialSummary.expensesSmsList.add(smsModel)
+                }else if(smsModel.smsType.isIncome()){
+                    financialSummary.incomeSmsList.add(smsModel)
+                }
+
+                map[smsModel.currency] = financialSummary
         }
         return map
     }

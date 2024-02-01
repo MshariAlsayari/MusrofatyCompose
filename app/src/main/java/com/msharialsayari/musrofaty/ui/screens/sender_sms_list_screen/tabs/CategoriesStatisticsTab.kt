@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.EmptySmsCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoading
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
@@ -30,6 +32,7 @@ fun CategoriesStatisticsTab(viewModel: SenderSmsListViewModel){
 @Composable
 fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
 
+    val context = LocalContext.current
     val uiState  by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
     val list  = uiState.categoriesStatistics
@@ -40,8 +43,16 @@ fun BuildCategoriesChartCompose(viewModel: SenderSmsListViewModel){
     ) {
 
         items(list) {
-            CategoriesStatistics(item = it, onRowClicked = {
-                viewModel.navigateToCategorySmsListScreen(it)
+            CategoriesStatistics(item = it, onRowClicked = { categoryModel->
+                val ids = categoryModel.smsList.map { it.id }
+                val smsContainer = SmsContainer(ids)
+                viewModel.navigateToSmsListScreen(
+                    smsContainer,
+                    categoryModel.storeAndCategoryModel?.category,
+                    isCategoryRowClicked = true,
+                    isExpensesSmsRowClicked = false,
+                    context
+                )
             })
         }
 
