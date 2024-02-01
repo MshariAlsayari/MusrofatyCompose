@@ -21,17 +21,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.msharialsayari.musrofaty.BuildConfig
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toSmsComponentModel
 import com.msharialsayari.musrofaty.utils.DateUtils
-import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
+import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isExpenses
+import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isIncome
 
 
 @Composable
@@ -161,7 +158,11 @@ private fun StoreAndCategoryComponent(
             )
         }
 
-        if (model.storeName.isNotEmpty() && BuildConfig.DEBUG){
+        if (model.smsType.isExpenses() || model.smsType.isIncome() ){
+
+            if(model.storeName.isNotEmpty())
+            DividerComponent.HorizontalDividerComponent()
+
             ListItem(
                 text = { Text(text = stringResource(id = R.string.common_amount)) },
                 trailing = {
@@ -171,10 +172,6 @@ private fun StoreAndCategoryComponent(
                 }
             )
         }
-
-
-
-
 
     }
 

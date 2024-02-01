@@ -7,6 +7,7 @@ import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isExpenses
 object SmsUtils {
 
     private const val WHITESPACES_REGEX = "\\s"
+    private const val LETTERS_REGEX = "\\p{L}"
     private const val UNWANTED_UNICODE_REGEX = "\u202C\u202A"
 
     //Amount Regex
@@ -75,7 +76,16 @@ object SmsUtils {
                         currency
                 }
             }
+
+            val tempCurrency = getAmountWithCurrency(it,amountList)
+             return if (tempCurrency.contains(LETTERS_REGEX.toRegex())){
+                 ""
+             }else{
+                 Constants.CURRENCY_1
+             }
         }
+
+
         return ""
     }
 
@@ -231,34 +241,56 @@ object SmsUtils {
         sms?.let {
             return try {
                 val regex = getRegex(amountList)
-                var insteadLoopStopped = false
-                var amount ="0"
                 for (itemRegex in regex){
                     val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
                     for (itemAmount in groupRegex){
                         if(itemAmount.contains(":")){
-                            val tempStoreName = itemAmount.split(":").last()
-                            if (canBeAmount(tempStoreName)) {
-                                amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(tempStoreName)?.groupValues?.get(0) ?:"0"
+                            val tempAmount = itemAmount.split(":").last()
+                            if (canBeAmount(tempAmount)) {
+                                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(tempAmount)?.groupValues?.get(0) ?:"0"
                                 amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
-                                insteadLoopStopped =true
-                                break
+                                amount = amount.replace(LETTERS_REGEX.toRegex(), "")
+                                return amount.toDouble()
                             }
 
                         }
 
                     }
 
-                    if(insteadLoopStopped){
-                        break
-                    }
                 }
 
-                return amount.toDouble()
+                return  0.0
             } catch (e: Exception) {
                 0.0
             }
         } ?: run { return 0.0 }
+
+    }
+
+    private fun getAmountWithCurrency(sms: String?,amountList: List<String>): String {
+        sms?.let {
+            return try {
+                val regex = getRegex(amountList)
+                for (itemRegex in regex){
+                    val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
+                    for (itemAmount in groupRegex){
+                        if(itemAmount.contains(":")){
+                            val tempAmount = itemAmount.split(":").last()
+                            if (canBeAmount(tempAmount)) {
+                                return tempAmount
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                return  ""
+            } catch (e: Exception) {
+                ""
+            }
+        } ?: run { return "" }
 
     }
 
@@ -267,27 +299,18 @@ object SmsUtils {
     private fun isSmsContainsCurrency(currency: String, sms: String?, amountList: List<String>): Boolean {
         sms?.let {
             val regex = getRegex(amountList)
-            var insteadLoopStopped = false
-            var containsCurrency = false
             for (itemRegex in regex){
                 val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
                 for (itemAmount in groupRegex){
                     if (itemAmount.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))){
-                        insteadLoopStopped = true
-                        containsCurrency = true
-                        break
+                        return true
                     }
 
                 }
-
-                if(insteadLoopStopped){
-                    break
-                }
-
             }
 
 
-            return containsCurrency
+            return false
         }?: run { return false }
     }
 
