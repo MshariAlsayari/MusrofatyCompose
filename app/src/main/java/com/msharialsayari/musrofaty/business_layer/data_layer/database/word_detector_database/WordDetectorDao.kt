@@ -17,6 +17,9 @@ interface WordDetectorDao {
     @Query("DELETE  FROM WordDetectorEntity WHERE id =:id")
     suspend fun delete(id:Int)
 
+    @Query("DELETE  FROM WordDetectorEntity WHERE type =:type")
+    suspend fun deleteType(type: String)
+
     @Query("DELETE  FROM WordDetectorEntity")
     suspend fun deleteAll()
 

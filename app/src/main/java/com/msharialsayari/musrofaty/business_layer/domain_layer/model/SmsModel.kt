@@ -5,7 +5,6 @@ import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
-import com.msharialsayari.musrofaty.utils.SmsUtils
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
 
@@ -19,17 +18,13 @@ data class SmsModel(
     var storeAndCategoryModel: StoreAndCategoryModel? = null,
     var smsType: SmsType = SmsType.NOTHING,
     var currency: String = "",
+    var storeName: String = "",
     var amount: Double = 0.0,
     var senderId: Int = 0,
     var senderModel: SenderModel? = null,
     var isFavorite: Boolean = false,
     var isDeleted: Boolean = false,
-) : Parcelable {
-
-    val storeName: String
-        get() =
-            SmsUtils.getStoreName(body, senderName,smsType)
-}
+) : Parcelable
 
 
 fun SmsModel.toSmsEntity() = SmsEntity(

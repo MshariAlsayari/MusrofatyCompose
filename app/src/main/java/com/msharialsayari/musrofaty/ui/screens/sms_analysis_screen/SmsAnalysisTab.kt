@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +34,11 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
 
         WordDetectorType.AMOUNT_WORDS -> uiState.amountsList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
+
+        WordDetectorType.STORE_WORDS -> uiState.storesList?.collectAsState(initial = emptyList())?.value
+            ?: emptyList()
+
+        else -> emptyList()
     }
 
     val description = when (word) {
@@ -45,6 +48,8 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
         WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS -> stringResource(id = R.string.tab_outgoing_transfer_description)
         WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> stringResource(id = R.string.tab_pay_bill_description)
         WordDetectorType.AMOUNT_WORDS -> stringResource(id = R.string.tab_amount_description)
+        WordDetectorType.STORE_WORDS -> stringResource(id = R.string.tab_store_description)
+        else -> ""
     }
 
     Column(

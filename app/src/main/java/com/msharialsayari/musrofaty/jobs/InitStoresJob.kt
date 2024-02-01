@@ -44,9 +44,9 @@ class InitStoresJob @AssistedInject constructor(
     private suspend fun insertStore(sms: SmsModel) {
         val smsStoreName = sms.storeName
         val store = storeRepo.getStoreByStoreName(smsStoreName)
-        if (smsStoreName.isNotEmpty() && (store == null || store.categoryId == 0)) {
+        if (smsStoreName.isNotEmpty() && (store == null || store.categoryId == 0 || store.categoryId == -1)) {
             val storeFirebase = storeFirebaseRepo.getStoreByStoreName(smsStoreName)
-            val model = if (storeFirebase != null) StoreModel(name = sms.storeName, categoryId = storeFirebase.category_id) else StoreModel(name = sms.storeName)
+            val model = if (storeFirebase != null) StoreModel(name = smsStoreName, categoryId = storeFirebase.category_id) else StoreModel(name = smsStoreName)
             addOrUpdateStoreUseCase.invoke(model)
         }
     }

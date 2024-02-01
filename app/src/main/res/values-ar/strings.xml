@@ -176,6 +176,9 @@
     <string name="tab_amount">المبالغ</string>
     <string name="tab_amount_description">بمكنك إضافة/حذف الكلمات الدالة على المبلغ ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
 
+    <string name="tab_store">المتاجر</string>
+    <string name="tab_store_description">بمكنك إضافة/حذف الكلمات الدالة على أسماء المتاجر ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
+
 
 
 

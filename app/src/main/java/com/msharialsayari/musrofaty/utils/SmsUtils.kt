@@ -1,8 +1,5 @@
 package com.msharialsayari.musrofaty.utils
 
-import com.msharialsayari.musrofaty.utils.Constants.ALINMA_BANK
-import com.msharialsayari.musrofaty.utils.Constants.STC_PAY_WALLET
-import com.msharialsayari.musrofaty.utils.Constants.UR_PAY_BANK
 import com.msharialsayari.musrofaty.utils.Constants.listSACurrency
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import com.msharialsayari.musrofaty.utils.enums.SmsType.Companion.isExpenses
@@ -83,12 +80,12 @@ object SmsUtils {
     }
 
 
-    fun getStoreName(sms: String?, senderName: String, smsType: SmsType): String {
+    fun getStoreName(sms: String?, smsType: SmsType, storesWord: List<String>): String {
 
         if(sms?.isNotEmpty() == true && smsType.isExpenses() ){
             return when (smsType) {
                 SmsType.EXPENSES_PURCHASES -> {
-                    getStoreNameFromExpensesPurchases(sms,senderName)
+                    getStoreNameFromExpensesPurchases(sms,storesWord)
                 }
                 SmsType.PAY_BILLS -> {
                     getBillNameFromExpensesPayBill(sms)
@@ -104,37 +101,34 @@ object SmsUtils {
         }
     }
 
-    private fun getStoreNameFromExpensesPurchases(sms: String, senderName: String): String{
+    private fun getStoreNameFromExpensesPurchases(
+        sms: String,
+        storesWord: List<String>
+    ): String{
         return try {
-            val groupRegex = when {
-                ALINMA_BANK.equals(
-                    senderName,
-                    ignoreCase = true
-                ) -> ALINMA_STORE_NAME_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(sms)?.groupValues?.get(0) ?: ""
-
-                UR_PAY_BANK.equals(
-                    senderName,
-                    ignoreCase = true
-                ) -> URPAY_STORE_NAME_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(sms)?.groupValues?.get(0) ?: ""
-
-                STC_PAY_WALLET.equals(
-                    senderName,
-                    ignoreCase = true
-                ) -> STC_PAY_STORE_NAME_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(sms)?.groupValues?.get(0) ?: ""
-
-                else -> STORE_NAME_REGEX.toRegex(option = RegexOption.IGNORE_CASE)
-                    .find(sms)?.groupValues?.get(0) ?: ""
-            }
-
+            val regex = getRegex(storesWord)
+            var insteadLoopStopped = false
             var storeName = ""
-            val list = groupRegex.split(":")
-            if (list.size >= 2) {
-                storeName = list[1].trim()
-                storeName = storeName.replace("\\n".toRegex(), "")
+
+            for (itemRegex in regex){
+                val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
+                for (item in groupRegex){
+                    if(item.contains(":")){
+                        val tempStoreName = item.split(":").last()
+                        if (canBeStoreName(tempStoreName)) {
+                            storeName = tempStoreName.trim().replace("\\n".toRegex(), "")
+                            insteadLoopStopped = true
+                            break
+                        }
+
+                    }
+                }
+
+                if(insteadLoopStopped){
+                    break
+                }
             }
+
             storeName
         } catch (e: Exception) {
             ""
@@ -217,19 +211,6 @@ object SmsUtils {
         return SmsType.NOTHING
     }
 
-
-
-    fun isSACurrency(currency: String) =   currency.equals(Constants.CURRENCY_1, ignoreCase = true) || currency.equals(
-        Constants.CURRENCY_2,
-        ignoreCase = true
-    ) || currency.equals(
-        Constants.CURRENCY_3,
-        ignoreCase = true
-    ) || currency.equals(
-        Constants.CURRENCY_4,
-        ignoreCase = true
-    )
-
     fun extractAmount(sms: String?, currencyList: List<String>,amountList: List<String>): Double {
         var amount = 0.0
         sms?.let {
@@ -250,10 +231,30 @@ object SmsUtils {
         sms?.let {
             return try {
                 val regex = getRegex(amountList)
-                val amountLine = regex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
-                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(amountLine)?.groupValues?.get(0) ?: "0"
-                amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
-                amount.toDouble()
+                var insteadLoopStopped = false
+                var amount ="0"
+                for (itemRegex in regex){
+                    val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
+                    for (itemAmount in groupRegex){
+                        if(itemAmount.contains(":")){
+                            val tempStoreName = itemAmount.split(":").last()
+                            if (canBeAmount(tempStoreName)) {
+                                amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(tempStoreName)?.groupValues?.get(0) ?:"0"
+                                amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
+                                insteadLoopStopped =true
+                                break
+                            }
+
+                        }
+
+                    }
+
+                    if(insteadLoopStopped){
+                        break
+                    }
+                }
+
+                return amount.toDouble()
             } catch (e: Exception) {
                 0.0
             }
@@ -266,19 +267,44 @@ object SmsUtils {
     private fun isSmsContainsCurrency(currency: String, sms: String?, amountList: List<String>): Boolean {
         sms?.let {
             val regex = getRegex(amountList)
-            val amountLine = regex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues?.get(0) ?: "0"
-            return amountLine.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))
+            var insteadLoopStopped = false
+            var containsCurrency = false
+            for (itemRegex in regex){
+                val groupRegex = itemRegex.toRegex(option = RegexOption.IGNORE_CASE).find(sms)?.groupValues ?: emptyList()
+                for (itemAmount in groupRegex){
+                    if (itemAmount.contains(currency.toRegex(option = RegexOption.IGNORE_CASE))){
+                        insteadLoopStopped = true
+                        containsCurrency = true
+                        break
+                    }
+
+                }
+
+                if(insteadLoopStopped){
+                    break
+                }
+
+            }
+
+
+            return containsCurrency
         }?: run { return false }
     }
 
-    private fun getRegex(words: List<String>):String{
-        var regex = ""
-        words.mapIndexed { index,  item->
-            regex+= "$item.+"
-            if(words.lastIndex != index){
-                regex+="|"
-            }
+    private fun getRegex(words: List<String>):List<String>{
+        val list = mutableListOf<String>()
+        words.map { item->
+            list.add("$item.+")
         }
-        return regex
+        return list
+    }
+
+    private fun canBeStoreName(storeName: String):Boolean{
+        val regex = "(X|x|\\*)+\\d+"
+        return !storeName.contains(regex.toRegex())
+    }
+
+    private fun canBeAmount(amount: String):Boolean{
+        return amount.contains(AMOUNT_REGEX.toRegex())
     }
 }

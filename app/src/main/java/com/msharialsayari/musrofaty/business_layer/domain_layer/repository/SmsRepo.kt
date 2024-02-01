@@ -43,6 +43,7 @@ class SmsRepo @Inject constructor(
         smsModel.currency = getSmsCurrency(smsModel.body)
         smsModel.amount = getAmount(smsModel.body)
         smsModel.senderModel = getSender(smsModel.senderId)
+        smsModel.storeName = getStoreName(smsModel.body,smsModel.smsType)
         smsModel.storeAndCategoryModel = getStoreAndCategory(smsModel.storeName)
         return smsModel
     }
@@ -275,6 +276,12 @@ class SmsRepo @Inject constructor(
         return SmsUtils.extractAmount(body, currencyList = currencyWord,amountWord)
     }
 
+    private suspend fun getStoreName(body: String,smsType: SmsType): String {
+        val storesWord = wordDetectorRepo.getAll(WordDetectorType.STORE_WORDS).map { it.word }
+
+        return SmsUtils.getStoreName(body,smsType,storesWord)
+    }
+
     private suspend fun getSender(senderId: Int): SenderModel? {
         return senderRepo.getSenderById(senderId)
     }
@@ -394,7 +401,28 @@ class SmsRepo @Inject constructor(
     }
 
     suspend fun getAllSmsContainsStore(storeName: String = ""): List<SmsModel> {
-        return dao.getAllSmsContainsStore(storeName).map {
+        val storesWords = wordDetectorRepo.getAll(WordDetectorType.STORE_WORDS).map { it.word }
+        var queryString = "SELECT * FROM SmsEntity WHERE "
+
+        storesWords.mapIndexed { index, s ->
+            if(index == 0){
+                queryString +=" ( "
+            }
+
+            queryString += "LOWER(body)  LIKE \'%${s.replace(":","")}:%\' "
+
+            queryString += if(storesWords.lastIndex != index){
+                " OR "
+            }else{
+                " ) AND "
+            }
+        }
+
+        queryString += " (LOWER(body) LIKE \'%${storeName.lowercase()}%\' ) "
+
+        val result = dao.getAllSmsContainsStore(SimpleSQLiteQuery(queryString))
+
+        return result.map {
             fillSmsModel(it.toSmsModel())
         }.toList()
     }

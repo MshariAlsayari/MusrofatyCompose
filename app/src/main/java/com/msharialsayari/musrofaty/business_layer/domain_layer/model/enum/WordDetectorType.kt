@@ -7,11 +7,10 @@ enum class WordDetectorType(val id: Int, val value:Int) {
     EXPENSES_PURCHASES_WORDS(0, SmsType.EXPENSES_PURCHASES.valueString ),
     EXPENSES_OUTGOING_TRANSFER_WORDS(1,SmsType.OUTGOING_TRANSFER.valueString),
     EXPENSES_PAY_BILLS_WORDS(2,SmsType.PAY_BILLS.valueString),
-
-
     INCOME_WORDS(3,SmsType.INCOME.valueString),
     CURRENCY_WORDS(4, R.string.tab_currency),
-    AMOUNT_WORDS(5, R.string.tab_amount);
+    AMOUNT_WORDS(5, R.string.tab_amount),
+    STORE_WORDS(6, R.string.tab_store);
 
 
     companion object {
@@ -23,6 +22,7 @@ enum class WordDetectorType(val id: Int, val value:Int) {
                 INCOME_WORDS.id -> INCOME_WORDS
                 CURRENCY_WORDS.id -> CURRENCY_WORDS
                 AMOUNT_WORDS.id -> AMOUNT_WORDS
+                STORE_WORDS.id -> STORE_WORDS
                 else -> throw Exception("The id is not existed")
             }
         }

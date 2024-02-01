@@ -17,7 +17,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStore
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import okio.utf8Size
 
 @HiltWorker
 class AutoCategoriesStoresJob @AssistedInject constructor(

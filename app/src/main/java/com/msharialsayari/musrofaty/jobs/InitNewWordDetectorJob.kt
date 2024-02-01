@@ -20,6 +20,7 @@ class InitNewWordDetectorJob @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         initAmountsWords()
+        initStoresWords()
         return Result.success()
     }
 
@@ -29,6 +30,18 @@ class InitNewWordDetectorJob @AssistedInject constructor(
                 WordDetectorModel(
                     word = it,
                     type = WordDetectorType.AMOUNT_WORDS.name
+                )
+            }.toList()
+
+        wordDetectorRepo.insert(incomes)
+    }
+
+    private suspend fun initStoresWords() {
+        val incomes: List<WordDetectorModel> =
+            Constants.listStoreWords.map {
+                WordDetectorModel(
+                    word = it,
+                    type = WordDetectorType.STORE_WORDS.name
                 )
             }.toList()
 

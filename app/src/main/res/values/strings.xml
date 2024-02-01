@@ -175,6 +175,9 @@
     <string name="tab_amount">Amounts</string>
     <string name="tab_amount_description">You can add/delete amounts words to make the app able to recognize amounts SMSs</string>
 
+    <string name="tab_store">Stores</string>
+    <string name="tab_store_description">You can add/delete stores words to make the app able to recognize stores names SMSs</string>
+
     <!--Appearance-->
     <string name="theme">Theme</string>
     <string name="language">Language</string>
