@@ -331,11 +331,7 @@ class RefreshAction : ActionCallback {
             AppWidget().update(context, glanceId)
         }
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            UpdateAppWidgetJob.TAG,
-            ExistingWorkPolicy.REPLACE,
-            updateAppWidgetWorker
-        )
+        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
         updateAppWidgetState(context, glanceId) { mutablePreferences ->
             mutablePreferences[AppWidget.LOADING_WIDGET_PREF_KEY] = false
             AppWidget().update(context, glanceId)

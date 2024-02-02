@@ -28,11 +28,7 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onReceive(context, intent)
         Log.d(TAG, "onReceive()")
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            UpdateAppWidgetJob.TAG,
-            ExistingWorkPolicy.REPLACE,
-            updateAppWidgetWorker
-        )
+        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
     }
 
     override fun onUpdate(
@@ -43,11 +39,7 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         Log.d(TAG, "onUpdate()")
         val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            UpdateAppWidgetJob.TAG,
-            ExistingWorkPolicy.REPLACE,
-            updateAppWidgetWorker
-        )
+        WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
 
     }
 

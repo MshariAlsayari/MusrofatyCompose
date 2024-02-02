@@ -32,20 +32,22 @@ class SmsAnalysisViewModel @Inject constructor(
 
     private fun getWordDetectors(){
         viewModelScope.launch {
-            val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
             val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PURCHASES_WORDS)
-            val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
             val expensesOutgoingResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS)
             val expensesPayBillsResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PAY_BILLS_WORDS)
+            val expensesWithdrawalATMResult = getWordDetectorUseCase.invoke(WordDetectorType.WITHDRAWAL_ATM_WORDS)
+            val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
             val amountsResult = getWordDetectorUseCase.invoke(WordDetectorType.AMOUNT_WORDS)
             val storesResult = getWordDetectorUseCase.invoke(WordDetectorType.STORE_WORDS)
+            val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
             _uiState.update {
                 it.copy(
                     currencyList = currencyResult,
                     expensesPurchasesList = expensesResult,
-                    incomesList = incomesResult,
                     expensesOutgoingTransferList = expensesOutgoingResult,
                     expensesPayBillsList = expensesPayBillsResult,
+                    expensesWithdrawalATMList = expensesWithdrawalATMResult,
+                    incomesList = incomesResult,
                     amountsList = amountsResult,
                     storesList = storesResult
                 )

@@ -251,6 +251,7 @@ class SmsRepo @Inject constructor(
         val expensesPurchasesWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PURCHASES_WORDS).map { it.word }
         val expensesOutGoingTransferWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS).map { it.word }
         val expensesPayBillsWord = wordDetectorRepo.getAll(WordDetectorType.EXPENSES_PAY_BILLS_WORDS).map { it.word }
+        val expensesWithdrawalATMWord = wordDetectorRepo.getAll(WordDetectorType.WITHDRAWAL_ATM_WORDS).map { it.word }
 
         val incomesWord = wordDetectorRepo.getAll(WordDetectorType.INCOME_WORDS).map { it.word }
 
@@ -260,6 +261,7 @@ class SmsRepo @Inject constructor(
             expensesPurchasesList = expensesPurchasesWord,
             expensesOutGoingTransferList = expensesOutGoingTransferWord,
             expensesPayBillsList = expensesPayBillsWord,
+            expensesWithdrawalATMsList=expensesWithdrawalATMWord,
             incomesList = incomesWord
         )
     }

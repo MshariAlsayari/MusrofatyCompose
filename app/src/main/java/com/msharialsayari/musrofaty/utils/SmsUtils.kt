@@ -187,6 +187,7 @@ object SmsUtils {
                    expensesPurchasesList:List<String>,
                    expensesOutGoingTransferList:List<String>,
                    expensesPayBillsList:List<String>,
+                   expensesWithdrawalATMsList:List<String>,
                    incomesList:List<String>): SmsType {
 
 
@@ -207,6 +208,10 @@ object SmsUtils {
 
         }) {
             return SmsType.OUTGOING_TRANSFER
+        }
+
+        if (expensesWithdrawalATMsList.any { sms.contains(it, ignoreCase = true) }) {
+            return SmsType.WITHDRAWAL_ATM
         }
 
         if (expensesPayBillsList.any { sms.contains(it, ignoreCase = true) }) {

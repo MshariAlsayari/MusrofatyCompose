@@ -16,6 +16,7 @@ object SharedPreferenceManager {
     private const val PREF_FILTER_PERIOD = "PREF_FILTER_PERIOD"
     private const val PREF_INIT_TRANSFER_JOB = "PREF_INIT_TRANSFER_JOB"
     private const val PREF_NEW_WORD_DETECTOR = "PREF_NEW_WORD_DETECTOR"
+    private const val PREF_INIT_WITHDRAWAL_ATM_WORDS_JOB = "PREF_INIT_WITHDRAWAL_ATM_WORDS_JOB"
 
     fun storeTheme(context: Context, theme: Theme) {
         PreferenceManager.getDefaultSharedPreferences(context)
@@ -94,6 +95,15 @@ object SharedPreferenceManager {
 
     fun setNewWordDetectors(context: Context) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_NEW_WORD_DETECTOR, true).apply()
+    }
+
+    fun withdrawalATMWords(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            PREF_INIT_WITHDRAWAL_ATM_WORDS_JOB, false)
+    }
+
+    fun setWithdrawalATMWords(context: Context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_INIT_WITHDRAWAL_ATM_WORDS_JOB, true).apply()
     }
 
 

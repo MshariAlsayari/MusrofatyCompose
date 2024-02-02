@@ -15,6 +15,7 @@ import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
 import com.msharialsayari.musrofaty.jobs.InitNewWordDetectorJob
 import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
 import com.msharialsayari.musrofaty.jobs.InitTransferWordsJob
+import com.msharialsayari.musrofaty.jobs.InitWithdrawalWordsJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.HiltAndroidApp
@@ -69,6 +70,11 @@ class MyApp : Application(), Configuration.Provider {
             initNewWordDetectorJob()
             SharedPreferenceManager.setNewWordDetectors(this)
         }
+
+        if (!SharedPreferenceManager.withdrawalATMWords(this)) {
+            initWithdrawalATMWordsJob()
+            SharedPreferenceManager.setWithdrawalATMWords(this)
+        }
         initCategoriesJob()
         initFirebaseStoresJob()
     }
@@ -85,6 +91,11 @@ class MyApp : Application(), Configuration.Provider {
 
     private fun initNewWordDetectorJob() {
         val worker = OneTimeWorkRequestBuilder<InitNewWordDetectorJob>().build()
+        WorkManager.getInstance(this).enqueue(worker)
+    }
+
+    private fun initWithdrawalATMWordsJob() {
+        val worker = OneTimeWorkRequestBuilder<InitWithdrawalWordsJob>().build()
         WorkManager.getInstance(this).enqueue(worker)
     }
 

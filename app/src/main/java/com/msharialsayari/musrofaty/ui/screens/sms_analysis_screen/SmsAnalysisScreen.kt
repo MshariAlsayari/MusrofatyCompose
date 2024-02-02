@@ -142,7 +142,7 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            val tabTitles = WordDetectorType.entries.map { it.value }
+            val tabTitles = WordDetectorType.entries.sortedBy { it.id }.map { it.value }
             Column(
                 Modifier.fillMaxSize()) {
                 ScrollableTabRow(

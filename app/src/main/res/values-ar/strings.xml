@@ -171,7 +171,8 @@
     <string name="tab_expensess">المصروفات</string>
     <string name="tab_expenses_description">بمكنك إضافة/حذف الكلمات الدالة على الصرف ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
     <string name="tab_outgoing_transfer_description">بمكنك إضافة/حذف الكلمات الدالة على الحوالات الصادرة ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
-    <string name="tab_pay_bill_description">بمكنك إضافة/حذف الكلمات الدالة سداد الفواتير ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
+    <string name="tab_pay_bill_description">بمكنك إضافة/حذف الكلمات الدالة على سداد الفواتير ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
+    <string name="tab_withdrawal_atm_description">بمكنك إضافة/حذف الكلمات الدالة على السحب من الصرافة ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
 
     <string name="tab_amount">المبالغ</string>
     <string name="tab_amount_description">بمكنك إضافة/حذف الكلمات الدالة على المبلغ ليتمكن التطبيق من معرفة الرسائل الدالة عليها</string>
@@ -246,6 +247,7 @@
     <string name="outgoing_transfer_sms_type">حوالات صادرة</string>
     <string name="incoming_transfer_sms_type">حوالات واردة</string>
     <string name="pay_bill_sms_type">سداد فواتير</string>
+    <string name="withdrawal_atm_sms_type">سحب صراف آلي</string>
 
     <!--   Time duration -->
     <string name="common_minute">دقيقة</string>

@@ -38,6 +38,9 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
         WordDetectorType.STORE_WORDS -> uiState.storesList?.collectAsState(initial = emptyList())?.value
             ?: emptyList()
 
+        WordDetectorType.WITHDRAWAL_ATM_WORDS -> uiState.expensesWithdrawalATMList?.collectAsState(initial = emptyList())?.value
+            ?: emptyList()
+
         else -> emptyList()
     }
 
@@ -49,6 +52,7 @@ fun SmsAnalysisTab(viewModel: SmsAnalysisViewModel, word: WordDetectorType) {
         WordDetectorType.EXPENSES_PAY_BILLS_WORDS -> stringResource(id = R.string.tab_pay_bill_description)
         WordDetectorType.AMOUNT_WORDS -> stringResource(id = R.string.tab_amount_description)
         WordDetectorType.STORE_WORDS -> stringResource(id = R.string.tab_store_description)
+        WordDetectorType.WITHDRAWAL_ATM_WORDS -> stringResource(id = R.string.tab_withdrawal_atm_description)
         else -> ""
     }
 

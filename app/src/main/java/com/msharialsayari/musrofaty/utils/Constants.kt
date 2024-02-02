@@ -171,13 +171,13 @@ object Constants {
 
 
     var listAmountWords = listOf(
+        Amount_7,
         Amount_1,
         Amount_2,
         Amount_3,
         Amount_4,
         Amount_5,
         Amount_6,
-        Amount_7,
         Amount_8,
         Amount_9,
     )
@@ -197,6 +197,16 @@ object Constants {
         Store_3,
         Store_4,
         Store_5,
+    )
+
+
+    //Withdrawal ATM words
+    private const val Withdrawal_ATM_1 = "سحب صراف"
+    private const val Withdrawal_ATM_2 = "صراف آلي"
+
+    var listWithdrawalATMWords = listOf(
+        Withdrawal_ATM_1,
+        Withdrawal_ATM_2
     )
 
 

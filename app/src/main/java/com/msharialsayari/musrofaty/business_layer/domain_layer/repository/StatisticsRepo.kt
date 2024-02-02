@@ -80,6 +80,7 @@ class StatisticsRepo @Inject constructor(
             val category = when (it.smsType) {
                 SmsType.PAY_BILLS ->CategoryModel.getCategory(id = -2, valueAr = "سداد فاتورة", valueEn = "Pay Bill")
                 SmsType.OUTGOING_TRANSFER -> CategoryModel.getCategory(id =-3,valueAr = "حوالات صادرة", valueEn = "Outgoing transfers")
+                SmsType.WITHDRAWAL_ATM -> CategoryModel.getCategory(id =-4,valueAr = "سحب من الصراف", valueEn = "Withdrawal ATM")
                 else -> it.storeAndCategoryModel?.category ?: CategoryModel.getCategory(-1)
             }
 
@@ -249,9 +250,9 @@ class StatisticsRepo @Inject constructor(
         amount: Double,
         smsType: SmsType
     ): FinancialStatistics {
-        when (smsType) {
-            SmsType.INCOME -> financialSummary.income += amount
-            SmsType.EXPENSES_PURCHASES -> financialSummary.expenses += amount
+        when  {
+            smsType.isIncome() -> financialSummary.income += amount
+            smsType.isExpenses()  -> financialSummary.expenses += amount
             else -> {}
         }
         return financialSummary

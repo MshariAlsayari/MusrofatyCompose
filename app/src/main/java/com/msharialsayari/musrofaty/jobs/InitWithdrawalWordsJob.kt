@@ -11,37 +11,25 @@ import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
+
 @HiltWorker
-class InitNewWordDetectorJob @AssistedInject constructor(
+class InitWithdrawalWordsJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
     private val wordDetectorRepo: WordDetectorRepo,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        initAmountsWords()
-        initStoresWords()
+        initWithdrawalATMWords()
         return Result.success()
     }
 
-    private suspend fun initAmountsWords() {
+    private suspend fun initWithdrawalATMWords() {
         val incomes: List<WordDetectorModel> =
-            Constants.listAmountWords.map {
+            Constants.listWithdrawalATMWords.map {
                 WordDetectorModel(
                     word = it,
-                    type = WordDetectorType.AMOUNT_WORDS.name
-                )
-            }.toList()
-
-        wordDetectorRepo.insert(incomes)
-    }
-
-    private suspend fun initStoresWords() {
-        val incomes: List<WordDetectorModel> =
-            Constants.listStoreWords.map {
-                WordDetectorModel(
-                    word = it,
-                    type = WordDetectorType.STORE_WORDS.name
+                    type = WordDetectorType.WITHDRAWAL_ATM_WORDS.name
                 )
             }.toList()
 

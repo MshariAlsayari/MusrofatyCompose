@@ -171,6 +171,7 @@
 
     <string name="tab_outgoing_transfer_description">You can add/delete expenses words to make the app able to recognize outgoing transfers SMSs</string>
     <string name="tab_pay_bill_description">You can add/delete expenses words to make the app able to recognize pay bills SMSs</string>
+    <string name="tab_withdrawal_atm_description">You can add/delete expenses words to make the app able to recognize withdrawal from ATMs SMSs</string>
 
     <string name="tab_amount">Amounts</string>
     <string name="tab_amount_description">You can add/delete amounts words to make the app able to recognize amounts SMSs</string>
@@ -235,6 +236,7 @@
     <string name="outgoing_transfer_sms_type">Outgoing transfers</string>
     <string name="incoming_transfer_sms_type">Incoming transfers</string>
     <string name="pay_bill_sms_type">Pay Bill</string>
+    <string name="withdrawal_atm_sms_type">Withdrawal ATM</string>
 
 
     <!--   Time duration -->

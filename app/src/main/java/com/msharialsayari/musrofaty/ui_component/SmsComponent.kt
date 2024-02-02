@@ -136,13 +136,14 @@ private fun StoreAndCategoryComponent(
             )
         }
 
-        if (model.storeName.isNotEmpty()) {
+        if (model.storeName.isNotEmpty() || model.smsType == SmsType.WITHDRAWAL_ATM) {
+            model.storeName.isNotEmpty()
             DividerComponent.HorizontalDividerComponent()
             ListItem(
                 text = { Text(text = stringResource(id = R.string.category)) },
                 trailing = {
 
-                    if(model.smsType ==  SmsType.OUTGOING_TRANSFER || model.smsType ==  SmsType.PAY_BILLS ){
+                    if(model.smsType ==  SmsType.OUTGOING_TRANSFER || model.smsType ==  SmsType.PAY_BILLS || model.smsType ==  SmsType.WITHDRAWAL_ATM ){
                         TextComponent.PlaceholderText(
                             text = model.storeCategory,
                         )
@@ -160,7 +161,7 @@ private fun StoreAndCategoryComponent(
 
         if (model.smsType.isExpenses() || model.smsType.isIncome() ){
 
-            if(model.storeName.isNotEmpty())
+            if(model.storeName.isNotEmpty()|| model.smsType == SmsType.WITHDRAWAL_ATM)
             DividerComponent.HorizontalDividerComponent()
 
             ListItem(
@@ -263,8 +264,9 @@ fun wrapSendersToSenderComponentModel(
     }
 
     val category = when (sms.smsType) {
-        SmsType.OUTGOING_TRANSFER -> context.getString(SmsType.OUTGOING_TRANSFER.valueString)
-        SmsType.PAY_BILLS -> context.getString(SmsType.PAY_BILLS.valueString)
+        SmsType.OUTGOING_TRANSFER,
+        SmsType.PAY_BILLS,
+        SmsType.WITHDRAWAL_ATM  -> context.getString(sms.smsType.valueString)
         else -> CategoryModel.getDisplayName(context, sms.storeAndCategoryModel?.category)
     }
 
