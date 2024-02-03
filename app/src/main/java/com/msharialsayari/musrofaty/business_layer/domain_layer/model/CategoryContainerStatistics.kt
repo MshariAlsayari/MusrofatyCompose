@@ -16,7 +16,8 @@ data class CategoryContainerStatistics(
 ) : Parcelable{
     fun getTitle() :String{
         val prettyTotal = StringsUtils.prettyCount(total.toLong())
-        return "$key\n$prettyTotal"
+        val formattedNumber = StringsUtils.formatArabicDigits(prettyTotal)
+        return "$key\n$formattedNumber"
     }
 }
 

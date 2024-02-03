@@ -94,9 +94,6 @@ fun PageCompose(
                 },
                 onCreateCategoryClicked = {
                     openDialog.value = true
-                    coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, false)
-                    }
                 },
                 onCategoryLongPressed = { category ->
                     onCategoryLongPressed(category.id)

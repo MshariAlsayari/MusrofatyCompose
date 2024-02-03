@@ -258,6 +258,14 @@ object SmsUtils {
                                 return amount.toDouble()
                             }
 
+                        }else{
+                            val number  = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(itemAmount)?.groupValues?.get(0) ?:"0"
+                            if (canBeAmount(number)){
+                                var amount = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(number)?.groupValues?.get(0) ?:"0"
+                                amount = amount.replace(WHITESPACES_REGEX.toRegex(), "")
+                                amount = amount.replace(LETTERS_REGEX.toRegex(), "")
+                                return amount.toDouble()
+                            }
                         }
 
                     }
@@ -285,8 +293,12 @@ object SmsUtils {
                                 return tempAmount
                             }
 
+                        }else{
+                            val number  = AMOUNT_REGEX.toRegex(option = RegexOption.IGNORE_CASE).find(itemAmount)?.groupValues?.get(0) ?:"0"
+                            if (canBeAmount(number)){
+                                return number
+                            }
                         }
-
                     }
 
                 }

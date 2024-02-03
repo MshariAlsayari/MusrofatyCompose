@@ -34,7 +34,6 @@ fun CategoryBottomSheet(viewModel: SmsListViewModel){
         },
         onCreateCategoryClicked = {
             openDialog.value = true
-            viewModel.updateSelectedBottomSheet(null)
         },
         onCategoryLongPressed = { category ->
             viewModel.navigateToCategoryScreen(category.id)
