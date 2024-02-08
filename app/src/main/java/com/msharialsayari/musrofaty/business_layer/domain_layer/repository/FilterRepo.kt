@@ -1,8 +1,17 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.*
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterWordEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterAdvancedEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterWordEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,7 +19,6 @@ import javax.inject.Singleton
 class FilterRepo @Inject constructor(
     private val dao: FilterAdvancedDao,
     private val filterDao: FilterDao,
-    private val senderRepo: SenderRepo,
 ) {
 
     suspend fun getAll( senderId:Int): List<FilterAdvancedModel> {
@@ -68,21 +76,25 @@ class FilterRepo @Inject constructor(
     }
 
 
-    suspend fun migrateForFilters() {
-        val senders = senderRepo.getAllSenders()
-        val filters = filterDao.getAll()
-        val filterAdvanced = mutableListOf<FilterAdvancedEntity>()
-        filters.forEach { filter->
-           val sender =  senders.find { it.senderName.equals(filter.bankName , ignoreCase = true) }
-            if (sender != null){
-                val entity = filter.toFilterModel(sender.id).toFilterAdvancedEntity()
-                val newWord = FilterAdvancedModel.getFilterWordsAsList(entity.words)[0]
-                entity.words = newWord
-                filterAdvanced.add(entity)
-            }
+    fun saveFilter(vararg list: FilterModel) {
+        val filters: MutableList<FilterEntity> = mutableListOf()
+        list.map {
+            filters.add(it.toFilterEntity())
         }
-        dao.insertAll(*filterAdvanced.toTypedArray())
+
+        filterDao.saveFilters(*filters.toTypedArray())
     }
+
+    fun saveFilterWords(vararg list: FilterWordModel) {
+        val filters: MutableList<FilterWordEntity> = mutableListOf()
+        list.map {
+            filters.add(it.toFilterWordEntity())
+        }
+
+        filterDao.saveWords(*filters.toTypedArray())
+    }
+
+
 
 
 

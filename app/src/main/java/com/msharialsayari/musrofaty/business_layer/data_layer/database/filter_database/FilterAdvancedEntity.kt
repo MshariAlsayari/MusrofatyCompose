@@ -20,7 +20,6 @@ class FilterAdvancedEntity(
     var words: String = "",
     @ColumnInfo(name = "senderId")
     var senderId: Int,
-
 ) : Parcelable
 
 

@@ -2,37 +2,69 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_d
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import androidx.room.Relation
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWithWordsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
 @Entity(tableName = "FilterEntity")
-class FilterEntity(
+class FilterEntity (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Int = 0,
     @ColumnInfo(name = "title")
     var title: String = "",
-    @ColumnInfo(name = "searchWord")
-    var searchWord: String = "",
-    @ColumnInfo(name = "smsType")
-    var smsType: String = "",
-    @ColumnInfo(name = "date")
-    var date: String = "",
-    @ColumnInfo(name = "bankName")
-    var bankName: String? = "",
-    @ColumnInfo(name = "dateFrom")
-    var dateFrom: String? = "",
-    @ColumnInfo(name = "dateTo")
-    var dateTo: String? = "",
+    @ColumnInfo(name = "senderId")
+    var senderId: Int,
 ) : Parcelable
 
-fun FilterEntity.toFilterModel(senderId:Int) = FilterAdvancedModel(
+
+@Parcelize
+@Entity(tableName = "FilterWordEntity")
+class FilterWordEntity (
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "wordId")
+    var wordId: Int = 0,
+    @ColumnInfo(name = "filterId")
+    var filterId: Int = 0,
+    @ColumnInfo(name = "word")
+    var word: String = "",
+    @ColumnInfo(name = "logicOperator")
+    var logicOperator: String = "",
+) : Parcelable
+
+
+@Parcelize
+data class FilterWithWordsEntity(
+    @Embedded val filter: FilterEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "filterId"
+    )
+    val words: List<FilterWordEntity> = emptyList()
+):Parcelable
+
+
+fun FilterEntity.toFilterModel() = FilterModel(
     id = id,
-    title = title,
-    words = searchWord,
-    senderId = senderId
+    title =  title,
+    senderId = senderId)
+
+
+fun FilterWordEntity.toFilterWordModel() = FilterWordModel(
+    wordId=wordId,
+    filterId=filterId,
+    word=word,
+    logicOperator= enumValueOf(logicOperator)
+)
+
+fun FilterWithWordsEntity.toFilterWithWordsModel() = FilterWithWordsModel(
+    filter=filter.toFilterModel(),
+    words = words.map { it.toFilterWordModel() },
 )

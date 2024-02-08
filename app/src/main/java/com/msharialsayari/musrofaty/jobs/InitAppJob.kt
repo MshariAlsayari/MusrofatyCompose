@@ -9,9 +9,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderMode
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.FilterRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
-import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.WordDetectorRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -20,15 +18,12 @@ import dagger.assisted.AssistedInject
 class InitAppJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val wordDetectorRepo: WordDetectorRepo,
     private val contentRepo: ContentRepo,
     private val senderRepo: SenderRepo,
-    private val filtersRepo: FilterRepo,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         initContent()
         initSenders()
-        initFilters()
         return Result.success()
     }
 
@@ -56,9 +51,7 @@ class InitAppJob @AssistedInject constructor(
 
     }
 
-    private suspend fun initFilters() {
-        filtersRepo.migrateForFilters()
-    }
+
 
 
 }
