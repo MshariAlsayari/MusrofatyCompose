@@ -14,7 +14,13 @@ interface FilterDao {
 
     @Transaction
     @Query("SELECT * FROM FilterEntity")
-    suspend fun getAll(): Flow<List<FilterWithWordsEntity>>
+    fun getAll(): Flow<List<FilterWithWordsEntity>>
+
+    @Query("SELECT * FROM FilterEntity WHERE senderId =:senderId ")
+    fun observingSenderFilters(senderId: Int): Flow<List<FilterEntity>>
+
+    @Query("SELECT * FROM FilterEntity WHERE senderId =:senderId ")
+    suspend fun getSenderFilters(senderId: Int): List<FilterEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveFilters(vararg filters: FilterEntity)

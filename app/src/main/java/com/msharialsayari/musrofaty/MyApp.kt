@@ -12,6 +12,7 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.msharialsayari.musrofaty.jobs.InitAppJob
 import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
+import com.msharialsayari.musrofaty.jobs.InitFiltersJob
 import com.msharialsayari.musrofaty.jobs.InitNewWordDetectorJob
 import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
 import com.msharialsayari.musrofaty.jobs.InitTransferWordsJob
@@ -75,6 +76,11 @@ class MyApp : Application(), Configuration.Provider {
             initWithdrawalATMWordsJob()
             SharedPreferenceManager.setWithdrawalATMWords(this)
         }
+
+        if (!SharedPreferenceManager.initFilters(this)) {
+            initFiltersJob()
+            SharedPreferenceManager.setInitFilters(this)
+        }
         initCategoriesJob()
         initFirebaseStoresJob()
     }
@@ -96,6 +102,11 @@ class MyApp : Application(), Configuration.Provider {
 
     private fun initWithdrawalATMWordsJob() {
         val worker = OneTimeWorkRequestBuilder<InitWithdrawalWordsJob>().build()
+        WorkManager.getInstance(this).enqueue(worker)
+    }
+
+    private fun initFiltersJob() {
+        val worker = OneTimeWorkRequestBuilder<InitFiltersJob>().build()
         WorkManager.getInstance(this).enqueue(worker)
     }
 

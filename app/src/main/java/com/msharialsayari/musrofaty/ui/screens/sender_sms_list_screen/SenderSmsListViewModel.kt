@@ -184,7 +184,7 @@ class SenderSmsListViewModel @Inject constructor(
         viewModelScope.launch {
             val filtersResult = getFiltersUseCase.invoke(senderId)
             _uiState.update {
-                it.copy(filters = filtersResult,)
+                it.copy(filters = filtersResult)
             }
         }
     }
@@ -333,7 +333,7 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     private fun getFilterWord(): String {
-        return _uiState.value.filters.find { it.id == _uiState.value.selectedFilter?.id }?.words ?: ""
+        return  ""
     }
 
     fun updateSelectedFilterWord(selectedItem: SelectedItemModel?){

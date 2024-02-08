@@ -6,12 +6,15 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_da
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterWordEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterAdvancedEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterWordEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,12 +24,18 @@ class FilterRepo @Inject constructor(
     private val filterDao: FilterDao,
 ) {
 
-    suspend fun getAll( senderId:Int): List<FilterAdvancedModel> {
-        val finalList = mutableListOf<FilterAdvancedModel>()
-        dao.getSenderFilters(senderId).map {entity ->
-            finalList.add(entity.toFilterAdvancedModel())
+    fun observingSenderFilters(senderId:Int): Flow<List<FilterModel>> {
+        return filterDao.observingSenderFilters(senderId).map { list ->
+            list.map {
+                it.toFilterModel()
+            }
         }
-        return finalList
+    }
+
+    suspend fun getAll(senderId:Int): List<FilterModel> {
+        return filterDao.getSenderFilters(senderId).map { entity ->
+            entity.toFilterModel()
+        }
     }
 
     suspend fun getAll(): List<FilterAdvancedModel> {

@@ -3,7 +3,7 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.SenderSmsListBottomSheetType
@@ -22,13 +22,13 @@ data class SenderSmsListUiState(
         val totalSms: Int = 0,
 
         //allSms tab
-        var allSmsList :Flow<PagingData<SmsModel>>? =null,
+        var allSmsList:Flow<PagingData<SmsModel>>? =null,
 
         //favorite tab
-        var favoriteSmsList :Flow<PagingData<SmsModel>>? =null,
+        var favoriteSmsList:Flow<PagingData<SmsModel>>? =null,
 
         //soft deleted tab
-        var softDeletedSmsList :Flow<PagingData<SmsModel>>? =null,
+        var softDeletedSmsList:Flow<PagingData<SmsModel>>? =null,
 
         //Financial tab
         var financialTabLoading: Boolean = false,
@@ -43,7 +43,7 @@ data class SenderSmsListUiState(
 
         //filer words
         var selectedFilter: SelectedItemModel? = null,
-        var filters: List<FilterAdvancedModel> = emptyList(),
+        var filters: List<FilterModel> = emptyList(),
 
 
         //Date picker

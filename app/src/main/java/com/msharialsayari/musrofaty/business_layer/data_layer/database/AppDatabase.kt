@@ -13,6 +13,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_da
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterWordEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sender_database.SenderEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
@@ -30,6 +31,7 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
     entities = [SmsEntity::class,
                 FilterEntity::class,
                 FilterAdvancedEntity::class,
+                FilterWordEntity::class,
                 CategoryEntity::class,
                 StoreEntity::class,
                 WordDetectorEntity::class,
