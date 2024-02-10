@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.usecase
 
-import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +13,6 @@ class ObservingSmsListByStoreNameUseCase @Inject constructor(
 ) {
 
     operator fun invoke(query:String): Flow<List<SmsModel>> {
-        return smsRepo.observingSmsListByStoreName(query)
+        return smsRepo.observingSmsList(query)
     }
 }

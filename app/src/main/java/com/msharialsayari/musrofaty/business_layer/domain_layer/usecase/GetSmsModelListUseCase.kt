@@ -17,12 +17,13 @@ class GetSmsModelListUseCase @Inject constructor(
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean?= null,
         isFavorite:Boolean?=null,
+        isFilter:Boolean=false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
         categoryId: Int?=null,
         storeName: String?=null,
     ): List<SmsModel> {
-        return smsRepo.getAllSmsModel(senderId, filterOption, isDeleted,isFavorite,query, startDate, endDate,categoryId,storeName)
+        return smsRepo.getAllSmsModel(senderId, filterOption, isDeleted,isFavorite,isFilter,query, startDate, endDate,categoryId,storeName)
     }
 }

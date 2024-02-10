@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -30,15 +30,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun FilterScreen(senderId:Int , filterId:Int?){
+fun FilterScreen(){
     val viewModel:FilterViewModel = hiltViewModel()
     val uiState                           by viewModel.uiState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val scaffoldState = rememberScaffoldState()
 
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
     val coroutineScope = rememberCoroutineScope()
 
@@ -62,31 +61,7 @@ fun FilterScreen(senderId:Int , filterId:Int?){
 
     }
 
-    LaunchedEffect(key1 = Unit){
-        filterId?.let {
-            viewModel.getFilter(it)
-        }
-    }
-    uiState.isCreateNewFilter = filterId == null
-    uiState.filterId = filterId ?: 0
-    uiState.senderId = senderId
 
-
-    if (uiState.wordValidationModel != null && !uiState.wordValidationModel!!.isValid) {
-        coroutineScope.launch {
-            val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
-                uiState.wordValidationModel!!.errorMsg,
-                duration = SnackbarDuration.Short
-            )
-
-            if (snackbarResult == SnackbarResult.Dismissed) {
-                viewModel.dismissSnackbar()
-            }
-        }
-    } else {
-        viewModel.dismissSnackbar()
-        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-    }
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
@@ -156,20 +131,19 @@ fun FilterScreen(senderId:Int , filterId:Int?){
 }
 
 @Composable
-fun FilterTitle(viewModel: FilterViewModel){
+fun FilterTitle(viewModel: FilterViewModel) {
 
-    val uiState                           by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val title = uiState.filterModel.title
     TextFieldComponent.BoarderTextFieldComponent(
         modifier = Modifier
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.default_margin16)),
-        textValue = uiState.title,
+        textValue = title,
         label = R.string.filter_title,
         errorMsg = uiState.titleValidationModel.errorMsg,
         onValueChanged = {
             viewModel.onFilterTitleChanged(it)
-
-
         }
     )
 
@@ -222,10 +196,12 @@ fun AddFilterBottomSheetCompose(onActionClicked:(String)->Unit){
 fun FiltersList(viewModel: FilterViewModel){
 
 
-    val uiState                           by viewModel.uiState.collectAsState()
-    val deleteAction = Action<String>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete )) },
-        { ActionIcon(id = R.drawable.ic_delete ) },
+    val uiState by viewModel.uiState.collectAsState()
+    val filterWords = uiState.filterWords
+
+    val deleteAction = Action<FilterWordModel>(
+        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
+        { ActionIcon(id = R.drawable.ic_delete) },
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.deleteFilter(item)
@@ -233,40 +209,28 @@ fun FiltersList(viewModel: FilterViewModel){
         })
 
 
-    VerticalEasyList(
-        modifier = Modifier,
-        list = FilterAdvancedModel.getFilterWordsAsList(uiState.words),
-        view = { word -> TextComponent.BodyText(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(), text = word) },
-        dividerView = { DividerComponent.HorizontalDividerComponent() },
-        onItemClicked = { item, position ->
+        VerticalEasyList(
+            modifier = Modifier,
+            list = filterWords,
+            view = { item ->
+                RowComponent.FilterWordRow(
+                    word = item.word,
+                    logicOperators = if(viewModel.isLastItem(item)) null else item.logicOperator
+                ) {
+                    viewModel.changeLogicOperator(item, it)
+                }
+            },
+            dividerView = { DividerComponent.HorizontalDividerComponent() },
+            onItemClicked = { item, position ->
 
-        },
-        startActions = listOf(deleteAction),
-        emptyView = { EmptyCompose() },
-    )
-
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun AddFilter(onAddFilterClicked:(String)->Unit){
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .clickable {
-            onAddFilterClicked("")
-        }) {
-        DividerComponent.HorizontalDividerComponent()
-        ListItem(
-            text = { TextComponent.BodyText(text = stringResource(id = R.string.common_add)) },
-            icon = {Icon( Icons.Default.Add, contentDescription = null)}
+            },
+            startActions = listOf(deleteAction),
+            emptyView = { EmptyCompose() },
         )
 
-    }
-
 }
+
+
 
 @Composable
 fun BtnAction(viewModel: FilterViewModel){
@@ -277,31 +241,25 @@ fun BtnAction(viewModel: FilterViewModel){
             modifier =Modifier.weight(1f),
             text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
             onClick = {
-
                 if (viewModel.validate()) {
-                    if (uiState.isCreateNewFilter) {
-                        viewModel.onCreateBtnClicked()
-                        viewModel.navigateUp()
-                    } else {
-                        viewModel.onSaveBtnClicked()
-                        viewModel.navigateUp()
-                    }
+                   viewModel.onCreateBtnClicked()
+                   viewModel.navigateUp()
                 }
             }
 
         )
 
         if (!uiState.isCreateNewFilter)
-        ButtonComponent.ActionButton(
-            modifier =Modifier.weight(1f),
-            color= MusrofatyTheme.colors.deleteActionColor,
-            text =  R.string.common_delete,
-            onClick = {
-                viewModel.onDeleteBtnClicked()
-                viewModel.navigateUp()
-            }
+            ButtonComponent.ActionButton(
+                modifier = Modifier.weight(1f),
+                color = MusrofatyTheme.colors.deleteActionColor,
+                text = R.string.common_delete,
+                onClick = {
+                    viewModel.onDeleteBtnClicked()
+                    viewModel.navigateUp()
+                }
 
-        )
+            )
 
     }
 

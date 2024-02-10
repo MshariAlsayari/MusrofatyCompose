@@ -3,8 +3,10 @@ package com.msharialsayari.musrofaty.ui_component
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -143,70 +146,6 @@ object RowComponent {
     }
 
 
-    @Composable
-    fun ExpandableCategoryStatisticsRow(
-        modifier: Modifier = Modifier,
-        model: CategoryStatisticsModel,
-        onClick: (String) -> Unit
-    ) {
-        
-        val expanded = remember { mutableStateOf(false) }
-        
-        Column(modifier = modifier) {
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(id = R.dimen.default_margin16))
-                    .clickable {
-                        expanded.value = !expanded.value
-                    }
-                ,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(RectangleShape)
-                        .background(Color(model.color))
-                )
-
-                TextComponent.PlaceholderText(
-                    text = model.category
-                )
-
-                TextComponent.PlaceholderText(
-                    text = StringsUtils.formatNumberWithComma(model.totalAmount.toString())
-                )
-
-                TextComponent.PlaceholderText(
-                    text = StringsUtils.formatDecimalNumber(model.percent) + " %"
-                )
-
-                TextComponent.PlaceholderText(
-                    text = model.currency
-                )
-                if (expanded.value)
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                    )
-                else
-                    Icon(
-                        modifier = Modifier.mirror(),
-                        painter = painterResource(id = R.drawable.ic_collapsed_arrow),
-                        contentDescription = null
-                    )
-
-            }
-
-
-            ExpandableContent(visible = expanded.value, initialVisibility = expanded.value, view = { CategoryDetailsStatisticsList(model.smsList, onItemClicked = onClick) })
-
-        }
-    }
 
 
     @Composable
@@ -303,103 +242,53 @@ object RowComponent {
         }
 
     }
-    
+
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun CategoryDetailsStatisticsList(list:List<SmsModel>, onItemClicked: (String) -> Unit){
-        val listState = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier.height(80.dp),
-            state = listState,
-        ) {
-
-            itemsIndexed(list) { index,item ->
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(dimensionResource(id = R.dimen.default_margin10))
-                        .clickable { onItemClicked(item.id) },
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    TextComponent.PlaceholderText(
-                        modifier = Modifier.weight(1f),
-                        alignment = TextAlign.Center,
-                        enableEllipsis =true,
-                        text = item.storeName
-                    )
-
-                    TextComponent.PlaceholderText(
-                        modifier = Modifier.weight(1f),
-                        alignment = TextAlign.Center,
-                        enableEllipsis =true,
-                        text = StringsUtils.formatNumberWithComma(item.amount.toString())
-                    )
-
-                    TextComponent.PlaceholderText(
-                        modifier = Modifier.weight(1f),
-                        alignment = TextAlign.Center,
-                        enableEllipsis =true,
-                        text = DateUtils.getDateByTimestamp(
-                            item.timestamp,
-                            pattern = DEFAULT_DATE_PATTERN
-                        ) ?: ""
-                    )
-
-                    TextComponent.PlaceholderText(
-                        modifier = Modifier.weight(1f),
-                        alignment = TextAlign.Center,
-                        enableEllipsis =true,
-                        text = item.currency
-                    )
-                }
-
-                if (index !=list.lastIndex )
-                    DividerComponent.HorizontalDividerComponent()
-            }
-
-
-        }
-        
-    }
-
-
-    @OptIn(ExperimentalAnimationApi::class)
-    @Composable
-    fun ExpandableContent(
-        visible: Boolean = true,
-        initialVisibility: Boolean = false,
-        view: @Composable () -> Unit
-
+    fun FilterWordRow(
+        modifier: Modifier = Modifier,
+        word: String,
+        logicOperators: LogicOperators? = null,
+        onClick: (LogicOperators) -> Unit = {}
     ) {
-        val enterTransition = remember {
-            expandVertically(
-                expandFrom = Alignment.Top,
-                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
-            ) + fadeIn(
-                initialAlpha = 0.3f,
-                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
-            )
-        }
-        val exitTransition = remember {
-            shrinkVertically(
-                // Expand from the top.
-                shrinkTowards = Alignment.Top,
-                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
-            ) + fadeOut(
-                // Fade in with the initial alpha of 0.3f.
-                animationSpec = tween(EXPANSTION_TRANSITION_DURATION)
-            )
-        }
-        AnimatedVisibility(
-            visible = visible,
-            initiallyVisible = initialVisibility,
-            enter = enterTransition,
-            exit = exitTransition
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .combinedClickable(
+                    onDoubleClick = {
+                        if (logicOperators == null || logicOperators == LogicOperators.OR) {
+                            onClick(LogicOperators.AND)
+                        } else {
+                            onClick(LogicOperators.OR)
+                        }
+                    },
+                    onClick = {
+
+                    }
+                ),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            view()
+            TextComponent.BodyText(
+                modifier = Modifier.weight(1f),
+                text = word
+            )
+
+            if (logicOperators != null)
+                TextComponent.ClickableText(
+                    modifier = Modifier.weight(.5f),
+                    text = logicOperators.name,
+                    alignment = TextAlign.Center
+
+                )
+
+
         }
+
+
     }
+    
+
 
 }
 

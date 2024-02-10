@@ -44,7 +44,7 @@ data class SenderSmsListUiState(
         //filer words
         var selectedFilter: SelectedItemModel? = null,
         var filters: List<FilterModel> = emptyList(),
-
+        var query: String = "",
 
         //Date picker
         var startDate: Long = 0,

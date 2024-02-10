@@ -4,13 +4,14 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.Filte
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
-class AddFilterWordUseCase @Inject constructor(
+class DeleteFilterWordUseCase @Inject constructor(
     private val filterRepo: FilterRepo
 ) {
 
-    suspend operator fun invoke(filterId:Int, word:String) {
-         filterRepo.addFilterWord(filterId, word)
+    suspend operator fun invoke(id: Int) {
+        filterRepo.deleteFilterWord(id)
     }
 
 

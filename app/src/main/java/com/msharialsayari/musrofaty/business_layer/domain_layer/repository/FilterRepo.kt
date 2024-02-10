@@ -7,9 +7,12 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_da
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterWordEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterModel
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterWithWordsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWithWordsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterAdvancedEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterWordEntity
@@ -24,13 +27,6 @@ class FilterRepo @Inject constructor(
     private val filterDao: FilterDao,
 ) {
 
-    fun observingSenderFilters(senderId:Int): Flow<List<FilterModel>> {
-        return filterDao.observingSenderFilters(senderId).map { list ->
-            list.map {
-                it.toFilterModel()
-            }
-        }
-    }
 
     suspend fun getAll(senderId:Int): List<FilterModel> {
         return filterDao.getSenderFilters(senderId).map { entity ->
@@ -46,16 +42,8 @@ class FilterRepo @Inject constructor(
         return finalList
     }
 
-    suspend fun getFilter(id:Int): FilterAdvancedModel {
-        return dao.getFilterById(id).toFilterAdvancedModel()
-
-    }
-
-    suspend fun addFilterWord(id:Int, word:String) {
-         val entity =  dao.getFilterById(id)
-         val list =   FilterAdvancedModel.getFilterWordsAsList(entity.words).toMutableList()
-         list.add(word)
-         dao.addFilterWord(id, FilterAdvancedModel.getFilterWordsAsString(list))
+    suspend fun getFilter(id:Int): FilterWithWordsModel? {
+        return filterDao.getFilter(id)?.toFilterWithWordsModel()
     }
 
 
@@ -72,35 +60,33 @@ class FilterRepo @Inject constructor(
         dao.update(model.toFilterAdvancedEntity())
     }
 
-    suspend fun delete(id: Int) {
-        dao.delete(id)
-    }
-
-    suspend fun delete(list: List<FilterAdvancedModel>) {
-        val finalList = mutableListOf<FilterAdvancedEntity>()
-        list.forEach {
-            finalList.add(it.toFilterAdvancedEntity())
-        }
-        dao.delete(*finalList.toTypedArray())
+    suspend fun deleteFilter(id: Int) {
+        filterDao.deleteFilter(id)
     }
 
 
-    fun saveFilter(vararg list: FilterModel) {
+
+
+    suspend fun saveFilter(vararg list: FilterModel): List<Long> {
         val filters: MutableList<FilterEntity> = mutableListOf()
         list.map {
             filters.add(it.toFilterEntity())
         }
 
-        filterDao.saveFilters(*filters.toTypedArray())
+        return filterDao.saveFilters(*filters.toTypedArray())
     }
 
-    fun saveFilterWords(vararg list: FilterWordModel) {
+    suspend fun saveFilterWords(vararg list: FilterWordModel) {
         val filters: MutableList<FilterWordEntity> = mutableListOf()
         list.map {
             filters.add(it.toFilterWordEntity())
         }
 
-        filterDao.saveWords(*filters.toTypedArray())
+        filterDao.insertFilterWord(*filters.toTypedArray())
+    }
+
+    suspend fun deleteFilterWord(id: Int) {
+        filterDao.deleteFilterWord(id)
     }
 
 

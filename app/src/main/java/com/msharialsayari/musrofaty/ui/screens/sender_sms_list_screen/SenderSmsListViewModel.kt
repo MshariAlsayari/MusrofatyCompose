@@ -22,6 +22,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.Favorite
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFiltersUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSenderUseCase
@@ -71,6 +72,7 @@ class SenderSmsListViewModel @Inject constructor(
     private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getAllSmsUseCase: GetAllSmsUseCase,
+    private val getFilterUseCase: GetFilterUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context,
@@ -134,6 +136,7 @@ class SenderSmsListViewModel @Inject constructor(
                 query = getFilterWord(),
                 isDeleted = null,
                 isFavorite = null,
+                isFilter = true,
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
             )
@@ -198,6 +201,7 @@ class SenderSmsListViewModel @Inject constructor(
                 query = getFilterWord(),
                 isDeleted = null,
                 isFavorite = null,
+                isFilter = true,
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
             )
@@ -208,6 +212,7 @@ class SenderSmsListViewModel @Inject constructor(
                 query = getFilterWord(),
                 isDeleted = null,
                 isFavorite = true,
+                isFilter = true,
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
             )
@@ -219,6 +224,7 @@ class SenderSmsListViewModel @Inject constructor(
                 query = getFilterWord(),
                 isDeleted = true,
                 isFavorite = null,
+                isFilter = true,
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
             )
@@ -243,6 +249,7 @@ class SenderSmsListViewModel @Inject constructor(
             filterOption = getFilterTimeOption(),
             query = getFilterWord(),
             isDeleted = isDeleted,
+            isFilter = true,
             startDate = _uiState.value.startDate,
             endDate = _uiState.value.endDate
         )
@@ -333,14 +340,36 @@ class SenderSmsListViewModel @Inject constructor(
     }
 
     private fun getFilterWord(): String {
-        return  ""
+        return _uiState.value.query
     }
 
     fun updateSelectedFilterWord(selectedItem: SelectedItemModel?){
-        _uiState.update {
-            it.copy(
-                selectedFilter = selectedItem,
-            )
+        viewModelScope.launch {
+            val id = selectedItem?.id ?: -1
+            val result = getFilterUseCase.invoke(id)
+            var query = ""
+            if(selectedItem != null)
+                result?.let {
+                    it.words.mapIndexed { index, filter ->
+
+                        if(index == 0){
+                            query += " ( "
+                        }
+
+                        query += if (index != it.words.lastIndex) {
+                            " body LIKE \'%${filter.word}%\'  ${filter.logicOperator} "
+                        } else {
+                            " body LIKE \'%${filter.word}%\' )"
+                        }
+
+                    }
+                }
+            _uiState.update {
+                it.copy(
+                    selectedFilter = selectedItem,
+                    query = query
+                )
+            }
         }
 
     }
@@ -462,9 +491,9 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun navigateToFilterScreen(senderId: Int, filterId: Int?) {
         if (filterId == null)
-            navigator.navigate(Screen.FilterScreen.route + "/${senderId}")
+            navigator.navigate(Screen.FilterScreen.route + "/${senderId}"+ "/${-1}"+ "/${true}")
         else
-            navigator.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}")
+            navigator.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}" +"/${false}")
     }
 
     fun navigateToSmsDetails(smsID: String) {

@@ -15,10 +15,11 @@ class GetAllSmsUseCase @Inject constructor(private val smsRepo: SmsRepo) {
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
+        isFilter: Boolean = false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
     ): List<SmsEntity> {
-        return smsRepo.getAllSms(senderId, filterOption, isDeleted,isFavorite, query, startDate, endDate)
+        return smsRepo.getAllSms(senderId, filterOption, isDeleted,isFavorite,isFilter, query, startDate, endDate)
     }
 }

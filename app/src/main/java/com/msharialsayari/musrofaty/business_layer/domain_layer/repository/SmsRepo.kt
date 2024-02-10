@@ -12,6 +12,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_datab
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWithWordsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
@@ -72,6 +73,7 @@ class SmsRepo @Inject constructor(
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
+        isFilter: Boolean = false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -84,6 +86,7 @@ class SmsRepo @Inject constructor(
             filterOption = filterOption,
             isDeleted = isDeleted,
             isFavorite = isFavorite,
+            isFilter=isFilter,
             query = query,
             startDate = startDate,
             endDate = endDate
@@ -116,6 +119,7 @@ class SmsRepo @Inject constructor(
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
+        isFilter: Boolean = false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -126,6 +130,7 @@ class SmsRepo @Inject constructor(
             filterOption = filterOption,
             isDeleted = isDeleted,
             isFavorite = isFavorite,
+            isFilter=isFilter,
             query = query,
             startDate = startDate,
             endDate = endDate
@@ -135,11 +140,12 @@ class SmsRepo @Inject constructor(
     }
 
 
-    fun observingSmsListByStoreName(
+    fun observingSmsList(
         senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
+        isFilter:Boolean=false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -150,6 +156,7 @@ class SmsRepo @Inject constructor(
             filterOption = filterOption,
             isDeleted = isDeleted,
             isFavorite = isFavorite,
+            isFilter=isFilter,
             query = query,
             startDate = startDate,
             endDate = endDate
@@ -170,8 +177,7 @@ class SmsRepo @Inject constructor(
 
     }
 
-
-    fun observingSmsListByStoreName(query: String): Flow<List<SmsModel>> {
+    fun observingSmsList(query: String): Flow<List<SmsModel>> {
         return dao.observingSmsListByQuery(query).map { pagingData ->
             pagingData.filter {
                 var model = it.toSmsModel()
@@ -313,6 +319,7 @@ class SmsRepo @Inject constructor(
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
+        isFilter:Boolean=false,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0
@@ -353,26 +360,32 @@ class SmsRepo @Inject constructor(
             " WHERE "
         }
 
-        // Build filter body query
-        var filterBodyQuery = ""
-        val filtersList = FilterAdvancedModel.getFilterWordsAsList(query)
-        if (filtersList.isEmpty()) {
-            filterBodyQuery = " body LIKE '%' || ? || '%'"
-            args.add(query)
-        } else {
-            filtersList.forEachIndexed { index, filter ->
-                if (index == 0) {
-                    filterBodyQuery = " body LIKE '%' || ? || '%'"
-                } else {
-                    filterBodyQuery += " AND body LIKE '%' || ? || '%'"
+        if(isFilter && query.isNotEmpty()){
+            queryString += query
+        }else{
+            // Build filter body query
+            var filterBodyQuery = ""
+            val filtersList = FilterAdvancedModel.getFilterWordsAsList(query)
+            if (filtersList.isEmpty()) {
+                filterBodyQuery = " body LIKE '%' || ? || '%'"
+                args.add(query)
+            } else {
+                filtersList.forEachIndexed { index, filter ->
+                    if (index == 0) {
+                        filterBodyQuery = " body LIKE '%' || ? || '%'"
+                    } else {
+                        filterBodyQuery += " AND body LIKE '%' || ? || '%'"
+                    }
+                    args.add(filter)
+
                 }
-                args.add(filter)
+
 
             }
-
-
+            queryString += filterBodyQuery
         }
-        queryString += filterBodyQuery
+
+
 
         // Build filter date query
         when (filterOption) {

@@ -10,7 +10,7 @@ class DeleteFilterUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(id: Int) {
-        filterRepo.delete(id)
+        filterRepo.deleteFilter(id)
     }
 
 

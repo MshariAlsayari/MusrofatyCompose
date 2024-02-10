@@ -15,6 +15,9 @@ import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScree
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterViewModel.Companion.CREATE_FILTER_KEY
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterViewModel.Companion.FILTER_ID_KEY
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterViewModel.Companion.SENDER_ID_KEY
 import com.msharialsayari.musrofaty.ui.screens.sender_details_screen.SenderDetailsScreen
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.SendersListScreen
@@ -78,22 +81,24 @@ fun NavigationGraph(
         }
 
 
-        composable(Screen.FilterScreen.route + "/{senderId}",
-            arguments = listOf(navArgument("senderId") { type = NavType.IntType }
-            )) { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId = senderId, filterId = null)
-        }
 
-        composable(Screen.FilterScreen.route + "/{senderId}" + "/{filterId}",
-            arguments = listOf(navArgument("senderId") { type = NavType.IntType },
-                navArgument("filterId") { type = NavType.IntType }
+        composable(Screen.FilterScreen.route + "/{$SENDER_ID_KEY}" + "/{$FILTER_ID_KEY}" + "/{$CREATE_FILTER_KEY}",
+            arguments = listOf(
+                navArgument(SENDER_ID_KEY) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+                navArgument(FILTER_ID_KEY) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+
+                navArgument(CREATE_FILTER_KEY) {
+                    type = NavType.BoolType
+                    defaultValue = true
+                }
             )) { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val filterId = arguments?.getInt("filterId")
-            val senderId = arguments?.getInt("senderId") ?: 0
-            FilterScreen(senderId = senderId, filterId = filterId)
+            FilterScreen()
         }
 
         composable(Screen.SmsScreen.route + "/{smsId}",

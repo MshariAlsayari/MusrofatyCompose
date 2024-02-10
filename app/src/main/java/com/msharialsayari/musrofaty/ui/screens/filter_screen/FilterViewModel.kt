@@ -1,15 +1,18 @@
 package com.msharialsayari.musrofaty.ui.screens.filter_screen
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.R
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.CreateNewFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterWordUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterWordUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,37 +26,67 @@ import javax.inject.Inject
 @HiltViewModel
 class FilterViewModel@Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
-    private val createNewFilterUseCase: CreateNewFilterUseCase,
-    private val updateFilterUseCase: UpdateFilterUseCase,
+    private val insertFilterUseCase: InsertFilterUseCase,
+    private val insertFilterWordUseCase: InsertFilterWordUseCase,
     private val deleteFilterUseCase: DeleteFilterUseCase,
+    private val deleteFilterWordUseCase: DeleteFilterWordUseCase,
     private val navigator: AppNavigator,
+    private val savedStateHandle: SavedStateHandle,
     @ApplicationContext val context: Context
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState: StateFlow<FilterUiState> = _uiState
 
-    fun getFilter(filterId:Int){
+    companion object{
+        const val SENDER_ID_KEY = "senderIdKey"
+        const val FILTER_ID_KEY = "filterIdKey"
+        const val CREATE_FILTER_KEY = "createFilterKey"
+    }
+
+
+    private val senderId: Int
+        get() {
+            return savedStateHandle.get<Int>(SENDER_ID_KEY) ?: -1
+        }
+
+    private val filterId: Int
+        get() {
+            return savedStateHandle.get<Int>(FILTER_ID_KEY) ?: -1
+        }
+
+    private val isCreateFilter: Boolean
+        get() {
+            return savedStateHandle.get<Boolean>(CREATE_FILTER_KEY) ?: false
+        }
+
+    init {
+        _uiState.value.filterId = filterId
+        _uiState.value.senderId = senderId
+        _uiState.value.filterModel.id = filterId
+        _uiState.value.filterModel.senderId = senderId
+        _uiState.value.isCreateNewFilter = isCreateFilter
+        getFilter()
+    }
+
+
+    private fun getFilter(){
         viewModelScope.launch {
             val result = getFilterUseCase(filterId)
-            _uiState.update {
-                it.copy(words = result.words, title =result.title)
+            result?.let {model->
+                _uiState.update {
+                    it.copy(filterModel = model.filter, filterWords = model.words)
+                }
             }
+
         }
 
     }
 
-    fun onFilterTitleChanged(value:String){
-        _uiState.update {
-            it.copy( title = value)
-        }
-    }
 
     fun validate(): Boolean {
-        val title = uiState.value.title.trim()
-        val word = uiState.value.words.trim()
+        val title = uiState.value.filterModel.title.trim()
         val titleValidationModel = ValidationModel()
-        val wordValidationModel = ValidationModel()
         if (title.isEmpty()){
             titleValidationModel.isValid = false
             titleValidationModel.errorMsg = context.getString(R.string.validation_field_mandatory)
@@ -62,34 +95,11 @@ class FilterViewModel@Inject constructor(
             titleValidationModel.errorMsg = context.getString(R.string.validation_contain_special_character)
         }
 
-        if (word.isEmpty()){
-            wordValidationModel.isValid = false
-            wordValidationModel.errorMsg = context.getString(R.string.validation_filter_list_empty)
-        }
-
         _uiState.update {
-            it.copy( titleValidationModel = titleValidationModel, wordValidationModel = wordValidationModel)
+            it.copy( titleValidationModel = titleValidationModel)
         }
 
-        return titleValidationModel.isValid && wordValidationModel.isValid
-    }
-
-
-
-
-    fun onSaveBtnClicked(){
-        viewModelScope.launch {
-            val model = FilterAdvancedModel(words = _uiState.value.words.trim(), title =_uiState.value.title.trim() , senderId = _uiState.value.senderId, id = _uiState.value.filterId )
-            updateFilterUseCase.invoke(model)
-        }
-    }
-
-    fun onCreateBtnClicked(){
-        viewModelScope.launch {
-            val model = FilterAdvancedModel(words = _uiState.value.words, title =_uiState.value.title , senderId = _uiState.value.senderId)
-            createNewFilterUseCase.invoke(model)
-        }
-
+        return titleValidationModel.isValid
     }
 
     fun onDeleteBtnClicked(){
@@ -101,35 +111,96 @@ class FilterViewModel@Inject constructor(
 
 
     fun addFilter(word: String) {
-        val validateWord = word.replace(",","")
-        if(validateWord.isNotEmpty()){
-            val wordLIst = FilterAdvancedModel.getFilterWordsAsList(_uiState.value.words).toMutableSet()
-            wordLIst.add(validateWord)
-            _uiState.update {
-                it.copy( words = FilterAdvancedModel.getFilterWordsAsString(wordLIst.toList()))
+        viewModelScope.launch {
+            val validateWord = word.replace(",","")
+            val filterId = _uiState.value.filterId
+            val words = _uiState.value.filterWords.map { it.word }
+            if(validateWord.isNotEmpty() && !words.contains(word)){
+                val model = FilterWordModel(
+                    word = word,
+                    filterId = filterId,
+                    logicOperator = LogicOperators.AND
+                )
+
+                val newList = _uiState.value.filterWords.toMutableList().apply {
+                    add(model)
+                }
+
+                _uiState.update {
+                    it.copy( filterWords = newList)
+                }
+
             }
         }
-    }
-
-    fun deleteFilter(word: String) {
-            val wordLIst = FilterAdvancedModel.getFilterWordsAsList(_uiState.value.words).toMutableList()
-            wordLIst.remove(word)
-            _uiState.update {
-                it.copy( words = FilterAdvancedModel.getFilterWordsAsString(wordLIst.toList()))
-            }
 
     }
 
-    fun dismissSnackbar() {
-        _uiState.update {
-            it.copy( wordValidationModel = null)
-        }
+    fun deleteFilter(word: FilterWordModel) {
+         viewModelScope.launch {
+             val newList = _uiState.value.filterWords.toMutableList().apply {
+                 removeIf { it.word ==  word.word}
+             }
+
+             _uiState.update {
+                 it.copy( filterWords = newList)
+             }
+
+             deleteFilterWordUseCase.invoke(word.wordId)
+         }
     }
 
     fun navigateUp(){
         navigator.navigateUp()
     }
 
+
+    fun changeLogicOperator(item: FilterWordModel, logicOperators: LogicOperators) {
+         val index = _uiState.value.filterWords.indexOfFirst { it.word == item.word }
+         val newItem = _uiState.value.filterWords[index].copy(logicOperator = logicOperators)
+        val newList =  _uiState.value.filterWords.toMutableList().apply {
+            removeAt(index)
+            add(index, newItem)
+        }
+
+        _uiState.update {
+            it.copy(filterWords = newList)
+        }
+    }
+
+    fun onFilterTitleChanged(title: String) {
+        val newFilter = _uiState.value.filterModel.copy(
+            title = title
+        )
+
+        _uiState.update {
+            it.copy(filterModel = newFilter)
+        }
+    }
+
+    fun onCreateBtnClicked() {
+        viewModelScope.launch {
+            val filter =  _uiState.value.filterModel
+            if(isCreateFilter){
+                filter.id = 0
+            }
+            val filterId = insertFilterUseCase.invoke(filter).first()
+
+            val words =  _uiState.value.filterWords.map {
+                it.filterId = filterId.toInt()
+                it
+            }
+
+            words.map { word->
+                insertFilterWordUseCase.invoke(word)
+            }
+        }
+    }
+
+
+    fun isLastItem(item: FilterWordModel): Boolean {
+        val index = _uiState.value.filterWords.indexOfFirst { it.word == item.word }
+        return _uiState.value.filterWords.lastIndex == index
+    }
 
 
 }

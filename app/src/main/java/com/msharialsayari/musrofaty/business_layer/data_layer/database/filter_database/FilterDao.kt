@@ -16,21 +16,26 @@ interface FilterDao {
     @Query("SELECT * FROM FilterEntity")
     fun getAll(): Flow<List<FilterWithWordsEntity>>
 
-    @Query("SELECT * FROM FilterEntity WHERE senderId =:senderId ")
-    fun observingSenderFilters(senderId: Int): Flow<List<FilterEntity>>
+    @Transaction
+    @Query("SELECT * FROM FilterEntity WHERE id =:id")
+    suspend fun getFilter(id:Int): FilterWithWordsEntity?
 
     @Query("SELECT * FROM FilterEntity WHERE senderId =:senderId ")
     suspend fun getSenderFilters(senderId: Int): List<FilterEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveFilters(vararg filters: FilterEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveWords(vararg filterWords: FilterWordEntity)
+    suspend fun saveFilters(vararg filters: FilterEntity) : List<Long>
 
     @Query("DELETE FROM FilterEntity  WHERE id =:id ")
-    suspend fun delete(id: Int)
+    suspend fun deleteFilter(id: Int)
 
     @Query("UPDATE  FilterEntity SET title =:title WHERE id =:id ")
     suspend fun updateFilterTitle(id: Int, title:String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFilterWord(vararg filterWords: FilterWordEntity)
+    @Query("DELETE FROM FilterWordEntity  WHERE wordId =:id ")
+    suspend fun deleteFilterWord(id: Int)
+
+
 }

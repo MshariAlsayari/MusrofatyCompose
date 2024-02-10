@@ -161,8 +161,8 @@ private fun StoreAndCategoryComponent(
 
         if (model.smsType.isExpenses() || model.smsType.isIncome() ){
 
-            if(model.storeName.isNotEmpty()|| model.smsType == SmsType.WITHDRAWAL_ATM)
-            DividerComponent.HorizontalDividerComponent()
+            if (model.storeName.isNotEmpty() || model.smsType == SmsType.WITHDRAWAL_ATM)
+                DividerComponent.HorizontalDividerComponent()
 
             ListItem(
                 text = { Text(text = stringResource(id = R.string.common_amount)) },
