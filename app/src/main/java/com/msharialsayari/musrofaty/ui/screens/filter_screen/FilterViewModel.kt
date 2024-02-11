@@ -110,24 +110,36 @@ class FilterViewModel@Inject constructor(
 
 
 
-    fun addFilter(word: String) {
+    fun addFilter(item:FilterWordModel?, newWord: String) {
         viewModelScope.launch {
-            val validateWord = word.replace(",","")
+            val validateWord = newWord.replace(",","")
             val filterId = _uiState.value.filterId
             val words = _uiState.value.filterWords.map { it.word }
-            if(validateWord.isNotEmpty() && !words.contains(word)){
-                val model = FilterWordModel(
-                    word = word,
-                    filterId = filterId,
-                    logicOperator = LogicOperators.AND
-                )
+            if(validateWord.isNotEmpty() && !words.contains(newWord)){
+                val newList: List<FilterWordModel>
+                //create a new word
+                if(item == null){
+                    val model = FilterWordModel(
+                        word = newWord,
+                        filterId = filterId,
+                        logicOperator = LogicOperators.AND
+                    )
 
-                val newList = _uiState.value.filterWords.toMutableList().apply {
-                    add(model)
+                    newList = _uiState.value.filterWords.toMutableList().apply {
+                        add(model)
+                    }
+
+                }else{   //update an existed word
+                    val index = _uiState.value.filterWords.indexOfFirst { it.word == item.word }
+                    val newItem = _uiState.value.filterWords[index].copy(word = newWord)
+                    newList = _uiState.value.filterWords.toMutableList().apply {
+                        removeAt(index)
+                        add(index, newItem)
+                    }
                 }
 
                 _uiState.update {
-                    it.copy( filterWords = newList)
+                    it.copy(filterWords = newList)
                 }
 
             }

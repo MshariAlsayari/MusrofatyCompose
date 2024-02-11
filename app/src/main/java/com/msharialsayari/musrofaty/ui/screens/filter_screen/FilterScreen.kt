@@ -21,6 +21,7 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -35,6 +36,7 @@ fun FilterScreen(){
     val uiState                           by viewModel.uiState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val scaffoldState = rememberScaffoldState()
+    val selectedFilter = remember { mutableStateOf<FilterWordModel?>(null) }
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -45,30 +47,14 @@ fun FilterScreen(){
         coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
     }
 
-    if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
-        DisposableEffect(Unit) {
-            onDispose {
-                keyboardController?.hide()
-            }
-        }
-
-    } else {
-        DisposableEffect(Unit) {
-            onDispose {
-                keyboardController?.show()
-            }
-        }
-
-    }
-
-
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
-            AddFilterBottomSheetCompose(onActionClicked = {
-                    word -> viewModel.addFilter(word.trim())
+            AddFilterBottomSheetCompose(item = selectedFilter.value) { item, newString ->
+                selectedFilter.value = null
+                viewModel.addFilter(item, newString.trim())
                 coroutineScope.launch {
                     BottomSheetComponent.handleVisibilityOfBottomSheet(
                         sheetState,
@@ -76,8 +62,6 @@ fun FilterScreen(){
                     )
                 }
             }
-            )
-
         },
     ){
 
@@ -94,9 +78,13 @@ fun FilterScreen(){
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxSize()) {
+                    .fillMaxSize(),
+                ) {
                 FilterTitle(viewModel)
+                FiltersInstructions()
                 FiltersListHeader(onAddFilterIconClicked = {
+                    selectedFilter.value = null
+                    keyboardController?.hide()
                     coroutineScope.launch {
                         BottomSheetComponent.handleVisibilityOfBottomSheet(
                             sheetState,
@@ -104,7 +92,16 @@ fun FilterScreen(){
                         )
                     }
                 })
-                FiltersList(viewModel)
+                FiltersList(viewModel){
+                    selectedFilter.value = it
+                    keyboardController?.hide()
+                    coroutineScope.launch {
+                        BottomSheetComponent.handleVisibilityOfBottomSheet(
+                            sheetState,
+                            !sheetState.isVisible
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 BtnAction(viewModel)
 
@@ -112,21 +109,21 @@ fun FilterScreen(){
         }
 
     }
+}
 
+@Composable
+fun FiltersInstructions() {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp,Alignment.CenterVertically)
+    ){
+        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_one_click))
+        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_double_click))
+        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_slide))
+        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_and))
+        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_or))
+    }
 
 }
 
@@ -176,13 +173,13 @@ fun FiltersListHeader(onAddFilterIconClicked:()->Unit) {
 }
 
 @Composable
-fun AddFilterBottomSheetCompose(onActionClicked:(String)->Unit){
+fun AddFilterBottomSheetCompose(item:FilterWordModel?=null, onActionClicked:(FilterWordModel?, String)->Unit){
     val model = TextFieldBottomSheetModel(
-        title = R.string.filter_add_word,
-        textFieldValue =  "",
+        title = if(item != null ) R.string.filter_modify_word else R.string.filter_add_word,
+        textFieldValue = item?.word ?: "",
         buttonText = R.string.common_add,
         onActionButtonClicked = { value ->
-            onActionClicked(value)
+            onActionClicked(item, value)
         })
 
     BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
@@ -193,7 +190,8 @@ fun AddFilterBottomSheetCompose(onActionClicked:(String)->Unit){
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi
 @Composable
-fun FiltersList(viewModel: FilterViewModel){
+fun FiltersList(viewModel: FilterViewModel,
+                onWordRowClicked:(FilterWordModel)->Unit){
 
 
     val uiState by viewModel.uiState.collectAsState()
@@ -216,13 +214,18 @@ fun FiltersList(viewModel: FilterViewModel){
                 RowComponent.FilterWordRow(
                     word = item.word,
                     logicOperators = if(viewModel.isLastItem(item)) null else item.logicOperator
-                ) {
-                    viewModel.changeLogicOperator(item, it)
-                }
+                )
             },
             dividerView = { DividerComponent.HorizontalDividerComponent() },
             onItemClicked = { item, position ->
-
+                onWordRowClicked(item)
+            },
+            onItemDoubleClicked = {item, position ->
+                if (item.logicOperator == LogicOperators.OR) {
+                    viewModel.changeLogicOperator(item, LogicOperators.AND)
+                } else {
+                    viewModel.changeLogicOperator(item, LogicOperators.OR)
+                }
             },
             startActions = listOf(deleteAction),
             emptyView = { EmptyCompose() },

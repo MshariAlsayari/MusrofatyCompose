@@ -224,6 +224,9 @@ fun StoresLazyList(modifier: Modifier=Modifier,viewModel:CategoriesViewModel, on
                 onItemClicked(item)
 
             },
+            onItemDoubleClicked = {item, position ->
+
+            },
             isLoading = uiState.isLoading,
             startActions = listOf(deleteAction),
             loadingProgress = { ProgressBar.CircleProgressBar() },

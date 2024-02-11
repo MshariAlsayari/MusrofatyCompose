@@ -94,6 +94,9 @@ fun SendersListCompose(
         onItemClicked = { item, position ->
             viewModel.navigateToSenderSmsList(senderId = item.senderId)
         },
+        onItemDoubleClicked = {item, position ->
+
+        },
         isLoading = uiState.isLoading,
         endActions = listOf(modifyAction, pinAction),
         startActions = listOf(deleteAction),

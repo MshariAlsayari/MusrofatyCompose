@@ -8,6 +8,7 @@ import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ object BottomSheetComponent {
         model: TextFieldBottomSheetModel
     ) {
         val context = LocalContext.current
-        val text = remember { mutableStateOf(model.textFieldValue) }
+        val text = remember { mutableStateOf<String>(model.textFieldValue) }
         val error = remember { mutableStateOf("") }
         text.value = text.value
         Column(modifier = modifier) {

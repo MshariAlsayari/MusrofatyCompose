@@ -230,6 +230,9 @@ fun WordsDetectorListCompose(viewModel: SmsAnalysisViewModel, list: List<WordDet
         onItemClicked = { item, position ->
 
         },
+        onItemDoubleClicked = {item, position ->
+
+        },
         endActions = listOf(deleteAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },
         emptyView = { EmptyCompose() },

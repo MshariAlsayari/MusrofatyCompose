@@ -243,30 +243,16 @@ object RowComponent {
 
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun FilterWordRow(
         modifier: Modifier = Modifier,
         word: String,
         logicOperators: LogicOperators? = null,
-        onClick: (LogicOperators) -> Unit = {}
     ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .combinedClickable(
-                    onDoubleClick = {
-                        if (logicOperators == null || logicOperators == LogicOperators.OR) {
-                            onClick(LogicOperators.AND)
-                        } else {
-                            onClick(LogicOperators.OR)
-                        }
-                    },
-                    onClick = {
-
-                    }
-                ),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextComponent.BodyText(
@@ -277,8 +263,8 @@ object RowComponent {
             if (logicOperators != null)
                 TextComponent.ClickableText(
                     modifier = Modifier.weight(.5f),
-                    text = logicOperators.name,
-                    alignment = TextAlign.Center
+                    text = logicOperators.value,
+                    alignment = TextAlign.End
 
                 )
 

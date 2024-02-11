@@ -140,7 +140,13 @@
     <!--Filter-->
     <string name="filter_title">Name</string>
     <string name="filter_add_word">Add a filter word</string>
+    <string name="filter_modify_word">Modify the filter word</string>
     <string name="validation_filter_list_empty">The list of filters can\'t be empty</string>
+    <string name="filter_one_click">One click on a word to modify</string>
+    <string name="filter_double_click">Double click on a word to change a logical operator</string>
+    <string name="filter_slide">slide a word from left to right to remove it</string>
+    <string name="filter_and">&amp;&amp; means \"AND\"</string>
+    <string name="filter_or">|| means \"OR\"</string>
 
     <!--validation-->
     <string name="validation_field_mandatory">The field is mandatory</string>

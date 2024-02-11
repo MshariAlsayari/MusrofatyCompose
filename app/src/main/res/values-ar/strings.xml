@@ -143,7 +143,13 @@
     <!--Filter-->
     <string name="filter_title">اسم الفلتر</string>
     <string name="filter_add_word">إضافة كلمة بحث</string>
+    <string name="filter_modify_word">تغيير كلمة بحث</string>
     <string name="validation_filter_list_empty">يجب تعبئة قائمة كلمات البحث</string>
+    <string name="filter_one_click">انقر نقرة على الكلمة للتعديل</string>
+    <string name="filter_double_click">انقر نقرتين متتاليتين على الكلمة لتغيير نوع العلاقة</string>
+    <string name="filter_slide">اسحب الكلمة من اليمين إلى اليسار لحذفها</string>
+    <string name="filter_and">علامة &amp;&amp; تدل أن العلاقة بين الكلمات هي \"و\"</string>
+    <string name="filter_or">علامة || تدل أن العلاقة بين الكلمات هي \"أو\"</string>
 
 
     <!--validation-->

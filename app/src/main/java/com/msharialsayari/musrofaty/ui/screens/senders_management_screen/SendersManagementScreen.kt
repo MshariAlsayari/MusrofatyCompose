@@ -168,6 +168,9 @@ fun SendersListCompose(viewModel: SendersManagementViewModel, list: List<SenderC
         onItemClicked   = { item, position ->
             onNavigateToSenderDetails(item.senderId)
         },
+        onItemDoubleClicked = {item, position ->
+
+        },
         isLoading       = uiState.isLoading,
         endActions      = listOf(modifyAction),
         loadingProgress = { ProgressBar.CircleProgressBar() },

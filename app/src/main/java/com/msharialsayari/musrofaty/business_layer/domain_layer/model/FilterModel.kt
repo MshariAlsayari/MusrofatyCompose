@@ -42,6 +42,6 @@ fun FilterWithWordsModel.toFilterWordEntity() = FilterWithWordsEntity(
 
 
 
-enum class LogicOperators{
-    AND,OR
+enum class LogicOperators(val value:String){
+    AND("&&"),OR("||")
 }
