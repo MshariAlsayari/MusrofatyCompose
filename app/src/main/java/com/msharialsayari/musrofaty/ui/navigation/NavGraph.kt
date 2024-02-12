@@ -28,6 +28,7 @@ import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SCREEN_TITLE_KEY
 import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SMS_IDS_KEY
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
+import com.msharialsayari.musrofaty.ui.screens.sms_types_screen.SmsTypesScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.store_sms_list_Screen.StoreSmsListScreen
@@ -177,6 +178,10 @@ fun NavigationGraph(
             )
         ) {
             SmsListScreen()
+        }
+
+        composable(Screen.SmsTypesScreen.route) {
+            SmsTypesScreen()
         }
 
     }

@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.msharialsayari.musrofaty.ui.navigation.BottomNavItem
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceContent
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.SmsAnalysisContent
+import com.msharialsayari.musrofaty.ui.screens.sms_types_screen.SmsTypesContent
 import com.msharialsayari.musrofaty.ui.screens.statistics_screen.StatisticsScreen
 import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -41,7 +42,8 @@ fun SettingsScreen() {
             onStoresClicked = { viewModel.navigateToStores() },
             onAnalysisClicked = { viewModel.navigateToAnalysis() },
             onStatisticsClicked = { viewModel.navigateToStatistics() },
-            onUpdateClicked = { viewModel.onClickOnUpdatePreference(activity) }
+            onUpdateClicked = { viewModel.onClickOnUpdatePreference(activity) },
+            onSmsTypesClicked = { viewModel.navigateToSmsTypesScreen() }
         )
     }
 
@@ -55,6 +57,7 @@ private fun SettingScreePortrait(
     onAnalysisClicked: () -> Unit,
     onStatisticsClicked: () -> Unit,
     onUpdateClicked: () -> Unit,
+    onSmsTypesClicked: () -> Unit,
 ) {
 
     Scaffold(topBar = {
@@ -71,6 +74,7 @@ private fun SettingScreePortrait(
                     PreferenceListEnum.Analysis -> onAnalysisClicked()
                     PreferenceListEnum.Update -> onUpdateClicked()
                     PreferenceListEnum.Statistics -> onStatisticsClicked()
+                    PreferenceListEnum.SmsTypes -> onSmsTypesClicked()
                 }
             })
 
@@ -105,6 +109,7 @@ private fun SettingScreeLandscape(viewModel: SettingsViewModel) {
 
             PreferenceListEnum.Stores -> StoresScreen()
             PreferenceListEnum.Analysis -> SmsAnalysisContent()
+            PreferenceListEnum.SmsTypes -> SmsTypesContent()
             PreferenceListEnum.Statistics -> StatisticsScreen()
             PreferenceListEnum.Update -> {
                 viewModel.onClickOnUpdatePreference(activity)

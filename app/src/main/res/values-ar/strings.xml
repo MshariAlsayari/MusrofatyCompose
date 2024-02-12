@@ -98,6 +98,8 @@
     <string name="pref_managment_sender_summary">إمكانية إدارة المرسلين إضافة، تعطيل، حذف وأكثر</string>
     <string name="pref_managment_stores_title">المتاجر</string>
     <string name="pref_managment_stores_summary">إمكانية تصنيف المتاجر</string>
+    <string name="pref_managment_sms_types_title">أنواع الرسائل</string>
+    <string name="pref_managment_sms_types_summary">إمكانية تحديد الرسائل بناء على نص الرسالة</string>
     <string name="pref_managment_analysis_title">التحليل</string>
     <string name="pref_managment_analysis_summary">إمكانية زيادة كفاءة تحليل الرسائل</string>
     <string name="pref_managment_update_title">التحديث</string>

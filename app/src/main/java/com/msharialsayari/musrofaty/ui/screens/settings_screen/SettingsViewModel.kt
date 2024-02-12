@@ -47,6 +47,10 @@ class SettingsViewModel @Inject constructor(
         navigator.navigate(Screen.StoreSmsListScreen.route + "/${id}")
     }
 
+    fun navigateToSmsTypesScreen(){
+        navigator.navigate(Screen.SmsTypesScreen.route)
+    }
+
     fun onClickOnUpdatePreference(activity: Activity){
         var packageName =  activity.packageName
         if (BuildConfig.DEBUG) {

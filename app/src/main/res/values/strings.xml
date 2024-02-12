@@ -96,8 +96,10 @@
     <string name="pref_managment_sender_summary">ability to manage your senders Add,Disable,Delete and more</string>
     <string name="pref_managment_stores_title">Stores</string>
     <string name="pref_managment_stores_summary">ability to categorize the stores</string>
-    <string name="pref_managment_analysis_title">Analysis</string>
-    <string name="pref_managment_analysis_summary">ability to increase sms analysis performance</string>
+    <string name="pref_managment_sms_types_title">Sms types</string>
+    <string name="pref_managment_sms_types_summary">ability to specify sms type based on an sms text</string>
+    <string name="pref_managment_analysis_title">Analytics</string>
+    <string name="pref_managment_analysis_summary">ability to increase sms analytics performance</string>
     <string name="pref_managment_update_title">Update</string>
     <string name="pref_managment_update_summary">navigate to Play Store to get last update</string>
     <string name="pref_managment_statistics_title">Statistics</string>
