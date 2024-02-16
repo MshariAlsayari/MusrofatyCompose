@@ -210,6 +210,10 @@ object Constants {
     )
 
 
+    //Work manager
+    const val ATTEMPTS_COUNT = 3
+
+
 
 
 }

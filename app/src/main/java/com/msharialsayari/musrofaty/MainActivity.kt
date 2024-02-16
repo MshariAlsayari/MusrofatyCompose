@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,18 +17,37 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Observer
+import androidx.work.BackoffPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.Utils.getScreenSize
+import com.msharialsayari.musrofaty.jobs.InitAppJob
+import com.msharialsayari.musrofaty.jobs.InitCategoriesFirebaseJob
+import com.msharialsayari.musrofaty.jobs.InitFiltersJob
+import com.msharialsayari.musrofaty.jobs.InitNewWordDetectorJob
+import com.msharialsayari.musrofaty.jobs.InitStoresFirebaseJob
+import com.msharialsayari.musrofaty.jobs.InitTransferWordsJob
+import com.msharialsayari.musrofaty.jobs.InitWithdrawalWordsJob
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
 import com.msharialsayari.musrofaty.utils.DialogsUtils
 import com.msharialsayari.musrofaty.utils.SetStatusBarColor
+import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+    }
 
 
     private val openSettingRequest =
@@ -43,6 +63,107 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initJobs()
+    }
+
+    private fun initJobs() {
+        if (!SharedPreferenceManager.sendersInitiated(this)) {
+            initAppJob()
+        }
+
+        if (!SharedPreferenceManager.transferJobInitiated(this)) {
+            initTransferSmsJob()
+        }
+
+        if (!SharedPreferenceManager.newWordDetectors(this)) {
+            initNewWordDetectorJob()
+        }
+
+        if (!SharedPreferenceManager.withdrawalATMWords(this)) {
+            initWithdrawalATMWordsJob()
+        }
+
+        if (!SharedPreferenceManager.initFilters(this)) {
+            initFiltersJob()
+        }
+        initCategoriesJob()
+        initFirebaseStoresJob()
+    }
+
+    private fun initAppJob() {
+        val worker = OneTimeWorkRequestBuilder<InitAppJob>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(worker)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(worker.id).observe(this, Observer {
+            if (it.state == WorkInfo.State.SUCCEEDED) {
+                Log.d(TAG, "initAppJob() state: SUCCEEDED")
+                SharedPreferenceManager.setSendersInitiated(this)
+            }
+        })
+
+    }
+
+    private fun initTransferSmsJob() {
+        val worker = OneTimeWorkRequestBuilder<InitTransferWordsJob>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(worker)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(worker.id).observe(this, Observer {
+            if (it.state == WorkInfo.State.SUCCEEDED) {
+                Log.d(TAG, "initTransferSmsJob() state: SUCCEEDED")
+                SharedPreferenceManager.setTransferJobInitiated(this)
+            }
+        })
+    }
+
+    private fun initNewWordDetectorJob() {
+        val worker = OneTimeWorkRequestBuilder<InitNewWordDetectorJob>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(worker)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(worker.id).observe(this, Observer {
+            if (it.state == WorkInfo.State.SUCCEEDED) {
+                Log.d(TAG, "initNewWordDetectorJob() state: SUCCEEDED")
+                SharedPreferenceManager.setNewWordDetectors(this)
+            }
+        })
+    }
+
+    private fun initWithdrawalATMWordsJob() {
+        val worker = OneTimeWorkRequestBuilder<InitWithdrawalWordsJob>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(worker)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(worker.id).observe(this, Observer {
+            if (it.state == WorkInfo.State.SUCCEEDED) {
+                Log.d(TAG, "initWithdrawalATMWordsJob() state: SUCCEEDED")
+                SharedPreferenceManager.setWithdrawalATMWords(this)
+            }
+        })
+    }
+
+    private fun initFiltersJob() {
+        val worker = OneTimeWorkRequestBuilder<InitFiltersJob>()
+            .setBackoffCriteria(BackoffPolicy.LINEAR, OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(worker)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(worker.id).observe(this, Observer {
+            if (it.state == WorkInfo.State.SUCCEEDED) {
+                Log.d(TAG, "initFiltersJob() state: SUCCEEDED")
+                SharedPreferenceManager.setInitFilters(this)
+            }
+        })
+    }
+
+    private fun initCategoriesJob() {
+        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesFirebaseJob>().build()
+        WorkManager.getInstance(this).enqueue(initCategoriesWorker)
+    }
+
+    private fun initFirebaseStoresJob() {
+        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresFirebaseJob>().build()
+        WorkManager.getInstance(this).enqueue(initStoresWorker)
     }
 
 

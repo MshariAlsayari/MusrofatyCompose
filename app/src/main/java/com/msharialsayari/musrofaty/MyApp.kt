@@ -43,7 +43,6 @@ class MyApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         initAppCheckFirebase()
-        initJobs()
         initUpdateAppWidgetJobWorker()
 
     }
@@ -54,70 +53,6 @@ class MyApp : Application(), Configuration.Provider {
         firebaseAppCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
-    }
-
-    private fun initJobs() {
-        if (!SharedPreferenceManager.sendersInitiated(this)) {
-            initAppJob()
-            SharedPreferenceManager.setSendersInitiated(this)
-        }
-
-        if (!SharedPreferenceManager.transferJobInitiated(this)) {
-            initTransferSmsJob()
-            SharedPreferenceManager.setTransferJobInitiated(this)
-        }
-
-        if (!SharedPreferenceManager.newWordDetectors(this)) {
-            initNewWordDetectorJob()
-            SharedPreferenceManager.setNewWordDetectors(this)
-        }
-
-        if (!SharedPreferenceManager.withdrawalATMWords(this)) {
-            initWithdrawalATMWordsJob()
-            SharedPreferenceManager.setWithdrawalATMWords(this)
-        }
-
-        if (!SharedPreferenceManager.initFilters(this)) {
-            initFiltersJob()
-            SharedPreferenceManager.setInitFilters(this)
-        }
-        initCategoriesJob()
-        initFirebaseStoresJob()
-    }
-
-    private fun initAppJob() {
-        val initAppWorker = OneTimeWorkRequestBuilder<InitAppJob>().build()
-        WorkManager.getInstance(this).enqueue(initAppWorker)
-    }
-
-    private fun initTransferSmsJob() {
-        val worker = OneTimeWorkRequestBuilder<InitTransferWordsJob>().build()
-        WorkManager.getInstance(this).enqueue(worker)
-    }
-
-    private fun initNewWordDetectorJob() {
-        val worker = OneTimeWorkRequestBuilder<InitNewWordDetectorJob>().build()
-        WorkManager.getInstance(this).enqueue(worker)
-    }
-
-    private fun initWithdrawalATMWordsJob() {
-        val worker = OneTimeWorkRequestBuilder<InitWithdrawalWordsJob>().build()
-        WorkManager.getInstance(this).enqueue(worker)
-    }
-
-    private fun initFiltersJob() {
-        val worker = OneTimeWorkRequestBuilder<InitFiltersJob>().build()
-        WorkManager.getInstance(this).enqueue(worker)
-    }
-
-    private fun initCategoriesJob() {
-        val initCategoriesWorker = OneTimeWorkRequestBuilder<InitCategoriesFirebaseJob>().build()
-        WorkManager.getInstance(this).enqueue(initCategoriesWorker)
-    }
-
-    private fun initFirebaseStoresJob() {
-        val initStoresWorker = OneTimeWorkRequestBuilder<InitStoresFirebaseJob>().build()
-        WorkManager.getInstance(this).enqueue(initStoresWorker)
     }
 
 

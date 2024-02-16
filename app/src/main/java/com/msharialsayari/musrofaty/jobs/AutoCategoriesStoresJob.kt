@@ -15,6 +15,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpd
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsContainsStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoresCategoriesKeysUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
+import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -38,18 +39,35 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
 
     override suspend fun doWork(): Result {
-        categories = categoryRepo.getCategoriesList()
-        getStoresCategoriesKeysUseCase().collect {
-            when (it) {
-                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
-                is Response.Loading -> Log.d(TAG, "Loading...")
-                is Response.Success -> getList(it.data)
-            }
 
+        Log.d(TAG, "doWork() running...")
+
+        if (runAttemptCount > Constants.ATTEMPTS_COUNT) {
+            Log.d(TAG, "doWork() Result.failure")
+            return Result.failure()
         }
-        if(categories.isNotEmpty() && list.isNotEmpty()){
-            categorising()
+
+        try {
+            categories = categoryRepo.getCategoriesList()
+            getStoresCategoriesKeysUseCase().collect {
+                when (it) {
+                    is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
+                    is Response.Loading -> Log.d(TAG, "Loading...")
+                    is Response.Success -> getList(it.data)
+                }
+
+            }
+            if(categories.isNotEmpty() && list.isNotEmpty()){
+                categorising()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d(TAG, "doWork() Result.retry")
+            return Result.retry()
         }
+
+
+        Log.d(TAG, "doWork() Result.success")
         return Result.success()
     }
 

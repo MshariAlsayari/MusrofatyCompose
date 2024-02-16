@@ -8,6 +8,7 @@ import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_firebase_database.StoreFirebaseEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.StoreFirebaseRepo
+import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -26,13 +27,29 @@ class InitStoresFirebaseJob @AssistedInject constructor(
     }
     override suspend fun doWork(): Result {
 
-        storeFirebaseRepo.getStoresFromFirebase().collect{
-            when (it) {
-                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
-                is Response.Loading -> Log.d(TAG, "Loading...")
-                is Response.Success -> insertList(it.data)
-            }
+        Log.d(TAG, "doWork() running...")
+
+        if (runAttemptCount > Constants.ATTEMPTS_COUNT) {
+            Log.d(TAG, "doWork() Result.failure")
+            return Result.failure()
         }
+
+        try {
+            storeFirebaseRepo.getStoresFromFirebase().collect{
+                when (it) {
+                    is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
+                    is Response.Loading -> Log.d(TAG, "Loading...")
+                    is Response.Success -> insertList(it.data)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d(TAG, "doWork() Result.retry")
+            return Result.retry()
+        }
+
+
+        Log.d(TAG, "doWork() Result.success")
         return Result.success()
     }
 

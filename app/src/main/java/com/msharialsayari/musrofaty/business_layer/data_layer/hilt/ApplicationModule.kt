@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.business_layer.data_layer.hilt
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.*
 import dagger.Module
 import dagger.Provides
@@ -48,6 +49,13 @@ object ApplicationModule {
 
             )
             .build()
+
+
+    @Singleton
+    @Provides
+    fun provideWorManager(@ApplicationContext  context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
 
     @Singleton
     @Provides

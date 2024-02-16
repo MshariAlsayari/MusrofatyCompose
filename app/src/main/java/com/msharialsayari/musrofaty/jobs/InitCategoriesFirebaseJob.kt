@@ -9,6 +9,7 @@ import com.msharialsayari.musrofaty.base.Response
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.toCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
+import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -26,19 +27,34 @@ class InitCategoriesFirebaseJob @AssistedInject constructor(
         private val TAG = InitCategoriesFirebaseJob::class.java.simpleName
     }
     override suspend fun doWork(): Result {
-        categoryRepo.getCategoriesFromFirestore().collect{
-            when (it) {
-                is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
-                is Response.Loading -> Log.d(TAG, "Loading...")
-                is Response.Success -> insertList(it.data)
-            }
+
+        Log.d(TAG, "doWork() running...")
+
+        if (runAttemptCount > Constants.ATTEMPTS_COUNT) {
+            Log.d(TAG, "doWork() Result.failure")
+            return Result.failure()
         }
 
+        try {
+            categoryRepo.getCategoriesFromFirestore().collect{
+                when (it) {
+                    is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
+                    is Response.Loading -> Log.d(TAG, "Loading...")
+                    is Response.Success -> insertList(it.data)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d(TAG, "doWork() Result.retry")
+            return Result.retry()
+        }
+
+        Log.d(TAG, "doWork() Result.success")
         return Result.success()
     }
 
     private suspend fun insertList(categories: List<CategoryEntity>) {
-        Log.d(TAG,  "insertList()..." + "categories:" + categories.size)
+        Log.d(TAG,  "insertList()" + "categories:" + categories.size)
         val list = categories.map { it.toCategoryModel() }.toList()
         categoryRepo.insert(list)
     }

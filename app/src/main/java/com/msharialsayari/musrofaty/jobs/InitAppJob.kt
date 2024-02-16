@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.jobs
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -10,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.Conte
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.SendersKey
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.ContentRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SenderRepo
+import com.msharialsayari.musrofaty.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -21,9 +23,29 @@ class InitAppJob @AssistedInject constructor(
     private val contentRepo: ContentRepo,
     private val senderRepo: SenderRepo,
 ) : CoroutineWorker(appContext, workerParams) {
+
+    companion object {
+        private val TAG = InitAppJob::class.java.simpleName
+    }
     override suspend fun doWork(): Result {
-        initContent()
-        initSenders()
+
+        Log.d(TAG, "doWork() running...")
+
+        if (runAttemptCount > Constants.ATTEMPTS_COUNT) {
+            Log.d(TAG, "doWork() Result.failure")
+            return Result.failure()
+        }
+
+        try {
+            initContent()
+            initSenders()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d(TAG, "doWork() Result.retry")
+            return Result.retry()
+        }
+
+        Log.d(TAG, "doWork() Result.success")
         return Result.success()
     }
 

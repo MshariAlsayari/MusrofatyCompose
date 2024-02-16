@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.jobs
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -19,13 +20,32 @@ class InitTransferWordsJob @AssistedInject constructor(
     private val wordDetectorRepo: WordDetectorRepo,
 ) : CoroutineWorker(appContext, workerParams) {
 
+    companion object {
+        private val TAG = InitTransferWordsJob::class.java.simpleName
+    }
+
     override suspend fun doWork(): Result {
-        wordDetectorRepo.deleteAll()
-        initIncomesWords()
-        initExpensesPurchasesWords()
-        initExpensesOutGoingTransferWords()
-        initExpensesPayBillsWords()
-        initCurrencyWords()
+        Log.d(TAG, "doWork() running...")
+
+        if (runAttemptCount > Constants.ATTEMPTS_COUNT) {
+            Log.d(TAG, "doWork() Result.failure")
+            return Result.failure()
+        }
+
+        try {
+            wordDetectorRepo.deleteAll()
+            initIncomesWords()
+            initExpensesPurchasesWords()
+            initExpensesOutGoingTransferWords()
+            initExpensesPayBillsWords()
+            initCurrencyWords()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d(TAG, "doWork() Result.retry")
+            return Result.retry()
+        }
+
+        Log.d(TAG, "doWork() Result.success")
         return Result.success()
     }
 
