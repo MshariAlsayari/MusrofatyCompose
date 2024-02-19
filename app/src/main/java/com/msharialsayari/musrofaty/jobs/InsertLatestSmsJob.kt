@@ -4,6 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertLatestSmsUseCase
 import com.msharialsayari.musrofaty.utils.Constants
@@ -32,7 +36,17 @@ class InsertLatestSmsJob@AssistedInject constructor(
         }
 
         try {
-            insertLatestSmsUseCase.invoke()
+           val sms =  insertLatestSmsUseCase.invoke()
+            sms?.let {
+                val inputData = Data.Builder()
+                    .putString(AutoCategoriesStoresJob.STORE_NAME_KEY, it.storeName)
+                    .build()
+                val worker =
+                    OneTimeWorkRequestBuilder<AutoCategoriesStoresJob>().setInputData(inputData)
+                        .build()
+                WorkManager.getInstance(appContext).enqueue(worker)
+            }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d(TAG, "doWork() Result.retry")

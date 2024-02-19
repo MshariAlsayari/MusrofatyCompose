@@ -1,6 +1,8 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.usecase
 
 import android.content.Context
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -13,7 +15,7 @@ class InsertLatestSmsUseCase @Inject constructor(
     @ApplicationContext val context: Context
     ) {
 
-    suspend operator fun invoke(){
+    suspend operator fun invoke(): SmsModel? {
         return smsRepo.insertLatestSms()
     }
 }

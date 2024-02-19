@@ -13,6 +13,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEnt
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.CategoryRepo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsContainsStoreUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoreAndCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetStoresCategoriesKeysUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.utils.Constants
@@ -24,6 +25,7 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParams: WorkerParameters,
     private val getAllSmsContainsStoreUseCase: GetAllSmsContainsStoreUseCase,
+    private val getStoreAndCategoryUseCase: GetStoreAndCategoryUseCase,
     private val categoryRepo:CategoryRepo,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
@@ -32,10 +34,12 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
     companion object {
         private val TAG = AutoCategoriesStoresJob::class.java.simpleName
+        const val STORE_NAME_KEY = "STORE_NAME_KEY"
     }
 
     var categories = emptyList<CategoryEntity>()
     var list : List<StoresCategoriesModel> = emptyList()
+    var storeName:String? = null
 
 
     override suspend fun doWork(): Result {
@@ -49,6 +53,7 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
         try {
             categories = categoryRepo.getCategoriesList()
+            storeName  = inputData.getString(STORE_NAME_KEY)
             getStoresCategoriesKeysUseCase().collect {
                 when (it) {
                     is Response.Failure -> Log.d(TAG, "Failure... " + it.errorMessage)
@@ -58,7 +63,12 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
             }
             if(categories.isNotEmpty() && list.isNotEmpty()){
-                categorising()
+                if (storeName != null){
+                    categorisingExistedStoreName(storeName!!)
+                }else{
+                    categorising()
+                }
+
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -69,6 +79,27 @@ class AutoCategoriesStoresJob @AssistedInject constructor(
 
         Log.d(TAG, "doWork() Result.success")
         return Result.success()
+    }
+
+    private suspend fun categorisingExistedStoreName(storeName: String) {
+        val storeCategory = getStoreAndCategoryUseCase(storeName)
+        if(storeCategory.category == null){
+            Log.d(TAG, "categorisingExistedStoreName()...storeName: $storeName")
+            list.map {model->
+                model.keysSearch.map {key->
+                    if(storeName.contains(key, ignoreCase = true)){
+                        val storeModel = StoreModel(name = storeName, categoryId = model.categoryId)
+                        addOrUpdateStoreUseCase.invoke(storeModel)
+                        postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
+                        return
+                    }
+
+                }
+
+            }
+
+        }
+
     }
 
     private  fun getList(stores: List<StoresCategoriesModel>) {

@@ -408,11 +408,14 @@ class SmsRepo @Inject constructor(
         return SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
     }
 
-    suspend fun insertLatestSms() {
+    suspend fun insertLatestSms():SmsModel? {
         val smsEntity = datasource.loadLatestSms(context)
+        var smsModel:SmsModel? = null
         smsEntity?.let {
             dao.insertAll(it)
+            smsModel = fillSmsModel(it.toSmsModel())
         }
+        return smsModel
     }
 
     suspend fun getAllSmsContainsStore(storeName: String = ""): List<SmsModel> {
