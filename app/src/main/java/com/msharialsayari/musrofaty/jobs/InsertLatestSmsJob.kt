@@ -41,9 +41,11 @@ class InsertLatestSmsJob@AssistedInject constructor(
                 val inputData = Data.Builder()
                     .putString(AutoCategoriesStoresJob.STORE_NAME_KEY, it.storeName)
                     .build()
-                val worker =
-                    OneTimeWorkRequestBuilder<AutoCategoriesStoresJob>().setInputData(inputData)
+
+                val worker = OneTimeWorkRequestBuilder<AutoCategoriesStoresJob>()
+                        .setInputData(inputData)
                         .build()
+
                 WorkManager.getInstance(appContext).enqueue(worker)
             }
 
