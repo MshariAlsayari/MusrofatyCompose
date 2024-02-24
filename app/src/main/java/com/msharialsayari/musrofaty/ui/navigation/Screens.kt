@@ -23,6 +23,7 @@ sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title)
 
     object SmsListScreen   : Screen("sms_list_screen",title = R.string.category_title_screen)
     object SmsTypesScreen   : Screen("sms_types_screen",title = R.string.pref_managment_sms_types_title)
+    object SmsDetectorToolScreen   : Screen("sms_detector_tool_screen",title = R.string.pref_managment_sms_tool_title)
 
 }
 

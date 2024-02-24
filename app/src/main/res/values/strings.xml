@@ -104,6 +104,8 @@
     <string name="pref_managment_update_summary">navigate to Play Store to get last update</string>
     <string name="pref_managment_statistics_title">Statistics</string>
     <string name="pref_managment_statistics_summary">ability to build charts to know your spending on a specific category</string>
+    <string name="pref_managment_sms_tool_title">Sms tool</string>
+    <string name="pref_managment_sms_tool_summary">Sms tool detector</string>
 
     <!--filter options-->
     <string-array name="filter_options">
@@ -291,6 +293,11 @@
     <!--   Message Dialog -->
     <string name="no_currency_message">The app can\'t detect these messages currencies, you can add currencies through Settings > Analysis > Currencies</string>
     <string name="no_currency">No currency</string>
+
+
+    <!--   Sms Detector Screen  -->
+    <string name="sms_detector_tool_title">Sms tool</string>
+
 
 
 

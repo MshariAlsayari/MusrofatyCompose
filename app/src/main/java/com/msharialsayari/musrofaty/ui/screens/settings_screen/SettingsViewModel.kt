@@ -51,6 +51,10 @@ class SettingsViewModel @Inject constructor(
         navigator.navigate(Screen.SmsTypesScreen.route)
     }
 
+    fun navigateToSmsToolDetectorScreen(){
+        navigator.navigate(Screen.SmsDetectorToolScreen.route)
+    }
+
     fun onClickOnUpdatePreference(activity: Activity){
         var packageName =  activity.packageName
         if (BuildConfig.DEBUG) {

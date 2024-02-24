@@ -106,6 +106,8 @@
     <string name="pref_managment_update_summary">الذهاب إلى متجر Play Store للحصول على آخر نسخة من التطبيق</string>
     <string name="pref_managment_statistics_title">الإحصائيات</string>
     <string name="pref_managment_statistics_summary">إمكانية إنشاء رسوم بيانية لمعرفة مقدار صرفك على فئة معينة</string>
+    <string name="pref_managment_sms_tool_title">أداة الرسائل</string>
+    <string name="pref_managment_sms_tool_summary">أداة تحقق الرسائل</string>
 
 
     <!--filter options-->
@@ -303,5 +305,8 @@
     <!--   Message Dialog -->
     <string name="no_currency_message">هذه الرسائل لم يتمكن التطبيق من التعرف على عملاتها، يمكن إضافة عملة عن طريق الذهاب إلى الإعدادات > التحليل > العملات</string>
     <string name="no_currency">لاتوجد عملة</string>
+
+    <!--   Sms Detector Screen  -->
+    <string name="sms_detector_tool_title">أداة الرسائل</string>
 
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.msharialsayari.musrofaty.BuildConfig
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 
@@ -16,16 +17,17 @@ enum class PreferenceListEnum {
     Analysis,
     SmsTypes,
     Statistics,
+    SmsTool,
     Update
 
 }
 
 @Composable
-fun PreferenceList(modifier: Modifier =Modifier, onClick:(PreferenceListEnum)->Unit){
-    Column (
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())) {
+fun PreferenceList(
+    modifier: Modifier = Modifier,
+    onClick: (PreferenceListEnum) -> Unit
+) {
+    Column(modifier = modifier) {
         RowComponent.PreferenceRow(
             iconId = R.drawable.ic_settings,
             header = stringResource(id = R.string.pref_appearance_title),
@@ -60,6 +62,17 @@ fun PreferenceList(modifier: Modifier =Modifier, onClick:(PreferenceListEnum)->U
             body = stringResource(id = R.string.pref_managment_statistics_summary),
             onClick = { onClick(PreferenceListEnum.Statistics) }
         )
+
+
+        if (BuildConfig.DEBUG) {
+            RowComponent.PreferenceRow(
+                iconId = R.drawable.ic_settings,
+                header = stringResource(id = R.string.pref_managment_sms_tool_title),
+                body = stringResource(id = R.string.pref_managment_sms_tool_summary),
+                onClick = { onClick(PreferenceListEnum.SmsTool) }
+            )
+        }
+
 
         RowComponent.PreferenceRow(
             iconId = R.drawable.ic_update,
