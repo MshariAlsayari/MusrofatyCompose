@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import kotlinx.coroutines.flow.Flow
 
 
@@ -34,8 +35,15 @@ interface FilterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFilterWord(vararg filterWords: FilterWordEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFilterAmount(model: FilterAmountEntity)
+
     @Query("DELETE FROM FilterWordEntity  WHERE wordId =:id ")
     suspend fun deleteFilterWord(id: Int)
+
+    @Query("DELETE FROM FilterAmountEntity  WHERE wordId =:id ")
+    suspend fun deleteFilterAmount(id: Int)
 
 
 }

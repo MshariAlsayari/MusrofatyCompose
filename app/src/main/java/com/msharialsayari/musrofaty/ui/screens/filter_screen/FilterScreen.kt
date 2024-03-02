@@ -8,10 +8,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -20,9 +22,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AddFilterBottomSheetCompose
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AmountFilterBottomSheetCompose
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.FilterBottomSheetType
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
@@ -37,6 +43,8 @@ fun FilterScreen(){
     val keyboardController = LocalSoftwareKeyboardController.current
     val scaffoldState = rememberScaffoldState()
     val selectedFilter = remember { mutableStateOf<FilterWordModel?>(null) }
+    val bottomSheetType =  uiState.bottomSheetType
+    val isAddAmountFilter = uiState.filterAmountModel == null
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -52,16 +60,30 @@ fun FilterScreen(){
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
-            AddFilterBottomSheetCompose(item = selectedFilter.value) { item, newString ->
-                selectedFilter.value = null
-                viewModel.addFilter(item, newString.trim())
-                coroutineScope.launch {
-                    BottomSheetComponent.handleVisibilityOfBottomSheet(
-                        sheetState,
-                        false
-                    )
+            when(bottomSheetType){
+                FilterBottomSheetType.WORD ->   AddFilterBottomSheetCompose(item = selectedFilter.value) { item, newString ->
+                    selectedFilter.value = null
+                    viewModel.addFilter(item, newString.trim())
+                    coroutineScope.launch {
+                        BottomSheetComponent.handleVisibilityOfBottomSheet(
+                            sheetState,
+                            false
+                        )
+                    }
                 }
+                FilterBottomSheetType.AMOUNT -> AmountFilterBottomSheetCompose(item = uiState.filterAmountModel) { item, newString ->
+                    selectedFilter.value = null
+                    coroutineScope.launch {
+                        viewModel.addAmountFilter(item, newString.trim())
+                        BottomSheetComponent.handleVisibilityOfBottomSheet(
+                            sheetState,
+                            false
+                        )
+                    }
+                }
+                null -> {}
             }
+
         },
     ){
 
@@ -82,16 +104,55 @@ fun FilterScreen(){
                 ) {
                 FilterTitle(viewModel)
                 FiltersInstructions()
-                FiltersListHeader(onAddFilterIconClicked = {
+
+                ListHeader(
+                    title = stringResource(id = R.string.filter_add_word),
+                    icon = if(isAddAmountFilter) Icons.Default.Add else Icons.Default.Clear
+                ) {
+                    selectedFilter.value = null
+                    keyboardController?.hide()
+                    if(isAddAmountFilter){
+                        coroutineScope.launch {
+                            BottomSheetComponent.handleVisibilityOfBottomSheet(
+                                sheetState,
+                                true
+                            )
+                        }
+                    }else{
+                        viewModel.deleteFilterAmount()
+                        coroutineScope.launch {
+                            BottomSheetComponent.handleVisibilityOfBottomSheet(
+                                sheetState,
+                                false
+                            )
+                        }
+                    }
+
+                }
+
+                if(isAddAmountFilter){
+                    TextComponent.PlaceholderText(text =stringResource(id = R.string.no_result) )
+                }else{
+                    RowComponent.FilterWordRow(
+                        title = uiState.filterAmountModel?.amount ?: "",
+                        value = stringResource(id = uiState.filterAmountModel!!.amountOperator.valueString)
+                    )
+                }
+
+
+                ListHeader(
+                    title = stringResource(id = R.string.filter_add_word),
+                    icon = Icons.Default.Add
+                ) {
                     selectedFilter.value = null
                     keyboardController?.hide()
                     coroutineScope.launch {
                         BottomSheetComponent.handleVisibilityOfBottomSheet(
                             sheetState,
-                            !sheetState.isVisible
+                            true
                         )
                     }
-                })
+                }
                 FiltersList(viewModel){
                     selectedFilter.value = it
                     keyboardController?.hide()
@@ -151,7 +212,10 @@ fun FilterTitle(viewModel: FilterViewModel) {
 
 @ExperimentalComposeUiApi
 @Composable
-fun FiltersListHeader(onAddFilterIconClicked:()->Unit) {
+fun ListHeader(
+    title:String,
+    icon: ImageVector,
+    onAddFilterIconClicked:()->Unit) {
 
 
     Column(modifier = Modifier
@@ -159,8 +223,8 @@ fun FiltersListHeader(onAddFilterIconClicked:()->Unit) {
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.default_margin16)), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextComponent.HeaderText(text = stringResource(id = R.string.filter_add_word))
-                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.clickable {
+                TextComponent.HeaderText(text = title)
+                Icon(icon, contentDescription = null, modifier = Modifier.clickable {
                     onAddFilterIconClicked()
                 })
             }
@@ -172,25 +236,10 @@ fun FiltersListHeader(onAddFilterIconClicked:()->Unit) {
 
 }
 
-@Composable
-fun AddFilterBottomSheetCompose(item:FilterWordModel?=null, onActionClicked:(FilterWordModel?, String)->Unit){
-    val model = TextFieldBottomSheetModel(
-        title = if(item != null ) R.string.filter_modify_word else R.string.filter_add_word,
-        textFieldValue = item?.word ?: "",
-        buttonText = R.string.common_add,
-        onActionButtonClicked = { value ->
-            onActionClicked(item, value)
-        })
-
-    BottomSheetComponent.TextFieldBottomSheetComponent(model = model)
-
-}
-
-
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi
 @Composable
-fun FiltersList(viewModel: FilterViewModel,
+private fun FiltersList(viewModel: FilterViewModel,
                 onWordRowClicked:(FilterWordModel)->Unit){
 
 
@@ -212,8 +261,8 @@ fun FiltersList(viewModel: FilterViewModel,
             list = filterWords,
             view = { item ->
                 RowComponent.FilterWordRow(
-                    word = item.word,
-                    logicOperators = if(viewModel.isLastItem(item)) null else item.logicOperator
+                    title = item.word,
+                    value = if(viewModel.isLastItem(item)) null else item.logicOperator.name
                 )
             },
             dividerView = { DividerComponent.HorizontalDividerComponent() },

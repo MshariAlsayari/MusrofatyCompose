@@ -6,11 +6,10 @@ import javax.inject.Singleton
 
 
 @Singleton
-class DeleteFilterWordUseCase @Inject constructor(
+class DeleteFilterAmountUseCase @Inject constructor(
     private val filterRepo: FilterRepo
 ) {
-
     suspend operator fun invoke(id: Int) {
-        filterRepo.deleteFilterWord(id)
+        filterRepo.deleteFilterAmount(id)
     }
 }

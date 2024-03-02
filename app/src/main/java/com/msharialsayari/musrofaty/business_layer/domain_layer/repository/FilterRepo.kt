@@ -9,11 +9,13 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_da
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.toFilterWithWordsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWithWordsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterAdvancedEntity
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterAmountEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toFilterWordEntity
 import kotlinx.coroutines.flow.Flow
@@ -85,8 +87,16 @@ class FilterRepo @Inject constructor(
         filterDao.insertFilterWord(*filters.toTypedArray())
     }
 
+    suspend fun saveFilterAmount(model: FilterAmountModel) {
+        filterDao.insertFilterAmount(model.toFilterAmountEntity())
+    }
+
     suspend fun deleteFilterWord(id: Int) {
         filterDao.deleteFilterWord(id)
+    }
+
+    suspend fun deleteFilterAmount(id: Int) {
+        filterDao.deleteFilterAmount(id)
     }
 
 

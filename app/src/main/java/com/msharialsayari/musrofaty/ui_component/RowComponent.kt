@@ -1,24 +1,14 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,8 +25,6 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_dat
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.utils.DateUtils
-import com.msharialsayari.musrofaty.utils.DateUtils.DEFAULT_DATE_PATTERN
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import com.msharialsayari.musrofaty.utils.mirror
 
@@ -246,8 +234,8 @@ object RowComponent {
     @Composable
     fun FilterWordRow(
         modifier: Modifier = Modifier,
-        word: String,
-        logicOperators: LogicOperators? = null,
+        title: String,
+        value: String? = null,
     ) {
         Row(
             modifier = modifier
@@ -257,13 +245,13 @@ object RowComponent {
         ) {
             TextComponent.BodyText(
                 modifier = Modifier.weight(1f),
-                text = word
+                text = title
             )
 
-            if (logicOperators != null)
+            if (value != null)
                 TextComponent.ClickableText(
                     modifier = Modifier.weight(.5f),
-                    text = logicOperators.value,
+                    text = value,
                     alignment = TextAlign.End
 
                 )

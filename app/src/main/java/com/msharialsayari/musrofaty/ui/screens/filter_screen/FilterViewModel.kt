@@ -5,12 +5,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.AmountOperators
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterAmountUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteFilterWordUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFilterUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterAmountUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterWordUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
@@ -28,8 +32,10 @@ class FilterViewModel@Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
     private val insertFilterUseCase: InsertFilterUseCase,
     private val insertFilterWordUseCase: InsertFilterWordUseCase,
+    private val insertFilterAmountUseCase: InsertFilterAmountUseCase,
     private val deleteFilterUseCase: DeleteFilterUseCase,
     private val deleteFilterWordUseCase: DeleteFilterWordUseCase,
+    private val deleteFilterAmountUseCase: DeleteFilterAmountUseCase,
     private val navigator: AppNavigator,
     private val savedStateHandle: SavedStateHandle,
     @ApplicationContext val context: Context
@@ -75,7 +81,11 @@ class FilterViewModel@Inject constructor(
             val result = getFilterUseCase(filterId)
             result?.let {model->
                 _uiState.update {
-                    it.copy(filterModel = model.filter, filterWords = model.words)
+                    it.copy(
+                        filterModel = model.filter,
+                        filterWords = model.words,
+                        filterAmountModel = model.amountFilter
+                    )
                 }
             }
 
@@ -109,16 +119,17 @@ class FilterViewModel@Inject constructor(
     }
 
 
-
-    fun addFilter(item:FilterWordModel?, newWord: String) {
+    fun addFilter(
+        item: FilterWordModel?,
+        newWord: String) {
         viewModelScope.launch {
-            val validateWord = newWord.replace(",","")
+            val validateWord = newWord.replace(",", "")
             val filterId = _uiState.value.filterId
             val words = _uiState.value.filterWords.map { it.word }
-            if(validateWord.isNotEmpty() && !words.contains(newWord)){
+            if (validateWord.isNotEmpty() && !words.contains(newWord)) {
                 val newList: List<FilterWordModel>
                 //create a new word
-                if(item == null){
+                if (item == null) {
                     val model = FilterWordModel(
                         word = newWord,
                         filterId = filterId,
@@ -129,7 +140,7 @@ class FilterViewModel@Inject constructor(
                         add(model)
                     }
 
-                }else{   //update an existed word
+                } else {   //update an existed word
                     val index = _uiState.value.filterWords.indexOfFirst { it.word == item.word }
                     val newItem = _uiState.value.filterWords[index].copy(word = newWord)
                     newList = _uiState.value.filterWords.toMutableList().apply {
@@ -140,6 +151,34 @@ class FilterViewModel@Inject constructor(
 
                 _uiState.update {
                     it.copy(filterWords = newList)
+                }
+
+            }
+        }
+
+    }
+
+
+    fun addAmountFilter(
+        item: FilterAmountModel?,
+        newAmount: String) {
+        viewModelScope.launch {
+            val filterId = _uiState.value.filterId
+            val filterAmountModel:FilterAmountModel
+            if (newAmount.isNotEmpty()) {
+                //create a new word
+                filterAmountModel = if (item == null || _uiState.value.filterAmountModel == null ) {
+                    FilterAmountModel(
+                        amount = newAmount,
+                        filterId = filterId,
+                        amountOperator = AmountOperators.EQUAL_OR_MORE
+                    )
+                } else {   //update an existed word
+                    _uiState.value.filterAmountModel?.copy(amount = newAmount)!!
+                }
+
+                _uiState.update {
+                    it.copy(filterAmountModel = filterAmountModel)
                 }
 
             }
@@ -159,6 +198,19 @@ class FilterViewModel@Inject constructor(
 
              deleteFilterWordUseCase.invoke(word.wordId)
          }
+    }
+
+    fun deleteFilterAmount() {
+        viewModelScope.launch {
+            val model = _uiState.value.filterAmountModel
+            model?.let {
+                deleteFilterAmountUseCase.invoke(it.amountId)
+            }
+            _uiState.update {
+                it.copy(filterAmountModel = null)
+            }
+
+        }
     }
 
     fun navigateUp(){
@@ -204,6 +256,10 @@ class FilterViewModel@Inject constructor(
 
             words.map { word->
                 insertFilterWordUseCase.invoke(word)
+            }
+
+            _uiState.value.filterAmountModel?.let {
+                insertFilterAmountUseCase.invoke(it)
             }
         }
     }

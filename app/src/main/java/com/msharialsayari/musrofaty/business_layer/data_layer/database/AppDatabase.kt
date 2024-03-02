@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_d
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.content_database.ContentEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAdvancedEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterAmountEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterDao
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.filter_database.FilterWordEntity
@@ -32,13 +33,14 @@ import com.msharialsayari.musrofaty.layer_data.database.Convertors
                 FilterEntity::class,
                 FilterAdvancedEntity::class,
                 FilterWordEntity::class,
+                FilterAmountEntity::class,
                 CategoryEntity::class,
                 StoreEntity::class,
                 WordDetectorEntity::class,
                 SenderEntity::class,
                 ContentEntity::class,
                 StoreFirebaseEntity::class,],
-    version = 28,
+    version = 29,
     exportSchema = false
 )
 @TypeConverters(Convertors::class)
@@ -249,6 +251,12 @@ val MIGRATION_27_28= object : Migration(27,28) {
         database.execSQL("DROP TABLE `FilterEntity`" )
         database.execSQL("CREATE TABLE `FilterEntity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL,`senderId` INTEGER NOT NULL DEFAULT(0) )")
         database.execSQL("CREATE TABLE `FilterWordEntity` (`wordId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`filterId` INTEGER NOT NULL DEFAULT(0), `word` TEXT NOT NULL,`logicOperator` TEXT NOT NULL DEFAULT('AND') )")
+    }
+}
+
+val MIGRATION_28_29= object : Migration(28,29) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE `FilterAmountEntity` (`amountId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,`filterId` INTEGER NOT NULL DEFAULT(0), `amount` TEXT NOT NULL,`amountOperator` TEXT NOT NULL DEFAULT('EQUAL_OR_MORE') )")
     }
 }
 
