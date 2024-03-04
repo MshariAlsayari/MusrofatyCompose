@@ -419,7 +419,9 @@ class SenderSmsListViewModel @Inject constructor(
             filterTimeId = uiState.value.selectedFilterTimeOption?.id ?: 0,
             filterWord = getFilterWord(),
             startDate = uiState.value.startDate,
-            endDate = uiState.value.endDate
+            endDate = uiState.value.endDate,
+            filterId = _uiState.value.selectedFilter?.id ?: -1,
+            isFilter =  true
         )
     }
 

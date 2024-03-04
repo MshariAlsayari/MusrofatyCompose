@@ -115,7 +115,7 @@ class SmsRepo @Inject constructor(
 
         }
 
-        returnedList = returnedList.filter {model->
+        returnedList = returnedList.filter { model->
             when(filterAmountModel?.amountOperator){
                 AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
                 AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount

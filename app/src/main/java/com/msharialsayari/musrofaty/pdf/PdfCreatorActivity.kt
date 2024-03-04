@@ -19,14 +19,17 @@ import androidx.core.content.FileProvider
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.notifications.makeStatusNotification
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import com.tejpratapsingh.pdfcreator.utils.PDFUtil.PDFUtilListener
 import com.tejpratapsingh.pdfcreator.views.PDFBody
 import com.tejpratapsingh.pdfcreator.views.PDFHeaderView
-import com.tejpratapsingh.pdfcreator.views.basic.*
+import com.tejpratapsingh.pdfcreator.views.basic.PDFHorizontalView
+import com.tejpratapsingh.pdfcreator.views.basic.PDFImageView
+import com.tejpratapsingh.pdfcreator.views.basic.PDFLineSeparatorView
+import com.tejpratapsingh.pdfcreator.views.basic.PDFTextView
+import com.tejpratapsingh.pdfcreator.views.basic.PDFVerticalView
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.util.Locale
@@ -42,7 +45,8 @@ class PdfCreatorActivity : BasePDFCreator() {
          const val FILTER_WORD = "FILTER_WORD"
          const val START_TIME = "START_TIME"
          const val END_TIME = "END_TIME"
-
+         const val FILTER_ID = "FILTER_ID"
+        const val IS_FILTER = "IS_FILTER"
         fun startPdfCreatorActivity(activity: Activity, pdfBundle: PdfCreatorViewModel.PdfBundle) {
             val bundle = Bundle()
 
@@ -51,7 +55,8 @@ class PdfCreatorActivity : BasePDFCreator() {
             bundle.putString(FILTER_WORD, pdfBundle.filterWord)
             bundle.putLong(START_TIME, pdfBundle.startDate)
             bundle.putLong(END_TIME, pdfBundle.endDate)
-
+            bundle.putInt(FILTER_ID, pdfBundle.filterId)
+            bundle.putBoolean(IS_FILTER, pdfBundle.isFilter)
             activity.startActivity(Intent(activity, PdfCreatorActivity::class.java).putExtras(bundle)
             )
         }
@@ -77,7 +82,9 @@ class PdfCreatorActivity : BasePDFCreator() {
             viewModel.filterTimeId = it.getInt(FILTER_TIME_OPTION, 0)
             viewModel.filterWord   = it.getString(FILTER_WORD)?:""
             viewModel.startDate    = it.getLong(START_TIME,0L)
-            viewModel. endDate      = it.getLong(END_TIME,0L)
+            viewModel.endDate     = it.getLong(END_TIME,0L)
+            viewModel.filterId    = it.getInt(FILTER_ID,-1)
+            viewModel.isFilter    = it.getBoolean(IS_FILTER)
             viewModel.getAllBanksSms()
         }
 
