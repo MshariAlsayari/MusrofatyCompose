@@ -3,6 +3,7 @@ package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen
 import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
@@ -45,6 +46,7 @@ data class SenderSmsListUiState(
         var selectedFilter: SelectedItemModel? = null,
         var filters: List<FilterModel> = emptyList(),
         var query: String = "",
+        var amountQuery: FilterAmountModel? = null,
 
         //Date picker
         var startDate: Long = 0,

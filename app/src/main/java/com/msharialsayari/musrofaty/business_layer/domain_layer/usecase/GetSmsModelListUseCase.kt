@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.usecase
 
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.repository.SmsRepo
 import com.msharialsayari.musrofaty.utils.DateUtils
@@ -13,17 +14,30 @@ class GetSmsModelListUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        senderId: Int?= null,
+        senderId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
-        isDeleted: Boolean?= null,
-        isFavorite:Boolean?=null,
-        isFilter:Boolean=false,
+        isDeleted: Boolean? = null,
+        isFavorite: Boolean? = null,
+        isFilter: Boolean = false,
         query: String = "",
+        filterAmountModel: FilterAmountModel? = null,
         startDate: Long = 0,
         endDate: Long = 0,
-        categoryId: Int?=null,
-        storeName: String?=null,
+        categoryId: Int? = null,
+        storeName: String? = null,
     ): List<SmsModel> {
-        return smsRepo.getAllSmsModel(senderId, filterOption, isDeleted,isFavorite,isFilter,query, startDate, endDate,categoryId,storeName)
+        return smsRepo.getAllSmsModel(
+            senderId,
+            filterOption,
+            isDeleted,
+            isFavorite,
+            isFilter,
+            query,
+            filterAmountModel,
+            startDate,
+            endDate,
+            categoryId,
+            storeName
+        )
     }
 }

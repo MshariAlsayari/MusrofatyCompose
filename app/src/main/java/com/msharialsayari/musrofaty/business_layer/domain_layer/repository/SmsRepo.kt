@@ -4,15 +4,16 @@ import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.filter
 import androidx.paging.map
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsDao
-import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.toSmsModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.data_layer.sms.SmsDataSource
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.AmountOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAdvancedModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWithWordsModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
@@ -75,11 +76,14 @@ class SmsRepo @Inject constructor(
         isFavorite: Boolean? = null,
         isFilter: Boolean = false,
         query: String = "",
+        filterAmountModel: FilterAmountModel? = null,
         startDate: Long = 0,
         endDate: Long = 0,
         categoryId: Int? = null,
         storeName: String? = null,
     ): List<SmsModel> {
+
+        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
 
         val finalQuery = getSmsQuery(
             senderId = senderId,
@@ -92,22 +96,32 @@ class SmsRepo @Inject constructor(
             endDate = endDate
         )
 
-        var returnedList = mutableListOf<SmsModel>()
+
         val smsListEntity = dao.getAllSms(finalQuery)
 
-        smsListEntity.map {
-            returnedList.add(fillSmsModel(it.toSmsModel()))
+        var returnedList = smsListEntity.map {
+            var model = it.toSmsModel()
+            model = fillSmsModel(model)
+            model
         }
 
         if (!storeName.isNullOrEmpty()) {
-            returnedList = returnedList.filter { it.storeName == storeName }.toMutableList()
+            returnedList = returnedList.filter { it.storeName == storeName }
         }
 
 
         if (categoryId != null) {
-            returnedList =
-                returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }
-                    .toMutableList()
+            returnedList = returnedList.filter { it.storeAndCategoryModel?.category?.id == categoryId }
+
+        }
+
+        returnedList = returnedList.filter {model->
+            when(filterAmountModel?.amountOperator){
+                AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
+                AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
+                AmountOperators.EQUAL -> amount == model.amount
+                else -> true
+            }
         }
 
         return returnedList
@@ -120,10 +134,11 @@ class SmsRepo @Inject constructor(
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
         isFilter: Boolean = false,
+        filterAmountModel: FilterAmountModel? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
-    ): List<SmsEntity> {
+    ): List<SmsModel> {
 
         val finalQuery = getSmsQuery(
             senderId = senderId,
@@ -135,8 +150,23 @@ class SmsRepo @Inject constructor(
             startDate = startDate,
             endDate = endDate
         )
+        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
+        var list = dao.getAllSms(finalQuery).map {
+            var model = it.toSmsModel()
+            model = fillSmsModel(model)
+            model
+        }
 
-        return dao.getAllSms(finalQuery)
+        list = list.filter {model->
+            when(filterAmountModel?.amountOperator){
+                AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
+                AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
+                AmountOperators.EQUAL -> amount == model.amount
+                else -> true
+            }
+        }
+
+        return list
     }
 
 
@@ -146,6 +176,7 @@ class SmsRepo @Inject constructor(
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
         isFilter:Boolean=false,
+        filterAmountModel: FilterAmountModel? = null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -163,12 +194,22 @@ class SmsRepo @Inject constructor(
         )
 
 
+        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
         ) {
             dao.getPaginationAllSms(finalQuery)
         }.flow.map { pagingData ->
-            pagingData.map {
+            pagingData.filter {
+                var model = it.toSmsModel()
+                model = fillSmsModel(model)
+                when(filterAmountModel?.amountOperator){
+                    AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
+                    AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
+                    AmountOperators.EQUAL -> amount == model.amount
+                    else -> true
+                }
+            }.map {
                 var model = it.toSmsModel()
                 model = fillSmsModel(model)
                 model

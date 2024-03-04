@@ -11,6 +11,7 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
@@ -136,6 +137,7 @@ class SenderSmsListViewModel @Inject constructor(
                 query = getFilterWord(),
                 isDeleted = null,
                 isFavorite = null,
+                filterAmountModel = getFilterAmount(),
                 isFilter = true,
                 startDate = _uiState.value.startDate,
                 endDate = _uiState.value.endDate,
@@ -199,6 +201,7 @@ class SenderSmsListViewModel @Inject constructor(
                 senderId =  senderId,
                 filterOption = getFilterTimeOption(),
                 query = getFilterWord(),
+                filterAmountModel = getFilterAmount(),
                 isDeleted = null,
                 isFavorite = null,
                 isFilter = true,
@@ -210,6 +213,7 @@ class SenderSmsListViewModel @Inject constructor(
                 senderId =  senderId,
                 filterOption = getFilterTimeOption(),
                 query = getFilterWord(),
+                filterAmountModel = getFilterAmount(),
                 isDeleted = null,
                 isFavorite = true,
                 isFilter = true,
@@ -222,6 +226,7 @@ class SenderSmsListViewModel @Inject constructor(
                 senderId =  senderId,
                 filterOption = getFilterTimeOption(),
                 query = getFilterWord(),
+                filterAmountModel = getFilterAmount(),
                 isDeleted = true,
                 isFavorite = null,
                 isFilter = true,
@@ -248,6 +253,7 @@ class SenderSmsListViewModel @Inject constructor(
             senderId = _uiState.value.sender.id,
             filterOption = getFilterTimeOption(),
             query = getFilterWord(),
+            filterAmountModel = getFilterAmount(),
             isDeleted = isDeleted,
             isFilter = true,
             startDate = _uiState.value.startDate,
@@ -343,12 +349,17 @@ class SenderSmsListViewModel @Inject constructor(
         return _uiState.value.query
     }
 
+    private fun getFilterAmount(): FilterAmountModel? {
+        return _uiState.value.amountQuery
+    }
+
     fun updateSelectedFilterWord(selectedItem: SelectedItemModel?){
         viewModelScope.launch {
             val id = selectedItem?.id ?: -1
             val result = getFilterUseCase.invoke(id)
             var query = ""
-            if(selectedItem != null)
+            var filterAmount:FilterAmountModel? = null
+            if(selectedItem != null){
                 result?.let {
                     it.words.mapIndexed { index, filter ->
 
@@ -363,11 +374,16 @@ class SenderSmsListViewModel @Inject constructor(
                         }
 
                     }
+
+                    filterAmount = result.amountFilter
                 }
+            }
+
             _uiState.update {
                 it.copy(
                     selectedFilter = selectedItem,
-                    query = query
+                    query = query,
+                    amountQuery =filterAmount
                 )
             }
         }
