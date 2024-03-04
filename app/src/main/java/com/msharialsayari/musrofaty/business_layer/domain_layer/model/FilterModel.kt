@@ -65,7 +65,7 @@ enum class LogicOperators(val value:String){
 }
 
 enum class AmountOperators(val valueString:Int){
-    EQUAL_OR_MORE(R.string.pref_managment_sms_tool_summary),
-    EQUAL_OR_LESS(R.string.pref_managment_sms_tool_summary),
-    EQUAL(R.string.pref_managment_sms_tool_summary)
+    EQUAL_OR_MORE(R.string.filter_more_or_equal),
+    EQUAL_OR_LESS(R.string.filter_less_or_equal),
+    EQUAL(R.string.filter_equal)
 }

@@ -18,6 +18,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFi
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertFilterWordUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
+import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.FilterBottomSheetType
 import com.msharialsayari.musrofaty.utils.StringsUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -229,6 +230,33 @@ class FilterViewModel@Inject constructor(
         _uiState.update {
             it.copy(filterWords = newList)
         }
+    }
+
+    fun changeAmountLogicOperator() {
+        val item = _uiState.value.filterAmountModel
+        item?.let {
+
+            val newLogicOperator = when(it.amountOperator){
+                AmountOperators.EQUAL_OR_MORE -> AmountOperators.EQUAL_OR_LESS
+                AmountOperators.EQUAL_OR_LESS ->  AmountOperators.EQUAL
+                AmountOperators.EQUAL ->  AmountOperators.EQUAL_OR_MORE
+            }
+
+            val newItem = it.copy(
+                amountOperator = newLogicOperator
+            )
+
+            _uiState.update {
+                it.copy(filterAmountModel = newItem)
+            }
+        }
+    }
+
+    fun openBottomSheet(type:FilterBottomSheetType?){
+        _uiState.update {
+            it.copy(bottomSheetType = type)
+        }
+
     }
 
     fun onFilterTitleChanged(title: String) {

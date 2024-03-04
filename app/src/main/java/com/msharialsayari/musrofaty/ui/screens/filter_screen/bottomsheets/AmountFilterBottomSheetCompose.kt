@@ -12,7 +12,7 @@ fun AmountFilterBottomSheetCompose(
     onActionClicked: (FilterAmountModel?, String) -> Unit
 ) {
     val model = TextFieldBottomSheetModel(
-        title = if (item != null) R.string.filter_modify_word else R.string.filter_add_word,
+        title = if (item != null) R.string.filter_modify_amount else R.string.filter_add_amount,
         textFieldValue = item?.amount ?: "",
         buttonText = if (item != null) R.string.common_change else R.string.common_add,
         onActionButtonClicked = { value ->

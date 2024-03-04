@@ -149,11 +149,16 @@
     <string name="filter_add_word">إضافة كلمة بحث</string>
     <string name="filter_modify_word">تغيير كلمة بحث</string>
     <string name="validation_filter_list_empty">يجب تعبئة قائمة كلمات البحث</string>
+    <string name="filter_add_amount">أضف مبلغ للبحث</string>
+    <string name="filter_modify_amount">عدل مبلغ البحث</string>
     <string name="filter_one_click">انقر نقرة على الكلمة للتعديل</string>
     <string name="filter_double_click">انقر نقرتين متتاليتين على الكلمة لتغيير نوع العلاقة</string>
     <string name="filter_slide">اسحب الكلمة من اليمين إلى اليسار لحذفها</string>
     <string name="filter_and">علامة &amp;&amp; تدل أن العلاقة بين الكلمات هي \"و\"</string>
     <string name="filter_or">علامة || تدل أن العلاقة بين الكلمات هي \"أو\"</string>
+    <string name="filter_equal">يساوي</string>
+    <string name="filter_more_or_equal">يساوي أو أكثر</string>
+    <string name="filter_less_or_equal">يساوي أو أقل</string>
 
 
     <!--validation-->
