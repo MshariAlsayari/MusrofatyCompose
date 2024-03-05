@@ -171,8 +171,7 @@ fun LowerPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
 
 
         TextComponent.PlaceholderText(
-            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value
-                ?: stringResource(id = DateUtils.FilterOption.ALL.title))
+            text = stringResource(id = R.string.common_filter_options) + ": " + (selectedTimeFilter?.value ?: stringResource(id = DateUtils.FilterOption.ALL.title))
         )
 
 

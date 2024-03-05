@@ -340,7 +340,8 @@ class SenderSmsListViewModel @Inject constructor(
             _uiState.value.endDate = DateUtils.getCurrentDate()
             val savedFilterOption = SharedPreferenceManager.getFilterTimePeriod(context)
             val timeFilterOptionId = if (savedFilterOption == DateUtils.FilterOption.ALL.id ) DateUtils.FilterOption.MONTH.id else savedFilterOption
-            _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = timeFilterOptionId, value = "", isSelected = true)
+            val timeFilterOption = DateUtils.FilterOption.getFilterOptionOrDefault(timeFilterOptionId)
+            _uiState.value.selectedFilterTimeOption = SelectedItemModel(id = timeFilterOptionId, value = context.getString(timeFilterOption.title), isSelected = true)
             DateUtils.FilterOption.getFilterOptionOrDefault(timeFilterOptionId)
         }
     }
