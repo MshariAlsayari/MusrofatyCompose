@@ -3,79 +3,82 @@ package com.msharialsayari.musrofaty.ui.screens.filter_screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyList
-import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterWordModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AddFilterBottomSheetCompose
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AmountFilterBottomSheetCompose
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.FilterBottomSheetType
-import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun FilterScreen(){
     val viewModel:FilterViewModel = hiltViewModel()
-    val uiState                           by viewModel.uiState.collectAsState()
+    val uiState   by viewModel.uiState.collectAsState()
     val scaffoldState = rememberScaffoldState()
-    val selectedFilter = remember { mutableStateOf<FilterWordModel?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val selectedFilterWordItem = rememberSaveable{ mutableStateOf<FilterWordModel?>(null) }
     val bottomSheetType =  uiState.bottomSheetType
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-    val coroutineScope = rememberCoroutineScope()
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
-        viewModel.openBottomSheet(null)
+
     }
 
+    LaunchedEffect(key1 = sheetState.currentValue){
+        if(sheetState.currentValue == ModalBottomSheetValue.Hidden){
+            viewModel.openBottomSheet(null)
+            keyboardController?.hide()
+        }
+    }
 
+    LaunchedEffect(key1 = bottomSheetType){
+        val showBottomSheet = bottomSheetType != null
+        coroutineScope.launch {
+            BottomSheetComponent.handleVisibilityOfBottomSheet(
+                sheetState,
+                showBottomSheet
+            )
+        }
+        keyboardController?.hide()
+    }
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
             when(bottomSheetType){
-                FilterBottomSheetType.WORD ->   AddFilterBottomSheetCompose(item = selectedFilter.value) { item, newString ->
-                    selectedFilter.value = null
-                    viewModel.openBottomSheet(null)
+                FilterBottomSheetType.WORD -> AddFilterBottomSheetCompose(item = selectedFilterWordItem.value) { item, newString ->
                     viewModel.addFilter(item, newString.trim())
-                    coroutineScope.launch {
-                        BottomSheetComponent.handleVisibilityOfBottomSheet(
-                            sheetState,
-                            false
-                        )
-                    }
+                    selectedFilterWordItem.value = null
+                    viewModel.openBottomSheet(null)
                 }
                 FilterBottomSheetType.AMOUNT -> AmountFilterBottomSheetCompose(item = uiState.filterAmountModel) { item, newString ->
-                    selectedFilter.value = null
+                    viewModel.addAmountFilter(item, newString.trim())
                     viewModel.openBottomSheet(null)
-                    coroutineScope.launch {
-                        viewModel.addAmountFilter(item, newString.trim())
-                        BottomSheetComponent.handleVisibilityOfBottomSheet(
-                            sheetState,
-                            false
-                        )
-                    }
                 }
                 null -> {}
             }
@@ -97,11 +100,14 @@ fun FilterScreen(){
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                 FilterTitle(viewModel)
                 FiltersInstructions()
-                FilterAmountSection(viewModel = viewModel, sheetState = sheetState)
-                FilterWordSection (viewModel = viewModel, sheetState = sheetState)
+                FilterAmountSection(viewModel = viewModel)
+                FilterWordSection (viewModel = viewModel){
+                    selectedFilterWordItem.value = it
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 BtnAction(viewModel)
             }
@@ -110,19 +116,49 @@ fun FilterScreen(){
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FiltersInstructions() {
 
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp,Alignment.CenterVertically)
-    ){
-        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_one_click))
-        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_double_click))
-        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_slide))
-        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_and))
-        TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_or))
+    var openInstructionDialog  by rememberSaveable { mutableStateOf(false) }
+
+    if(openInstructionDialog){
+        Dialog(onDismissRequest = {
+            openInstructionDialog = false
+        }) {
+            Card(modifier = Modifier){
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp,Alignment.CenterVertically)
+                ){
+                    TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_one_click))
+                    TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_double_click))
+                    TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_slide))
+                    TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_and))
+                    TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_or))
+
+                    TextButton(
+                        modifier = Modifier.align(Alignment.End),
+                        onClick = {
+                        openInstructionDialog = false
+                    }) {
+                        Text(text = stringResource(id = R.string.common_ok))
+                    }
+                }
+            }
+        }
+
     }
+
+    SectionHeader(
+        title = stringResource(id = R.string.common_instructions),
+        icon = Icons.Default.Info,
+        withDivider = false
+    ) {
+        openInstructionDialog = true
+    }
+
+
 
 }
 
@@ -150,78 +186,31 @@ fun FilterTitle(viewModel: FilterViewModel) {
 
 @ExperimentalComposeUiApi
 @Composable
-fun ListHeader(
+fun SectionHeader(
     title:String,
-    icon: ImageVector,
-    onAddFilterIconClicked:()->Unit) {
+    icon: ImageVector? = null,
+    withDivider:Boolean = true,
+    onIconClicked:()->Unit) {
 
 
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier) {
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.default_margin16)), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextComponent.HeaderText(text = title)
-                Icon(icon, contentDescription = null, modifier = Modifier.clickable {
-                    onAddFilterIconClicked()
-                })
+                if (icon != null)
+                    Icon(icon, contentDescription = null, modifier = Modifier.clickable {
+                        onIconClicked()
+                    })
             }
 
-        DividerComponent.HorizontalDividerComponent()
+        if (withDivider)
+            DividerComponent.HorizontalDividerComponent()
 
 
     }
 
 }
-
-@OptIn(ExperimentalMaterialApi::class)
-@ExperimentalComposeUiApi
-@Composable
-fun FiltersList(
-    viewModel: FilterViewModel,
-    onWordRowClicked: (FilterWordModel) -> Unit
-) {
-
-
-    val uiState by viewModel.uiState.collectAsState()
-    val filterWords = uiState.filterWords
-
-    val deleteAction = Action<FilterWordModel>(
-        { TextComponent.BodyText(text = stringResource(id = R.string.common_delete)) },
-        { ActionIcon(id = R.drawable.ic_delete) },
-        backgroundColor = MusrofatyTheme.colors.deleteActionColor,
-        onClicked = { position, item ->
-            viewModel.deleteFilter(item)
-
-        })
-
-
-        VerticalEasyList(
-            modifier = Modifier,
-            list = filterWords,
-            view = { item ->
-                RowComponent.FilterWordRow(
-                    title = item.word,
-                    value = if(viewModel.isLastItem(item)) null else item.logicOperator.name
-                )
-            },
-            dividerView = { DividerComponent.HorizontalDividerComponent() },
-            onItemClicked = { item, position ->
-                onWordRowClicked(item)
-            },
-            onItemDoubleClicked = {item, position ->
-                if (item.logicOperator == LogicOperators.OR) {
-                    viewModel.changeLogicOperator(item, LogicOperators.AND)
-                } else {
-                    viewModel.changeLogicOperator(item, LogicOperators.OR)
-                }
-            },
-            startActions = listOf(deleteAction),
-            emptyView = { EmptyCompose() },
-        )
-
-}
-
 
 
 @Composable

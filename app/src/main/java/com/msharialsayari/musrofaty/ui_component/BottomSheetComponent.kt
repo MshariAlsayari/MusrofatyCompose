@@ -3,12 +3,13 @@ package com.msharialsayari.musrofaty.ui_component
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,12 +28,13 @@ object BottomSheetComponent {
     @Composable
     fun TextFieldBottomSheetComponent(
         modifier: Modifier = Modifier,
-        model: TextFieldBottomSheetModel
+        model: TextFieldBottomSheetModel,
+        errorMsg:String  = ""
     ) {
         val context = LocalContext.current
-        val text = remember { mutableStateOf<String>(model.textFieldValue) }
-        val error = remember { mutableStateOf("") }
-        text.value = text.value
+        val text = remember{ mutableStateOf(model.textFieldValue) }
+        val error = remember { mutableStateOf(errorMsg) }
+
         Column(modifier = modifier) {
             TextComponent.HeaderText(
                 text = stringResource(id = model.title),
@@ -65,7 +67,10 @@ object BottomSheetComponent {
                     ),
                 textValue = text.value,
                 errorMsg = error.value,
+                label= model.label,
                 isSingleLine = model.isSingleLine,
+                keyboardActions = model.keyboardActions,
+                keyboardOptions = model.keyboardOptions,
                 onValueChanged = {
                     text.value = it
                 }
@@ -75,8 +80,6 @@ object BottomSheetComponent {
                 text = model.buttonText, onClick = {
                     if (text.value.notEmpty()) {
                         model.onActionButtonClicked(text.value)
-                        text.value = ""
-                        error.value = ""
                     } else {
                         error.value = context.getString(R.string.validation_field_mandatory)
                     }
@@ -235,10 +238,13 @@ object BottomSheetComponent {
 
 data class TextFieldBottomSheetModel(
     @StringRes var title: Int,
+    @StringRes var label: Int? = null,
     @StringRes var description: Int? = null,
     var textFieldValue: String = "",
     @StringRes var buttonText: Int,
     var onActionButtonClicked: (String) -> Unit,
-    var isSingleLine: Boolean = false,
+    var isSingleLine: Boolean = true,
+    var keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    var keyboardActions: KeyboardActions = KeyboardActions(),
 
     )

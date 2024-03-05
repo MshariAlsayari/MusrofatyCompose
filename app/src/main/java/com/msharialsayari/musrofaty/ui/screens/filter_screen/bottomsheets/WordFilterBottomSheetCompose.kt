@@ -12,9 +12,10 @@ fun AddFilterBottomSheetCompose(
     onActionClicked: (FilterWordModel?, String) -> Unit
 ) {
     val model = TextFieldBottomSheetModel(
-        title = if (item != null) R.string.filter_modify_word else R.string.filter_add_word,
+        title = if (item != null) R.string.common_change else R.string.common_add,
+        label = R.string.common_word,
         textFieldValue = item?.word ?: "",
-        buttonText = R.string.common_add,
+        buttonText = if (item != null) R.string.common_change else R.string.common_add,
         onActionButtonClicked = { value ->
             onActionClicked(item, value)
         })

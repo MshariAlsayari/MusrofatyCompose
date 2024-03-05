@@ -83,7 +83,7 @@ class SmsRepo @Inject constructor(
         storeName: String? = null,
     ): List<SmsModel> {
 
-        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
+
 
         val finalQuery = getSmsQuery(
             senderId = senderId,
@@ -116,12 +116,7 @@ class SmsRepo @Inject constructor(
         }
 
         returnedList = returnedList.filter { model->
-            when(filterAmountModel?.amountOperator){
-                AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
-                AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
-                AmountOperators.EQUAL -> amount == model.amount
-                else -> true
-            }
+            isValidAmount(sms = model, filterAmount = filterAmountModel)
         }
 
         return returnedList
@@ -150,7 +145,7 @@ class SmsRepo @Inject constructor(
             startDate = startDate,
             endDate = endDate
         )
-        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
+
         var list = dao.getAllSms(finalQuery).map {
             var model = it.toSmsModel()
             model = fillSmsModel(model)
@@ -158,12 +153,7 @@ class SmsRepo @Inject constructor(
         }
 
         list = list.filter {model->
-            when(filterAmountModel?.amountOperator){
-                AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
-                AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
-                AmountOperators.EQUAL -> amount == model.amount
-                else -> true
-            }
+            isValidAmount(sms = model, filterAmount = filterAmountModel)
         }
 
         return list
@@ -194,7 +184,6 @@ class SmsRepo @Inject constructor(
         )
 
 
-        val amount = filterAmountModel?.amount?.toDouble() ?: 0.0
         return Pager(
             config = PagingConfig(pageSize = ITEM_SIZE),
         ) {
@@ -203,12 +192,7 @@ class SmsRepo @Inject constructor(
             pagingData.filter {
                 var model = it.toSmsModel()
                 model = fillSmsModel(model)
-                when(filterAmountModel?.amountOperator){
-                    AmountOperators.EQUAL_OR_MORE -> model.amount >= amount
-                    AmountOperators.EQUAL_OR_LESS ->  model.amount <= amount
-                    AmountOperators.EQUAL -> amount == model.amount
-                    else -> true
-                }
+                isValidAmount(sms = model, filterAmount = filterAmountModel)
             }.map {
                 var model = it.toSmsModel()
                 model = fillSmsModel(model)
@@ -447,6 +431,20 @@ class SmsRepo @Inject constructor(
         // End of query string
         queryString += " order by timestamp DESC"
         return SimpleSQLiteQuery(queryString, args.toList().toTypedArray())
+    }
+
+
+    private fun isValidAmount(
+        sms: SmsModel,
+        filterAmount: FilterAmountModel? = null
+    ): Boolean {
+        val amount = filterAmount?.amount?.toDouble() ?: 0.0
+        return when (filterAmount?.amountOperator) {
+            AmountOperators.EQUAL_OR_MORE -> sms.amount >= amount
+            AmountOperators.EQUAL_OR_LESS -> sms.amount <= amount
+            AmountOperators.EQUAL -> amount == sms.amount
+            else -> true
+        }
     }
 
     suspend fun insertLatestSms():SmsModel? {

@@ -31,6 +31,9 @@
     <string name="common_period_time">Time</string>
     <string name="common_receiver">Receiver</string>
     <string name="common_amount">Amount</string>
+    <string name="common_instructions">Instructions</string>
+    <string name="common_word">Word</string>
+
 
 
     <!-- Sorted BY-->
@@ -143,23 +146,22 @@
 
     <!--Filter-->
     <string name="filter_title">Name</string>
-    <string name="filter_add_word">Add a filter word</string>
-    <string name="filter_modify_word">Modify the filter word</string>
-    <string name="filter_add_amount">Add a filter for amount</string>
-    <string name="filter_modify_amount">Modify the filter</string>
+    <string name="filter_add_word">Words in Sms</string>
+    <string name="filter_add_amount">Sms Amount</string>
     <string name="validation_filter_list_empty">The list of filters can\'t be empty</string>
     <string name="filter_one_click">One click on a word to modify</string>
     <string name="filter_double_click">Double click on a word to change a logical operator</string>
     <string name="filter_slide">slide a word from left to right to remove it</string>
     <string name="filter_and">&amp;&amp; means \"AND\"</string>
     <string name="filter_or">|| means \"OR\"</string>
-    <string name="filter_equal">Equal</string>
-    <string name="filter_more_or_equal">More or equal</string>
-    <string name="filter_less_or_equal">Less or equal</string>
+    <string name="filter_equal">equal</string>
+    <string name="filter_more_or_equal">more or equal</string>
+    <string name="filter_less_or_equal">less or equal</string>
 
     <!--validation-->
     <string name="validation_field_mandatory">The field is mandatory</string>
     <string name="validation_contain_special_character">can\'t contain a special character</string>
+    <string name="validation_field_amount">the amount is not correct</string>
 
     <!--Category-->
     <string name="stores">Stores</string>
