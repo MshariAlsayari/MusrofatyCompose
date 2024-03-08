@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomsheets.CategorySmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.models.FinancialStatistics
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,7 @@ data class CategorySmsListUiState(
     var isLoading: Boolean = false,
     val totalSms: Int = 0,
     var categories: Flow<List<CategoryEntity>>? = null,
+    val bottomSheetType: CategorySmsListBottomSheetType? = null,
     var title:String = "",
 
     //allSms tab

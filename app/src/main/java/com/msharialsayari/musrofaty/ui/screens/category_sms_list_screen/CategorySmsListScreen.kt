@@ -36,11 +36,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomsheets.CategorySmsListBottomSheetType
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomsheets.DateRangeBottomSheet
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomsheets.FilterTimeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs.CategorySmsListScreenTabs
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs.CategorySmsListTabs
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
@@ -106,7 +107,7 @@ fun CategorySmsListScreen() {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { /* do something */ }) {
+                        IconButton(onClick = { viewModel.navigateBack()}) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = null,
@@ -117,7 +118,9 @@ fun CategorySmsListScreen() {
 
                     },
                     actions = {
-                        IconButton(onClick = { /* do something */ }) {
+                        IconButton(onClick = {
+                            viewModel.updateBottomSheetType(CategorySmsListBottomSheetType.TIME_PERIODS)
+                        }) {
                             Icon(
                                 Icons.Default.DateRange,
                                 tint = if (isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
@@ -145,6 +148,7 @@ private fun CategorySmsListContent(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val bottomSheetType = uiState.bottomSheetType
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
@@ -158,25 +162,31 @@ private fun CategorySmsListContent(
         }
     }
 
+    LaunchedEffect(
+        key1 = bottomSheetType,
+    ) {
+        val show = bottomSheetType != null
+        coroutineScope.launch {
+            BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, show)
+        }
+    }
+
     ModalBottomSheetLayout(
         modifier = modifier,
         sheetState = sheetState,
         sheetContent = {
+            when(bottomSheetType){
+                CategorySmsListBottomSheetType.TIME_PERIODS ->  FilterTimeBottomSheet(viewModel)
+                CategorySmsListBottomSheetType.DATE_PICKER -> DateRangeBottomSheet(viewModel)
+                null -> {}
+            }
 
         }) {
 
-        SwipeRefresh(
-            modifier = Modifier
-                .background(MusrofatyTheme.colors.background)
-                .fillMaxSize(),
-            state = rememberSwipeRefreshState(uiState.isRefreshing),
-            onRefresh = { },
-        ) {
-
-            CategorySmsListTabs(viewModel = viewModel)
-        }
-
-
+        CategorySmsListTabs(
+            modifier = Modifier.background(MusrofatyTheme.colors.background).fillMaxSize(),
+            viewModel = viewModel
+        )
     }
 
 

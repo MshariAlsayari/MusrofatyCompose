@@ -27,6 +27,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDele
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateSenderIconUseCase
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.bottomsheets.CategorySmsListBottomSheetType
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
@@ -141,6 +142,28 @@ class CategorySmsListViewModel @Inject constructor(
         }
     }
 
+    fun onDatePeriodsSelected(start: Long, end: Long){
+        _uiState.update {
+            it.copy(startDate = start,endDate = end)
+        }
+    }
+
+    fun updateBottomSheetType(type: CategorySmsListBottomSheetType?){
+        _uiState.update {
+            it.copy(
+                bottomSheetType = type,
+            )
+        }
+    }
+
+    fun updateSelectedFilterTimePeriods(selectedItem: SelectedItemModel?){
+        _uiState.update {
+            it.copy(
+                selectedFilterTimeOption = selectedItem,
+            )
+        }
+    }
+
     private suspend fun getAllSmsModel(isDeleted: Boolean?=null): List<SmsModel> {
         return getAllSmsModelUseCase.invoke(
             categoryId = categoryId,
@@ -241,6 +264,10 @@ class CategorySmsListViewModel @Inject constructor(
         viewModelScope.launch {
             softDeleteSMsUseCase.invoke(id, delete)
         }
+    }
+
+    fun navigateBack(){
+        navigator.navigateUp()
     }
 
     fun navigateToSmsDetails(smsID: String) {
