@@ -34,6 +34,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.tabs.SoftDeletedTab
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.CategoriesBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.DateRangeBottomSheet
@@ -45,8 +46,6 @@ import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
-import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
-import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -178,7 +177,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Tabs(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit) {
+private fun Tabs(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
     Column(Modifier.fillMaxWidth()) {
