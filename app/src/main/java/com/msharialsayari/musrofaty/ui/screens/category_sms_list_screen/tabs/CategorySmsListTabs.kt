@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
@@ -25,7 +26,7 @@ fun CategorySmsListTabs(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
-    Column(Modifier.fillMaxWidth()) {
+    Column(Modifier.fillMaxSize()) {
         ScrollableTabRow(
             modifier = Modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colors.background,

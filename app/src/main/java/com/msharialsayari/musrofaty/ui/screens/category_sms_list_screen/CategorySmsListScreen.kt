@@ -2,6 +2,7 @@ package com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -40,6 +41,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs.CategorySmsListScreenTabs
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs.CategorySmsListTabs
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
@@ -55,8 +57,7 @@ import kotlinx.coroutines.launch
 fun CategorySmsListScreen() {
 
     val viewModel: CategorySmsListViewModel = hiltViewModel()
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val uiState by viewModel.uiState.collectAsState()
     val selectedTab = uiState.selectedTabIndex
     val isFilterDateSelected = uiState.selectedFilterTimeOption != null && uiState.selectedFilterTimeOption?.id != 0
@@ -75,6 +76,13 @@ fun CategorySmsListScreen() {
             viewModel.getData()
     }
 
+    LaunchedEffect(key1 = selectedTab){
+        when(CategorySmsListScreenTabs.getTabByIndex(selectedTab)){
+            CategorySmsListScreenTabs.FINANCIAL -> viewModel.getFinancialStatistics()
+            else -> {}
+        }
+    }
+
 
     if (uiState.isLoading) {
         PageLoading()
@@ -84,6 +92,7 @@ fun CategorySmsListScreen() {
             topBar = {
                 LargeTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
+                        titleContentColor = MusrofatyTheme.colors.iconBackgroundColor,
                         containerColor = MusrofatyTheme.colors.toolbarColor,
                         scrolledContainerColor = MusrofatyTheme.colors.toolbarColor,
                         navigationIconContentColor = MusrofatyTheme.colors.iconBackgroundColor,
@@ -91,7 +100,7 @@ fun CategorySmsListScreen() {
                     ),
                     title = {
                         Text(
-                            "Large Top App Bar",
+                            text = uiState.title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -157,7 +166,9 @@ private fun CategorySmsListContent(
         }) {
 
         SwipeRefresh(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .background(MusrofatyTheme.colors.background)
+                .fillMaxSize(),
             state = rememberSwipeRefreshState(uiState.isRefreshing),
             onRefresh = { },
         ) {

@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
@@ -30,6 +32,7 @@ import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -63,10 +66,10 @@ class CategorySmsListViewModel @Inject constructor(
     val uiState: StateFlow<CategorySmsListUiState> = _uiState
 
     companion object{
-        const val CATEGORY_ID_KEY = "CATEGORY_ID_KEY"
+        const val CATEGORY_ID_KEY = "categoryId"
     }
 
-    val senderId: Int
+    val categoryId: Int
         get() {
             return savedStateHandle.get<Int>(CATEGORY_ID_KEY)!!
         }
@@ -79,13 +82,15 @@ class CategorySmsListViewModel @Inject constructor(
     private fun initCategory() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val result = getCategoryUseCase.invoke(senderId)
+            val result = getCategoryUseCase.invoke(categoryId)
             if (result != null) {
                 _uiState.update {
                     it.copy(
                         category = result,
+                        title = CategoryModel.getDisplayName(context, result)
                     )
                 }
+                getData()
             }else{
                 navigator.navigateUp()
             }
@@ -110,7 +115,100 @@ class CategorySmsListViewModel @Inject constructor(
     }
 
     fun getData() {
+        getFinancialStatistics()
+        getSmsListTabs()
+        getSmsTotal()
+    }
 
+    fun getFinancialStatistics() {
+        viewModelScope.launch {
+            _uiState.update { state ->
+                state.copy(
+                    financialTabLoading = true,
+                )
+            }
+
+            val smsList = getAllSmsModel(isDeleted = false)
+            val result = getFinancialStatisticsUseCase.invoke(smsList)
+            _uiState.update { state ->
+                state.copy(
+                    financialTabLoading = false,
+                    financialStatistics = result,
+                )
+            }
+
+
+        }
+    }
+
+    private suspend fun getAllSmsModel(isDeleted: Boolean?=null): List<SmsModel> {
+        return getAllSmsModelUseCase.invoke(
+            categoryId = categoryId,
+            filterOption = getFilterTimeOption(),
+            isDeleted = isDeleted,
+            startDate = _uiState.value.startDate,
+            endDate = _uiState.value.endDate
+        )
+    }
+
+    private fun getSmsListTabs() {
+        viewModelScope.launch {
+
+            val allSmsTab : Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                categoryId =  categoryId,
+                filterOption = getFilterTimeOption(),
+                isDeleted = null,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+
+            val favoriteSmsTab : Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                categoryId =  categoryId,
+                filterOption = getFilterTimeOption(),
+                isDeleted = null,
+                isFavorite = true,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+
+
+            val softDeletedSmsTab : Flow<PagingData<SmsModel>> = observingPaginationAllSmsUseCase(
+                categoryId =  categoryId,
+                filterOption = getFilterTimeOption(),
+                isDeleted = true,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+
+            _uiState.update { state ->
+                state.copy(
+                    allSmsList = allSmsTab,
+                    favoriteSmsList = favoriteSmsTab,
+                    softDeletedSmsList = softDeletedSmsTab
+                )
+            }
+        }
+
+    }
+
+    private fun getSmsTotal() {
+        viewModelScope.launch {
+            val result = getAllSmsUseCase.invoke(
+                senderId =  categoryId,
+                filterOption = getFilterTimeOption(),
+                isDeleted = null,
+                isFavorite = null,
+                startDate = _uiState.value.startDate,
+                endDate = _uiState.value.endDate,
+            )
+            _uiState.update {
+                it.copy(
+                    totalSms = result.size
+                )
+            }
+        }
     }
 
     fun getFilterTimeOption(): DateUtils.FilterOption {

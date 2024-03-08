@@ -162,6 +162,7 @@ class SmsRepo @Inject constructor(
 
     fun observingSmsList(
         senderId: Int? = null,
+        categoryId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
@@ -189,15 +190,16 @@ class SmsRepo @Inject constructor(
         ) {
             dao.getPaginationAllSms(finalQuery)
         }.flow.map { pagingData ->
-            pagingData.filter {
-                var model = it.toSmsModel()
-                model = fillSmsModel(model)
-                isValidAmount(sms = model, filterAmount = filterAmountModel)
-            }.map {
+            pagingData.map {
                 var model = it.toSmsModel()
                 model = fillSmsModel(model)
                 model
+            }.filter {
+                isValidAmount(sms = it, filterAmount = filterAmountModel)
+            }.filter {
+                isValidCategory(sms = it, categoryId = categoryId)
             }
+
         }
 
     }
@@ -444,6 +446,16 @@ class SmsRepo @Inject constructor(
             AmountOperators.EQUAL_OR_LESS -> sms.amount <= amount
             AmountOperators.EQUAL -> amount == sms.amount
             else -> true
+        }
+    }
+
+    private fun isValidCategory(
+        sms: SmsModel,
+        categoryId: Int? = null
+    ): Boolean {
+        return when (categoryId) {
+            null -> true
+            else -> sms.storeAndCategoryModel?.category?.id == categoryId
         }
     }
 

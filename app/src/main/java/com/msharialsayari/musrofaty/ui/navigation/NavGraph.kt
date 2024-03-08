@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
-import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
+import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.content_screen.ContentScreen
 import com.msharialsayari.musrofaty.ui.screens.dashboard_screen.DashboardScreen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.FilterScreen
@@ -121,7 +121,8 @@ fun NavigationGraph(
             val arguments = backStackEntry.arguments
             val categoryId = arguments?.getInt("categoryId")
             categoryId?.let {
-                CategoriesScreen(categoryId = categoryId)
+             //  CategoriesScreen(categoryId = categoryId)
+                CategorySmsListScreen()
             }
         }
 
