@@ -167,6 +167,7 @@ class SmsRepo @Inject constructor(
         isFavorite: Boolean? = null,
         isFilter:Boolean=false,
         filterAmountModel: FilterAmountModel? = null,
+        categoryId: Int?=null,
         query: String = "",
         startDate: Long = 0,
         endDate: Long = 0,
@@ -189,14 +190,14 @@ class SmsRepo @Inject constructor(
         ) {
             dao.getPaginationAllSms(finalQuery)
         }.flow.map { pagingData ->
-            pagingData.filter {
-                var model = it.toSmsModel()
-                model = fillSmsModel(model)
-                isValidAmount(sms = model, filterAmount = filterAmountModel)
+            pagingData.map {
+                fillSmsModel(it.toSmsModel())
+            }.filter {
+                isValidAmount(sms = it, filterAmount = filterAmountModel)
+            }.filter {
+                isValidCategory(sms = it, categoryId = categoryId )
             }.map {
-                var model = it.toSmsModel()
-                model = fillSmsModel(model)
-                model
+                it
             }
         }
 
@@ -445,6 +446,19 @@ class SmsRepo @Inject constructor(
             AmountOperators.EQUAL -> amount == sms.amount
             else -> true
         }
+    }
+
+    private fun isValidCategory(
+        sms: SmsModel,
+        categoryId: Int? = null
+    ): Boolean {
+        return if(categoryId == null){
+             true
+        }else{
+            sms.storeAndCategoryModel?.category?.id == categoryId
+        }
+
+
     }
 
     suspend fun insertLatestSms():SmsModel? {

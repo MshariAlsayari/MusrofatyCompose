@@ -1,9 +1,11 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.repository
 
 import android.content.Context
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChart
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoriesChartModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
@@ -241,6 +243,95 @@ class StatisticsRepo @Inject constructor(
                 context.getString(R.string.common_days)
             }
         }
+        return model
+    }
+
+    fun getCategoriesChartData(
+        key: String,
+        filterOption: DateUtils.FilterOption,
+        list: List<SmsModel>
+    ) :CategoriesChart{
+        val model = CategoriesChart(key = key)
+        val chartBarList = mutableListOf<BarEntry>()
+        var total = 0.0f
+        var average = 0.0f
+        var min = 0.0f
+        var max = 0.0f
+
+        val validList = list.filter { !it.isDeleted && it.smsType.isExpenses() && it.amount > 0}
+        if(validList.isEmpty()) return model
+
+        val sortedListByTime = validList.sortedByDescending { it.timestamp }
+        val endDate =  sortedListByTime.first().timestamp
+        val startDate = sortedListByTime.last().timestamp
+
+        val finalFilterOption = if(filterOption == DateUtils.FilterOption.RANGE || filterOption == DateUtils.FilterOption.YEAR){
+            val start = DateUtils.ofMilliSecond(startDate)
+            val end = DateUtils.ofMilliSecond(endDate)
+            val monthsBetween = ChronoUnit.MONTHS.between(start, end).toInt()
+            val weeksBetween = ChronoUnit.WEEKS.between(start, end).toInt()
+
+            if(weeksBetween <= 7){
+                DateUtils.FilterOption.MONTH
+            }else if(monthsBetween <=12){
+                DateUtils.FilterOption.YEAR
+            }else{
+                DateUtils.FilterOption.WEEK
+            }
+        }else {
+            filterOption
+        }
+
+        val groupedDate = sortedListByTime.groupBy {
+            val smsDate = DateUtils.toLocalDate(it.timestamp)
+            when (finalFilterOption) {
+                DateUtils.FilterOption.MONTH -> {
+                    val weekOfMonth = smsDate.get(WeekFields.of(Locale.ENGLISH).weekOfMonth())
+                    val keyDate = DateUtils.getDateByWeekOfMonth(weekOfMonth.toLong(), smsDate)
+                    keyDate
+                }
+                DateUtils.FilterOption.YEAR -> {
+                    smsDate.withDayOfMonth(1)
+                }
+                else -> {
+                    smsDate
+                }
+            }
+
+        }
+
+
+
+        groupedDate.entries.map {entry->
+            var barAmount = 0f
+            entry.value.map {
+                val smsAmount = it.amount.toFloat()
+                barAmount += smsAmount
+            }
+            val barEntry = BarEntry(DateUtils.toMilliSecond(entry.key).toFloat(),barAmount )
+            chartBarList.add(barEntry)
+        }
+
+        chartBarList.map {
+            val barAmount = it.y
+            if (barAmount > max) {
+                max = barAmount
+            }
+
+            if(barAmount < min){
+                min = barAmount
+            }
+
+            total+=barAmount
+        }
+        average = total / chartBarList.size
+
+
+        model.entries = chartBarList
+        model.total = total
+        model.average = average
+        model.max = max
+        model.min = min
         return model
     }
 

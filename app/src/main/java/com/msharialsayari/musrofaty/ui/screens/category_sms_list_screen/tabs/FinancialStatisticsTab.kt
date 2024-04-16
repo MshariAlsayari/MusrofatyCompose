@@ -1,18 +1,24 @@
 package com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.tabs
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.github.mikephil.charting.data.PieEntry
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.EmptySmsCompose
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.PageLoading
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
+import com.msharialsayari.musrofaty.ui_component.ChartComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.FinancialStatistics
 import com.msharialsayari.musrofaty.ui_component.FinancialStatisticsModel
@@ -40,7 +46,7 @@ fun BuildChartCompose(
     val context = LocalContext.current
     val uiState  by viewModel.uiState.collectAsState()
     val listState  = rememberLazyListState()
-    val list = uiState.financialStatistics.values.toList()
+    val list = uiState.financialStatistics
 
     LazyColumn(
         modifier = Modifier,
@@ -48,26 +54,12 @@ fun BuildChartCompose(
     ) {
 
         itemsIndexed(items = list )  {index ,item->
-            FinancialStatistics(
-                model = FinancialStatisticsModel(
-                    filterOption = viewModel.getFilterTimeOption(),
-                    currency = item.currency,
-                    total = item.expenses.plus(item.income),
-                    incomeTotal = item.income,
-                    expensesTotal = item.expenses,
-                    expensesSmsList = item.expensesSmsList,
-                    incomesSmsList = item.incomeSmsList
-                )
-            ) { smsList, isExpenses ->
-                val ids = smsList.map { it.id }
-                val smsContainer = SmsContainer(ids)
-                viewModel.navigateToSmsListScreen(
-                    smsContainer,
-                    categoryModel = null,
-                    isCategoryRowClicked = false,
-                    isExpensesSmsRowClicked = isExpenses,
-                    context
-                )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ChartComponent.BarChartCompose(chart = item)
+
             }
 
             if(list.lastIndex != index){

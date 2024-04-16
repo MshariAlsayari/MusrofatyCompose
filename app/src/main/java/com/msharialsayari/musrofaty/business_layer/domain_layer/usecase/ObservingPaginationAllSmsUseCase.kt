@@ -23,6 +23,7 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
         isFilter: Boolean = false,
         query: String = "",
         filterAmountModel: FilterAmountModel? = null,
+        categoryId: Int?=null,
         startDate: Long = 0,
         endDate: Long = 0
     ): Flow<PagingData<SmsModel>> {
@@ -33,6 +34,7 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
             isFavorite,
             isFilter,
             filterAmountModel,
+            categoryId,
             query,
             startDate,
             endDate

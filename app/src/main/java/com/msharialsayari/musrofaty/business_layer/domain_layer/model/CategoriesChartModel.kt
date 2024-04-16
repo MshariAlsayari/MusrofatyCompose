@@ -1,5 +1,6 @@
 package com.msharialsayari.musrofaty.business_layer.domain_layer.model
 
+import com.github.mikephil.charting.data.BarEntry
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -24,4 +25,16 @@ data class CategoriesChartModel(
 data class ChartEntry(
     var amount:Float = 0f,
     var date:LocalDate,
+)
+
+
+data class CategoriesChart(
+    val key:String, //currency
+    var entries: List<BarEntry> = emptyList(),
+    var xItemCount:Int = 1,
+    var yItemCount:Int = 6,
+    var average:Float = 0f,
+    var min:Float = 0f,
+    var max:Float = 0f,
+    var total:Float = 0f,
 )

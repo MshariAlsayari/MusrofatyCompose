@@ -6,8 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.CategorySmsListViewModel
 import com.msharialsayari.musrofaty.ui.screens.category_sms_list_screen.SmsList
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.LazySenderSms
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
 
 
 @Composable
