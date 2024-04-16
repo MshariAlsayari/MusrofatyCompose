@@ -21,11 +21,12 @@ import com.msharialsayari.musrofaty.ui_component.TextComponent
 
 @Composable
 fun CategorySmsListTabs(
+    modifier: Modifier = Modifier,
     viewModel: CategorySmsListViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
-    Column(Modifier.fillMaxWidth()) {
+    Column(modifier) {
         ScrollableTabRow(
             modifier = Modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colors.background,

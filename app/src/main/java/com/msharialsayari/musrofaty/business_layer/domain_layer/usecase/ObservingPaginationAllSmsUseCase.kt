@@ -17,6 +17,7 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
 
     operator fun invoke(
         senderId: Int? = null,
+        categoryId: Int? = null,
         filterOption: DateUtils.FilterOption = DateUtils.FilterOption.ALL,
         isDeleted: Boolean? = null,
         isFavorite: Boolean? = null,
@@ -29,6 +30,7 @@ class ObservingPaginationAllSmsUseCase @Inject constructor(
     ): Flow<PagingData<SmsModel>> {
         return smsRepo.observingSmsList(
             senderId,
+            categoryId,
             filterOption,
             isDeleted,
             isFavorite,
