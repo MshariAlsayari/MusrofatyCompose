@@ -509,7 +509,7 @@ class SenderSmsListViewModel @Inject constructor(
 
     fun navigateToFilterScreen(senderId: Int, filterId: Int?) {
         if (filterId == null)
-            navigator.navigate(Screen.FilterScreen.route + "/${senderId}"+ "/${-1}"+ "/${true}")
+            navigator.navigate(Screen.FilterScreen.route + "/${senderId}"+ "/${0}"+ "/${true}")
         else
             navigator.navigate(Screen.FilterScreen.route + "/${senderId}" + "/${filterId}" +"/${false}")
     }

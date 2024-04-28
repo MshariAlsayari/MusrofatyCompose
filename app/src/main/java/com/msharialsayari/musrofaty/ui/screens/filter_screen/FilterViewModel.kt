@@ -59,7 +59,7 @@ class FilterViewModel@Inject constructor(
 
     private val filterId: Int
         get() {
-            return savedStateHandle.get<Int>(FILTER_ID_KEY) ?: -1
+            return savedStateHandle.get<Int>(FILTER_ID_KEY) ?: 0
         }
 
     private val isCreateFilter: Boolean
@@ -287,6 +287,7 @@ class FilterViewModel@Inject constructor(
             }
 
             _uiState.value.filterAmountModel?.let {
+                it.filterId = filterId.toInt()
                 insertFilterAmountUseCase.invoke(it)
             }
         }

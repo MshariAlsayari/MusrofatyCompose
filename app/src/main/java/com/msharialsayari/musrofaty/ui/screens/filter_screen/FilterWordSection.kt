@@ -23,7 +23,7 @@ import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.RowComponent
 import com.msharialsayari.musrofaty.ui_component.TextComponent
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FilterWordSection(
     modifier: Modifier = Modifier,
