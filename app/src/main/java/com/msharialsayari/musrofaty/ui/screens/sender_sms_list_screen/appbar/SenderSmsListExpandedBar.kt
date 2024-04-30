@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -29,11 +31,13 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
+import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.ButtonComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent
 import com.msharialsayari.musrofaty.ui_component.SenderComponent
 import com.msharialsayari.musrofaty.ui_component.SenderComponentModel
 import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.shimmerBrush
 import com.msharialsayari.musrofaty.ui_component.singleMediaPicker
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.requestpermissionlib.component.RequestPermissions
@@ -60,6 +64,7 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val sender = uiState.sender
     val smsCount = uiState.totalSms
+    val smsCountLoading = uiState.totalSmsLoading
     var openGallery by remember { mutableStateOf(false) }
     val model = SenderComponentModel(
         senderId = sender.id,
@@ -133,6 +138,8 @@ fun UpperPartExpandedToolbar(viewModel: SenderSmsListViewModel) {
             )
 
             TextComponent.PlaceholderText(
+                modifier= Modifier.background(shimmerBrush(targetValue = 1300f, showShimmer = smsCountLoading)),
+                color = if(smsCountLoading) Color.Transparent else MusrofatyTheme.colors.textPlaceHolderColor,
                 text = stringResource(id = R.string.common_sms_total) + ": " + smsCount.toString() + " " + pluralStringResource(
                     id = R.plurals.common_sms,
                     count = smsCount

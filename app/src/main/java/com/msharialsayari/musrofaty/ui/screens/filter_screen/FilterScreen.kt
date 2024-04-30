@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,39 +25,44 @@ import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AddFilterBottomSheetCompose
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.AmountFilterBottomSheetCompose
 import com.msharialsayari.musrofaty.ui.screens.filter_screen.bottomsheets.FilterBottomSheetType
-import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FilterScreen(){
-    val viewModel:FilterViewModel = hiltViewModel()
-    val uiState   by viewModel.uiState.collectAsState()
+fun FilterScreen() {
+    val viewModel: FilterViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val selectedFilterWordItem = rememberSaveable{ mutableStateOf<FilterWordModel?>(null) }
-    val bottomSheetType =  uiState.bottomSheetType
+    val selectedFilterWordItem = rememberSaveable { mutableStateOf<FilterWordModel?>(null) }
+    val bottomSheetType = uiState.bottomSheetType
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { BottomSheetComponent.handleVisibilityOfBottomSheet(sheetState, false) }
+        coroutineScope.launch {
+            BottomSheetComponent.handleVisibilityOfBottomSheet(
+                sheetState,
+                false
+            )
+        }
 
     }
 
-    LaunchedEffect(key1 = sheetState.currentValue){
-        if(sheetState.currentValue == ModalBottomSheetValue.Hidden){
+    LaunchedEffect(key1 = sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
             viewModel.openBottomSheet(null)
             keyboardController?.hide()
         }
     }
 
-    LaunchedEffect(key1 = bottomSheetType){
+    LaunchedEffect(key1 = bottomSheetType) {
         val showBottomSheet = bottomSheetType != null
         coroutineScope.launch {
             BottomSheetComponent.handleVisibilityOfBottomSheet(
@@ -70,47 +76,70 @@ fun FilterScreen(){
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
         sheetContent = {
-            when(bottomSheetType){
+            when (bottomSheetType) {
                 FilterBottomSheetType.WORD -> AddFilterBottomSheetCompose(item = selectedFilterWordItem.value) { item, newString ->
                     viewModel.addFilter(item, newString.trim())
                     selectedFilterWordItem.value = null
                     viewModel.openBottomSheet(null)
                 }
+
                 FilterBottomSheetType.AMOUNT -> AmountFilterBottomSheetCompose(item = uiState.filterAmountModel) { item, newString ->
                     viewModel.addAmountFilter(item, newString.trim())
                     viewModel.openBottomSheet(null)
                 }
+
                 null -> {}
             }
 
         },
-    ){
+    ) {
 
         Scaffold(
             topBar = {
                 AppBarComponent.TopBarComponent(
                     title = Screen.FilterScreen.title,
+                    actions = {
+                        if(!uiState.isCreateNewFilter)
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .mirror()
+                                .clickable {
+                                    viewModel.onDeleteBtnClicked()
+                                    viewModel.navigateUp()
+                                })
+                    },
                     onArrowBackClicked = { viewModel.navigateUp() }
                 )
 
             },
             scaffoldState = scaffoldState
         ) { innerPadding ->
-            Column(
+
+            Box(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(bottom = dimensionResource(R.dimen.btn_height60))
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                FilterTitle(viewModel)
-                FiltersInstructions()
-                FilterAmountSection(viewModel = viewModel)
-                FilterWordSection (viewModel = viewModel){
-                    selectedFilterWordItem.value = it
+                    FilterTitle(viewModel)
+                    FiltersInstructions()
+                    FilterAmountSection(viewModel = viewModel)
+                    FilterWordSection(viewModel = viewModel) {
+                        selectedFilterWordItem.value = it
+                    }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                BtnAction(viewModel)
+
+                BtnAction(modifier = Modifier.align(Alignment.BottomCenter), viewModel = viewModel)
             }
+
         }
 
     }
@@ -120,17 +149,17 @@ fun FilterScreen(){
 @Composable
 fun FiltersInstructions() {
 
-    var openInstructionDialog  by rememberSaveable { mutableStateOf(false) }
+    var openInstructionDialog by rememberSaveable { mutableStateOf(false) }
 
-    if(openInstructionDialog){
+    if (openInstructionDialog) {
         Dialog(onDismissRequest = {
             openInstructionDialog = false
         }) {
-            Card(modifier = Modifier){
+            Card(modifier = Modifier) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp,Alignment.CenterVertically)
-                ){
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                ) {
                     TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_one_click))
                     TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_double_click))
                     TextComponent.PlaceholderText(text = stringResource(id = R.string.filter_slide))
@@ -140,8 +169,8 @@ fun FiltersInstructions() {
                     TextButton(
                         modifier = Modifier.align(Alignment.End),
                         onClick = {
-                        openInstructionDialog = false
-                    }) {
+                            openInstructionDialog = false
+                        }) {
                         Text(text = stringResource(id = R.string.common_ok))
                     }
                 }
@@ -157,7 +186,6 @@ fun FiltersInstructions() {
     ) {
         openInstructionDialog = true
     }
-
 
 
 }
@@ -182,27 +210,29 @@ fun FilterTitle(viewModel: FilterViewModel) {
 }
 
 
-
-
 @ExperimentalComposeUiApi
 @Composable
 fun SectionHeader(
-    title:String,
+    title: String,
     icon: ImageVector? = null,
-    withDivider:Boolean = true,
-    onIconClicked:()->Unit) {
+    withDivider: Boolean = true,
+    onIconClicked: () -> Unit
+) {
 
 
     Column(modifier = Modifier) {
-            Row(modifier = Modifier
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.default_margin16)), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextComponent.HeaderText(text = title)
-                if (icon != null)
-                    Icon(icon, contentDescription = null, modifier = Modifier.clickable {
-                        onIconClicked()
-                    })
-            }
+                .padding(dimensionResource(id = R.dimen.default_margin16)),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TextComponent.HeaderText(text = title)
+            if (icon != null)
+                Icon(icon, contentDescription = null, modifier = Modifier.clickable {
+                    onIconClicked()
+                })
+        }
 
         if (withDivider)
             DividerComponent.HorizontalDividerComponent()
@@ -214,41 +244,28 @@ fun SectionHeader(
 
 
 @Composable
-fun BtnAction(viewModel: FilterViewModel){
-    val uiState                           by viewModel.uiState.collectAsState()
+fun BtnAction(
+    modifier: Modifier = Modifier,
+    viewModel: FilterViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    Row {
-        ButtonComponent.ActionButton(
-            modifier =Modifier.weight(1f),
-            text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
-            onClick = {
-                if (viewModel.validate()) {
-                   viewModel.onCreateBtnClicked()
-                   viewModel.navigateUp()
-                }
+
+    ButtonComponent.ActionButton(
+        modifier = modifier.fillMaxWidth(),
+        text = if (uiState.isCreateNewFilter) R.string.common_create else R.string.common_save,
+        onClick = {
+            if (viewModel.validate()) {
+                viewModel.onCreateBtnClicked()
+                viewModel.navigateUp()
             }
+        }
 
-        )
-
-        if (!uiState.isCreateNewFilter)
-            ButtonComponent.ActionButton(
-                modifier = Modifier.weight(1f),
-                color = MusrofatyTheme.colors.deleteActionColor,
-                text = R.string.common_delete,
-                onClick = {
-                    viewModel.onDeleteBtnClicked()
-                    viewModel.navigateUp()
-                }
-
-            )
-
-    }
-
-
+    )
 }
 
 @Composable
-fun EmptyCompose(){
+fun EmptyCompose() {
     Box(contentAlignment = Alignment.Center) {
         EmptyComponent.EmptyTextComponent()
     }

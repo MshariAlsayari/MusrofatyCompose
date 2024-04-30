@@ -12,7 +12,6 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryContainerStatistics
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
@@ -81,7 +80,7 @@ class SenderSmsListViewModel @Inject constructor(
 
 
 
-    private val _uiState = MutableStateFlow(SenderSmsListUiState(sender = SenderModel(senderName = "")))
+    private val _uiState = MutableStateFlow(SenderSmsListUiState())
     val uiState: StateFlow<SenderSmsListUiState> = _uiState
 
     val senderId: Int
@@ -131,6 +130,11 @@ class SenderSmsListViewModel @Inject constructor(
 
     private fun getSmsTotal() {
         viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    totalSmsLoading= true,
+                )
+            }
             val result = getAllSmsUseCase.invoke(
                 senderId =  senderId,
                 filterOption = getFilterTimeOption(),
@@ -144,6 +148,7 @@ class SenderSmsListViewModel @Inject constructor(
             )
             _uiState.update {
                 it.copy(
+                    totalSmsLoading= false,
                     totalSms = result.size
                 )
             }

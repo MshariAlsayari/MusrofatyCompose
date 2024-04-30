@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -16,11 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsListViewModel
@@ -28,10 +30,9 @@ import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui.toolbar.CollapsingToolbar
 import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.shimmerBrush
 import com.msharialsayari.musrofaty.utils.findActivity
 import com.msharialsayari.musrofaty.utils.mirror
-
-
 
 
 @Composable
@@ -66,13 +67,23 @@ fun CollapsedToolbarComposable(viewModel: SenderSmsListViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val smsCount =  uiState.totalSms
+    val isLoading =  uiState.totalSmsLoading
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TextComponent.HeaderText(
             text = SenderModel.getDisplayName(context, uiState.sender)
         )
 
+
+
         TextComponent.BodyText(
+            modifier = Modifier.background(
+                shimmerBrush(
+                    targetValue = 1300f,
+                    showShimmer = isLoading
+                )
+            ).width(150.dp),
+            color = if (isLoading) Color.Transparent else MusrofatyTheme.colors.textBodyColor,
             text = "$smsCount " + pluralStringResource(
                 id = R.plurals.common_sms,
                 count = smsCount
