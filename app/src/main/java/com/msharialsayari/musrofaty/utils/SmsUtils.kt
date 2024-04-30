@@ -51,6 +51,10 @@ object SmsUtils {
                 sender.equals(Constants.ALAHLI_WITH_SAMBA_BANK, ignoreCase = true)
     }
 
+    fun isArabiBankSender(sender:String):Boolean{
+        return  sender.equals(Constants.ALARABI_BANK, ignoreCase = true)
+    }
+
 
 
     private fun containsNumber(sms:String?):Boolean{

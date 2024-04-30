@@ -42,11 +42,12 @@ class SmsSourceImpl @Inject constructor(
             if (cursor.moveToFirst() && totalSMS != null) {
                 for (i in 0 until totalSMS) {
                     val smsId = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
+                    val smsAddress = cursor.getString(cursor.getColumnIndexOrThrow("address"))
                     val senderName =
-                        if (SmsUtils.isAlahliSender(cursor.getString(cursor.getColumnIndexOrThrow("address")))) {
-                            Constants.ALAHLI_WITH_SAMBA_BANK
-                        } else {
-                            cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                        when{
+                            SmsUtils.isAlahliSender(smsAddress)    ->   Constants.ALAHLI_WITH_SAMBA_BANK
+                            SmsUtils.isArabiBankSender(smsAddress) ->   Constants.ALARABI_BANK
+                            else ->    smsAddress
                         }
                     val smsBody =
                         SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body")))
@@ -128,12 +129,12 @@ class SmsSourceImpl @Inject constructor(
         if (cursor != null && cursor.moveToFirst()) {
             val smsId = cursor.getString(cursor.getColumnIndexOrThrow("_id"))
             val smsSenderName = cursor.getString(cursor.getColumnIndexOrThrow("address"))
-            val isAlahliSender = SmsUtils.isAlahliSender(smsSenderName)
-            val finalSenderName = if (isAlahliSender) {
-                Constants.ALAHLI_WITH_SAMBA_BANK
-            } else {
-                smsSenderName
+            val finalSenderName = when{
+                SmsUtils.isAlahliSender(smsSenderName)    ->   Constants.ALAHLI_WITH_SAMBA_BANK
+                SmsUtils.isArabiBankSender(smsSenderName) ->   Constants.ALARABI_BANK
+                else ->    smsSenderName
             }
+
             val smsBody =
                 SmsUtils.clearSms(cursor.getString(cursor.getColumnIndexOrThrow("body"))) ?: ""
             val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("date")).toLong()
