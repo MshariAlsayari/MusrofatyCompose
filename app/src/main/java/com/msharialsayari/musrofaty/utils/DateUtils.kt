@@ -8,13 +8,13 @@ import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Month
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Calendar
 import java.util.Locale
+
 
 object DateUtils {
 
@@ -258,19 +258,17 @@ object DateUtils {
         return Instant.ofEpochMilli(millisecond).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
 
-    fun getDateByWeekOfMonth(weekOfMonth: Long, date: LocalDate = LocalDate.now()): LocalDate {
+    fun getDateByWeekOfMonth(weekOfMonth: Long, weekStartDay:DayOfWeek = DayOfWeek.SATURDAY, date: LocalDate = LocalDate.now()): LocalDate {
         return LocalDate.of(date.year, date.month, 1)
-            .with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+            .with(WeekFields.of(weekStartDay,1).dayOfWeek(), weekStartDay.value.toLong())
             .plusWeeks(weekOfMonth - 1)
-
     }
 
-    fun getDateByMonthOfYear(monthValue: Month, date: LocalDate = LocalDate.now() ): LocalDate {
-        return LocalDate.of(date.year, monthValue, 1)
-
+    fun getWeekOfMonthNumberByLocalDate(date: LocalDate? = LocalDate.now(), weekStartDay:DayOfWeek = DayOfWeek.SATURDAY): Int? {
+        val weekFields  = WeekFields.of(weekStartDay, 1)
+        val weekOfMonth = weekFields.weekOfMonth()
+        return  date?.get(weekOfMonth)
     }
-
-
 
     enum class NumberType {
         SINGLE, TWICE, PLURAL
@@ -287,7 +285,6 @@ object DateUtils {
         MONTH(3, R.string.filter_options_month_title),
         YEAR(4, R.string.filter_options_year_title),
         RANGE(5, R.string.filter_options_range_title);
-
 
         companion object{
             fun getFilterOptionOrDefault(id:Int? = 0, default:FilterOption =  ALL): FilterOption {

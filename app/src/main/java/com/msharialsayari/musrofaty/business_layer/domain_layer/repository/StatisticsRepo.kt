@@ -21,11 +21,9 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
-import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -126,7 +124,6 @@ class StatisticsRepo @Inject constructor(
         //declaring variables
         val model = CategoriesChartModel(key = key)
         val chartEntryList = mutableListOf<ChartEntry>()
-        val data = mutableMapOf<LocalDate, Float>()
         val entries = mutableListOf<FloatEntry>()
         var total = 0.0f
         var average = 0.0f
@@ -160,8 +157,8 @@ class StatisticsRepo @Inject constructor(
             val smsDate = DateUtils.toLocalDate(it.timestamp)
             when (finalFilterOption) {
                 DateUtils.FilterOption.MONTH -> {
-                    val weekOfMonth = smsDate.get(WeekFields.of(Locale.ENGLISH).weekOfMonth())
-                    val keyDate = DateUtils.getDateByWeekOfMonth(weekOfMonth.toLong(), smsDate)
+                    val weekOfMonth = DateUtils.getWeekOfMonthNumberByLocalDate(smsDate)
+                    val keyDate = DateUtils.getDateByWeekOfMonth(weekOfMonth =weekOfMonth?.toLong()?:0, date = smsDate)
                     keyDate
                 }
                 DateUtils.FilterOption.YEAR -> {
@@ -178,38 +175,27 @@ class StatisticsRepo @Inject constructor(
         groupedDate.entries.map {entry->
             var amount = 0f
             entry.value.map { amount += it.amount.toFloat() }
-            val chartEntry = ChartEntry(amount=amount, date = entry.key )
-            chartEntryList.add(chartEntry)
+            entries.add(FloatEntry(x = entry.key.toEpochDay().toFloat(), y = amount))
+            chartEntryList.add(ChartEntry(date = entry.key ,amount=amount,))
+            total += amount
+
         }
 
-
-        chartEntryList.mapIndexed { index,entry ->
-            data[entry.date] = entry.amount
-            entries.add(FloatEntry(x = entry.date.toEpochDay().toFloat(), y = entry.amount))
-            total += entry.amount
-        }
-        average = if (chartEntryList.isEmpty()) {
+        average = if (entries.isEmpty()) {
             0f
         } else {
-            total / chartEntryList.size
+            total / entries.size
         }
 
 
 
         val xValuesToDates = chartEntryList.associateBy { it.date.toEpochDay().toFloat() }
-        val dateTimeFormatter: DateTimeFormatter =
-           if (entries.size <= 6) {
-                DateTimeFormatter.ofPattern("d MMM")
-            } else {
-                DateTimeFormatter.ofPattern("d")
-            }
-
+        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
         val horizontalAxisValueFormatter =
             AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValue ->
                 when (finalFilterOption) {
                     DateUtils.FilterOption.MONTH -> {
-                       val weekFields = WeekFields.of(Locale.getDefault())
-                       val numberOfWeek =  xValuesToDates[value]?.date?.get(weekFields.weekOfWeekBasedYear())
+                       val numberOfWeek = DateUtils.getWeekOfMonthNumberByLocalDate(xValuesToDates[value]?.date)
                         "${context.getString(R.string.common_week)} $numberOfWeek"
                     }
 
@@ -224,7 +210,6 @@ class StatisticsRepo @Inject constructor(
 
             }
 
-        model.data = data
         model.entries = entries
         model.total = total
         model.average = average

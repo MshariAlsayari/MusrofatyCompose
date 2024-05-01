@@ -9,7 +9,6 @@ import java.time.LocalDate
 
 data class CategoriesChartModel(
     val key:String,
-    var data: Map<LocalDate, Float> = emptyMap(),
     var entries: List<FloatEntry> = emptyList(),
     var xItemCount:Int = 1,
     var yItemCount:Int = 6,
@@ -22,6 +21,6 @@ data class CategoriesChartModel(
 )
 
 data class ChartEntry(
-    var amount:Float = 0f,
-    var date:LocalDate,
+    var amount:Float = 0f, // y
+    var date:LocalDate, // x
 )
