@@ -9,11 +9,9 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsL
 
 
 @Composable
-fun SoftDeletedTab(viewModel: SenderSmsListViewModel,onCategoryClicked:()->Unit){
+fun SoftDeletedTab(viewModel: SenderSmsListViewModel){
     val uiState  by viewModel.uiState.collectAsState()
     val smsList = uiState.softDeletedSmsList?.collectAsLazyPagingItems()
     if (smsList != null)
-        LazySenderSms(viewModel = viewModel, list = smsList) {
-            onCategoryClicked()
-        }
+        LazySenderSms(viewModel = viewModel, list = smsList)
 }

@@ -14,10 +14,7 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryMo
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FilterAmountModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsContainer
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetAllSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesStatisticsUseCase
@@ -29,7 +26,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSende
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.LoadSenderSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingPaginationAllSmsUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateSenderIconUseCase
 import com.msharialsayari.musrofaty.excei.ExcelModel
@@ -68,8 +64,6 @@ class SenderSmsListViewModel @Inject constructor(
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
     private val updateSenderIconUseCase: UpdateSenderIconUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
-    private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
-    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getAllSmsUseCase: GetAllSmsUseCase,
     private val getFilterUseCase: GetFilterUseCase,
@@ -469,19 +463,6 @@ class SenderSmsListViewModel @Inject constructor(
         }
     }
 
-    fun onCategorySelected(item: SelectedItemModel) {
-        viewModelScope.launch {
-            val categoryId = item.id
-            val storeName = _uiState.value.selectedSms?.storeAndCategoryModel?.store?.name
-            val storeModel = storeName?.let { name -> StoreModel(name = name, categoryId = categoryId) }
-
-            storeModel?.let {
-                addOrUpdateStoreUseCase.invoke(it)
-                postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
-                getData()
-            }
-        }
-    }
 
     fun getCategoryItems(
         context: Context,

@@ -3,13 +3,9 @@ package com.msharialsayari.musrofaty.ui.screens.sms_screen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_database.CategoryEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SenderModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCategoryUseCase
@@ -24,7 +20,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDele
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
-import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -137,14 +132,14 @@ class SmsViewModel @Inject constructor(
 
                 if (item.isSelected) {
                     addOrUpdateStoreUseCase.invoke(it)
+                    getData(_uiState.value.sms?.id!!)
                     postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
                 } else {
                     storeModel.categoryId = -1
                     addOrUpdateStoreUseCase.invoke(storeModel)
+                    getData(_uiState.value.sms?.id!!)
                 }
             }
-
-            getData(_uiState.value.sms?.id!!)
         }
     }
 

@@ -9,12 +9,10 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsL
 
 
 @Composable
-fun FavoriteSmsTab(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit){
+fun FavoriteSmsTab(viewModel: SenderSmsListViewModel){
     val uiState  by viewModel.uiState.collectAsState()
     val smsList = uiState.favoriteSmsList?.collectAsLazyPagingItems()
     if (smsList != null)
-        LazySenderSms(viewModel = viewModel, list = smsList) {
-            onCategoryClicked()
-        }
+        LazySenderSms(viewModel = viewModel, list = smsList)
 
 }

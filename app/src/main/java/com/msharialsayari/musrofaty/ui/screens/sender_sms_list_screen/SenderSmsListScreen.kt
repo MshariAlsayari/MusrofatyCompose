@@ -35,7 +35,6 @@ import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.Utils
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.appbar.SenderSmsListCollapsedBar
-import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.CategoriesBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.DateRangeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterTimeBottomSheet
 import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.bottomsheets.FilterWordsBottomSheet
@@ -45,8 +44,6 @@ import com.msharialsayari.musrofaty.ui.toolbar.ToolbarState
 import com.msharialsayari.musrofaty.ui.toolbar.scrollflags.ScrollState
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
-import com.msharialsayari.musrofaty.ui_component.date_picker.ComposeDatePicker
-import com.msharialsayari.musrofaty.utils.DateUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -125,7 +122,6 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
             when(bottomSheetType){
                 SenderSmsListBottomSheetType.TIME_PERIODS ->  FilterTimeBottomSheet(viewModel,sheetState)
                 SenderSmsListBottomSheetType.FILTER ->  FilterWordsBottomSheet(viewModel, sheetState)
-                SenderSmsListBottomSheetType.CATEGORIES ->CategoriesBottomSheet(viewModel, sheetState)
                 SenderSmsListBottomSheetType.DATE_PICKER ->DateRangeBottomSheet(viewModel, sheetState)
                 null -> {}
             }
@@ -161,12 +157,7 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
                     }
 
                 )
-                Tabs(viewModel = viewModel){
-                    viewModel.updateBottomSheetType(SenderSmsListBottomSheetType.CATEGORIES)
-                    coroutineScope.launch {
-                        handleVisibilityOfBottomSheet(sheetState, true)
-                    }
-                }
+                Tabs(viewModel = viewModel)
             }
         }
 
@@ -176,9 +167,8 @@ fun SenderSmsListContent(viewModel: SenderSmsListViewModel) {
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Tabs(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit) {
+fun Tabs(viewModel: SenderSmsListViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val tabIndex = uiState.selectedTabIndex
     Column(Modifier.fillMaxWidth()) {
@@ -211,9 +201,9 @@ fun Tabs(viewModel: SenderSmsListViewModel, onCategoryClicked:()->Unit) {
             }
         }
         when (SenderSmsListScreenTabs.getTabByIndex(tabIndex)) {
-            SenderSmsListScreenTabs.ALL -> AllSmsTab(viewModel,onCategoryClicked)
-            SenderSmsListScreenTabs.FAVORITE -> FavoriteSmsTab(viewModel,onCategoryClicked)
-            SenderSmsListScreenTabs.DELETED -> SoftDeletedTab(viewModel,onCategoryClicked)
+            SenderSmsListScreenTabs.ALL -> AllSmsTab(viewModel)
+            SenderSmsListScreenTabs.FAVORITE -> FavoriteSmsTab(viewModel)
+            SenderSmsListScreenTabs.DELETED -> SoftDeletedTab(viewModel)
             SenderSmsListScreenTabs.FINANCIAL -> FinancialStatisticsTab(viewModel)
             SenderSmsListScreenTabs.CATEGORIES -> CategoriesStatisticsTab(viewModel)
         }
@@ -239,8 +229,7 @@ fun PageLoading() {
 @Composable
 fun LazySenderSms(
     list: LazyPagingItems<SmsModel>,
-    viewModel: SenderSmsListViewModel,
-    onCategoryClicked:()->Unit
+    viewModel: SenderSmsListViewModel
 ) {
     val context = LocalContext.current
 
@@ -258,11 +247,6 @@ fun LazySenderSms(
                         viewModel.navigateToSmsDetails(it)
                     },
                     forceHideStoreAndCategory = true,
-                    onCategoryClicked = {
-                        viewModel.onSmsCategoryClicked(item)
-                        onCategoryClicked()
-
-                    },
                     onActionClicked = { model, action ->
                         when (action) {
                             SmsActionType.FAVORITE -> viewModel.favoriteSms(

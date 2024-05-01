@@ -108,13 +108,15 @@ class StoreSmsListViewModel  @Inject constructor(
             storeModel?.let {
                 if(item.isSelected){
                     addOrUpdateStoreUseCase.invoke(it)
+                    getAllSms()
                     postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
                 }else{
                     storeModel.categoryId = -1
                     addOrUpdateStoreUseCase.invoke(storeModel)
+                    getAllSms()
                 }
 
-                getAllSms()
+
             }
         }
     }

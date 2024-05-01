@@ -15,7 +15,6 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddCateg
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddOrUpdateStoreUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.FavoriteSmsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoriesUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetCategoryUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObservingSmsListByIdsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.PostStoreToFirebaseUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.SoftDeleteSMsUseCase
@@ -39,7 +38,6 @@ class SmsListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val softDeleteSMsUseCase: SoftDeleteSMsUseCase,
     private val favoriteSmsUseCase: FavoriteSmsUseCase,
-    private val getCategoryUseCase: GetCategoryUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val addOrUpdateStoreUseCase: AddOrUpdateStoreUseCase,
     private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
@@ -153,13 +151,13 @@ class SmsListViewModel @Inject constructor(
             storeModel?.let {
                 if(item.isSelected){
                     addOrUpdateStoreUseCase.invoke(it)
+                    getSms()
                     postStoreToFirebaseUseCase.invoke(storeModel.toStoreEntity())
                 }else{
                     storeModel.categoryId = -1
                     addOrUpdateStoreUseCase.invoke(storeModel)
+                    getSms()
                 }
-
-                getSms()
             }
         }
     }

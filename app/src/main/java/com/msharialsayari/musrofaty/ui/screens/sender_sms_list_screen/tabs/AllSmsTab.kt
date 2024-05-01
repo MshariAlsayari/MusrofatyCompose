@@ -9,11 +9,9 @@ import com.msharialsayari.musrofaty.ui.screens.sender_sms_list_screen.SenderSmsL
 
 
 @Composable
-fun AllSmsTab(viewModel: SenderSmsListViewModel, onCategoryClicked: () -> Unit) {
+fun AllSmsTab(viewModel: SenderSmsListViewModel) {
     val uiState  by viewModel.uiState.collectAsState()
     val smsList = uiState.allSmsList?.collectAsLazyPagingItems()
     if (smsList != null)
-        LazySenderSms(viewModel = viewModel, list = smsList) {
-            onCategoryClicked()
-        }
+        LazySenderSms(viewModel = viewModel, list = smsList)
 }
