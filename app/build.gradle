@@ -9,7 +9,7 @@ plugins {
 
 def versionMajor = 3
 def versionMinor = 0
-def versionPatch = 9
+def versionPatch = 1
 def versionBuild = 0// bump for dogfood builds, public betas, etc.
 
 
