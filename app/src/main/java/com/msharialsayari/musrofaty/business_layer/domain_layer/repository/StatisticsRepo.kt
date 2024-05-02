@@ -132,7 +132,7 @@ class StatisticsRepo @Inject constructor(
             return model
 
 
-        val sortedList = filteredList.sortedByDescending { it.timestamp }
+        val sortedList = filteredList.sortedBy { it.timestamp }
         val endDate =  sortedList.first().timestamp
         val startDate = sortedList.last().timestamp
         val finalFilterOption = if(filterOption == DateUtils.FilterOption.RANGE || filterOption == DateUtils.FilterOption.YEAR){
@@ -141,9 +141,9 @@ class StatisticsRepo @Inject constructor(
             val monthsBetween = ChronoUnit.MONTHS.between(start, end).toInt()
             val weeksBetween = ChronoUnit.WEEKS.between(start, end).toInt()
 
-            if(weeksBetween <= 7){
+            if(weeksBetween in 0..4){
                 DateUtils.FilterOption.MONTH
-            }else if(monthsBetween <=12){
+            }else if(monthsBetween in 0..12){
                 DateUtils.FilterOption.YEAR
             }else{
                 DateUtils.FilterOption.WEEK
@@ -172,11 +172,11 @@ class StatisticsRepo @Inject constructor(
         }
 
 
-        groupedDate.entries.map {entry->
+        groupedDate.entries.mapIndexed { index, entry ->
             var amount = 0f
             entry.value.map { amount += it.amount.toFloat() }
-            entries.add(FloatEntry(x = entry.key.toEpochDay().toFloat(), y = amount))
-            chartEntryList.add(ChartEntry(date = entry.key ,amount=amount,))
+            entries.add(FloatEntry(x = index.toFloat(), y = amount))
+            chartEntryList.add(ChartEntry(date = entry.key ,amount=amount))
             total += amount
 
         }
@@ -189,23 +189,25 @@ class StatisticsRepo @Inject constructor(
 
 
 
-        val xValuesToDates = chartEntryList.associateBy { it.date.toEpochDay().toFloat() }
-        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
-        val horizontalAxisValueFormatter =
-            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValue ->
+        val xValuesToDates = chartEntryList.withIndex().associateBy ({ it.index.toFloat() }, {it.value})
+        val horizontalAxisValueFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValue ->
+            val date = xValuesToDates[value]?.date
+            date?.let {
                 when (finalFilterOption) {
                     DateUtils.FilterOption.MONTH -> {
-                       val numberOfWeek = DateUtils.getWeekOfMonthNumberByLocalDate(xValuesToDates[value]?.date)
+                        val numberOfWeek = DateUtils.getWeekOfMonthNumberByLocalDate(date)
                         "${context.getString(R.string.common_week)} $numberOfWeek"
                     }
 
                     DateUtils.FilterOption.YEAR -> {
-                        xValuesToDates[value]?.date?.month?.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())?: ""
+                        date.month?.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())
                     }
+
                     else -> {
-                        (xValuesToDates[value])?.date?.format(dateTimeFormatter) ?:""
+                        date.format(DateTimeFormatter.ofPattern("d MMM"))
                     }
                 }
+            } ?: run { "" }
 
 
             }

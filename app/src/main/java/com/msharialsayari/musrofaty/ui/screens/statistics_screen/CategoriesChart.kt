@@ -72,6 +72,7 @@ fun CategoriesChart(modifier: Modifier = Modifier, viewModel: StatisticsViewMode
                     title = it.yTitle
                 ),
                 bottomAxis = rememberBottomAxis(
+                    itemPlacer = remember { AxisItemPlacer.Horizontal.default(addExtremeLabelPadding = true) },
                     valueFormatter = it.xValueFormatter,
                     titleComponent = axisLabelComponent(),
                     title = it.xTitle
