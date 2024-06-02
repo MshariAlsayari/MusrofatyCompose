@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import androidx.work.BackoffPolicy
 import androidx.work.OneTimeWorkRequest
@@ -34,7 +33,6 @@ import com.msharialsayari.musrofaty.jobs.InitWithdrawalWordsJob
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
-import com.msharialsayari.musrofaty.utils.DialogsUtils
 import com.msharialsayari.musrofaty.utils.SetStatusBarColor
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
@@ -59,11 +57,14 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    private val viewModel: MainViewModel by viewModels()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initJobs()
+        runApp()
     }
 
     private fun initJobs() {
@@ -169,37 +170,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        when {
-            isPermissionGranted() -> runApp()
-            shouldShowRequestPermissionRationale() -> {
-                DialogsUtils.showDialog(
-                    this, DialogsUtils.Params(
-                        title = R.string.sms_permission_rational_dialog_title,
-                        message = R.string.sms_permission_rational_dialog_message,
-                        positiveBtnText = android.R.string.ok,
-                        positiveBtnListener = {
-                            askPermission()
-                        }
-                    )
-                )
-
-            }
-
-            else -> {
-                DialogsUtils.showDialog(this, DialogsUtils.Params(
-                    title = R.string.sms_permission_denied_dialog_title,
-                    message = R.string.sms_permission_denied_dialog_message,
-                    positiveBtnText = R.string.permission_dialog_positive_button,
-                    positiveBtnListener = {
-                        navigationToAppSetting(getSettingIntent())
-                    }
-                ))
-
-            }
-        }
-
-
+        viewModel.observeSmsPermission()
     }
 
 
@@ -216,7 +187,6 @@ class MainActivity : ComponentActivity() {
 
     private fun runApp() {
         setContent {
-            val viewModel: MainViewModel = hiltViewModel()
             val navigatorViewModel: AppNavigatorViewModel by viewModels()
             val uiState by viewModel.uiState.collectAsState()
             val windowSizeClass = getScreenSize(this)
@@ -229,6 +199,7 @@ class MainActivity : ComponentActivity() {
 
                 SetStatusBarColor()
                 MainScreenView(
+                    mainViewModel = viewModel,
                     navigatorViewModel =navigatorViewModel,
                     screenType = screenType
                 )

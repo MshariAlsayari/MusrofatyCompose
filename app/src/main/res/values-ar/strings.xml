@@ -315,4 +315,9 @@
     <!--   Sms Detector Screen  -->
     <string name="sms_detector_tool_title">أداة الرسائل</string>
 
+    <!--   Sms Permission Screen  -->
+    <string name="sms_permission_title">الرسائل</string>
+    <string name="sms_permission_message">يحتاج التطبيق للوصول إلى الرسائل لحساب إيرادات ومصروفات</string>
+    <!--   End Sms Permission Screen  -->
+
 </resources>

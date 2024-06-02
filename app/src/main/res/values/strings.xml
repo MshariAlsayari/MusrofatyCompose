@@ -305,6 +305,11 @@
     <!--   Sms Detector Screen  -->
     <string name="sms_detector_tool_title">Sms tool</string>
 
+    <!--   Sms Permission Screen  -->
+    <string name="sms_permission_title">SMS</string>
+    <string name="sms_permission_message">The app needs your permission to read SMS to calculate your incomes and expenses</string>
+    <!--   End Sms Permission Screen  -->
+
 
 
 

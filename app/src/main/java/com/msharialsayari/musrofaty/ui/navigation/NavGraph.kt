@@ -1,14 +1,23 @@
 package com.msharialsayari.musrofaty.ui.navigation
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.msharialsayari.musrofaty.MainViewModel
 import com.msharialsayari.musrofaty.ui.permission.singlePermission
 import com.msharialsayari.musrofaty.ui.screens.appearance_screen.AppearanceScreen
 import com.msharialsayari.musrofaty.ui.screens.categories_screen.CategoriesScreen
@@ -28,6 +37,7 @@ import com.msharialsayari.musrofaty.ui.screens.sms_detector_tool_screen.SmsDetec
 import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SCREEN_TITLE_KEY
 import com.msharialsayari.musrofaty.ui.screens.sms_list_screen.SmsListViewModel.Companion.SMS_IDS_KEY
+import com.msharialsayari.musrofaty.ui.screens.sms_permission_screen.SmsPermissionScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_screen.SmsScreen
 import com.msharialsayari.musrofaty.ui.screens.sms_types_screen.SmsTypesScreen
 import com.msharialsayari.musrofaty.ui.screens.splash_screen.SplashScreen
@@ -39,15 +49,36 @@ import com.msharialsayari.musrofaty.ui.screens.stores_screen.StoresScreen
 
 @Composable
 fun NavigationGraph(
+    mainViewModel: MainViewModel,
     navController: NavHostController,
     innerPadding: PaddingValues,
 ) {
 
+    val uiState by mainViewModel.uiState.collectAsState()
+    val isSmsGranted = uiState.smsPermissionGranted
+    val context = LocalContext.current as Activity
+
+    LaunchedEffect(isSmsGranted){
+         if(isSmsGranted) {
+            navController.navigate(Screen.Splash.route)
+        }else{
+             navController.navigate(Screen.SmsPermissionScreen.route)
+        }
+    }
+
+
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route,
-        Modifier.padding(innerPadding)
+        startDestination = Screen.Default.route,
+        modifier = Modifier.padding(innerPadding)
     ) {
+
+        composable(Screen.Default.route) {
+
+        }
+
+
         composable(Screen.Splash.route) {
             SplashScreen(onLoadingDone = {
                 navController.navigate(BottomNavItem.Dashboard.route) {
@@ -55,6 +86,15 @@ fun NavigationGraph(
                         inclusive = true
                     }
                 }
+            })
+        }
+
+        composable(Screen.SmsPermissionScreen.route) {
+            SmsPermissionScreen(onActionBtnClick = {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri: Uri = Uri.fromParts("package", context.packageName, null)
+                intent.data = uri
+                context.startActivity(intent)
             })
         }
 

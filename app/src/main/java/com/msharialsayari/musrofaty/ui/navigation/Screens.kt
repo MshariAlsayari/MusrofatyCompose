@@ -6,6 +6,7 @@ import com.msharialsayari.musrofaty.R
 open class BaseScreen(val route: String, var title:Int?=null)
 
 sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title) {
+    object Default                  : Screen("default_screen")
     object Splash                  : Screen("splash_screen")
     object SenderDetailsScreen     : Screen("sender_details_screen", title = R.string.sender_details_title_screen)
     object SenderSmsListScreen     : Screen("sender_sms_list_screen")
@@ -24,6 +25,8 @@ sealed class Screen(route: String, title: Int? = null): BaseScreen(route, title)
     object SmsListScreen   : Screen("sms_list_screen",title = R.string.category_title_screen)
     object SmsTypesScreen   : Screen("sms_types_screen",title = R.string.pref_managment_sms_types_title)
     object SmsDetectorToolScreen   : Screen("sms_detector_tool_screen",title = R.string.pref_managment_sms_tool_title)
+
+    object SmsPermissionScreen  : Screen("sms_permission_screen",title = R.string.sms_permission_title)
 
 }
 
