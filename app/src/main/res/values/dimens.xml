@@ -20,6 +20,7 @@
 
 
     <dimen name="btn_height60">60dp</dimen>
+    <dimen name="btn_height50">50dp</dimen>
 
 
     <!--rows_size-->

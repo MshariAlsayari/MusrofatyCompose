@@ -60,9 +60,17 @@ fun NavigationGraph(
 
     LaunchedEffect(isSmsGranted){
          if(isSmsGranted) {
-            navController.navigate(Screen.Splash.route)
+            navController.navigate(Screen.Splash.route){
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
         }else{
-             navController.navigate(Screen.SmsPermissionScreen.route)
+             navController.navigate(Screen.SmsPermissionScreen.route){
+                 popUpTo(navController.graph.id) {
+                     inclusive = true
+                 }
+             }
         }
     }
 
@@ -74,15 +82,12 @@ fun NavigationGraph(
         modifier = Modifier.padding(innerPadding)
     ) {
 
-        composable(Screen.Default.route) {
-
-        }
-
+        composable(Screen.Default.route){}
 
         composable(Screen.Splash.route) {
             SplashScreen(onLoadingDone = {
                 navController.navigate(BottomNavItem.Dashboard.route) {
-                    popUpTo(Screen.Splash.route) {
+                    popUpTo(navController.graph.id) {
                         inclusive = true
                     }
                 }

@@ -64,7 +64,7 @@
     <string name="sms_permission_rational_dialog_message">التطبيق يحتاج لقراءة رسائل البنوك المحددة لحساب المصروفات واللإيرادات</string>
 
     <string name="sms_permission_denied_dialog_title">الأذونات</string>
-    <string name="sms_permission_denied_dialog_message">التطبيق يحتاج إلى السماح له بقراءة رسائل البنوك المحددة لحساب المصروفات واللإيرادات  من خلال إعدادات التطبيق</string>
+    <string name="sms_permission_denied_dialog_message">للسماح للوصول إلى الرسائل يرجى الضغط على الإعدادات للذهاب إلى اعدادات التطبيق ومن ثم الذهاب إلى الأذونات وتعفيل إذن قراءة الرسائل</string>
     <string name="permission_dialog_positive_button">الإعدادات</string>
 
     <!--Dashboard-->
@@ -317,7 +317,7 @@
 
     <!--   Sms Permission Screen  -->
     <string name="sms_permission_title">الرسائل</string>
-    <string name="sms_permission_message">يحتاج التطبيق للوصول إلى الرسائل لحساب إيرادات ومصروفات</string>
+    <string name="sms_permission_message">يحتاج التطبيق للوصول إلى الرسائل لحساب الإيرادات والمصروفات</string>
     <!--   End Sms Permission Screen  -->
 
 </resources>

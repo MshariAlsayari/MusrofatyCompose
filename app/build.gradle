@@ -208,7 +208,6 @@ dependencies {
 
     implementation "io.github.vanpra.compose-material-dialogs:datetime:${material_date_version}"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
-    implementation 'com.github.MshariAlsayari:Request-Permission-Compose:1.1.1'
     implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation "com.google.accompanist:accompanist-pager:0.25.1"

@@ -1,21 +1,13 @@
 package com.msharialsayari.musrofaty
 
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.work.BackoffPolicy
 import androidx.work.OneTimeWorkRequest
@@ -47,15 +39,6 @@ class MainActivity : ComponentActivity() {
         private val TAG = MainActivity::class.java.simpleName
     }
 
-
-    private val openSettingRequest =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (isPermissionGranted()) {
-                runApp()
-            }else{
-                navigationToAppSetting(getSettingIntent())
-            }
-        }
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -174,17 +157,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    private fun navigationToAppSetting(intent: Intent) {
-        openSettingRequest.launch(intent)
-    }
-
-    private fun getSettingIntent(): Intent {
-        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri: Uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        return intent
-    }
-
     private fun runApp() {
         setContent {
             val navigatorViewModel: AppNavigatorViewModel by viewModels()
@@ -206,27 +178,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-    private fun isPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_SMS
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun shouldShowRequestPermissionRationale(): Boolean {
-        return shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)
-    }
-
-    private fun askPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            listOf(Manifest.permission.READ_SMS).toTypedArray(),
-            123
-        )
-    }
-
 }
 
 

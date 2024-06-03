@@ -60,7 +60,7 @@
 
 
     <string name="sms_permission_denied_dialog_title">Sms Permission</string>
-    <string name="sms_permission_denied_dialog_message">please let the app to access to specified bank SMS through app\'s settings</string>
+    <string name="sms_permission_denied_dialog_message">to enable reading Sms please click on settings to navigate to the app\'s setting then go to the permissions and allow Read SMS permission </string>
     <string name="permission_dialog_positive_button">Settings</string>
 
 

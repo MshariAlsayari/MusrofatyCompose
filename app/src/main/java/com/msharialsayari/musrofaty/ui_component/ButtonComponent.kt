@@ -7,7 +7,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -31,7 +37,7 @@ object ButtonComponent {
 
             ),
             modifier = modifier
-                .height(dimensionResource(R.dimen.btn_height60)),
+                .height(dimensionResource(R.dimen.btn_height50)),
             ) {
             Text(text = stringResource(id = text), color = MaterialTheme.colors.onPrimary)
         }
