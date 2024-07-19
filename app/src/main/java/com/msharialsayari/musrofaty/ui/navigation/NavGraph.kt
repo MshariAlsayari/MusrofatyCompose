@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,7 +81,9 @@ fun NavigationGraph(
     NavHost(
         navController = navController,
         startDestination = Screen.Default.route,
-        modifier = Modifier.padding(innerPadding)
+        modifier =   Modifier
+            .statusBarsPadding()
+            .padding(innerPadding)
     ) {
 
         composable(Screen.Default.route){}

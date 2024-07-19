@@ -50,7 +50,7 @@ private val expensesColor        = Color(0xFFCC0311)
 private val deleteActionColor    = Color(0xFFF44336)
 private val pinActionColor       = Color(0xFF4CAF50)
 private val modifyActionColor    = Color(0xFF2196F3)
-private val toolbarColor         = primary
+private val toolbarColor         = background
 private val textHeaderColor      = onBackground
 private val textBodyColor        = onBackground
 private val textPlaceHolderColor = LightGray
@@ -61,12 +61,12 @@ private val selectedItemColor    = primary
 private val navigationBarColor    = White
 
 //Musrofaty Dark Colors
-private val toolbarDarkColor         = LightBlackOnyx
+private val toolbarDarkColor         = backgroundDark
 private val textHeaderDarkColor      = Air
 private val textBodyDarkColor        = textHeaderDarkColor
 private val textClickableDarkColor   = secondaryDark
 private val selectedItemDarkColor    = onBackgroundDark
-private val iconBackgroundDarkColor  = onBackgroundDark
+private val iconBackgroundDarkColor  = LightGray
 private val activeDarkColor          = textClickableDarkColor
 private val navigationBarDarkColor    = Black
 

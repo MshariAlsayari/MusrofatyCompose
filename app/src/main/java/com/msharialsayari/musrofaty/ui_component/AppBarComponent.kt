@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -71,8 +72,10 @@ object AppBarComponent {
         TopAppBar(
             title = { Text(appbarTitle) },
             navigationIcon = if (isParent) null else navigationIcon,
+            elevation = 0.dp,
+            backgroundColor = MusrofatyTheme.colors.toolbarColor,
             actions = actions,
-            contentColor = Color.White
+            contentColor = MusrofatyTheme.colors.onBackground,
         )
 
     }
@@ -105,7 +108,8 @@ object AppBarComponent {
                 title = { Text(appbarTitle) },
                 navigationIcon = if (isParent) null else navigationIcon,
                 actions = actions,
-                contentColor = Color.White
+                backgroundColor = MusrofatyTheme.colors.toolbarColor,
+                contentColor = MusrofatyTheme.colors.onBackground
             )
         }
 
@@ -132,7 +136,6 @@ object AppBarComponent {
             modifier = Modifier
                 .height(54.dp)
                 .fillMaxWidth()
-                .background(MusrofatyTheme.colors.toolbarColor)
         ){
 
             AnimatedVisibility(
@@ -142,8 +145,7 @@ object AppBarComponent {
             ) {
 
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     color = Color.Transparent,
                     elevation = 0.dp
                 ) {

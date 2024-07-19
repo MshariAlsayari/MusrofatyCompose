@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 
-private val Elevation = 2.dp
+private val Elevation = 0.dp
 
 
 @Composable

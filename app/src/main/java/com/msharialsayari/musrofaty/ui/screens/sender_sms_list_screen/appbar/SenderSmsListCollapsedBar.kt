@@ -57,7 +57,6 @@ fun SenderSmsListCollapsedBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(toolbarState.height.dp + 5.dp)
-
     )
 
 }
