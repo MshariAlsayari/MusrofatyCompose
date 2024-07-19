@@ -9,6 +9,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.category_
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.StoreModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ValidationModel
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.toStoreEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.*
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigator
 import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
@@ -30,6 +31,7 @@ class CategoriesViewModel @Inject constructor(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val updateStoreUseCase: UpdateStoreUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
+    private val postStoreToFirebaseUseCase: PostStoreToFirebaseUseCase,
     private val navigator: AppNavigator,
     @ApplicationContext val context: Context
 
@@ -186,6 +188,7 @@ class CategoriesViewModel @Inject constructor(
                 categoryId = newCategoryId
             )
             updateStoreUseCase.invoke(model)
+            postStoreToFirebaseUseCase.invoke(model.toStoreEntity())
         }
     }
 

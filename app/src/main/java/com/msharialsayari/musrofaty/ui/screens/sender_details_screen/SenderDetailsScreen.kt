@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -22,6 +23,7 @@ import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
 
@@ -32,6 +34,18 @@ fun SenderDetailsScreen(senderId: Int) {
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.SenderDetailsScreen.title,
+                actions = {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = MusrofatyTheme.colors.iconBackgroundColor,
+                        modifier = Modifier
+                            .mirror()
+                            .clickable {
+                                viewModel.deleteSender()
+                                viewModel.navigateUp()
+                            })
+                },
                 onArrowBackClicked = { viewModel.navigateUp() }
             )
 
@@ -192,33 +206,15 @@ fun PageCompose(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Row(modifier = Modifier.fillMaxWidth()) {
+                ButtonComponent.ActionButton(
+                    modifier = Modifier
 
-                    ButtonComponent.ActionButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        text = R.string.common_save,
-                        onClick = {
-                            viewModel.navigateUp()
-                        }
-                    )
-
-                    ButtonComponent.ActionButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        text = R.string.common_delete,
-                        color = MusrofatyTheme.colors.deleteActionColor,
-                        onClick = {
-                            viewModel.deleteSender()
-                            viewModel.navigateUp()
-                        }
-                    )
-
-                }
-
-
+                        .fillMaxWidth(),
+                    text = R.string.common_save,
+                    onClick = {
+                        viewModel.navigateUp()
+                    }
+                )
             }
         }
 

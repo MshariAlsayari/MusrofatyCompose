@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -31,6 +32,7 @@ import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.ui_component.*
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
 import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
+import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,6 +48,18 @@ fun CategoriesScreen(categoryId:Int){
         topBar = {
             AppBarComponent.TopBarComponent(
                 title = Screen.CategoryScreen.title,
+                actions = {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = MusrofatyTheme.colors.iconBackgroundColor,
+                        modifier = Modifier
+                            .mirror()
+                            .clickable {
+                                viewModel.onDeleteBtnClicked()
+                                viewModel.navigateUp()
+                            })
+                },
                 onArrowBackClicked = { viewModel.navigateUp() }
             )
 
@@ -285,36 +299,18 @@ fun CategoryBottomSheet(viewModel: CategoriesViewModel, onCategorySelected:(Int)
 
 @Composable
 fun ActionButtonsCompose(modifier: Modifier=Modifier,viewModel: CategoriesViewModel){
-    val uiState by viewModel.uiState.collectAsState()
 
-    Row (modifier = modifier){
-        ButtonComponent.ActionButton(
-            modifier =Modifier.weight(1f),
-            text =  R.string.common_save,
-            onClick = {
-
-                if (viewModel.validate()) {
-                    viewModel.onSaveBtnClicked()
-                    viewModel.navigateUp()
-                }
+    ButtonComponent.ActionButton(
+        modifier =modifier.fillMaxWidth(),
+        text =  R.string.common_save,
+        onClick = {
+            if (viewModel.validate()) {
+                viewModel.onSaveBtnClicked()
+                viewModel.navigateUp()
             }
+        }
 
-        )
-
-            ButtonComponent.ActionButton(
-                modifier =Modifier.weight(1f),
-                color= MusrofatyTheme.colors.deleteActionColor,
-                text =  R.string.common_delete,
-                onClick = {
-                    viewModel.onDeleteBtnClicked()
-                    viewModel.navigateUp()
-
-                }
-
-            )
-
-    }
-
+    )
 }
 
 
