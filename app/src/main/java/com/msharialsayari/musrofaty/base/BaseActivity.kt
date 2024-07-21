@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.base
 
-import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -28,8 +27,6 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme()
         setStatusBarColor()
-
-
     }
 
     private fun setStatusBarColor() {

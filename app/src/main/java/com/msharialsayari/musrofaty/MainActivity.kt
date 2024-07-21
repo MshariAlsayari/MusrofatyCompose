@@ -1,13 +1,10 @@
 package com.msharialsayari.musrofaty
 
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +25,6 @@ import com.msharialsayari.musrofaty.jobs.InitWithdrawalWordsJob
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.MainScreenView
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyComposeTheme
-import com.msharialsayari.musrofaty.utils.SetStatusBarColor
 import com.msharialsayari.musrofaty.utils.SharedPreferenceManager
 import com.msharialsayari.musrofaty.utils.getScreenTypeByWidth
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,10 +44,6 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-        )
         super.onCreate(savedInstanceState)
         initJobs()
         runApp()
@@ -173,7 +165,8 @@ class MainActivity : ComponentActivity() {
             MusrofatyComposeTheme(
                 appTheme = uiState.appAppearance,
                 appLanguage = uiState.appLanguage,
-                screenType =screenType
+                screenType =screenType,
+                activity = this
             ) {
 
                 MainScreenView(

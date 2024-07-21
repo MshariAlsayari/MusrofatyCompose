@@ -1,7 +1,11 @@
 package com.msharialsayari.musrofaty.ui.theme
 
 import androidx.compose.material.Colors
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 
 
@@ -58,7 +62,9 @@ private val textClickableColor   = primary
 private val iconBackgroundColor  = LightGray
 private val activeColor          = primary
 private val selectedItemColor    = primary
-private val navigationBarColor    = White
+private val navigationBarColor   = background
+private val bottomNavigationBarColor   = background
+private val statusBarColor       = toolbarColor
 
 //Musrofaty Dark Colors
 private val toolbarDarkColor         = backgroundDark
@@ -68,7 +74,9 @@ private val textClickableDarkColor   = secondaryDark
 private val selectedItemDarkColor    = onBackgroundDark
 private val iconBackgroundDarkColor  = LightGray
 private val activeDarkColor          = textClickableDarkColor
-private val navigationBarDarkColor    = Black
+private val navigationBarDarkColor   = backgroundDark
+private val bottomNavigationBarDarkColor   = backgroundDark
+private val statusBarDarkColor       = toolbarDarkColor
 
 val LightColors = MusrofatyColors(
     primary               = primary,
@@ -98,6 +106,8 @@ val LightColors = MusrofatyColors(
     activeColor           = activeColor,
     selectedItemColor     = selectedItemColor,
     navigationBarColor    = navigationBarColor,
+    statusBarColor        = statusBarColor,
+    bottomNavigationBarColor = bottomNavigationBarColor,
     isLight               = true
 )
 
@@ -129,6 +139,8 @@ val DarkColors = MusrofatyColors(
     activeColor           = activeDarkColor,
     selectedItemColor     = selectedItemDarkColor,
     navigationBarColor    = navigationBarDarkColor,
+    statusBarColor        = statusBarDarkColor,
+    bottomNavigationBarColor = bottomNavigationBarDarkColor,
     isLight               = false
 )
 
@@ -163,6 +175,8 @@ class MusrofatyColors(
     activeColor: Color = Color.Unspecified,
     selectedItemColor: Color = Color.Unspecified,
     navigationBarColor: Color = Color.Unspecified,
+    statusBarColor: Color = Color.Unspecified,
+    bottomNavigationBarColor: Color = Color.Unspecified,
     isLight: Boolean = true
 ) {
     var primary by mutableStateOf(primary, structuralEqualityPolicy())
@@ -236,6 +250,12 @@ class MusrofatyColors(
     var navigationBarColor by mutableStateOf(navigationBarColor, structuralEqualityPolicy())
         internal set
 
+    var statusBarColor by mutableStateOf(statusBarColor, structuralEqualityPolicy())
+        internal set
+
+    var bottomNavigationBarColor by mutableStateOf(bottomNavigationBarColor, structuralEqualityPolicy())
+        internal set
+
     var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
         internal set
 
@@ -267,6 +287,8 @@ class MusrofatyColors(
         iconBackgroundColor= other.iconBackgroundColor
         selectedItemColor= other.selectedItemColor
         navigationBarColor= other.navigationBarColor
+        statusBarColor = other.statusBarColor
+        bottomNavigationBarColor = other.bottomNavigationBarColor
         isLight = other.isLight
 
     }
@@ -299,6 +321,8 @@ class MusrofatyColors(
         iconBackgroundColor: Color = this.iconBackgroundColor,
         selectedItemColor: Color = this.selectedItemColor,
         navigationBarColor: Color = this.navigationBarColor,
+        statusBarColor: Color = this.statusBarColor,
+        bottomNavigationBarColor:Color = this.bottomNavigationBarColor,
         isLight: Boolean = this.isLight,
 
     ): MusrofatyColors = MusrofatyColors(
@@ -329,6 +353,8 @@ class MusrofatyColors(
         iconBackgroundColor = iconBackgroundColor,
         selectedItemColor = selectedItemColor,
         navigationBarColor = navigationBarColor,
+        statusBarColor = statusBarColor,
+        bottomNavigationBarColor = bottomNavigationBarColor,
         isLight = isLight
     )
 }

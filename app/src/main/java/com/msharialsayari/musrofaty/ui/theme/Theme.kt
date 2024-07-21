@@ -1,26 +1,32 @@
 package com.msharialsayari.musrofaty.ui.theme
 
+import android.app.Activity
 import android.content.res.Configuration
-import android.util.Log
+import android.graphics.Color
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.WindowCompat
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Language
 import com.msharialsayari.musrofaty.business_layer.domain_layer.settings.Theme
-import com.msharialsayari.musrofaty.utils.AppTheme
-import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.enums.ScreenType
-import java.util.*
+import java.util.Locale
 
 
 @Composable
@@ -28,6 +34,7 @@ fun MusrofatyComposeTheme(
     appTheme: Theme = Theme.DARK,
     appLanguage: Language = Language.DEFAULT,
     screenType: ScreenType,
+    activity: ComponentActivity? = null,
     content: @Composable () -> Unit,
 ) {
 
@@ -35,6 +42,8 @@ fun MusrofatyComposeTheme(
     val colors = getColorSchema(appTheme)
     val context = LocalContext.current
     val local = getDeviceLocal()
+    val isDark = colors.second
+    val view = LocalView.current
 
     val direction = when (appLanguage) {
         Language.DEFAULT -> if (local.language.lowercase() == "en") LayoutDirection.Ltr else LayoutDirection.Rtl
@@ -58,6 +67,22 @@ fun MusrofatyComposeTheme(
         context.resources.updateConfiguration(config, displayMetrics)
     }
 
+
+    activity?.let {
+        EnableEdgeToEdge(it,isDark)
+    }
+
+    val statusBarColor = MusrofatyTheme.colors.statusBarColor
+    val navigationBarColor = MusrofatyTheme.colors.navigationBarColor
+    if(!view.isInEditMode){
+        SideEffect {
+            val window = ( view.context as Activity).window
+            window.statusBarColor = statusBarColor.toArgb()
+            window.navigationBarColor = navigationBarColor.toArgb()
+            WindowCompat.getInsetsController(window,view).isAppearanceLightStatusBars = !isDark
+            WindowCompat.getInsetsController(window,view).isAppearanceLightNavigationBars = !isDark
+        }
+    }
 
     ProvideMusrofatyTheme(colors.first,screenType, colors.second, direction) {
         CompositionLocalProvider(LocalLayoutDirection provides direction) {
@@ -151,4 +176,18 @@ fun getDeviceLocal(): Locale {
     val configuration = LocalConfiguration.current
     val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: LocaleListCompat.getDefault()[0]!!
     return locale
+}
+@Composable
+private fun EnableEdgeToEdge(activity: ComponentActivity, isDark:Boolean){
+
+    val systemBarStyle = if(isDark){
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+    }else{
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+    }
+    activity.enableEdgeToEdge(
+        statusBarStyle = systemBarStyle,
+        navigationBarStyle = systemBarStyle,
+    )
+
 }
