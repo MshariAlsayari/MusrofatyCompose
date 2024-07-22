@@ -3,7 +3,6 @@ package com.msharialsayari.musrofaty.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
@@ -14,8 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-
-import java.util.*
 
 @Stable
 fun Modifier.mirror(): Modifier = composed {
@@ -35,14 +32,27 @@ fun Context.findActivity(): Activity {
 }
 
 @Composable
-fun SetStatusBarColor(color: Color? = MusrofatyTheme.colors.toolbarColor) {
+fun SetStatusBarColor(color: Color = MusrofatyTheme.colors.statusBarColor) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = !MusrofatyTheme.isDarkMode
-    val statusBarColor = color ?: MusrofatyTheme.colors.toolbarColor
+
 
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = statusBarColor,
+            color = color,
+            darkIcons = false
+        )
+    }
+}
+
+@Composable
+fun SetNavigationBarColor(color: Color = MusrofatyTheme.colors.navigationBarColor) {
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !MusrofatyTheme.isDarkMode
+
+    SideEffect {
+        systemUiController.setNavigationBarColor(
+            color = color,
             darkIcons = false
         )
     }

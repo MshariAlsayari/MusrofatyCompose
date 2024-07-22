@@ -3,7 +3,15 @@ package com.msharialsayari.musrofaty.ui_component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -22,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.LogicOperators
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
 import com.msharialsayari.musrofaty.utils.StringsUtils
@@ -105,7 +112,7 @@ object RowComponent {
                 iconId?.let {
                     Icon(
                         painter = painterResource(id = iconId),
-                        tint =  MusrofatyTheme.colors.iconBackgroundColor,
+                        tint =  MusrofatyTheme.colors.onBackgroundIconColor,
                         contentDescription = ""
                     )
                 }

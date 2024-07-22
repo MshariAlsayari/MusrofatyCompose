@@ -116,7 +116,7 @@ fun ToolbarActionsComposable(
 
         Icon(
             Icons.Default.ArrowBack,
-            tint = MusrofatyTheme.colors.iconBackgroundColor,
+            tint = MusrofatyTheme.colors.onToolbarIconsColor,
             contentDescription = null,
             modifier = Modifier
                 .mirror()
@@ -129,7 +129,7 @@ fun ToolbarActionsComposable(
 
 
             Icon(painter = painterResource(id = R.drawable.ic_excel),
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                tint = MusrofatyTheme.colors.onToolbarIconsColor,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
@@ -142,7 +142,7 @@ fun ToolbarActionsComposable(
                     })
 
             Icon(painter = painterResource(id = R.drawable.ic_pdf),
-                tint = MusrofatyTheme.colors.iconBackgroundColor,
+                tint = MusrofatyTheme.colors.onToolbarIconsColor,
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
@@ -159,7 +159,7 @@ fun ToolbarActionsComposable(
 
 
             Icon(painter = painterResource(id = R.drawable.ic_filter),
-                tint = if (isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
+                tint = if (isFilterSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.onToolbarIconsColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()
@@ -169,7 +169,7 @@ fun ToolbarActionsComposable(
 
             Icon(
                 Icons.Default.DateRange,
-                tint = if (isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.iconBackgroundColor,
+                tint = if (isFilterDateSelected) MusrofatyTheme.colors.secondary else MusrofatyTheme.colors.onToolbarIconsColor,
                 contentDescription = null,
                 modifier = Modifier
                     .mirror()

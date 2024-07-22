@@ -2,12 +2,29 @@ package com.msharialsayari.musrofaty.ui.screens.sender_details_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ListItem
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -21,8 +38,15 @@ import com.msharialsayari.musrofaty.business_layer.domain_layer.model.ContentMod
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.ContentKey
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.AppBarComponent
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.ui_component.ButtonComponent
+import com.msharialsayari.musrofaty.ui_component.DialogComponent
+import com.msharialsayari.musrofaty.ui_component.SelectedItemModel
+import com.msharialsayari.musrofaty.ui_component.SwitchComponent
+import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
@@ -38,7 +62,7 @@ fun SenderDetailsScreen(senderId: Int) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = null,
-                        tint = MusrofatyTheme.colors.iconBackgroundColor,
+                        tint = MusrofatyTheme.colors.onToolbarIconsColor,
                         modifier = Modifier
                             .mirror()
                             .clickable {

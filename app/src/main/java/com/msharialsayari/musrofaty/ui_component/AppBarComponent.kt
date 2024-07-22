@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -17,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -159,29 +157,22 @@ object AppBarComponent {
                         },
                         placeholder = {
                             Text(
-                                modifier = Modifier
-                                    .alpha(ContentAlpha.medium),
+                                modifier = Modifier.alpha(ContentAlpha.medium),
                                 text = stringResource(id = R.string.common_search),
-                                color = Color.White
+                                color = MusrofatyTheme.colors.onToolbarTextsColor.copy(alpha = 0.5f)
                             )
                         },
                         textStyle = TextStyle(
-                            color = Color.White,
+                            color = MusrofatyTheme.colors.onToolbarTextsColor,
                             fontSize = 16.sp
                         ),
                         singleLine = true,
                         leadingIcon = {
-                            IconButton(
-                                modifier = Modifier
-                                    .alpha(ContentAlpha.medium),
-                                onClick = {}
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = null,
-                                    tint = Color.White
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null,
+                                tint = MusrofatyTheme.colors.onToolbarIconsColor,
+                            )
                         },
                         trailingIcon = {
                             IconButton(onClick = {
@@ -204,7 +195,7 @@ object AppBarComponent {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
                                     contentDescription = null,
-                                    tint = Color.White
+                                    tint = MusrofatyTheme.colors.onToolbarIconsColor,
                                 )
                             }
                         },

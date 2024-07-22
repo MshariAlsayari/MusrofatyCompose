@@ -72,13 +72,13 @@ fun MusrofatyComposeTheme(
         EnableEdgeToEdge(it,isDark)
     }
 
-    val statusBarColor = MusrofatyTheme.colors.statusBarColor
-    val navigationBarColor = MusrofatyTheme.colors.navigationBarColor
+    val statusBarColor = MusrofatyTheme.colors.statusBarColor.toArgb()
+    val navigationBarColor = MusrofatyTheme.colors.navigationBarColor.toArgb()
     if(!view.isInEditMode){
         SideEffect {
             val window = ( view.context as Activity).window
-            window.statusBarColor = statusBarColor.toArgb()
-            window.navigationBarColor = navigationBarColor.toArgb()
+            window.statusBarColor = statusBarColor
+            window.navigationBarColor = navigationBarColor
             WindowCompat.getInsetsController(window,view).isAppearanceLightStatusBars = !isDark
             WindowCompat.getInsetsController(window,view).isAppearanceLightNavigationBars = !isDark
         }

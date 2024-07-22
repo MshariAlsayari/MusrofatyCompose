@@ -9,7 +9,7 @@ import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 
 
-val Black          = Color(0xFF000000)
+val Black          = Color(0xFF404040)
 val White          = Color(0xFFFFFFFF)
 val Red            = Color(0xFFCC0311)
 val BlackOnyx      = Color(0xFF1D252D)
@@ -59,12 +59,14 @@ private val textHeaderColor      = onBackground
 private val textBodyColor        = onBackground
 private val textPlaceHolderColor = LightGray
 private val textClickableColor   = primary
-private val iconBackgroundColor  = LightGray
 private val activeColor          = primary
 private val selectedItemColor    = primary
 private val navigationBarColor   = background
 private val bottomNavigationBarColor   = background
 private val statusBarColor       = toolbarColor
+private val onToolbarIconsColor         = LightGray
+private val onToolbarTextsColor         = Black
+private val onBackgroundIconColor       = Black
 
 //Musrofaty Dark Colors
 private val toolbarDarkColor         = backgroundDark
@@ -72,11 +74,13 @@ private val textHeaderDarkColor      = Air
 private val textBodyDarkColor        = textHeaderDarkColor
 private val textClickableDarkColor   = secondaryDark
 private val selectedItemDarkColor    = onBackgroundDark
-private val iconBackgroundDarkColor  = LightGray
 private val activeDarkColor          = textClickableDarkColor
 private val navigationBarDarkColor   = backgroundDark
 private val bottomNavigationBarDarkColor   = backgroundDark
 private val statusBarDarkColor       = toolbarDarkColor
+private val onToolbarIconsDarkColor         = LightGray
+private val onToolbarTextsDarkColor         = Air
+private val onBackgroundIconDarkColor       = Air
 
 val LightColors = MusrofatyColors(
     primary               = primary,
@@ -91,7 +95,7 @@ val LightColors = MusrofatyColors(
     onBackground          = onBackground,
     onSurface             = onSurface,
     onError               = onError,
-    onBackgroundIconColor = LightGray,
+    onBackgroundIconColor = onBackgroundIconColor,
     incomeColor           = incomeColor,
     expensesColor         = expensesColor,
     deleteActionColor     = deleteActionColor,
@@ -102,12 +106,13 @@ val LightColors = MusrofatyColors(
     textBodyColor         = textBodyColor,
     textPlaceHolderColor  = textPlaceHolderColor,
     textClickableColor    = textClickableColor,
-    iconBackgroundColor   = iconBackgroundColor,
     activeColor           = activeColor,
     selectedItemColor     = selectedItemColor,
     navigationBarColor    = navigationBarColor,
     statusBarColor        = statusBarColor,
     bottomNavigationBarColor = bottomNavigationBarColor,
+    onToolbarIconsColor = onToolbarIconsColor,
+    onToolbarTextsColor = onToolbarTextsColor,
     isLight               = true
 )
 
@@ -124,7 +129,7 @@ val DarkColors = MusrofatyColors(
     onBackground          = onBackgroundDark,
     onSurface             = onSurfaceDark,
     onError               = onErrorDark,
-    onBackgroundIconColor = White ,
+    onBackgroundIconColor = onBackgroundIconDarkColor ,
     incomeColor           = incomeColor,
     expensesColor         = expensesColor,
     deleteActionColor     = deleteActionColor,
@@ -135,12 +140,13 @@ val DarkColors = MusrofatyColors(
     textBodyColor         = textBodyDarkColor,
     textPlaceHolderColor  = textPlaceHolderColor,
     textClickableColor    = textClickableDarkColor,
-    iconBackgroundColor   = iconBackgroundDarkColor,
     activeColor           = activeDarkColor,
     selectedItemColor     = selectedItemDarkColor,
     navigationBarColor    = navigationBarDarkColor,
     statusBarColor        = statusBarDarkColor,
     bottomNavigationBarColor = bottomNavigationBarDarkColor,
+    onToolbarIconsColor = onToolbarIconsDarkColor,
+    onToolbarTextsColor = onToolbarTextsDarkColor,
     isLight               = false
 )
 
@@ -171,12 +177,13 @@ class MusrofatyColors(
     textBodyColor: Color = Color.Unspecified,
     textPlaceHolderColor: Color = Color.Unspecified,
     textClickableColor: Color = Color.Unspecified,
-    iconBackgroundColor: Color = Color.Unspecified,
     activeColor: Color = Color.Unspecified,
     selectedItemColor: Color = Color.Unspecified,
     navigationBarColor: Color = Color.Unspecified,
     statusBarColor: Color = Color.Unspecified,
     bottomNavigationBarColor: Color = Color.Unspecified,
+    onToolbarIconsColor: Color = Color.Unspecified,
+    onToolbarTextsColor: Color = Color.Unspecified,
     isLight: Boolean = true
 ) {
     var primary by mutableStateOf(primary, structuralEqualityPolicy())
@@ -238,9 +245,6 @@ class MusrofatyColors(
     var textClickableColor by mutableStateOf(textClickableColor, structuralEqualityPolicy())
         internal set
 
-    var iconBackgroundColor by mutableStateOf(iconBackgroundColor, structuralEqualityPolicy())
-        internal set
-
     var activeColor by mutableStateOf(activeColor, structuralEqualityPolicy())
         internal set
 
@@ -254,6 +258,12 @@ class MusrofatyColors(
         internal set
 
     var bottomNavigationBarColor by mutableStateOf(bottomNavigationBarColor, structuralEqualityPolicy())
+        internal set
+
+    var onToolbarIconsColor by mutableStateOf(onToolbarIconsColor, structuralEqualityPolicy())
+        internal set
+
+    var onToolbarTextsColor by mutableStateOf(onToolbarTextsColor, structuralEqualityPolicy())
         internal set
 
     var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
@@ -284,11 +294,12 @@ class MusrofatyColors(
         textBodyColor= other.textBodyColor
         textPlaceHolderColor= other.textPlaceHolderColor
         textClickableColor= other.textClickableColor
-        iconBackgroundColor= other.iconBackgroundColor
         selectedItemColor= other.selectedItemColor
         navigationBarColor= other.navigationBarColor
         statusBarColor = other.statusBarColor
         bottomNavigationBarColor = other.bottomNavigationBarColor
+        onToolbarIconsColor = other.onToolbarIconsColor
+        onToolbarTextsColor = other.onToolbarTextsColor
         isLight = other.isLight
 
     }
@@ -318,11 +329,12 @@ class MusrofatyColors(
         textBodyColor: Color = this.textBodyColor,
         textPlaceHolderColor: Color = this.textPlaceHolderColor,
         textClickableColor: Color = this.textClickableColor,
-        iconBackgroundColor: Color = this.iconBackgroundColor,
         selectedItemColor: Color = this.selectedItemColor,
         navigationBarColor: Color = this.navigationBarColor,
         statusBarColor: Color = this.statusBarColor,
         bottomNavigationBarColor:Color = this.bottomNavigationBarColor,
+        onToolbarIconsColor: Color = this.onToolbarIconsColor,
+        onToolbarTextsColor:Color = this.onToolbarTextsColor,
         isLight: Boolean = this.isLight,
 
     ): MusrofatyColors = MusrofatyColors(
@@ -350,11 +362,12 @@ class MusrofatyColors(
         textBodyColor = textBodyColor,
         textPlaceHolderColor = textPlaceHolderColor,
         textClickableColor = textClickableColor,
-        iconBackgroundColor = iconBackgroundColor,
         selectedItemColor = selectedItemColor,
         navigationBarColor = navigationBarColor,
         statusBarColor = statusBarColor,
         bottomNavigationBarColor = bottomNavigationBarColor,
+        onToolbarIconsColor = onToolbarIconsColor,
+        onToolbarTextsColor = onToolbarTextsColor,
         isLight = isLight
     )
 }

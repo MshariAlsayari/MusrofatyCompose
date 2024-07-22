@@ -2,12 +2,28 @@ package com.msharialsayari.musrofaty.ui.screens.categories_screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,11 +43,17 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_dat
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
-
 import com.msharialsayari.musrofaty.ui.theme.MusrofatyTheme
-import com.msharialsayari.musrofaty.ui_component.*
+import com.msharialsayari.musrofaty.ui_component.AppBarComponent
+import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent
 import com.msharialsayari.musrofaty.ui_component.BottomSheetComponent.handleVisibilityOfBottomSheet
+import com.msharialsayari.musrofaty.ui_component.ButtonComponent
+import com.msharialsayari.musrofaty.ui_component.DialogComponent
 import com.msharialsayari.musrofaty.ui_component.DividerComponent.HorizontalDividerComponent
+import com.msharialsayari.musrofaty.ui_component.EmptyComponent
+import com.msharialsayari.musrofaty.ui_component.ProgressBar
+import com.msharialsayari.musrofaty.ui_component.TextComponent
+import com.msharialsayari.musrofaty.ui_component.TextFieldComponent
 import com.msharialsayari.musrofaty.utils.mirror
 import kotlinx.coroutines.launch
 
@@ -52,7 +74,7 @@ fun CategoriesScreen(categoryId:Int){
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = null,
-                        tint = MusrofatyTheme.colors.iconBackgroundColor,
+                        tint = MusrofatyTheme.colors.onToolbarIconsColor,
                         modifier = Modifier
                             .mirror()
                             .clickable {
