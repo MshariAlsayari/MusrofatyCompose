@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.msharialsayari.musrofaty.jobs.ScheduleRefreshWidgetJob
 import com.msharialsayari.musrofaty.jobs.UpdateAppWidgetJob
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +23,8 @@ class BootReceiver : BroadcastReceiver() {
         if (intent.action.equals(BOOT_COMPLETED)) {
             val updateAppWidgetWorker = OneTimeWorkRequestBuilder<UpdateAppWidgetJob>().build()
             WorkManager.getInstance(context).enqueue(updateAppWidgetWorker)
+
+            ScheduleRefreshWidgetJob.initUpdateAppWidgetJobWorker(context)
         }
     }
 

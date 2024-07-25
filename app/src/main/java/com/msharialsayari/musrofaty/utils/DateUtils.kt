@@ -1,6 +1,7 @@
 package com.msharialsayari.musrofaty.utils
 
 import android.content.Context
+import android.util.Log
 import com.msharialsayari.musrofaty.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -8,12 +9,14 @@ import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Calendar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 
 object DateUtils {
@@ -21,6 +24,8 @@ object DateUtils {
     const val DEFAULT_DATE_TIME_PATTERN = "dd/MM/yyyy hh:mm:ss"
     const val DEFAULT_DATE_PATTERN = "dd/MM/yyyy"
     const val DEFAULT_MONTH_YEAR_PATTERN = "MM-yyyy"
+
+    private val TAG = DateUtils::class.java.simpleName
 
     @JvmStatic
     fun getDateByTimestamp(date: Long, pattern: String = DEFAULT_DATE_TIME_PATTERN): String? {
@@ -45,6 +50,12 @@ object DateUtils {
     @JvmStatic
     fun getToday(): LocalDateTime {
         return LocalDateTime.now()
+    }
+
+    fun getTodayAt(hour: Int = 0, minutes: Int = 0, seconds: Int = 0): LocalDateTime {
+        val date = getToday().toLocalDate()
+        val time = LocalTime.of(hour, minutes, seconds)
+        return LocalDateTime.of(date, time)
     }
 
     fun getDisplayMonth(
@@ -243,6 +254,11 @@ object DateUtils {
 
     }
 
+    fun toMilliSecond(date: LocalDateTime): Long {
+        val zdt = ZonedDateTime.of(date, ZoneId.systemDefault())
+        return zdt.toInstant().toEpochMilli();
+    }
+
     fun toMilliSecond(date: LocalDate): Long {
         val localDateTime = date.atStartOfDay()
         val zdt = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
@@ -268,6 +284,21 @@ object DateUtils {
         val weekFields  = WeekFields.of(weekStartDay, 1)
         val weekOfMonth = weekFields.weekOfMonth()
         return  date?.get(weekOfMonth)
+    }
+
+    fun formatInitialDelayToHours(initialDelay: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(initialDelay)
+        val remainderMinutes = TimeUnit.MILLISECONDS.toMinutes(initialDelay) % 60
+        return String.format("%02d:%02d", hours, remainderMinutes)
+    }
+
+    //we want to schedule changing app icon job to run at 12:00 a.m. (every start day)
+    fun calculateInitialDelayForSchedulingJobs(): Long {
+        // Set the time to 12:00 a.m.
+        val today = getTodayAt(0, 0, 0)
+        val tomorrow = today.plusDays(1)
+        Log.i(TAG, "calculateInitialDelayForSchedulingJobs() tomorrow:$tomorrow")
+        return toMilliSecond(tomorrow) - System.currentTimeMillis()
     }
 
     enum class NumberType {
