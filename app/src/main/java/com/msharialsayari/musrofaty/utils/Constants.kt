@@ -68,6 +68,7 @@ object Constants {
 
     //Currency
     const val CURRENCY_1 = "SAR"
+    const val CURRENCY_1_WIDGET = "SR"
     const val CURRENCY_2 = "ريال"
     const val CURRENCY_3 = "SR"
     const val CURRENCY_4 = "ر.س"

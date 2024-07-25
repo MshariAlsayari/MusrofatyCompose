@@ -38,7 +38,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.msharialsayari.musrofaty.MainActivity
@@ -109,7 +108,7 @@ class AppWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            DateView(modifier = GlanceModifier.defaultWeight())
+            DateView(modifier = GlanceModifier.padding(horizontal = 16.dp))
             DividerView(modifier = GlanceModifier)
             StatisticsView(modifier = GlanceModifier.defaultWeight().padding(start = 16.dp))
         }
@@ -253,8 +252,8 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun TodayExpensesTextView(modifier: GlanceModifier = GlanceModifier){
         val context = LocalContext.current
-        val json = currentState(key = TODAY_FINANCIAL_INFO) ?: "0"
-        val text = "${context.getString(R.string.today_widget_title)} : $json ${Constants.CURRENCY_1}"
+        val json = currentState(key = TODAY_FINANCIAL_INFO) ?: "0.0"
+        val text = "${context.getString(R.string.today_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
         Text(
             text,
             modifier=modifier,
@@ -274,8 +273,8 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun WeekExpensesTextView(modifier: GlanceModifier = GlanceModifier){
         val context = LocalContext.current
-        val json = currentState(key = WEEK_FINANCIAL_INFO) ?: "0"
-        val text = "${context.getString(R.string.week_widget_title)} : $json ${Constants.CURRENCY_1}"
+        val json = currentState(key = WEEK_FINANCIAL_INFO) ?: "0.0"
+        val text = "${context.getString(R.string.week_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
         Text(
             text,
             modifier=modifier,
@@ -295,8 +294,8 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun MonthExpensesTextView(modifier: GlanceModifier = GlanceModifier){
         val context = LocalContext.current
-        val json = currentState(key = MONTH_FINANCIAL_INFO) ?: "0"
-        val text = "${context.getString(R.string.month_widget_title)} : $json ${Constants.CURRENCY_1}"
+        val json = currentState(key = MONTH_FINANCIAL_INFO) ?: "0.0"
+        val text = "${context.getString(R.string.month_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
         Text(
             text,
             modifier=modifier,
