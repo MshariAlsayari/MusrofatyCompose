@@ -13,7 +13,7 @@
         android:background="?attr/colorToolbar"
         android:elevation="4dp"
         app:navigationIcon="@drawable/ic_arrow_back_white"
-        app:titleTextColor="@color/white"
-        app:subtitleTextColor="@color/white" />
+        app:titleTextColor="@color/on_background_color"
+        app:subtitleTextColor="@color/on_background_color" />
 
 </com.google.android.material.appbar.AppBarLayout>

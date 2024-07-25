@@ -16,10 +16,11 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
     <style name="lightTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
         <item name="android:itemBackground">@color/white</item>
         <item name="android:colorControlNormal">@color/light_gray</item>
-        <item name="colorStatusBar">@color/primary_color</item>
-        <item name="colorToolbar">@color/primary_color</item>
+        <item name="colorStatusBar">@color/white</item>
+        <item name="colorToolbar">@color/white</item>
         <item name="colorProgressBar">@color/primary_color</item>
     </style>
 

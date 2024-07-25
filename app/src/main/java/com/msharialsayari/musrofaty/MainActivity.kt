@@ -166,7 +166,6 @@ class MainActivity : ComponentActivity() {
                 appTheme = uiState.appAppearance,
                 appLanguage = uiState.appLanguage,
                 screenType =screenType,
-                activity = this
             ) {
 
                 MainScreenView(

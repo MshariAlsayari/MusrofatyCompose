@@ -9,7 +9,7 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="black_onyx">#1d252d</color>
+    <color name="black_onyx">#FF1D252D</color>
     <color name="light_black_onyx">#333a42</color>
     <color name="air">#f3f3f1</color>
     <color name="light_gray">#979797</color>

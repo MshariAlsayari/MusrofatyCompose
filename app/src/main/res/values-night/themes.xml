@@ -13,11 +13,11 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
     <style name="darkTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/black_onyx</item>
-        <item name="android:navigationBarColor">@color/light_black_onyx</item>
+        <item name="android:navigationBarColor">@color/black_onyx</item>
         <item name="android:itemBackground">@color/black_onyx</item>
         <item name="android:colorControlNormal">@color/light_gray</item>
         <item name="colorStatusBar">@color/black_onyx</item>
-        <item name="colorToolbar">@color/light_black_onyx</item>
+        <item name="colorToolbar">@color/black_onyx</item>
         <item name="colorProgressBar">@color/secondary_color</item>
     </style>
 </resources>

@@ -10,8 +10,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.toArgb
@@ -34,13 +34,13 @@ fun MusrofatyComposeTheme(
     appTheme: Theme = Theme.DARK,
     appLanguage: Language = Language.DEFAULT,
     screenType: ScreenType,
-    activity: ComponentActivity? = null,
     content: @Composable () -> Unit,
 ) {
 
 
     val colors = getColorSchema(appTheme)
     val context = LocalContext.current
+    val activity = context as ComponentActivity
     val local = getDeviceLocal()
     val isDark = colors.second
     val view = LocalView.current
@@ -68,20 +68,13 @@ fun MusrofatyComposeTheme(
     }
 
 
-    activity?.let {
-        EnableEdgeToEdge(it,isDark)
-    }
 
-    val statusBarColor = MusrofatyTheme.colors.statusBarColor.toArgb()
-    val navigationBarColor = MusrofatyTheme.colors.navigationBarColor.toArgb()
-    if(!view.isInEditMode){
-        SideEffect {
-            val window = ( view.context as Activity).window
-            window.statusBarColor = statusBarColor
-            window.navigationBarColor = navigationBarColor
-            WindowCompat.getInsetsController(window,view).isAppearanceLightStatusBars = !isDark
-            WindowCompat.getInsetsController(window,view).isAppearanceLightNavigationBars = !isDark
-        }
+    EnableEdgeToEdge(activity,isDark)
+
+    LaunchedEffect(key1 = isDark) {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDark
+        WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !isDark
     }
 
     ProvideMusrofatyTheme(colors.first,screenType, colors.second, direction) {
@@ -180,14 +173,17 @@ fun getDeviceLocal(): Locale {
 @Composable
 private fun EnableEdgeToEdge(activity: ComponentActivity, isDark:Boolean){
 
+    val statusBarColor = MusrofatyTheme.colors.statusBarColor.toArgb()
+    val navigationBarColor = MusrofatyTheme.colors.expensesColor.toArgb()
+
     val systemBarStyle = if(isDark){
-        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        SystemBarStyle.light(navigationBarColor, navigationBarColor)
     }else{
-        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        SystemBarStyle.light(navigationBarColor,navigationBarColor)
     }
     activity.enableEdgeToEdge(
-        statusBarStyle = systemBarStyle,
-        navigationBarStyle = systemBarStyle,
+        statusBarStyle =  SystemBarStyle.auto(Color.TRANSPARENT,Color.TRANSPARENT),
+        navigationBarStyle =  systemBarStyle,
     )
 
 }
