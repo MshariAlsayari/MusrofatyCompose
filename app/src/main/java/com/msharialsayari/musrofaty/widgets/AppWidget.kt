@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -51,6 +52,7 @@ class AppWidget : GlanceAppWidget() {
     companion object {
         private val TAG = AppWidget::class.java.simpleName
 
+        val DATE_INFO = longPreferencesKey("date")
         val TODAY_FINANCIAL_INFO = stringPreferencesKey("today")
         val WEEK_FINANCIAL_INFO  = stringPreferencesKey("week")
         val MONTH_FINANCIAL_INFO = stringPreferencesKey("month")
@@ -69,7 +71,7 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun ContentView() {
         Column(
-            modifier = GlanceModifier.padding(16.dp).fillMaxSize()
+            modifier = GlanceModifier.padding(8.dp).fillMaxSize()
                 .background(
                     ColorProvider(
                         day = MyAppWidgetGlanceColorScheme.backgroundColor,
@@ -81,9 +83,7 @@ class AppWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.Start
         ) {
-            HeaderView(GlanceModifier.fillMaxWidth())
             MainView(GlanceModifier.fillMaxWidth())
-
         }
     }
 
@@ -93,7 +93,7 @@ class AppWidget : GlanceAppWidget() {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.End
         ) {
             TitleView(modifier = GlanceModifier.defaultWeight())
             RefreshView(modifier = GlanceModifier)
@@ -109,7 +109,6 @@ class AppWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DateView(modifier = GlanceModifier.padding(horizontal = 16.dp))
-            DividerView(modifier = GlanceModifier)
             StatisticsView(modifier = GlanceModifier.defaultWeight().padding(start = 16.dp))
         }
 
@@ -155,10 +154,6 @@ class AppWidget : GlanceAppWidget() {
         )
     }
 
-    @Composable
-    private fun TabsView(modifier: GlanceModifier = GlanceModifier){
-
-    }
 
     @Composable
     private fun DateView(modifier: GlanceModifier = GlanceModifier){
@@ -175,7 +170,8 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun DayTextView(modifier: GlanceModifier = GlanceModifier){
         val today = DateUtils.getToday()
-        val date = today.dayOfMonth.toString()
+        val json = currentState(key = DATE_INFO) ?: DateUtils.toMilliSecond(today)
+        val date = DateUtils.ofMilliSecond(json).dayOfMonth.toString()
         Text(
             date,
             modifier=modifier,
@@ -195,8 +191,10 @@ class AppWidget : GlanceAppWidget() {
     @Composable
     private fun MonthTextView(modifier: GlanceModifier = GlanceModifier){
         val today = DateUtils.getToday()
+        val json = currentState(key = DATE_INFO) ?: DateUtils.toMilliSecond(today)
+        val date = DateUtils.ofMilliSecond(json)
         val month = DateUtils.getDisplayMonth(
-            today,
+            date,
             textStyle = java.time.format.TextStyle.SHORT
         )
         Text(
@@ -208,8 +206,8 @@ class AppWidget : GlanceAppWidget() {
                     night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
                 ),
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp
             ),
         )
 
@@ -238,14 +236,14 @@ class AppWidget : GlanceAppWidget() {
 
     @Composable
     private fun StatisticsView(modifier: GlanceModifier = GlanceModifier){
-        Column(
-            modifier = modifier.fillMaxHeight(),
+        Row(
+            modifier = modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.Start
         ) {
-            TodayExpensesTextView()
-            WeekExpensesTextView(GlanceModifier.padding(top = 8.dp))
-            MonthExpensesTextView(GlanceModifier.padding(top = 8.dp))
+            TodayExpensesTextView(modifier = GlanceModifier.defaultWeight())
+            WeekExpensesTextView(modifier = GlanceModifier.defaultWeight())
+            MonthExpensesTextView(modifier = GlanceModifier.defaultWeight())
         }
     }
 
@@ -254,18 +252,10 @@ class AppWidget : GlanceAppWidget() {
         val context = LocalContext.current
         val json = currentState(key = TODAY_FINANCIAL_INFO) ?: "0.0"
         val text = "${context.getString(R.string.today_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
-        Text(
-            text,
+        StatisticsItem(
             modifier=modifier,
-            style = TextStyle(
-                color = ColorProvider(
-                    day = MyAppWidgetGlanceColorScheme.onBackgroundColor,
-                    night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
-                ),
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
-            ),
+            title = context.getString(R.string.today_widget_title),
+            value = json
         )
 
     }
@@ -275,18 +265,10 @@ class AppWidget : GlanceAppWidget() {
         val context = LocalContext.current
         val json = currentState(key = WEEK_FINANCIAL_INFO) ?: "0.0"
         val text = "${context.getString(R.string.week_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
-        Text(
-            text,
+        StatisticsItem(
             modifier=modifier,
-            style = TextStyle(
-                color = ColorProvider(
-                    day = MyAppWidgetGlanceColorScheme.onBackgroundColor,
-                    night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
-                ),
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
-            ),
+            title = context.getString(R.string.week_widget_title),
+            value = json
         )
 
     }
@@ -296,20 +278,52 @@ class AppWidget : GlanceAppWidget() {
         val context = LocalContext.current
         val json = currentState(key = MONTH_FINANCIAL_INFO) ?: "0.0"
         val text = "${context.getString(R.string.month_widget_title)} : $json ${Constants.CURRENCY_1_WIDGET}"
-        Text(
-            text,
-            modifier=modifier,
-            style = TextStyle(
-                color = ColorProvider(
-                    day = MyAppWidgetGlanceColorScheme.onBackgroundColor,
-                    night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
-                ),
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
-            ),
-        )
 
+        StatisticsItem(
+            modifier=modifier,
+            title = context.getString(R.string.month_widget_title),
+            value = json
+        )
+    }
+
+    @Composable
+    private fun StatisticsItem(
+        modifier: GlanceModifier = GlanceModifier,
+        title: String,
+        value: String
+    ) {
+
+        Column(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                title,
+                style = TextStyle(
+                    color = ColorProvider(
+                        day = MyAppWidgetGlanceColorScheme.onBackgroundColor,
+                        night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
+                    ),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp
+                ),
+            )
+
+            Text(
+                value,
+                style = TextStyle(
+                    color = ColorProvider(
+                        day = MyAppWidgetGlanceColorScheme.onBackgroundColor,
+                        night = MyAppWidgetGlanceColorScheme.onBackgroundColorDark
+                    ),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp
+                ),
+            )
+        }
     }
 
 }

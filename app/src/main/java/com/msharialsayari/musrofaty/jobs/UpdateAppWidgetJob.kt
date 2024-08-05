@@ -7,10 +7,11 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetFinancialStatisticsUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetSmsModelListUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.InsertSmsUseCase
 import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.DateUtils
 import com.msharialsayari.musrofaty.utils.StringsUtils
@@ -38,6 +39,7 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
         glanceId = GlanceAppWidgetManager(appContext).getGlanceIds(AppWidget::class.java).firstOrNull()
         Log.d(TAG, "doWork() updating the app widget glanceId: $glanceId")
         glanceId?.let {glanceId->
+            initInsertSmsJob(appContext)
             val todaySmsList = getAllSmsUseCase.invoke(
                 filterOption = DateUtils.FilterOption.TODAY,
                 isDeleted = false
@@ -59,6 +61,10 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
                 val todayPref = mutablePreferences[AppWidget.TODAY_FINANCIAL_INFO]
                 val weekPref  = mutablePreferences[AppWidget.WEEK_FINANCIAL_INFO]
                 val monthPref = mutablePreferences[AppWidget.MONTH_FINANCIAL_INFO]
+
+                val today = DateUtils.getToday()
+                val timestamp = DateUtils.toMilliSecond(today)
+                mutablePreferences[AppWidget.DATE_INFO] = timestamp
 
                 if (todayPref != null) {
                     val json = todayFinResult.getOrDefault(Constants.CURRENCY_1, FinancialStatistics())
@@ -89,5 +95,10 @@ class UpdateAppWidgetJob  @AssistedInject constructor(
             }
         }
         return Result.success()
+    }
+
+    private fun initInsertSmsJob(context: Context){
+        val initStoresWorker = OneTimeWorkRequestBuilder<InsertSmsJob>().build()
+        WorkManager.getInstance(context).enqueue(initStoresWorker)
     }
 }
