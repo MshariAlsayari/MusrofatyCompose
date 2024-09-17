@@ -214,6 +214,9 @@
     <string name="excel_income_amount_header">مبلغ الدخل</string>
     <string name="excel_amount_currency_header">العملة</string>
     <string name="excel_sms_date_header">تاريخ الرسالة</string>
+    <string name="excel_statistics_expenses_header">مجموع المصروفات</string>
+    <string name="excel_statistics_income_header">مجموع الإيرادات</string>
+    <string name="excel_statistics_currency_header">العملة</string>
     <string name="notification_generate_excel_file_title">إنشاء ملف اكسل</string>
     <string name="notification_generate_pdf_file_title">إنشاء ملف pdf</string>
     <string name="notification_generate_excel_file_starting_message">يتم إنشاء الملف</string>

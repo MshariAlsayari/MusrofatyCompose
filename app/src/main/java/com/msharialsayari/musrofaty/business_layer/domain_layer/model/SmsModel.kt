@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.sms_database.SmsEntity
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.store_database.StoreAndCategoryModel
 import com.msharialsayari.musrofaty.ui_component.SmsComponentModel
+import com.msharialsayari.musrofaty.utils.Constants
 import com.msharialsayari.musrofaty.utils.enums.SmsType
 import kotlinx.parcelize.Parcelize
 
@@ -24,7 +25,13 @@ data class SmsModel(
     var senderModel: SenderModel? = null,
     var isFavorite: Boolean = false,
     var isDeleted: Boolean = false,
-) : Parcelable
+) : Parcelable {
+
+
+    fun getExcelCurrency():String{
+        return if(Constants.listSACurrency.contains(currency) || currency.isEmpty())Constants.CURRENCY_1 else currency
+    }
+}
 
 
 fun SmsModel.toSmsEntity() = SmsEntity(

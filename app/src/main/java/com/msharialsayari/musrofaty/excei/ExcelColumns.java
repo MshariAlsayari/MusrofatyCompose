@@ -11,7 +11,10 @@ enum ExcelColumns{
     INCOME_AMOUNT_COLUMN(5, R.string.excel_income_amount_header),
     AMOUNT_CURRENCY_COLUMN(6, R.string.excel_amount_currency_header),
     SMS_TYPE_COLUMN(7, R.string.excel_sms_type_header),
-    SMS_DATE(8, R.string.excel_sms_date_header);
+    SMS_DATE(8, R.string.excel_sms_date_header),
+    STATISTICS_CURRENCY_COLUMN(10, R.string.excel_statistics_currency_header),
+    STATISTICS_EXPENSES_COLUMN(11, R.string.excel_statistics_expenses_header),
+    STATISTICS_INCOMES_COLUMN(12, R.string.excel_statistics_income_header);
 
     private int index;
     private int title;

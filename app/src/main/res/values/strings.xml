@@ -211,6 +211,10 @@
     <string name="excel_income_amount_header">Income amount</string>
     <string name="excel_amount_currency_header">Currency</string>
     <string name="excel_sms_date_header">SMS Date</string>
+    <string name="excel_statistics_expenses_header">Expenses Total</string>
+    <string name="excel_statistics_income_header">Incomes Total</string>
+    <string name="excel_statistics_currency_header">Currency</string>
+
     <string name="notification_generate_excel_file_title">Generating Excel File</string>
     <string name="notification_generate_pdf_file_title">Generating PDF File</string>
     <string name="notification_generate_excel_file_starting_message">starting generating the file</string>

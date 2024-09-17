@@ -8,9 +8,10 @@ import android.util.Log;
 import com.msharialsayari.musrofaty.R;
 import com.msharialsayari.musrofaty.Utils;
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.CategoryModel;
+import com.msharialsayari.musrofaty.business_layer.domain_layer.model.FinancialSummary;
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.SmsModel;
-import com.msharialsayari.musrofaty.utils.Constants;
 import com.msharialsayari.musrofaty.utils.DateUtils;
+import com.msharialsayari.musrofaty.utils.enums.SmsType;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -84,15 +85,13 @@ public class ExcelUtils {
 
         //create All Sms Sheet
         initSheet(context.getString(R.string.common_all));
-        fillDataIntoExcel(excelModel.getSmsList(), context);
+        fillDataIntoExcel(excelModel.getSmsList(), excelModel.getStatistics(), context);
 
 
         //create sheet based on months
         for (Map.Entry<String, List<SmsModel>> entry : smsMap.entrySet()) {
             initSheet(entry.getKey());
-            fillDataIntoExcel(entry.getValue(), context);
-            // fillDivider();
-
+            fillDataIntoExcel(entry.getValue(), excelModel.getStatistics(), context);
         }
 
 
@@ -181,9 +180,10 @@ public class ExcelUtils {
      * <p>
      * NOTE: Set row index as i+1 since 0th index belongs to header row
      *
-     * @param dataList - List containing data to be filled into excel
+     * @param dataList   - List containing data to be filled into excel
+     * @param statistics
      */
-    private void fillDataIntoExcel(List<SmsModel> dataList, Context context) {
+    private void fillDataIntoExcel(List<SmsModel> dataList, Map<String, FinancialSummary> statistics, Context context) {
 
 
         for (int i = 0; i < dataList.size(); i++) {
@@ -210,13 +210,10 @@ public class ExcelUtils {
 
             double incomeAmount = 0.0;
             double expensesAmount = 0.0;
-            switch (Objects.requireNonNull(smsModel.getSmsType())) {
-                case INCOME:
-                    incomeAmount = smsModel.getAmount();
-                    break;
-                case EXPENSES_PURCHASES:
-                    expensesAmount = smsModel.getAmount();
-                    break;
+            if(SmsType.Companion.isExpenses(smsModel.getSmsType())){
+                expensesAmount = smsModel.getAmount();
+            }else if(SmsType.Companion.isIncome(smsModel.getSmsType())){
+                incomeAmount = smsModel.getAmount();
             }
 
 
@@ -230,7 +227,7 @@ public class ExcelUtils {
 
             //Amount Currency  Cell
             cell = rowData.createCell(ExcelColumns.AMOUNT_CURRENCY_COLUMN.getIndex());
-            cell.setCellValue(smsModel.getCurrency().isEmpty() ? Constants.CURRENCY_1 : smsModel.getCurrency());
+            cell.setCellValue(smsModel.getExcelCurrency());
 
             //Sms type  Cell
             cell = rowData.createCell(ExcelColumns.SMS_TYPE_COLUMN.getIndex());
@@ -241,6 +238,25 @@ public class ExcelUtils {
             cell = rowData.createCell(ExcelColumns.SMS_DATE.getIndex());
             String date = DateUtils.getDateByTimestamp(smsModel.getTimestamp(), DateUtils.DEFAULT_DATE_TIME_PATTERN);
             cell.setCellValue(date);
+        }
+
+
+        List<FinancialSummary> statisticsValues = new ArrayList(statistics.values());
+        for (int i = 0; i < statisticsValues.size(); i++){
+            Row rowData = sheet.getRow(i+1);
+            FinancialSummary model = statisticsValues.get(i);
+
+            //Statistics Currency Cell
+            cell = rowData.createCell(ExcelColumns.STATISTICS_CURRENCY_COLUMN.getIndex());
+            cell.setCellValue(model.getCurrency());
+
+            //Statistics Expenses  Cell
+            cell = rowData.createCell(ExcelColumns.STATISTICS_EXPENSES_COLUMN.getIndex());
+            cell.setCellValue(model.getExpenses());
+
+            //Statistics Incomes  Cell
+            cell = rowData.createCell(ExcelColumns.STATISTICS_INCOMES_COLUMN.getIndex());
+            cell.setCellValue(model.getIncome());
         }
     }
 
