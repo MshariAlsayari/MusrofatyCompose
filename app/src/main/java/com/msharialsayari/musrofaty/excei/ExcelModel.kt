@@ -13,9 +13,9 @@ data class ExcelModel(
 ) : Parcelable{
 
 
-    fun getStatistics(): Map<String, FinancialSummary>{
+    fun getStatistics(list:  List<SmsModel>): Map<String, FinancialSummary>{
         val map = mutableMapOf<String, FinancialSummary>()
-        val grouped = smsList.groupBy { it.getExcelCurrency() }
+        val grouped = list.groupBy { it.getExcelCurrency() }
 
         grouped.map {
             var expensesTotal = 0.0

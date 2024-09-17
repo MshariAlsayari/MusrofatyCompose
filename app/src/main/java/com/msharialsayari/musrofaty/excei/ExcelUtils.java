@@ -85,13 +85,13 @@ public class ExcelUtils {
 
         //create All Sms Sheet
         initSheet(context.getString(R.string.common_all));
-        fillDataIntoExcel(excelModel.getSmsList(), excelModel.getStatistics(), context);
+        fillDataIntoExcel(excelModel.getSmsList(), excelModel.getStatistics(excelModel.getSmsList()), context);
 
 
         //create sheet based on months
         for (Map.Entry<String, List<SmsModel>> entry : smsMap.entrySet()) {
             initSheet(entry.getKey());
-            fillDataIntoExcel(entry.getValue(), excelModel.getStatistics(), context);
+            fillDataIntoExcel(entry.getValue(), excelModel.getStatistics(entry.getValue()), context);
         }
 
 
