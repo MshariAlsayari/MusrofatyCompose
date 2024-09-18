@@ -132,21 +132,20 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
         modifier = modifier,
         sheetState = sheetState,
         sheetContent = {
-            val model = TextFieldBottomSheetModel(
-                title = if (selectedItem != null) R.string.common_change else R.string.common_add,
-                label = R.string.common_word,
-                textFieldValue = textValue,
-                buttonText = if (selectedItem != null) R.string.common_change else R.string.common_add,
-                onActionButtonClicked = { value ->
-                    viewModel.onActionClicked(
-                        value = value,
-                        selectedItem = selectedItem
-                    )
-                    showSheet(false)
-                },
-            )
             BottomSheetComponent.TextFieldBottomSheetComponent(
-                model = model
+                model = TextFieldBottomSheetModel(
+                    title = if (selectedItem != null) R.string.common_change else R.string.common_add,
+                    label = R.string.common_word,
+                    textFieldValue = textValue,
+                    buttonText = if (selectedItem != null) R.string.common_change else R.string.common_add,
+                    onActionButtonClicked = { value ->
+                        viewModel.onActionClicked(
+                            value = value,
+                            selectedItem = selectedItem
+                        )
+                        showSheet(false)
+                    },
+                )
             )
         }
     ) {

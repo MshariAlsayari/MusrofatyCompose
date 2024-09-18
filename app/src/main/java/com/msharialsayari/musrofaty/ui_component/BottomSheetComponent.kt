@@ -87,6 +87,7 @@ object BottomSheetComponent {
                     if (text.value.notEmpty()) {
                         model.onActionButtonClicked(text.value)
                         text.value = ""
+                        error.value = ""
                     } else {
                         error.value = context.getString(R.string.validation_field_mandatory)
                     }
