@@ -79,6 +79,7 @@ object BottomSheetComponent {
                 keyboardOptions = model.keyboardOptions,
                 onValueChanged = {
                     text.value = it
+                    error.value = ""
                 }
             )
             ButtonComponent.ActionButton(
