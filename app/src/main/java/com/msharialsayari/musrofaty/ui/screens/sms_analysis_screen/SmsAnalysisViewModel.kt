@@ -2,11 +2,14 @@ package com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.toWordDetectorModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.WordDetectorModel
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.AddWordDetectorUseCase
 import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.DeleteWordDetectorUseCase
-import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.GetWordDetectorUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.ObserveWordDetectorUseCase
+import com.msharialsayari.musrofaty.business_layer.domain_layer.usecase.UpdateWordDetectorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmsAnalysisViewModel @Inject constructor(
-    private val getWordDetectorUseCase: GetWordDetectorUseCase,
-    private val addWordDetectorUseCase: AddWordDetectorUseCase ,
+    private val getWordDetectorUseCase: ObserveWordDetectorUseCase,
+    private val addWordDetectorUseCase: AddWordDetectorUseCase,
+    private val updateWordDetectorUseCase: UpdateWordDetectorUseCase,
     private val deleteWordDetectorUseCase: DeleteWordDetectorUseCase
     ):ViewModel() {
 
@@ -26,40 +30,37 @@ class SmsAnalysisViewModel @Inject constructor(
     val uiState: StateFlow<SmsAnalysisUIState> = _uiState
 
     init {
-        getWordDetectors()
+        observingData()
     }
 
-
-    private fun getWordDetectors(){
+    private fun observingData() {
         viewModelScope.launch {
-            val expensesResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PURCHASES_WORDS)
-            val expensesOutgoingResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_OUTGOING_TRANSFER_WORDS)
-            val expensesPayBillsResult = getWordDetectorUseCase.invoke(WordDetectorType.EXPENSES_PAY_BILLS_WORDS)
-            val expensesWithdrawalATMResult = getWordDetectorUseCase.invoke(WordDetectorType.WITHDRAWAL_ATM_WORDS)
-            val incomesResult = getWordDetectorUseCase.invoke(WordDetectorType.INCOME_WORDS)
-            val amountsResult = getWordDetectorUseCase.invoke(WordDetectorType.AMOUNT_WORDS)
-            val storesResult = getWordDetectorUseCase.invoke(WordDetectorType.STORE_WORDS)
-            val currencyResult = getWordDetectorUseCase.invoke(WordDetectorType.CURRENCY_WORDS)
+            val result = getWordDetectorUseCase.invoke()
             _uiState.update {
-                it.copy(
-                    currencyList = currencyResult,
-                    expensesPurchasesList = expensesResult,
-                    expensesOutgoingTransferList = expensesOutgoingResult,
-                    expensesPayBillsList = expensesPayBillsResult,
-                    expensesWithdrawalATMList = expensesWithdrawalATMResult,
-                    incomesList = incomesResult,
-                    amountsList = amountsResult,
-                    storesList = storesResult
-                )
+                it.copy(list = result)
             }
         }
-
+    }
+    fun updateSelectedTab(index:Int){
+        _uiState.update {
+            it.copy(
+                selectedTab = index
+            )
+        }
     }
 
-    fun addWordDetector(value:String,type: WordDetectorType){
+    private fun addWordDetector(value:String,type: WordDetectorType){
         viewModelScope.launch {
             val model = WordDetectorModel(word = value, type = type.name)
             addWordDetectorUseCase.invoke(model)
+        }
+    }
+
+    private fun updateWordDetector(value: String, selectedItem: WordDetectorEntity) {
+        val newItem = selectedItem.toWordDetectorModel()
+        newItem.word = value
+        viewModelScope.launch {
+            updateWordDetectorUseCase.invoke(newItem)
         }
     }
 
@@ -69,6 +70,25 @@ class SmsAnalysisViewModel @Inject constructor(
         }
     }
 
+    fun getWordDetectorByIndex(index: Int): WordDetectorType {
+        return WordDetectorType.getTypeByIndexForAnalyticsScreen(index)
+    }
+
+
+
+    fun onActionClicked(value: String,selectedItem:WordDetectorEntity?){
+        val tabIndex = _uiState.value.selectedTab
+        val type =  WordDetectorType.getTypeByIndexForAnalyticsScreen(tabIndex)
+        val validatedWord = value.trim()
+        if(validatedWord.isNotEmpty()){
+            if(selectedItem != null){
+                updateWordDetector(value, selectedItem)
+            }else{
+                addWordDetector(value, type)
+            }
+        }
+
+    }
 
 
 }

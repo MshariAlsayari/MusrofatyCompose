@@ -1,6 +1,5 @@
 package com.msharialsayari.musrofaty.ui.screens.sms_types_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
@@ -34,7 +33,6 @@ class SmsTypesViewModel @Inject constructor(
     val initialPage: Flow<List<WordDetectorEntity>> =
         _uiState.flatMapLatest { uiState ->
             val type = getWordDetectorByIndex(uiState.selectedTab)
-            Log.d("MshariTest",type.name )
              getWordDetectorUseCase(type)
         }
 

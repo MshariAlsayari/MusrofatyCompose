@@ -11,12 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.msharialsayari.musrofaty.R
+import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
 import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen.WordsDetectorListCompose
 import com.msharialsayari.musrofaty.ui_component.TextComponent
 
 @Composable
-fun SmsTypesTab(viewModel: SmsTypesViewModel) {
+fun SmsTypesTab(
+    viewModel: SmsTypesViewModel,
+    onItemClicked: (WordDetectorEntity) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     val list = viewModel.initialPage.collectAsState(initial = emptyList()).value
@@ -40,9 +44,10 @@ fun SmsTypesTab(viewModel: SmsTypesViewModel) {
             modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.default_margin16)),
             text = description
         )
-        WordsDetectorListCompose(list){id->
-            viewModel.deleteWordDetector(id)
-        }
+        WordsDetectorListCompose(
+            list = list,
+            onItemClicked = onItemClicked,
+            onDelete = { id -> viewModel.deleteWordDetector(id) })
     }
 
 

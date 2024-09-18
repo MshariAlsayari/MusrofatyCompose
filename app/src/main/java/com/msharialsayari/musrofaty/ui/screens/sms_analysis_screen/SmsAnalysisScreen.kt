@@ -19,10 +19,12 @@ import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -56,7 +58,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SmsAnalysisScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel()) {
 
-
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
@@ -76,24 +77,35 @@ fun SmsAnalysisScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel(
 @Composable
 fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 
-    var tabIndex by remember { mutableStateOf(0) }
     val viewModel: SmsAnalysisViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val tabIndex = uiState.selectedTab
 
 
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+    var selectedItem by rememberSaveable { mutableStateOf<WordDetectorEntity?>(null) }
+    var textValue by rememberSaveable { mutableStateOf<String>(selectedItem?.word?:"") }
+
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-
-
-    BackHandler(sheetState.isVisible) {
+    val showSheet : (Boolean)-> Unit = { show ->
         coroutineScope.launch {
             BottomSheetComponent.handleVisibilityOfBottomSheet(
                 sheetState,
-                false
+                show
             )
         }
+
+        if(!show){
+            selectedItem = null
+        }
+    }
+
+
+    BackHandler(sheetState.isVisible) {
+        showSheet(false)
     }
 
     if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
@@ -112,36 +124,36 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 
     }
 
+    LaunchedEffect (selectedItem){
+        textValue = selectedItem?.word ?: ""
+    }
+
     ModalBottomSheetLayout(
         modifier = modifier,
         sheetState = sheetState,
         sheetContent = {
+            val model = TextFieldBottomSheetModel(
+                title = if (selectedItem != null) R.string.common_change else R.string.common_add,
+                label = R.string.common_word,
+                textFieldValue = textValue,
+                buttonText = if (selectedItem != null) R.string.common_change else R.string.common_add,
+                onActionButtonClicked = { value ->
+                    viewModel.onActionClicked(
+                        value = value,
+                        selectedItem = selectedItem
+                    )
+                    showSheet(false)
+                },
+            )
             BottomSheetComponent.TextFieldBottomSheetComponent(
-                model = TextFieldBottomSheetModel(
-                    title = R.string.sms_analysis_bottom_sheet_title,
-                    textFieldValue = "",
-                    buttonText = R.string.common_add,
-                    onActionButtonClicked = { value ->
-                        viewModel.addWordDetector(
-                            value,
-                            WordDetectorType.getTypeByIndexForAnalyticsScreen(tabIndex)
-                        )
-                        coroutineScope.launch {
-                            BottomSheetComponent.handleVisibilityOfBottomSheet(
-                                sheetState,
-                                false
-                            )
-                        }
-                    },
-                )
+                model = model
             )
         }
     ) {
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            val tabTitles =
-                WordDetectorType.getAnalyticsScreenList().sortedBy { it.id }.map { it.value }
+            val tabTitles = WordDetectorType.getAnalyticsScreenList().sortedBy { it.id }.map { it.value }
             Column(
                 Modifier.fillMaxSize()
             ) {
@@ -160,7 +172,9 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
                         Tab(
                             modifier = Modifier.background(MaterialTheme.colors.background),
                             selected = tabIndex == index,
-                            onClick = { tabIndex = index },
+                            onClick = {
+                                viewModel.updateSelectedTab(index)
+                            },
                             text = {
                                 TextComponent.ClickableText(
                                     text = stringResource(id = stringResId),
@@ -171,10 +185,10 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
                             })
                     }
                 }
-                SmsAnalysisTab(
-                    viewModel = viewModel,
-                    word = WordDetectorType.getTypeByIndexForAnalyticsScreen(tabIndex)
-                )
+                SmsAnalysisTab(viewModel){
+                    selectedItem = it
+                    showSheet(true)
+                }
             }
 
 
@@ -183,12 +197,8 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
                     .align(Alignment.BottomEnd)
                     .padding(dimensionResource(id = R.dimen.default_margin16)),
                 onClick = {
-                    coroutineScope.launch {
-                        BottomSheetComponent.handleVisibilityOfBottomSheet(
-                            sheetState,
-                            true
-                        )
-                    }
+                    selectedItem = null
+                    showSheet(true)
                 }
             )
 
@@ -202,6 +212,7 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 @Composable
 fun WordsDetectorListCompose(
     list: List<WordDetectorEntity>,
+    onItemClicked : (WordDetectorEntity) -> Unit,
     onDelete: (Int) -> Unit,
 ) {
     val deleteAction = Action<WordDetectorEntity>(
@@ -230,7 +241,7 @@ fun WordsDetectorListCompose(
         },
         dividerView = { DividerComponent.HorizontalDividerComponent() },
         onItemClicked = { item, position ->
-
+            onItemClicked(item)
         },
         onItemDoubleClicked = { item, position ->
 

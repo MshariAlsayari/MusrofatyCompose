@@ -29,6 +29,10 @@ class WordDetectorRepo @Inject constructor(
         return dao.getAllFlowList(type.name)
     }
 
+    fun observeAll():Flow<List<WordDetectorEntity>> {
+        return dao.getAll()
+    }
+
     suspend fun insert(vararg list: WordDetectorModel) {
         val words: MutableList<WordDetectorEntity> = mutableListOf()
         list.map {

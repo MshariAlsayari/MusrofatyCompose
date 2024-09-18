@@ -156,7 +156,9 @@ fun SmsTypesContent(modifier: Modifier = Modifier) {
                             })
                     }
                 }
-                SmsTypesTab(viewModel)
+                SmsTypesTab(viewModel){
+
+                }
             }
 
 

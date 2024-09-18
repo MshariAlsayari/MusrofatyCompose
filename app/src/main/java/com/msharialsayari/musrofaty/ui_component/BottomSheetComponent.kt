@@ -1,7 +1,13 @@
 package com.msharialsayari.musrofaty.ui_component
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -80,6 +86,7 @@ object BottomSheetComponent {
                 text = model.buttonText, onClick = {
                     if (text.value.notEmpty()) {
                         model.onActionButtonClicked(text.value)
+                        text.value = ""
                     } else {
                         error.value = context.getString(R.string.validation_field_mandatory)
                     }

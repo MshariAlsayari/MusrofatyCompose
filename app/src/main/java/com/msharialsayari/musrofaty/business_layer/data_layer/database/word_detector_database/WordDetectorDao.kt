@@ -1,6 +1,10 @@
 package com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 
@@ -13,6 +17,9 @@ interface WordDetectorDao {
 
     @Query("SELECT * FROM WordDetectorEntity WHERE type COLLATE NOCASE IN (:type)")
      fun getAllFlowList(type:String): Flow<List<WordDetectorEntity>>
+
+    @Query("SELECT * FROM WordDetectorEntity")
+    fun getAll(): Flow<List<WordDetectorEntity>>
 
     @Query("DELETE  FROM WordDetectorEntity WHERE id =:id")
     suspend fun delete(id:Int)
