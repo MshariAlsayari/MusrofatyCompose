@@ -1,26 +1,19 @@
 package com.msharialsayari.musrofaty.ui.screens.sms_analysis_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,7 +24,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,7 +32,6 @@ import com.android.magic_recyclerview.component.magic_recyclerview.VerticalEasyL
 import com.android.magic_recyclerview.model.Action
 import com.msharialsayari.musrofaty.R
 import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_detector_database.WordDetectorEntity
-import com.msharialsayari.musrofaty.business_layer.domain_layer.model.enum.WordDetectorType
 import com.msharialsayari.musrofaty.navigation.navigator.AppNavigatorViewModel
 import com.msharialsayari.musrofaty.ui.navigation.Screen
 import com.msharialsayari.musrofaty.ui.screens.senders_list_screen.ActionIcon
@@ -56,18 +47,23 @@ import com.msharialsayari.musrofaty.ui_component.TextFieldBottomSheetModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmsAnalysisScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel()) {
+fun SmsAnalysisScreen(
+    navigatorViewModel: AppNavigatorViewModel = hiltViewModel(),
+    isSmsAnalysisScreen: Boolean
+) {
 
     Scaffold(
         topBar = {
             AppBarComponent.TopBarComponent(
-                title = Screen.SmsAnalysisScreen.title,
+                title = if (isSmsAnalysisScreen) Screen.SmsAnalysisScreen.title else Screen.SmsTypesScreen.title,
                 onArrowBackClicked = { navigatorViewModel.navigateUp() }
             )
-
         }
     ) { innerPadding ->
-        SmsAnalysisContent(modifier = Modifier.padding(innerPadding))
+        SmsAnalysisContent(
+            modifier = Modifier.padding(innerPadding),
+            isSmsAnalysisScreen = isSmsAnalysisScreen
+        )
     }
 
 
@@ -75,22 +71,26 @@ fun SmsAnalysisScreen(navigatorViewModel: AppNavigatorViewModel = hiltViewModel(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SmsAnalysisContent(modifier: Modifier = Modifier) {
+fun SmsAnalysisContent(
+    modifier: Modifier = Modifier,
+    isSmsAnalysisScreen: Boolean
+) {
 
     val viewModel: SmsAnalysisViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    val tabIndex = uiState.selectedTab
+    LaunchedEffect(key1 = isSmsAnalysisScreen) {
+        viewModel.updateScreenType(isSmsAnalysisScreen)
+    }
 
 
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     var selectedItem by rememberSaveable { mutableStateOf<WordDetectorEntity?>(null) }
-    var textValue by rememberSaveable { mutableStateOf<String>(selectedItem?.word?:"") }
+    var textValue by rememberSaveable { mutableStateOf<String>(selectedItem?.word ?: "") }
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
-    val showSheet : (Boolean)-> Unit = { show ->
+    val showSheet: (Boolean) -> Unit = { show ->
         coroutineScope.launch {
             BottomSheetComponent.handleVisibilityOfBottomSheet(
                 sheetState,
@@ -98,7 +98,7 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
             )
         }
 
-        if(!show){
+        if (!show) {
             selectedItem = null
         }
     }
@@ -124,7 +124,7 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 
     }
 
-    LaunchedEffect (selectedItem){
+    LaunchedEffect(selectedItem) {
         textValue = selectedItem?.word ?: ""
     }
 
@@ -151,45 +151,16 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
     ) {
 
         Box(modifier = Modifier.fillMaxSize()) {
-
-            val tabTitles = WordDetectorType.getAnalyticsScreenList().sortedBy { it.id }.map { it.value }
-            Column(
-                Modifier.fillMaxSize()
-            ) {
-                TabRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedTabIndex = tabIndex,
-                    indicator = {
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier.tabIndicatorOffset(it[tabIndex]),
-                            color = MaterialTheme.colors.secondary,
-                            height = TabRowDefaults.IndicatorHeight
-                        )
-                    }
-                ) {
-                    tabTitles.forEachIndexed { index, stringResId ->
-                        Tab(
-                            modifier = Modifier.background(MaterialTheme.colors.background),
-                            selected = tabIndex == index,
-                            onClick = {
-                                viewModel.updateSelectedTab(index)
-                            },
-                            text = {
-                                TextComponent.ClickableText(
-                                    text = stringResource(id = stringResId),
-                                    color = if (tabIndex == index) MaterialTheme.colors.secondary else colorResource(
-                                        id = R.color.light_gray
-                                    )
-                                )
-                            })
-                    }
-                }
-                SmsAnalysisTab(viewModel){
+            Column(Modifier.fillMaxSize()) {
+                SmsScreenTabRow(
+                    viewModel = viewModel,
+                    isSmsAnalysisScreen = isSmsAnalysisScreen
+                )
+                SmsAnalysisTab(viewModel) {
                     selectedItem = it
                     showSheet(true)
                 }
             }
-
 
             ButtonComponent.FloatingButton(
                 modifier = Modifier
@@ -200,8 +171,6 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
                     showSheet(true)
                 }
             )
-
-
         }
     }
 
@@ -211,7 +180,7 @@ fun SmsAnalysisContent(modifier: Modifier = Modifier) {
 @Composable
 fun WordsDetectorListCompose(
     list: List<WordDetectorEntity>,
-    onItemClicked : (WordDetectorEntity) -> Unit,
+    onItemClicked: (WordDetectorEntity) -> Unit,
     onDelete: (Int) -> Unit,
 ) {
     val deleteAction = Action<WordDetectorEntity>(

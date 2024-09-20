@@ -122,8 +122,8 @@ private fun SettingScreeLandscape(
             when (selectedPreference.value) {
                 PreferenceListEnum.Appearance -> AppearanceContent()
                 PreferenceListEnum.Stores -> StoresScreen()
-                PreferenceListEnum.Analysis -> SmsAnalysisContent()
-                PreferenceListEnum.SmsTypes -> SmsTypesContent()
+                PreferenceListEnum.Analysis -> SmsAnalysisContent(isSmsAnalysisScreen = true)
+                PreferenceListEnum.SmsTypes -> SmsAnalysisContent(isSmsAnalysisScreen = false)
                 PreferenceListEnum.Statistics -> StatisticsScreen()
                 PreferenceListEnum.SmsTool -> SmsDetectorToolContent()
                 PreferenceListEnum.Update -> viewModel.onClickOnUpdatePreference(activity)

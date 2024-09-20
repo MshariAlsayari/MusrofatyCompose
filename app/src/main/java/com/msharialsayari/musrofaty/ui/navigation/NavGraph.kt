@@ -180,7 +180,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.SmsAnalysisScreen.route) {
-            SmsAnalysisScreen()
+            SmsAnalysisScreen(isSmsAnalysisScreen = true)
         }
 
         composable(Screen.ContentScreen.route + "/{contentId}",
@@ -231,7 +231,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.SmsTypesScreen.route) {
-            SmsTypesScreen()
+            SmsAnalysisScreen(isSmsAnalysisScreen = false)
         }
 
         composable(Screen.SmsDetectorToolScreen.route) {

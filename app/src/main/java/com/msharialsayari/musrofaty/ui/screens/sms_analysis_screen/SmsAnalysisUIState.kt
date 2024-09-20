@@ -4,6 +4,7 @@ import com.msharialsayari.musrofaty.business_layer.data_layer.database.word_dete
 import kotlinx.coroutines.flow.Flow
 
 data class SmsAnalysisUIState(
+    var isSmsAnalyticsScreen:Boolean = false,
     var selectedTab:Int = 0,
     var list: Flow<List<WordDetectorEntity>>? = null,
 )

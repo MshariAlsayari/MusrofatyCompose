@@ -49,6 +49,14 @@ class SmsAnalysisViewModel @Inject constructor(
         }
     }
 
+    fun updateScreenType(isSmsAnalysisScreen: Boolean){
+        _uiState.update {
+            it.copy(
+                isSmsAnalyticsScreen = isSmsAnalysisScreen
+            )
+        }
+    }
+
     private fun addWordDetector(value:String,type: WordDetectorType){
         viewModelScope.launch {
             val model = WordDetectorModel(word = value, type = type.name)
@@ -71,14 +79,37 @@ class SmsAnalysisViewModel @Inject constructor(
     }
 
     fun getWordDetectorByIndex(index: Int): WordDetectorType {
-        return WordDetectorType.getTypeByIndexForAnalyticsScreen(index)
+        val isSmsAnalyticsScreen = _uiState.value.isSmsAnalyticsScreen
+        return if(isSmsAnalyticsScreen){
+            WordDetectorType.getTypeByIndexForAnalyticsScreen(index)
+        }else{
+            WordDetectorType.getTypeByIndexForSmsTypesScreen(index)
+        }
+
+    }
+
+    fun getTabList(isSmsAnalysisScreen: Boolean): List<Int> {
+        return if(isSmsAnalysisScreen){
+            WordDetectorType.getAnalyticsScreenList().sortedBy { it.id }.map { it.value }
+        }else{
+            WordDetectorType.getSmsTypesScreenList().sortedBy { it.id }.map { it.value }
+        }
+    }
+
+    private fun getWordDetectorType(): WordDetectorType {
+        val tabIndex = _uiState.value.selectedTab
+        val isSmsAnalyticsScreen = _uiState.value.isSmsAnalyticsScreen
+        return if(isSmsAnalyticsScreen){
+            WordDetectorType.getTypeByIndexForAnalyticsScreen(tabIndex)
+        }else{
+            WordDetectorType.getTypeByIndexForSmsTypesScreen(tabIndex)
+        }
     }
 
 
 
     fun onActionClicked(value: String,selectedItem:WordDetectorEntity?){
-        val tabIndex = _uiState.value.selectedTab
-        val type =  WordDetectorType.getTypeByIndexForAnalyticsScreen(tabIndex)
+        val type =  getWordDetectorType()
         val validatedWord = value.trim()
         if(validatedWord.isNotEmpty()){
             if(selectedItem != null){
