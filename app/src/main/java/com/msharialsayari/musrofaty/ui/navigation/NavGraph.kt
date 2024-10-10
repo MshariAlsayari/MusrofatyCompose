@@ -99,12 +99,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.SmsPermissionScreen.route) {
-            SmsPermissionScreen(onActionBtnClick = {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                val uri: Uri = Uri.fromParts("package", context.packageName, null)
-                intent.data = uri
-                context.startActivity(intent)
-            })
+            SmsPermissionScreen()
         }
 
         composable(BottomNavItem.Dashboard.route) {

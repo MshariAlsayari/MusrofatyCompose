@@ -10,7 +10,7 @@ plugins {
 def versionMajor = 3
 def versionMinor = 1
 def versionPatch = 0
-def versionBuild = 2// bump for dogfood builds, public betas, etc.
+def versionBuild = 3// bump for dogfood builds, public betas, etc.
 
 
 def keystoreProperties = rootProject.file('keystore.properties')
@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId "com.msharialsayari.musrofaty"
         minSdk 27
-        targetSdk 33
+        targetSdk 34
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 

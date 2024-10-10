@@ -27,9 +27,7 @@ import com.msharialsayari.requestpermissionlib.model.DialogParams
 
 
 @Composable
-fun SmsPermissionScreen(
-    onActionBtnClick: () -> Unit
-) {
+fun SmsPermissionScreen() {
 
     var openSms by remember { mutableStateOf(false) }
 
@@ -42,7 +40,7 @@ fun SmsPermissionScreen(
                 positiveButtonText = R.string.permission_dialog_positive_button
             ),
             isGranted = {
-                onActionBtnClick()
+                openSms = false
             },
             onDone = {
                 openSms = false
