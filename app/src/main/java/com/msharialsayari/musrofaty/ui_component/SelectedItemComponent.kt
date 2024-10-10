@@ -15,20 +15,34 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedItemModel, canUnSelect:Boolean = false,canDoubleSelect:Boolean = true, onSelect:(Boolean)->Unit, onLongPress:(SelectedItemModel)->Unit = {} ) {
+fun StringSelectedItemComponent(
+    modifier: Modifier = Modifier,
+    model: SelectedItemModel,
+    canUnSelect: Boolean = false,
+    canDoubleSelect: Boolean = true,
+    onSelect: (Boolean) -> Unit,
+    onLongPress: (SelectedItemModel) -> Unit = {}
+) {
+
+    val secondaryText: @Composable (() -> Unit)? = if (model.description.trim().isNotEmpty()) {
+        {
+            TextComponent.PlaceholderText(text = model.description)
+        }
+    } else null
+
     ListItem(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    if (canUnSelect){
+                    if (canUnSelect) {
                         onSelect(!model.isSelected)
-                    }else{
+                    } else {
 
-                        if (canDoubleSelect){
+                        if (canDoubleSelect) {
                             onSelect(true)
-                        }else{
-                            if (!model.isSelected){
+                        } else {
+                            if (!model.isSelected) {
                                 onSelect(true)
                             }
                         }
@@ -36,14 +50,18 @@ fun StringSelectedItemComponent(modifier: Modifier = Modifier, model: SelectedIt
                     }
                 },
                 onLongClick = {
-                              onLongPress(model)
+                    onLongPress(model)
                 },
             ),
         text = { TextComponent.BodyText(text = model.value) },
-        secondaryText = { TextComponent.PlaceholderText(text = model.description) },
+        secondaryText = secondaryText,
         trailing = {
             if (model.isSelected) {
-                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colors.secondary)
+                Icon(
+                    Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.secondary
+                )
             }
 
         }

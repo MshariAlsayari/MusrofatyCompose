@@ -35,6 +35,8 @@
     <string name="common_amount">المبلغ</string>
     <string name="common_instructions">تعليمات</string>
     <string name="common_word">كلمة</string>
+    <string name="common_yes">نعم</string>
+    <string name="common_cancel">إلغاء</string>
 
 
     <!-- Sorted BY-->
@@ -234,12 +236,6 @@
     <string name="no_sms_to_generat_file">لايوجد رسائل، لا يمكن إنشاء ملف</string>
 
 
-
-
-
-
-
-
     <!--Content-->
     <string name="sms_category_no_category">غير محدد</string>
     <string name="banks">مصرف</string>
@@ -322,5 +318,11 @@
     <string name="sms_permission_title">الرسائل</string>
     <string name="sms_permission_message">يحتاج التطبيق للوصول إلى الرسائل لحساب الإيرادات والمصروفات</string>
     <!--   End Sms Permission Screen  -->
+
+
+    <!--   Delete Dialog  -->
+    <string name="delete_dialog_title">الحذف</string>
+    <string name="delete_dialog_message">هل أنت متأكد من الحذف</string>
+    <!--   End Delete Dialog  -->
 
 </resources>

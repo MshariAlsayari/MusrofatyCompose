@@ -67,7 +67,6 @@ private fun FiltersList(
         backgroundColor = MusrofatyTheme.colors.deleteActionColor,
         onClicked = { position, item ->
             viewModel.deleteFilter(item)
-
         })
 
 

@@ -20,4 +20,5 @@ data class FilterUiState(
         val filterAmountModel: FilterAmountModel? = null,
         val bottomSheetType: FilterBottomSheetType? = null,
         var titleValidationModel: ValidationModel = ValidationModel(),
+        var showConfirmationDialog:Boolean = false,
 )

@@ -299,5 +299,12 @@ class FilterViewModel@Inject constructor(
         return _uiState.value.filterWords.lastIndex == index
     }
 
+    fun updateConfirmationDialogStatus(show:Boolean){
+        _uiState.update {
+            it.copy(showConfirmationDialog = show)
+        }
+    }
+
+
 
 }

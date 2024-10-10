@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,24 +39,29 @@ object DialogComponent {
         message: String = "",
         positiveBtnText: String? = null,
         negativeBtnText: String? = null,
+        cancelable: Boolean = false,
         onClickPositiveBtn: () -> Unit = {},
         onClickNegativeBtn: () -> Unit = {}
     ) {
 
-        Dialog(onDismissRequest = { }) {
+        Dialog(onDismissRequest = { },
+            DialogProperties(
+                dismissOnBackPress = cancelable,
+                dismissOnClickOutside = cancelable
+            )) {
             Card(
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(150.dp)
+                modifier = Modifier.defaultMinSize(minHeight = 150.dp, minWidth = 300.dp)
             ) {
-                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16))) {
+                Column(
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_margin16), Alignment.Top)
+                ) {
 
                     TextComponent.HeaderText(
                         text = title
                     )
 
                     TextComponent.BodyText(
-                        modifier = Modifier.weight(1f),
                         text = message
                     )
 
@@ -99,7 +105,7 @@ object DialogComponent {
             elevation = 8.dp,
             shape = RoundedCornerShape(0.dp)
         ) {
-            Column{
+            Column {
                 TextComponent.HeaderText(
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.default_margin16)),
                     text = stringResource(id = R.string.category)
@@ -132,7 +138,7 @@ object DialogComponent {
 
                 }
 
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
@@ -141,7 +147,7 @@ object DialogComponent {
                             bottom = dimensionResource(id = R.dimen.default_margin16)
                         ),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ){
+                ) {
                     ButtonComponent.ActionButton(
                         modifier = Modifier.weight(1f),
                         text = R.string.add,
@@ -185,9 +191,9 @@ object DialogComponent {
 
     @Composable
     fun MessageDialog(
-        @StringRes message:Int,
+        @StringRes message: Int,
         onDismiss: () -> Unit,
-    ){
+    ) {
 
         Dialog(onDismissRequest = onDismiss) {
             Card(
@@ -212,7 +218,6 @@ object DialogComponent {
             }
 
         }
-
 
 
     }
@@ -250,18 +255,18 @@ object DialogComponent {
 
             }
         }
-        
+
     }
 
     @Composable
     fun TimeOptionDialog(
         selectedItem: SelectedItemModel? = null,
-        ignoreFilterOption:DateUtils.FilterOption? = null,
+        ignoreFilterOption: DateUtils.FilterOption? = null,
         startDate: Long = 0,
         endDate: Long = 0,
         onFilterSelected: (SelectedItemModel) -> Unit
-    ){
-        val context  = LocalContext.current
+    ) {
+        val context = LocalContext.current
 
 
         val options =
@@ -273,7 +278,10 @@ object DialogComponent {
                 SelectedItemModel(
                     id = item.id,
                     value = context.getString(item.title),
-                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(startDate,endDate) else context.getString(item.subtitle),
+                    description = if (DateUtils.FilterOption.isRangeDateSelected(selectedItem?.id) && item.id == 5) DateUtils.formattedRangeDate(
+                        startDate,
+                        endDate
+                    ) else context.getString(item.subtitle),
                     isSelected = if (selectedItem != null) selectedItem.id == item.id else item.id == 0
                 )
             )
@@ -295,5 +303,28 @@ object DialogComponent {
 
 
         }
+    }
+
+    @Composable
+    fun ConfirmationDialog(
+        title: String = "",
+        message: String = "",
+        cancelable: Boolean = false,
+        positiveBtnText: String? = stringResource(id = R.string.common_yes),
+        negativeBtnText: String? = stringResource(id = R.string.common_cancel),
+        onClickPositiveBtn: () -> Unit = {},
+        onClickNegativeBtn: () -> Unit = {}
+    ) {
+
+        MusrofatyDialog(
+            title = title,
+            message = message,
+            cancelable=cancelable,
+            positiveBtnText = positiveBtnText,
+            negativeBtnText = negativeBtnText,
+            onClickPositiveBtn = onClickPositiveBtn,
+            onClickNegativeBtn = onClickNegativeBtn
+        )
+
     }
 }

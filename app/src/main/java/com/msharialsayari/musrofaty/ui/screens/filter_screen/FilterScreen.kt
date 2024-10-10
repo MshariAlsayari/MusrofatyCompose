@@ -40,6 +40,7 @@ fun FilterScreen() {
     val keyboardController = LocalSoftwareKeyboardController.current
     val selectedFilterWordItem = rememberSaveable { mutableStateOf<FilterWordModel?>(null) }
     val bottomSheetType = uiState.bottomSheetType
+    val showConfirmationDialog = uiState.showConfirmationDialog
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -72,6 +73,21 @@ fun FilterScreen() {
         }
         keyboardController?.hide()
     }
+
+
+    if(showConfirmationDialog){
+        DialogComponent.ConfirmationDialog(
+            title = stringResource(id = R.string.delete_dialog_title),
+            message = stringResource(id = R.string.delete_dialog_message),
+            onClickPositiveBtn = {
+                viewModel.onDeleteBtnClicked()
+                viewModel.navigateUp()
+            },
+            onClickNegativeBtn = {
+                viewModel.updateConfirmationDialogStatus(false)
+            }
+        )
+    }
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
         sheetState = sheetState,
@@ -96,23 +112,7 @@ fun FilterScreen() {
 
         Scaffold(
             topBar = {
-                AppBarComponent.TopBarComponent(
-                    title = Screen.FilterScreen.title,
-                    actions = {
-                        if(!uiState.isCreateNewFilter)
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .mirror()
-                                .clickable {
-                                    viewModel.onDeleteBtnClicked()
-                                    viewModel.navigateUp()
-                                })
-                    },
-                    onArrowBackClicked = { viewModel.navigateUp() }
-                )
-
+                FilterScreenTopBar(viewModel = viewModel)
             },
             scaffoldState = scaffoldState
         ) { innerPadding ->
